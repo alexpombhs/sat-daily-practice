@@ -179,13 +179,17 @@ export default function PerformanceDashboard({
   </AlexBox>
 
   return <AlexBox>
-    {!compact&&<AlexBox sx={{display:'flex',justifyContent:'space-between',alignItems:{xs:'flex-start',md:'flex-end'},gap:2,flexDirection:{xs:'column',md:'row'}}}>
-      <AlexBox>
-        <AlexText sx={{fontSize:12,textTransform:'uppercase',letterSpacing:'.12em',fontWeight:800,color:'#6558F5'}}>Performance</AlexText>
-        <AlexText component="h1" sx={{fontFamily:'Georgia, "Times New Roman", serif',fontSize:{xs:32,md:46},lineHeight:1.08,my:1,color:'#08275B'}}>Your practice trends</AlexText>
-        <AlexText sx={{color:'#667085',maxWidth:720}}>Track success rate, response time, repeat attempts, session progress, and a practice-only score prediction based on recent per-question success rates.</AlexText>
-      </AlexBox>
-      {onTimeRangeChange&&<AlexBox sx={{width:{xs:'100%',md:'auto'},minWidth:{md:220},display:'grid',gap:1}}>
+    {!compact&&<AlexBox>
+      <AlexText sx={{fontSize:12,textTransform:'uppercase',letterSpacing:'.12em',fontWeight:800,color:'#6558F5'}}>Performance</AlexText>
+      <AlexText component="h1" sx={{fontFamily:'Georgia, "Times New Roman", serif',fontSize:{xs:32,md:46},lineHeight:1.08,my:1,color:'#08275B'}}>Your practice trends</AlexText>
+      <AlexText sx={{color:'#667085',maxWidth:720}}>See your current performance first, then expand deeper breakdowns only when you need them.</AlexText>
+    </AlexBox>}
+
+    {!compact&&<AlexBox sx={{mt:2.5}}><SectionPanel
+      eyebrow="Selected period"
+      title={`Performance in ${rangeLabel}`}
+      description="Essential stats for the selected time range. Score prediction remains based on the rolling scoring model."
+      action={onTimeRangeChange?<AlexBox sx={{width:{xs:'100%',sm:260},display:'grid',gap:1}}>
         <AlexDropdown
           id="performance-time-range"
           label="Time frame"
@@ -201,7 +205,7 @@ export default function PerformanceDashboard({
           ]}
           onChange={onTimeRangeChange}
         />
-        {timeRange==='custom'&&<AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'1fr',sm:'1fr 1fr'},gap:1}}>
+        {timeRange==='custom'&&<AlexBox sx={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:1}}>
           <AlexTextField
             label="From"
             type="date"
@@ -217,13 +221,7 @@ export default function PerformanceDashboard({
             slotProps={{inputLabel:{shrink:true}}}
           />
         </AlexBox>}
-      </AlexBox>}
-    </AlexBox>}
-
-    {!compact&&<SectionPanel
-      eyebrow="Selected period"
-      title={`Performance in ${rangeLabel}`}
-      description="Essential stats for the selected time range. Score prediction remains based on the rolling scoring model."
+      </AlexBox>:undefined}
     >
       <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'repeat(2,minmax(0,1fr))',lg:'repeat(4,minmax(0,1fr))'},gap:{xs:1,sm:1.25}}}>
         {[
@@ -243,7 +241,7 @@ export default function PerformanceDashboard({
           <AlexText sx={{fontSize:12.5,color:'#667085',mt:.25,lineHeight:1.45}}>{summary.recommendation.reason}</AlexText>
         </AlexBox>
       </AlexBox>}
-    </SectionPanel>}
+    </SectionPanel></AlexBox>}
 
     {!hasHistory&&!compact&&<AlexSurface sx={{p:3.5,mt:2.5,border:'1px solid #E6E2DB'}}>
       <AlexText component="h2" sx={{fontSize:22,fontWeight:750,mb:1}}>No sessions in this range</AlexText>
@@ -272,7 +270,7 @@ export default function PerformanceDashboard({
             ariaLabel="Accuracy trend by practice day"
           />
         </PerformanceChartCard>
-        <PerformanceChartCard title="Practice score prediction" description={summary.latestScoreEstimate?`${scoreCalibrationText}. Latest prediction ${summary.latestScoreEstimate}${latestDelta===0?'':` · ${latestDelta>0?'+':''}${latestDelta} since the prior scored session`}. ${scoreBasisText} Sessions 1–9 are provisional; session 10 starts the full rolling 10-session question-pool prediction. Each unique question is weighted equally by its success rate within that window. This is a practice trend, not an official College Board score.`:'Answer at least 3 unique questions in both sections within your recent completed sessions to begin a score prediction.'}>
+        <PerformanceChartCard title="Practice score prediction" description={summary.latestScoreEstimate?`${scoreCalibrationText} · latest ${summary.latestScoreEstimate}${latestDelta===0?'':` · ${latestDelta>0?'+':''}${latestDelta} from prior scored session`}.`:'More cross-section history is needed before a score prediction is available.'}>
           {scoreTrend.length&&scoreTrend.some(series=>series.data.length)?<AlexLineChart
             data={scoreTrend}
             margin={{top:20,right:25,bottom:52,left:58}}
@@ -293,8 +291,20 @@ export default function PerformanceDashboard({
         </PerformanceChartCard>
       </AlexBox>
 
+      {scoreBasis&&<AlexAccordion
+        sx={{mt:1.5}}
+        summary={<AlexBox>
+          <AlexText sx={{fontSize:14,fontWeight:850,color:'#08275B'}}>Score prediction details</AlexText>
+          <AlexText sx={{fontSize:12.5,color:'#667085',mt:.15}}>How the rolling practice estimate is calculated</AlexText>
+        </AlexBox>}
+      >
+        <AlexText sx={{fontSize:13,color:'#667085',lineHeight:1.6}}>
+          {scoreBasisText} Sessions 1–9 are provisional; session 10 starts the full rolling 10-session question-pool prediction. Each unique question is weighted equally by its success rate within that window. This is a practice trend, not an official College Board score.
+        </AlexText>
+      </AlexAccordion>}
+
       <AlexAccordion
-        sx={{mt:2}}
+        sx={{mt:1.5}}
         summary={<AlexBox>
           <AlexText sx={{fontSize:14,fontWeight:850,color:'#08275B'}}>Section breakdown</AlexText>
           <AlexText sx={{fontSize:12.5,color:'#667085',mt:.15}}>Accuracy and response time by section</AlexText>
