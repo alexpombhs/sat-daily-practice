@@ -1,6 +1,7 @@
 import {BarChart3,BookOpen,Clock3,Target,TrendingUp} from 'lucide-react'
 import AlexBarChart from '../atoms/AlexBarChart'
 import AlexBox from '../atoms/AlexBox'
+import AlexButton from '../atoms/AlexButton'
 import AlexLineChart from '../atoms/AlexLineChart'
 import AlexDropdown from '../atoms/AlexDropdown'
 import AlexTextField from '../atoms/AlexTextField'
