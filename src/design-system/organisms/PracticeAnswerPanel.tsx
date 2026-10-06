@@ -2,7 +2,6 @@ import AlexButton from '../atoms/AlexButton'
 import AlexChoiceButton from '../atoms/AlexChoiceButton'
 import AlexTextField from '../atoms/AlexTextField'
 import AnswerFeedback from '../molecules/AnswerFeedback'
-import ExplanationContent from '../molecules/ExplanationContent'
 import {answerLabel} from '../../lib/answerCompare'
 import {formatDuration} from '../../lib/practiceGamification'
 import type {Attempt,PracticeQuestion} from '../../types'
@@ -36,7 +35,7 @@ export default function PracticeAnswerPanel({question,selected,submitted,attempt
     {!attempt&&!submitted&&<AlexButton fullWidth disabled={!selected.trim()} onClick={onSubmit}>Submit answer</AlexButton>}
     {attempt&&revealFeedback&&<AnswerFeedback correct={attempt.correct} acceptedAnswer={answerLabel(question)} elapsedLabel={formatDuration(attempt.elapsedMs)}/>}
     {attempt&&!revealFeedback&&<p className="muted">Answer saved. Correct answers and explanations will be available after you finish the session.</p>}
-    {attempt&&revealFeedback&&explanationBytes&&<details className="inline-review" open={reviewMode}><summary>Review walkthrough</summary><ExplanationContent question={question} bytes={explanationBytes}/></details>}
-    <p className="review-note">{reviewMode?'Use Previous and Next to review the full session.':revealFeedback?'Walkthroughs are optional and remain available in your session review.':'Finish the session to see your score, correct answers, and explanations.'}</p>
+    {attempt&&revealFeedback&&!reviewMode&&explanationBytes&&<details className="inline-review"><summary>Review walkthrough</summary></details>}
+    <p className="review-note">{reviewMode?'Use the Question and Explanation tabs, then Previous and Next to review the full session.':revealFeedback?'Detailed explanations are available in session review.':'Finish the session to see your score, correct answers, and explanations.'}</p>
   </aside>
 }
