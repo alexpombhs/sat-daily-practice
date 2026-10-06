@@ -10,7 +10,7 @@ import QuestionContent from './design-system/molecules/QuestionContent'
 import AccountAuthPanel from './design-system/organisms/AccountAuthPanel'
 import AppSidebarLayout from './design-system/organisms/AppSidebarLayout'
 import ParsingIssuesDashboard from './design-system/organisms/ParsingIssuesDashboard'
-import PerformanceDashboard from './design-system/organisms/PerformanceDashboard'
+import PerformanceDashboard,{type PerformanceTimeRange} from './design-system/organisms/PerformanceDashboard'
 import DailyPracticeGoals from './design-system/organisms/DailyPracticeGoals'
 import PracticeAnswerPanel from './design-system/organisms/PracticeAnswerPanel'
 import PracticeSessionHeader from './design-system/organisms/PracticeSessionHeader'
@@ -59,6 +59,9 @@ export default function App(){
   const[questionBank,setQuestionBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
   const[resumableSession,setResumableSession]=useState<ActivePracticeSession|null>(null)
   const[reviewMode,setReviewMode]=useState(false)
+  const[performanceTimeRange,setPerformanceTimeRange]=useState<PerformanceTimeRange>('30d')
+  const[performanceCustomStart,setPerformanceCustomStart]=useState('')
+  const[performanceCustomEnd,setPerformanceCustomEnd]=useState('')
 
   function navigateTo(next:View,{replace=false}:{replace?:boolean}={}){
     setView(next)
@@ -164,6 +167,47 @@ export default function App(){
   const current=qs[i]
   const currentRec=current?currentAttempts.find(attempt=>attempt.questionId===current.id):undefined
   const performance=summarizePerformance(attempts,sessions,questionBank.length)
+  const performanceRangeBounds=(()=>{
+    const now=new Date()
+    const endOfToday=new Date(now)
+    endOfToday.setHours(23,59,59,999)
+    if(performanceTimeRange==='all')return {start:null as Date|null,end:null as Date|null}
+    if(performanceTimeRange==='custom'){
+      const start=performanceCustomStart?new Date(`${performanceCustomStart}T00:00:00`):null
+      const end=performanceCustomEnd?new Date(`${performanceCustomEnd}T23:59:59.999`):null
+      return {start,end}
+    }
+    const days=performanceTimeRange==='7d'?7:performanceTimeRange==='14d'?14:performanceTimeRange==='21d'?21:performanceTimeRange==='30d'?30:90
+    const start=new Date(endOfToday)
+    start.setDate(start.getDate()-(days-1))
+    start.setHours(0,0,0,0)
+    return {start,end:endOfToday}
+  })()
+  const performanceSessions=sessions.filter(session=>{
+    const time=new Date(session.startedAt).getTime()
+    if(!Number.isFinite(time))return false
+    if(performanceRangeBounds.start&&time<performanceRangeBounds.start.getTime())return false
+    if(performanceRangeBounds.end&&time>performanceRangeBounds.end.getTime())return false
+    return true
+  })
+  const performanceSessionIds=new Set(performanceSessions.map(session=>session.id))
+  const performanceAttempts=attempts.filter(attempt=>performanceSessionIds.has(attempt.sessionId))
+  const rangePerformanceBase=summarizePerformance(performanceAttempts,performanceSessions,questionBank.length)
+  const rangeScoreTrend=performance.scoreTrend.filter(point=>{
+    const time=new Date(point.startedAt).getTime()
+    if(!Number.isFinite(time))return false
+    if(performanceRangeBounds.start&&time<performanceRangeBounds.start.getTime())return false
+    if(performanceRangeBounds.end&&time>performanceRangeBounds.end.getTime())return false
+    return true
+  })
+  const rangePerformance={
+    ...rangePerformanceBase,
+    scoreTrend:rangeScoreTrend,
+    latestScoreEstimate:performance.latestScoreEstimate,
+    weeklyScoreChange:performance.weeklyScoreChange,
+    scorePredictionBasis:performance.scorePredictionBasis,
+    scoreEstimateConfidence:performance.scoreEstimateConfidence,
+  }
   const missedQuestionCount=countMissedPracticeQuestions(settings,attempts,questionBank)
   const failedQuestionCount=countFailedPracticeQuestions(settings,attempts,questionBank)
   const practiceRecommendation=buildPracticePlanRecommendation(settings,questionBank,attempts,performance)
@@ -181,6 +225,12 @@ export default function App(){
 
   const lastCompletedSession=sessions.length?sessions[sessions.length-1]:null
   const lastCompletedMetrics=lastCompletedSession?summarizeSession(lastCompletedSession.attempts):null
+  const completedSessionHistory=[...sessions]
+    .sort((a,b)=>b.endedAt.localeCompare(a.endedAt))
+    .map(session=>{
+      const metrics=summarizeSession(session.attempts)
+      return {id:session.id,endedAt:session.endedAt,correct:metrics.correct,total:metrics.total,accuracy:metrics.accuracy}
+    })
 
   async function beginPractice(nextMode:SubjectMode=settings.mode,nextPracticeTest=settings.practiceTest??'all'){
     if(!authUser){
@@ -304,6 +354,11 @@ export default function App(){
 
   function reviewLastSession(){
     if(lastCompletedSession)reviewSession(lastCompletedSession)
+  }
+
+  function reviewPastSession(sessionId:string){
+    const session=sessions.find(item=>item.id===sessionId)
+    if(session)reviewSession(session)
   }
 
   async function record(correct:boolean,selfGraded=false){
@@ -466,7 +521,18 @@ export default function App(){
     </main>)
   }
 
-  if(view==='stats')return withSidebar('performance',<main className="shell"><PerformanceDashboard summary={performance} hasHistory={attempts.length>0} questionsPdf={qpdf} answersPdf={apdf}/></main>)
+  if(view==='stats')return withSidebar('performance',<main className="shell"><PerformanceDashboard
+    summary={rangePerformance}
+    hasHistory={performanceAttempts.length>0}
+    questionsPdf={qpdf}
+    answersPdf={apdf}
+    timeRange={performanceTimeRange}
+    customStartDate={performanceCustomStart}
+    customEndDate={performanceCustomEnd}
+    onTimeRangeChange={setPerformanceTimeRange}
+    onCustomStartDateChange={setPerformanceCustomStart}
+    onCustomEndDateChange={setPerformanceCustomEnd}
+  /></main>)
 
   if(view==='question-bank')return withSidebar('question-bank',<QuestionBankReview questionsPdf={qpdf}/>,'#F7F6F2')
 
@@ -666,15 +732,18 @@ export default function App(){
       lastActivityAt:resumableSession.lastActivityAt,
     }:null}
     lastSession={lastCompletedSession&&lastCompletedMetrics?{
+      id:lastCompletedSession.id,
       endedAt:lastCompletedSession.endedAt,
       correct:lastCompletedMetrics.correct,
       total:lastCompletedMetrics.total,
       accuracy:lastCompletedMetrics.accuracy,
     }:null}
+    sessionHistory={completedSessionHistory}
     onStartTest={value=>void beginPractice(settings.mode,value)}
     onOpenSetup={()=>navigateTo('settings')}
     onResumeSession={resumeActiveSession}
     onEndSession={()=>void endResumableSession()}
     onReviewLastSession={reviewLastSession}
+    onReviewSession={reviewPastSession}
   />)
 }
