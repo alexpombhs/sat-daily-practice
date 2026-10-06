@@ -16,7 +16,7 @@ export default function SessionReviewSelector({value,options,onChange,onReview}:
   return <AlexBox
     sx={{
       display:'grid',
-      gridTemplateColumns:{xs:'1fr',md:'minmax(0,1fr) minmax(360px,480px)'},
+      gridTemplateColumns:{xs:'1fr',md:'minmax(0,1fr) minmax(280px,360px)'},
       gap:{xs:1.25,md:4},
       alignItems:'center',
       py:{xs:1.5,md:1.75},
@@ -34,7 +34,7 @@ export default function SessionReviewSelector({value,options,onChange,onReview}:
     <AlexBox
       sx={{
         display:'grid',
-        gridTemplateColumns:{xs:'1fr',sm:'minmax(0,1fr) auto'},
+        gridTemplateColumns:{xs:'1fr',sm:'minmax(0,1fr) 110px'},
         gap:1,
         alignItems:'center',
         minWidth:0,
@@ -52,7 +52,7 @@ export default function SessionReviewSelector({value,options,onChange,onReview}:
         tone="secondary"
         disabled={!value}
         onClick={onReview}
-        sx={{width:{xs:'100%',sm:'auto'},minWidth:{sm:110}}}
+        sx={{width:'100%'}}
       >
         Review
       </AlexButton>
