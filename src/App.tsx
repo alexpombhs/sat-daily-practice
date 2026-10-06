@@ -58,6 +58,7 @@ export default function App(){
   const[settingsCloudReady,setSettingsCloudReady]=useState(false)
   const[questionBank,setQuestionBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
   const[resumableSession,setResumableSession]=useState<ActivePracticeSession|null>(null)
+  const[reviewMode,setReviewMode]=useState(false)
 
   function navigateTo(next:View,{replace=false}:{replace?:boolean}={}){
     setView(next)
@@ -148,7 +149,7 @@ export default function App(){
     }
   },[settings,authUser?.id,settingsCloudReady])
   useEffect(()=>{
-    if(!authUser||view!=='practice'||!sid)return
+    if(!authUser||view!=='practice'||!sid||reviewMode)return
     const lastActivityAt=new Date().toISOString()
     setResumableSession(previous=>previous&&previous.id===sid
       ?{...previous,currentIndex:i,draftAnswer:selected,lastActivityAt}
@@ -157,7 +158,7 @@ export default function App(){
       void saveActiveSessionProgress(sid,i,selected).catch(error=>console.warn('Active session progress sync failed',error))
     },400)
     return()=>window.clearTimeout(timeout)
-  },[authUser?.id,view,sid,i,selected])
+  },[authUser?.id,view,sid,i,selected,reviewMode])
 
 
   const current=qs[i]
@@ -177,6 +178,9 @@ export default function App(){
     const practicedIds=new Set(attempts.filter(attempt=>attempt.practiceTestId===value).map(attempt=>attempt.questionId))
     return{value,label:practiceTestLabel(value),questionCount:questions.length,practicedCount:questions.filter(question=>practicedIds.has(question.id)).length}
   })
+
+  const lastCompletedSession=sessions.length?sessions[sessions.length-1]:null
+  const lastCompletedMetrics=lastCompletedSession?summarizeSession(lastCompletedSession.attempts):null
 
   async function beginPractice(nextMode:SubjectMode=settings.mode,nextPracticeTest=settings.practiceTest??'all'){
     if(!authUser){
@@ -227,6 +231,7 @@ export default function App(){
         return
       }
     }
+    setReviewMode(false)
     setSettings(nextSettings)
     setQs(nextQuestions)
     setSid(sessionId)
@@ -251,6 +256,7 @@ export default function App(){
     const nextIndex=Math.min(Math.max(resumableSession.currentIndex,0),Math.max(0,resumedQuestions.length-1))
     const currentQuestion=resumedQuestions[nextIndex]
     const priorAttempt=currentQuestion?resumableSession.attempts.find(attempt=>attempt.questionId===currentQuestion.id):undefined
+    setReviewMode(false)
     setSettings({...settings,...resumableSession.settings})
     setQs(resumedQuestions)
     setSid(resumableSession.id)
@@ -276,6 +282,29 @@ export default function App(){
   }
 
   function start(){void beginPractice(settings.mode)}
+
+  function reviewSession(session:SessionSummary){
+    const reviewQuestions=session.attempts
+      .map(attempt=>questionBank.find(question=>question.id===attempt.questionId))
+      .filter((question):question is PracticeQuestion=>Boolean(question))
+    if(!reviewQuestions.length){
+      window.alert('This session has no reviewable questions.')
+      return
+    }
+    setReviewMode(true)
+    setQs(reviewQuestions)
+    setSid(session.id)
+    setStarted(session.startedAt)
+    setCurrentAttempts(session.attempts)
+    setI(0)
+    setSelected(session.attempts[0]?.selectedAnswer??'')
+    setSubmitted(true)
+    navigateTo('practice')
+  }
+
+  function reviewLastSession(){
+    if(lastCompletedSession)reviewSession(lastCompletedSession)
+  }
 
   async function record(correct:boolean,selfGraded=false){
     if(!current)return
@@ -312,7 +341,7 @@ export default function App(){
     setI(index)
     setSelected(attempt?.selectedAnswer??'')
     setSubmitted(Boolean(attempt))
-    if(!attempt)setQStart(Date.now())
+    if(!attempt&&!reviewMode)setQStart(Date.now())
   }
 
   async function finish(){
@@ -329,6 +358,15 @@ export default function App(){
   }
 
   async function next(){
+    if(reviewMode){
+      if(i+1>=qs.length){
+        setReviewMode(false)
+        navigateTo('home')
+        return
+      }
+      goTo(i+1)
+      return
+    }
     if(!currentRec)return
     if(i+1>=qs.length){await finish();return}
     goTo(i+1)
@@ -376,10 +414,11 @@ export default function App(){
         current={i+1}
         total={qs.length}
         canGoPrevious={i>0}
-        canGoNext={Boolean(currentRec)}
+        canGoNext={reviewMode||Boolean(currentRec)}
         isLast={i+1===qs.length}
         onPrevious={()=>goTo(i-1)}
         onNext={next}
+        reviewMode={reviewMode}
       />
       <div className="practice-workspace">
         <section className="question-panel">
@@ -390,7 +429,7 @@ export default function App(){
             </div>
             <AlexBox sx={{display:'flex',alignItems:'center',gap:.65,flex:'0 0 auto'}}>
               <ParsingIssueReporter question={current} context="practice" compact/>
-              <AlexStatusChip>READY</AlexStatusChip>
+              <AlexStatusChip>{reviewMode?'REVIEW':'READY'}</AlexStatusChip>
             </AlexBox>
           </div>
           <QuestionContent question={current} bytes={qpdf} alt={`${moduleLabel(current.module)} question ${current.number}`}/>
@@ -403,6 +442,8 @@ export default function App(){
           explanationBytes={apdf}
           onSelect={setSelected}
           onSubmit={submit}
+          revealFeedback={reviewMode||(settings.answerFeedbackTiming??'end')==='immediate'}
+          reviewMode={reviewMode}
         />
       </div>
     </main>,'#F7F6F2')
@@ -410,25 +451,17 @@ export default function App(){
 
   if(view==='results'){
     const session=summarizeSession(currentAttempts)
+    const completedSession=sessions.find(item=>item.id===sid)??(sid?{id:sid,startedAt:started,endedAt:new Date().toISOString(),mode:settings.mode,questionCount:qs.length,attempts:currentAttempts}:null)
     return withSidebar('practice-tests',<main className="shell">
       <section className="card results">
         <p className="eyebrow">Session complete</p>
         <h1>{session.accuracy}% accuracy</h1>
         <p>{session.correct} of {session.total} correct · {formatDuration(session.averageMs)} average</p>
-        <div className="review-list">
-          <h2>Session review</h2>
-          {currentAttempts.map((attempt,index)=>{
-            const question=questionBank.find(item=>item.id===attempt.questionId)
-            if(!question)return null
-            return <article className="review-item" key={attempt.id}>
-              <div className="review-head"><div><b>{index+1}. {moduleLabel(attempt.module)} · Q{attempt.questionNumber}</b><span>{attempt.correct?'Correct':'Review'} · {formatDuration(attempt.elapsedMs)}</span></div><div><span>Your answer: <b>{attempt.selectedAnswer||'—'}</b></span><span>Accepted: <b>{answerLabel(question)}</b></span></div></div>
-              <details><summary>Review question</summary><QuestionContent question={question} bytes={qpdf} alt={`${moduleLabel(question.module)} question ${question.number}`}/></details>
-              <ParsingIssueReporter question={question} context="session-review" compact/>
-              {apdf?<details><summary>Show walkthrough and explanation</summary><ExplanationContent question={question} bytes={apdf}/></details>:<p className="muted">Add the answer-explanations source in Resources to review explanations here.</p>}
-            </article>
-          })}
+        <div className="hero-actions">
+          {completedSession&&<AlexButton onClick={()=>reviewSession(completedSession)}>Review answers</AlexButton>}
+          <AlexButton tone="secondary" onClick={start}>Start another session</AlexButton>
+          <AlexButton tone="quiet" onClick={()=>navigateTo('home')}>Back to practice tests</AlexButton>
         </div>
-        <div className="hero-actions"><AlexButton onClick={start}>Start another session</AlexButton><AlexButton tone="secondary" onClick={()=>navigateTo('home')}>Back to practice tests</AlexButton></div>
       </section>
     </main>)
   }
@@ -632,9 +665,16 @@ export default function App(){
       answeredCount:resumableSession.attempts.length,
       lastActivityAt:resumableSession.lastActivityAt,
     }:null}
+    lastSession={lastCompletedSession&&lastCompletedMetrics?{
+      endedAt:lastCompletedSession.endedAt,
+      correct:lastCompletedMetrics.correct,
+      total:lastCompletedMetrics.total,
+      accuracy:lastCompletedMetrics.accuracy,
+    }:null}
     onStartTest={value=>void beginPractice(settings.mode,value)}
     onOpenSetup={()=>navigateTo('settings')}
     onResumeSession={resumeActiveSession}
     onEndSession={()=>void endResumableSession()}
+    onReviewLastSession={reviewLastSession}
   />)
 }
