@@ -19,6 +19,7 @@ type ActiveSessionSummary={
 }
 
 type LastSessionSummary={
+  id:string
   endedAt:string
   correct:number
   total:number
@@ -30,14 +31,16 @@ type Props={
   sessionSummary:string
   activeSession?:ActiveSessionSummary|null
   lastSession?:LastSessionSummary|null
+  sessionHistory?:LastSessionSummary[]
   onStartTest:(value:PracticeTestFilter)=>void
   onOpenSetup:()=>void
   onResumeSession?:()=>void
   onEndSession?:()=>void
   onReviewLastSession?:()=>void
+  onReviewSession?:(sessionId:string)=>void
 }
 
-export default function PracticeTestsDashboard({tests,sessionSummary,activeSession,lastSession,onStartTest,onOpenSetup,onResumeSession,onEndSession,onReviewLastSession}:Props){
+export default function PracticeTestsDashboard({tests,sessionSummary,activeSession,lastSession,sessionHistory=[],onStartTest,onOpenSetup,onResumeSession,onEndSession,onReviewLastSession,onReviewSession}:Props){
   return <AlexBox component="section" sx={{width:'100%',px:{xs:.5,sm:1.5,md:2.5,lg:4},py:{xs:2,sm:2.75,lg:4}}}>
     <AlexBox sx={{maxWidth:960,mx:'auto'}}>
       <AlexText component="h1" sx={{fontFamily:'Georgia, "Times New Roman", serif',fontSize:{xs:28,sm:32,lg:36},fontWeight:500,lineHeight:1.12,m:0,color:'#08275B'}}>Practice tests</AlexText>
@@ -71,6 +74,25 @@ export default function PracticeTestsDashboard({tests,sessionSummary,activeSessi
         </AlexBox>
         <AlexButton fullWidth tone="secondary" onClick={onOpenSetup} sx={{width:{xs:'100%',sm:'auto'}}}>Edit setup</AlexButton>
       </AlexSurface>
+
+      {sessionHistory.length>0&&<AlexSurface sx={{mt:2,p:2,border:'1px solid #E4E7EC',borderRadius:2.5,bgcolor:'#fff'}}>
+        <AlexBox sx={{display:'flex',alignItems:'baseline',justifyContent:'space-between',gap:2,mb:1.25}}>
+          <AlexBox>
+            <AlexText sx={{fontSize:12,fontWeight:850,textTransform:'uppercase',letterSpacing:'.06em',color:'#667085'}}>Session history</AlexText>
+            <AlexText sx={{mt:.25,fontSize:13,color:'#667085'}}>Review any completed session using the same read-only test UI.</AlexText>
+          </AlexBox>
+          <AlexText sx={{fontSize:12.5,color:'#667085',whiteSpace:'nowrap'}}>{sessionHistory.length} completed</AlexText>
+        </AlexBox>
+        <AlexBox sx={{display:'grid',maxHeight:320,overflowY:'auto',borderTop:'1px solid #EAECF0'}}>
+          {sessionHistory.map(session=><AlexBox key={session.id} sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1.5,py:1.25,borderBottom:'1px solid #EAECF0',flexDirection:{xs:'column',sm:'row'}}}>
+            <AlexBox>
+              <AlexText sx={{fontSize:14,fontWeight:800,color:'#08275B'}}>{session.accuracy}% · {session.correct} of {session.total} correct</AlexText>
+              <AlexText sx={{fontSize:12.5,color:'#667085',mt:.2}}>{new Date(session.endedAt).toLocaleString()}</AlexText>
+            </AlexBox>
+            <AlexButton tone="secondary" onClick={()=>onReviewSession?.(session.id)} sx={{width:{xs:'100%',sm:'auto'}}}>Review session</AlexButton>
+          </AlexBox>)}
+        </AlexBox>
+      </AlexSurface>}
 
       <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'1fr',sm:'repeat(2,minmax(0,1fr))'},gap:{xs:1,sm:1.5},mt:2}}>
         {tests.map(test=><PracticeTestCard
