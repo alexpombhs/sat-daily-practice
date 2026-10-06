@@ -15,6 +15,14 @@ import type {PerformanceAnalytics} from '../../lib/performanceAnalytics'
 
 export type PerformanceTimeRange='7d'|'14d'|'21d'|'30d'|'90d'|'all'|'custom'
 
+type SessionReviewSummary={
+  id:string
+  endedAt:string
+  correct:number
+  total:number
+  accuracy:number
+}
+
 type Props={
   summary:PerformanceAnalytics
   hasHistory:boolean
@@ -28,6 +36,8 @@ type Props={
   onTimeRangeChange?:(value:PerformanceTimeRange)=>void
   onCustomStartDateChange?:(value:string)=>void
   onCustomEndDateChange?:(value:string)=>void
+  sessionHistory?:SessionReviewSummary[]
+  onReviewSession?:(sessionId:string)=>void
 }
 
 const chartTheme={
@@ -40,6 +50,7 @@ const chartTheme={
 export default function PerformanceDashboard({
   summary,hasHistory,compact=false,compactRecommendationExtra=null,questionsPdf=null,answersPdf=null,
   timeRange='30d',customStartDate='',customEndDate='',onTimeRangeChange,onCustomStartDateChange,onCustomEndDateChange,
+  sessionHistory=[],onReviewSession,
 }:Props){
   const sectionAccuracy=summary.sections.filter(section=>section.attempts>0).map(section=>({section:section.label,success:section.successRate}))
   const sectionTime=summary.sections.filter(section=>section.attempts>0).map(section=>({section:section.label,seconds:Math.round(section.averageMs/1000)}))
@@ -201,6 +212,26 @@ export default function PerformanceDashboard({
       <AlexText sx={{fontSize:12,fontWeight:850,textTransform:'uppercase',letterSpacing:'.09em',color:'#6558F5'}}>Recommended focus</AlexText>
       <AlexText component="h2" sx={{fontSize:22,fontWeight:800,color:'#08275B',mt:.5}}>{summary.recommendation.label}</AlexText>
       <AlexText sx={{color:'#475467',mt:.75}}>{summary.recommendation.reason}</AlexText>
+    </AlexSurface>}
+
+    {!compact&&sessionHistory.length>0&&<AlexSurface sx={{p:{xs:2.25,md:2.75},mt:2.5,border:'1px solid #E4E7EC',borderRadius:3,bgcolor:'#fff'}}>
+      <AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'baseline'},justifyContent:'space-between',gap:1.5,mb:1.25,flexDirection:{xs:'column',sm:'row'}}}>
+        <AlexBox>
+          <AlexText sx={{fontSize:12,fontWeight:850,textTransform:'uppercase',letterSpacing:'.09em',color:'#6558F5'}}>Session review</AlexText>
+          <AlexText component="h2" sx={{fontSize:22,fontWeight:800,color:'#08275B',mt:.45}}>Completed sessions</AlexText>
+          <AlexText sx={{color:'#667085',mt:.35,fontSize:13.5}}>Open any past session in the same read-only test view with your answer, the accepted answer, and explanation.</AlexText>
+        </AlexBox>
+        <AlexText sx={{fontSize:12.5,color:'#667085',whiteSpace:'nowrap'}}>{sessionHistory.length} completed</AlexText>
+      </AlexBox>
+      <AlexBox sx={{display:'grid',maxHeight:360,overflowY:'auto',borderTop:'1px solid #EAECF0'}}>
+        {sessionHistory.map(session=><AlexBox key={session.id} sx={{display:'grid',gridTemplateColumns:{xs:'1fr',sm:'minmax(0,1fr) auto'},alignItems:{xs:'stretch',sm:'center'},gap:1.25,py:1.25,borderBottom:'1px solid #EAECF0'}}>
+          <AlexBox sx={{minWidth:0}}>
+            <AlexText sx={{fontSize:14,fontWeight:800,color:'#08275B'}}>{session.accuracy}% · {session.correct} of {session.total} correct</AlexText>
+            <AlexText sx={{fontSize:12.5,color:'#667085',mt:.2}}>{new Date(session.endedAt).toLocaleString()}</AlexText>
+          </AlexBox>
+          <AlexButton tone="secondary" onClick={()=>onReviewSession?.(session.id)} sx={{width:{xs:'100%',sm:'auto'}}}>Review session</AlexButton>
+        </AlexBox>)}
+      </AlexBox>
     </AlexSurface>}
 
     {hasHistory&&!compact&&<>
