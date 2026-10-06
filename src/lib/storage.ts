@@ -11,6 +11,7 @@ export const DEFAULT_SETTINGS:Settings={
   mode:'both',
   questionsPerSession:10,
   showExplanations:true,
+  answerFeedbackTiming:'end',
   shuffle:true,
   practiceTest:'all',
   selectionMode:'adaptive',
