@@ -505,6 +505,7 @@ export default function App(){
           selected={selected}
           submitted={submitted}
           attempt={currentRec}
+          explanationBytes={apdf}
           onSelect={setSelected}
           onSubmit={submit}
           revealFeedback={reviewMode||(settings.answerFeedbackTiming??'end')==='immediate'}
