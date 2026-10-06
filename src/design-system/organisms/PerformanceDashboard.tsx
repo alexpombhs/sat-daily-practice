@@ -59,6 +59,7 @@ export default function PerformanceDashboard({
     .sort((a,b)=>a.date.getTime()-b.date.getTime())
     .map(day=>({x:formatChartDay(day.date),y:day.attempts?Math.round(100*day.correct/day.attempts):0}))
   const sessionAccuracy=[{id:'Accuracy',data:dailyAccuracy}]
+  const accuracyTickValues=sampleTickValues(dailyAccuracy.map(point=>point.x))
 
   const dailyScorePoints=new Map<string,(typeof summary.scoreTrend)[number]>()
   summary.scoreTrend.forEach(point=>{
@@ -77,6 +78,7 @@ export default function PerformanceDashboard({
     {id:'Calibrating',data:calibratingScoreTrend},
     {id:'10-session prediction',data:calibratedScoreTrend},
   ].filter(series=>series.data.length)
+  const scoreTickValues=sampleTickValues(dailyScoreTrend.map(point=>formatChartDay(new Date(point.startedAt))))
   const latestDelta=summary.scoreTrend.length?summary.scoreTrend[summary.scoreTrend.length-1].delta:0
   const weeklyScoreValue=summary.weeklyScoreChange===null?'—':summary.weeklyScoreChange===0?'0':`${summary.weeklyScoreChange>0?'+':''}${summary.weeklyScoreChange}`
   const weeklyScoreColor=summary.weeklyScoreChange===null||summary.weeklyScoreChange===0
@@ -258,7 +260,7 @@ export default function PerformanceDashboard({
             useMesh
             enableArea
             areaOpacity={0.08}
-            axisBottom={{legend:'Day',legendPosition:'middle',legendOffset:40}}
+            axisBottom={{legend:'Day',legendPosition:'middle',legendOffset:40,tickValues:accuracyTickValues}}
             axisLeft={{legend:'Accuracy %',legendPosition:'middle',legendOffset:-44}}
             theme={chartTheme}
             ariaLabel="Accuracy trend by practice day"
@@ -277,7 +279,7 @@ export default function PerformanceDashboard({
             pointBorderWidth={2}
             useMesh
             layers={['grid','markers','axes','areas',PredictionPhaseLines,'points','slices','mesh','legends']}
-            axisBottom={{legend:'Day',legendPosition:'middle',legendOffset:40}}
+            axisBottom={{legend:'Day',legendPosition:'middle',legendOffset:40,tickValues:scoreTickValues}}
             axisLeft={{legend:'Predicted score',legendPosition:'middle',legendOffset:-48}}
             theme={chartTheme}
             ariaLabel="Practice SAT score prediction trend"
@@ -369,4 +371,14 @@ function localDayKey(date:Date){
 
 function formatChartDay(date:Date){
   return new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(date)
+}
+
+function sampleTickValues(values:string[],maxTicks=10){
+  const unique=[...new Set(values)]
+  if(unique.length<=maxTicks)return unique
+  const step=Math.ceil(unique.length/maxTicks)
+  const sampled=unique.filter((_value,index)=>index%step===0)
+  const last=unique[unique.length-1]
+  if(sampled[sampled.length-1]!==last)sampled.push(last)
+  return sampled
 }
