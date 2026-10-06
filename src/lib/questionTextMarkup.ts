@@ -27,3 +27,20 @@ export function underlineSelection(value:string,start:number,end:number){
     end:start+wrapped.length,
   }
 }
+
+
+export function preserveUnderlineMarkup(previousValue:string,nextValue:string){
+  const spans=[...previousValue.matchAll(/<u>([\s\S]*?)<\/u>/gi)]
+    .map(match=>match[1])
+    .filter(span=>span.trim().length>0)
+
+  let output=nextValue
+  for(const span of spans){
+    const wrapped=UNDERLINE_OPEN+span+UNDERLINE_CLOSE
+    if(output.includes(wrapped))continue
+    const index=output.indexOf(span)
+    if(index<0)continue
+    output=output.slice(0,index)+wrapped+output.slice(index+span.length)
+  }
+  return output
+}
