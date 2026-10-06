@@ -3,6 +3,7 @@ import {CalendarDays,Clock3,ListChecks,PenLine,Target} from 'lucide-react'
 import AlexBox from './design-system/atoms/AlexBox'
 import AlexButton from './design-system/atoms/AlexButton'
 import AlexStatusChip from './design-system/atoms/AlexStatusChip'
+import AlexTabs from './design-system/atoms/AlexTabs'
 import ExplanationContent from './design-system/molecules/ExplanationContent'
 import ParsingIssueReporter from './design-system/molecules/ParsingIssueReporter'
 import DashboardCard from './design-system/molecules/DashboardCard'
@@ -59,6 +60,7 @@ export default function App(){
   const[questionBank,setQuestionBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
   const[resumableSession,setResumableSession]=useState<ActivePracticeSession|null>(null)
   const[reviewMode,setReviewMode]=useState(false)
+  const[reviewContentTab,setReviewContentTab]=useState<'question'|'explanation'>('question')
   const[performanceTimeRange,setPerformanceTimeRange]=useState<PerformanceTimeRange>('30d')
   const[performanceCustomStart,setPerformanceCustomStart]=useState('')
   const[performanceCustomEnd,setPerformanceCustomEnd]=useState('')
@@ -151,6 +153,10 @@ export default function App(){
       void saveUserSettings(settings).catch(error=>console.warn('Supabase settings save failed',error))
     }
   },[settings,authUser?.id,settingsCloudReady])
+  useEffect(()=>{
+    setReviewContentTab('question')
+  },[i,reviewMode])
+
   useEffect(()=>{
     if(!authUser||view!=='practice'||!sid||reviewMode)return
     const lastActivityAt=new Date().toISOString()
@@ -477,11 +483,22 @@ export default function App(){
               <b>{current.subject==='math'?'Math':'Reading & Writing'}</b>
             </div>
             <AlexBox sx={{display:'flex',alignItems:'center',gap:.65,flex:'0 0 auto'}}>
-              <ParsingIssueReporter question={current} context="practice" compact/>
+              <ParsingIssueReporter question={current} context={reviewMode?'session-review':'practice'} compact/>
               <AlexStatusChip>{reviewMode?'REVIEW':'READY'}</AlexStatusChip>
             </AlexBox>
           </div>
-          <QuestionContent question={current} bytes={qpdf} alt={`${moduleLabel(current.module)} question ${current.number}`}/>
+          {reviewMode&&<AlexTabs
+            value={reviewContentTab}
+            options={[{value:'question',label:'Question'},{value:'explanation',label:'Explanation'}]}
+            onChange={setReviewContentTab}
+            aria-label="Session review content"
+            sx={{mb:2}}
+          />}
+          {!reviewMode||reviewContentTab==='question'
+            ?<QuestionContent question={current} bytes={qpdf} alt={`${moduleLabel(current.module)} question ${current.number}`}/>
+            :<AlexBox sx={{minHeight:{xs:420,md:560},width:'100%'}}>
+              <ExplanationContent question={current} bytes={apdf}/>
+            </AlexBox>}
         </section>
         <PracticeAnswerPanel
           question={current}
