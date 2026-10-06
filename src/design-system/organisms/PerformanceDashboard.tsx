@@ -2,6 +2,8 @@ import {BarChart3,BookOpen,Clock3,Target,TrendingUp} from 'lucide-react'
 import AlexBarChart from '../atoms/AlexBarChart'
 import AlexBox from '../atoms/AlexBox'
 import AlexLineChart from '../atoms/AlexLineChart'
+import AlexDropdown from '../atoms/AlexDropdown'
+import AlexTextField from '../atoms/AlexTextField'
 import AlexProgressThumbIcon from '../atoms/AlexProgressThumbIcon'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
@@ -11,7 +13,22 @@ import PerformanceChartCard from '../molecules/PerformanceChartCard'
 import QuestionStatsTable from '../molecules/QuestionStatsTable'
 import type {PerformanceAnalytics} from '../../lib/performanceAnalytics'
 
-type Props={summary:PerformanceAnalytics;hasHistory:boolean;compact?:boolean;compactRecommendationExtra?:React.ReactNode;questionsPdf?:ArrayBuffer|null;answersPdf?:ArrayBuffer|null}
+export type PerformanceTimeRange='7d'|'14d'|'21d'|'30d'|'90d'|'all'|'custom'
+
+type Props={
+  summary:PerformanceAnalytics
+  hasHistory:boolean
+  compact?:boolean
+  compactRecommendationExtra?:React.ReactNode
+  questionsPdf?:ArrayBuffer|null
+  answersPdf?:ArrayBuffer|null
+  timeRange?:PerformanceTimeRange
+  customStartDate?:string
+  customEndDate?:string
+  onTimeRangeChange?:(value:PerformanceTimeRange)=>void
+  onCustomStartDateChange?:(value:string)=>void
+  onCustomEndDateChange?:(value:string)=>void
+}
 
 const chartTheme={
   text:{fontSize:12,fill:'#475467'},
@@ -20,7 +37,10 @@ const chartTheme={
   tooltip:{container:{fontSize:12,borderRadius:8,boxShadow:'0 8px 30px rgba(16,24,40,.14)'}},
 }
 
-export default function PerformanceDashboard({summary,hasHistory,compact=false,compactRecommendationExtra=null,questionsPdf=null,answersPdf=null}:Props){
+export default function PerformanceDashboard({
+  summary,hasHistory,compact=false,compactRecommendationExtra=null,questionsPdf=null,answersPdf=null,
+  timeRange='30d',customStartDate='',customEndDate='',onTimeRangeChange,onCustomStartDateChange,onCustomEndDateChange,
+}:Props){
   const sectionAccuracy=summary.sections.filter(section=>section.attempts>0).map(section=>({section:section.label,success:section.successRate}))
   const sectionTime=summary.sections.filter(section=>section.attempts>0).map(section=>({section:section.label,seconds:Math.round(section.averageMs/1000)}))
   const questionStats=summary.questions.slice(0,18)
@@ -127,6 +147,39 @@ export default function PerformanceDashboard({summary,hasHistory,compact=false,c
         <AlexText component="h1" sx={{fontFamily:'Georgia, "Times New Roman", serif',fontSize:{xs:32,md:46},lineHeight:1.08,my:1,color:'#08275B'}}>Your practice trends</AlexText>
         <AlexText sx={{color:'#667085',maxWidth:720}}>Track success rate, response time, repeat attempts, session progress, and a practice-only score prediction based on recent per-question success rates.</AlexText>
       </AlexBox>
+      {onTimeRangeChange&&<AlexBox sx={{width:{xs:'100%',md:'auto'},minWidth:{md:220},display:'grid',gap:1}}>
+        <AlexDropdown
+          id="performance-time-range"
+          label="Time frame"
+          value={timeRange}
+          options={[
+            {value:'7d',label:'Last week'},
+            {value:'14d',label:'Last 2 weeks'},
+            {value:'21d',label:'Last 3 weeks'},
+            {value:'30d',label:'Last month'},
+            {value:'90d',label:'Last 3 months'},
+            {value:'all',label:'All time'},
+            {value:'custom',label:'Custom dates'},
+          ]}
+          onChange={onTimeRangeChange}
+        />
+        {timeRange==='custom'&&<AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'1fr',sm:'1fr 1fr'},gap:1}}>
+          <AlexTextField
+            label="From"
+            type="date"
+            value={customStartDate}
+            onChange={event=>onCustomStartDateChange?.(event.target.value)}
+            slotProps={{inputLabel:{shrink:true}}}
+          />
+          <AlexTextField
+            label="To"
+            type="date"
+            value={customEndDate}
+            onChange={event=>onCustomEndDateChange?.(event.target.value)}
+            slotProps={{inputLabel:{shrink:true}}}
+          />
+        </AlexBox>}
+      </AlexBox>}
     </AlexBox>}
 
     <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'repeat(2,minmax(0,1fr))',md:'repeat(3,minmax(0,1fr))',xl:'repeat(5,minmax(0,1fr))'},gap:{xs:1,sm:1.5,lg:1.75},mt:compact?0:2.5}}>
