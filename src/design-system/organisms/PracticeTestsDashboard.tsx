@@ -5,6 +5,7 @@ import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
 import PracticeTestCard from '../molecules/PracticeTestCard'
 import SessionReviewSelector from '../molecules/SessionReviewSelector'
+import PracticeSettingField from '../molecules/PracticeSettingField'
 import type {PracticeTestFilter} from '../../types'
 
 type TestSummary={
@@ -71,12 +72,15 @@ export default function PracticeTestsDashboard({tests,sessionSummary,activeSessi
         </AlexBox>
       </AlexSurface>}
 
-      <AlexSurface sx={{mt:activeSession?2:3,p:2,border:'1px solid #E4E7EC',borderRadius:2.5,bgcolor:'#F8FAFC',display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:2,flexDirection:{xs:'column',sm:'row'}}}>
-        <AlexBox>
-          <AlexText sx={{fontSize:12,fontWeight:800,textTransform:'uppercase',letterSpacing:'.06em',color:'#667085'}}>Current setup</AlexText>
-          <AlexText sx={{mt:.35,fontSize:14.5,fontWeight:700,color:'#08275B'}}>{sessionSummary}</AlexText>
-        </AlexBox>
-        <AlexButton fullWidth tone="secondary" onClick={onOpenSetup} sx={{width:{xs:'100%',sm:'auto'}}}>Edit setup</AlexButton>
+      <AlexSurface sx={{mt:activeSession?2:3,px:{xs:2.5,md:3},border:'1px solid #E4E7EC',bgcolor:'#F8FAFC'}}>
+        <PracticeSettingField
+          label="Current setup"
+          helperText={sessionSummary}
+          control={<AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'1fr',sm:'minmax(0,1fr) 110px'},gap:1,alignItems:'center'}}>
+            <AlexBox/>
+            <AlexButton tone="secondary" onClick={onOpenSetup} sx={{width:'100%'}}>Edit setup</AlexButton>
+          </AlexBox>}
+        />
       </AlexSurface>
 
       {sessionHistory.length>0&&<AlexSurface sx={{mt:2,px:{xs:2.5,md:3},border:'1px solid #E4E7EC',bgcolor:'#fff'}}>
