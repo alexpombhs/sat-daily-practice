@@ -29,6 +29,7 @@ export default function PracticeSetupPanel({settings,practiceTests,missedQuestio
   const practiceTest=settings.practiceTest??'all'
   const missedOnly=settings.failedOnly??false
   const failedEverOnly=settings.failedEverOnly??false
+  const answerFeedbackTiming=settings.answerFeedbackTiming??'end'
   const dailyLabel=recommendation.estimatedDailyMinutes>0
     ?`${recommendation.estimatedDailyMinutes} min/day`
     :'On track'
@@ -61,6 +62,20 @@ export default function PracticeSetupPanel({settings,practiceTests,missedQuestio
       label="Questions per session"
       helperText="Up to this many eligible questions will be included."
       control={<AlexNumberField fullWidth label="Questions per session" value={settings.questionsPerSession} min={1} max={30} onChange={questionsPerSession=>onChange({...settings,questionsPerSession})}/>}
+    />
+
+    <PracticeSettingField
+      label="Answer feedback"
+      helperText={answerFeedbackTiming==='end'
+        ?'Complete the full session first, then see your score and review correct answers with explanations.'
+        :'See whether each answer is correct immediately after submitting it.'}
+      control={<AlexDropdown
+        id="answer-feedback-timing"
+        label="Show correct answers"
+        value={answerFeedbackTiming}
+        options={[{value:'end',label:'At the end of the session'},{value:'immediate',label:'After each question'}]}
+        onChange={answerFeedbackTiming=>onChange({...settings,answerFeedbackTiming})}
+      />}
     />
 
     <PracticeSettingField
