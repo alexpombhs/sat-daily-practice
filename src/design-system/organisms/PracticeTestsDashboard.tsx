@@ -1,10 +1,10 @@
 import {useEffect,useState} from 'react'
 import AlexBox from '../atoms/AlexBox'
 import AlexButton from '../atoms/AlexButton'
-import AlexDropdown from '../atoms/AlexDropdown'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
 import PracticeTestCard from '../molecules/PracticeTestCard'
+import SessionReviewSelector from '../molecules/SessionReviewSelector'
 import type {PracticeTestFilter} from '../../types'
 
 type TestSummary={
@@ -79,25 +79,13 @@ export default function PracticeTestsDashboard({tests,sessionSummary,activeSessi
         <AlexButton fullWidth tone="secondary" onClick={onOpenSetup} sx={{width:{xs:'100%',sm:'auto'}}}>Edit setup</AlexButton>
       </AlexSurface>
 
-      {sessionHistory.length>0&&<AlexSurface sx={{mt:2,p:2,border:'1px solid #E4E7EC',borderRadius:2.5,bgcolor:'#fff',display:'flex',alignItems:{xs:'stretch',sm:'flex-end'},justifyContent:'space-between',gap:1.5,flexDirection:{xs:'column',sm:'row'}}}>
-        <AlexBox sx={{minWidth:0,flex:'1 1 auto'}}>
-          <AlexText sx={{fontSize:12,fontWeight:850,textTransform:'uppercase',letterSpacing:'.06em',color:'#667085',mb:.75}}>Review a past session</AlexText>
-          <AlexDropdown
-            id="practice-session-review"
-            label="Completed session"
-            value={selectedReviewSession}
-            options={reviewSessionOptions}
-            onChange={setSelectedReviewSession}
-          />
-        </AlexBox>
-        <AlexButton
-          tone="secondary"
-          disabled={!selectedReviewSession}
-          onClick={()=>selectedReviewSession&&onReviewSession?.(selectedReviewSession)}
-          sx={{width:{xs:'100%',sm:'auto'},minWidth:{sm:110}}}
-        >
-          Review
-        </AlexButton>
+      {sessionHistory.length>0&&<AlexSurface sx={{mt:2,px:{xs:2.5,md:3},border:'1px solid #E4E7EC',bgcolor:'#fff'}}>
+        <SessionReviewSelector
+          value={selectedReviewSession}
+          options={reviewSessionOptions}
+          onChange={setSelectedReviewSession}
+          onReview={()=>selectedReviewSession&&onReviewSession?.(selectedReviewSession)}
+        />
       </AlexSurface>}
 
       <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'1fr',sm:'repeat(2,minmax(0,1fr))'},gap:{xs:1,sm:1.5},mt:2}}>
