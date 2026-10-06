@@ -223,8 +223,6 @@ export default function App(){
     return{value,label:practiceTestLabel(value),questionCount:questions.length,practicedCount:questions.filter(question=>practicedIds.has(question.id)).length}
   })
 
-  const lastCompletedSession=sessions.length?sessions[sessions.length-1]:null
-  const lastCompletedMetrics=lastCompletedSession?summarizeSession(lastCompletedSession.attempts):null
   const completedSessionHistory=[...sessions]
     .sort((a,b)=>b.endedAt.localeCompare(a.endedAt))
     .map(session=>{
@@ -350,10 +348,6 @@ export default function App(){
     setSelected(session.attempts[0]?.selectedAnswer??'')
     setSubmitted(true)
     navigateTo('practice')
-  }
-
-  function reviewLastSession(){
-    if(lastCompletedSession)reviewSession(lastCompletedSession)
   }
 
   function reviewPastSession(sessionId:string){
@@ -532,6 +526,8 @@ export default function App(){
     onTimeRangeChange={setPerformanceTimeRange}
     onCustomStartDateChange={setPerformanceCustomStart}
     onCustomEndDateChange={setPerformanceCustomEnd}
+    sessionHistory={completedSessionHistory}
+    onReviewSession={reviewPastSession}
   /></main>)
 
   if(view==='question-bank')return withSidebar('question-bank',<QuestionBankReview questionsPdf={qpdf}/>,'#F7F6F2')
@@ -731,19 +727,11 @@ export default function App(){
       answeredCount:resumableSession.attempts.length,
       lastActivityAt:resumableSession.lastActivityAt,
     }:null}
-    lastSession={lastCompletedSession&&lastCompletedMetrics?{
-      id:lastCompletedSession.id,
-      endedAt:lastCompletedSession.endedAt,
-      correct:lastCompletedMetrics.correct,
-      total:lastCompletedMetrics.total,
-      accuracy:lastCompletedMetrics.accuracy,
-    }:null}
     sessionHistory={completedSessionHistory}
     onStartTest={value=>void beginPractice(settings.mode,value)}
     onOpenSetup={()=>navigateTo('settings')}
     onResumeSession={resumeActiveSession}
     onEndSession={()=>void endResumableSession()}
-    onReviewLastSession={reviewLastSession}
     onReviewSession={reviewPastSession}
   />)
 }
