@@ -1,5 +1,7 @@
+import {useEffect,useState} from 'react'
 import AlexBox from '../atoms/AlexBox'
 import AlexButton from '../atoms/AlexButton'
+import AlexDropdown from '../atoms/AlexDropdown'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
 import PracticeTestCard from '../molecules/PracticeTestCard'
@@ -30,17 +32,28 @@ type Props={
   tests:TestSummary[]
   sessionSummary:string
   activeSession?:ActiveSessionSummary|null
-  lastSession?:LastSessionSummary|null
   sessionHistory?:LastSessionSummary[]
   onStartTest:(value:PracticeTestFilter)=>void
   onOpenSetup:()=>void
   onResumeSession?:()=>void
   onEndSession?:()=>void
-  onReviewLastSession?:()=>void
   onReviewSession?:(sessionId:string)=>void
 }
 
-export default function PracticeTestsDashboard({tests,sessionSummary,activeSession,lastSession,sessionHistory=[],onStartTest,onOpenSetup,onResumeSession,onEndSession,onReviewLastSession,onReviewSession}:Props){
+export default function PracticeTestsDashboard({tests,sessionSummary,activeSession,sessionHistory=[],onStartTest,onOpenSetup,onResumeSession,onEndSession,onReviewSession}:Props){
+  const[selectedReviewSession,setSelectedReviewSession]=useState(sessionHistory[0]?.id??'')
+  useEffect(()=>{
+    if(!sessionHistory.length){
+      setSelectedReviewSession('')
+      return
+    }
+    if(!sessionHistory.some(session=>session.id===selectedReviewSession))setSelectedReviewSession(sessionHistory[0].id)
+  },[sessionHistory,selectedReviewSession])
+  const reviewSessionOptions=sessionHistory.map(session=>({
+    value:session.id,
+    label:`${new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(new Date(session.endedAt))} · ${session.accuracy}% · ${session.total} question${session.total===1?'':'s'}`,
+  }))
+
   return <AlexBox component="section" sx={{width:'100%',px:{xs:.5,sm:1.5,md:2.5,lg:4},py:{xs:2,sm:2.75,lg:4}}}>
     <AlexBox sx={{maxWidth:960,mx:'auto'}}>
       <AlexText component="h1" sx={{fontFamily:'Georgia, "Times New Roman", serif',fontSize:{xs:28,sm:32,lg:36},fontWeight:500,lineHeight:1.12,m:0,color:'#08275B'}}>Practice tests</AlexText>
@@ -58,16 +71,7 @@ export default function PracticeTestsDashboard({tests,sessionSummary,activeSessi
         </AlexBox>
       </AlexSurface>}
 
-      {lastSession&&<AlexSurface sx={{mt:activeSession?2:3,p:2,border:'1px solid #D8E6DD',borderRadius:2.5,bgcolor:'#F7FBF8',display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:2,flexDirection:{xs:'column',sm:'row'}}}>
-        <AlexBox>
-          <AlexText sx={{fontSize:12,fontWeight:850,textTransform:'uppercase',letterSpacing:'.06em',color:'#28734A'}}>Last completed session</AlexText>
-          <AlexText sx={{mt:.35,fontSize:15,fontWeight:800,color:'#08275B'}}>{lastSession.accuracy}% · {lastSession.correct} of {lastSession.total} correct</AlexText>
-          <AlexText sx={{mt:.25,fontSize:12.5,color:'#667085'}}>Completed {new Date(lastSession.endedAt).toLocaleString()} · Reopen the test-style review with answers and explanations.</AlexText>
-        </AlexBox>
-        <AlexButton fullWidth tone="secondary" onClick={onReviewLastSession} sx={{width:{xs:'100%',sm:'auto'}}}>Review last session</AlexButton>
-      </AlexSurface>}
-
-      <AlexSurface sx={{mt:(activeSession||lastSession)?2:3,p:2,border:'1px solid #E4E7EC',borderRadius:2.5,bgcolor:'#F8FAFC',display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:2,flexDirection:{xs:'column',sm:'row'}}}>
+      <AlexSurface sx={{mt:activeSession?2:3,p:2,border:'1px solid #E4E7EC',borderRadius:2.5,bgcolor:'#F8FAFC',display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:2,flexDirection:{xs:'column',sm:'row'}}}>
         <AlexBox>
           <AlexText sx={{fontSize:12,fontWeight:800,textTransform:'uppercase',letterSpacing:'.06em',color:'#667085'}}>Current setup</AlexText>
           <AlexText sx={{mt:.35,fontSize:14.5,fontWeight:700,color:'#08275B'}}>{sessionSummary}</AlexText>
@@ -75,23 +79,25 @@ export default function PracticeTestsDashboard({tests,sessionSummary,activeSessi
         <AlexButton fullWidth tone="secondary" onClick={onOpenSetup} sx={{width:{xs:'100%',sm:'auto'}}}>Edit setup</AlexButton>
       </AlexSurface>
 
-      {sessionHistory.length>0&&<AlexSurface sx={{mt:2,p:2,border:'1px solid #E4E7EC',borderRadius:2.5,bgcolor:'#fff'}}>
-        <AlexBox sx={{display:'flex',alignItems:'baseline',justifyContent:'space-between',gap:2,mb:1.25}}>
-          <AlexBox>
-            <AlexText sx={{fontSize:12,fontWeight:850,textTransform:'uppercase',letterSpacing:'.06em',color:'#667085'}}>Session history</AlexText>
-            <AlexText sx={{mt:.25,fontSize:13,color:'#667085'}}>Review any completed session using the same read-only test UI.</AlexText>
-          </AlexBox>
-          <AlexText sx={{fontSize:12.5,color:'#667085',whiteSpace:'nowrap'}}>{sessionHistory.length} completed</AlexText>
+      {sessionHistory.length>0&&<AlexSurface sx={{mt:2,p:2,border:'1px solid #E4E7EC',borderRadius:2.5,bgcolor:'#fff',display:'flex',alignItems:{xs:'stretch',sm:'flex-end'},justifyContent:'space-between',gap:1.5,flexDirection:{xs:'column',sm:'row'}}}>
+        <AlexBox sx={{minWidth:0,flex:'1 1 auto'}}>
+          <AlexText sx={{fontSize:12,fontWeight:850,textTransform:'uppercase',letterSpacing:'.06em',color:'#667085',mb:.75}}>Review a past session</AlexText>
+          <AlexDropdown
+            id="practice-session-review"
+            label="Completed session"
+            value={selectedReviewSession}
+            options={reviewSessionOptions}
+            onChange={setSelectedReviewSession}
+          />
         </AlexBox>
-        <AlexBox sx={{display:'grid',maxHeight:320,overflowY:'auto',borderTop:'1px solid #EAECF0'}}>
-          {sessionHistory.map(session=><AlexBox key={session.id} sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1.5,py:1.25,borderBottom:'1px solid #EAECF0',flexDirection:{xs:'column',sm:'row'}}}>
-            <AlexBox>
-              <AlexText sx={{fontSize:14,fontWeight:800,color:'#08275B'}}>{session.accuracy}% · {session.correct} of {session.total} correct</AlexText>
-              <AlexText sx={{fontSize:12.5,color:'#667085',mt:.2}}>{new Date(session.endedAt).toLocaleString()}</AlexText>
-            </AlexBox>
-            <AlexButton tone="secondary" onClick={()=>onReviewSession?.(session.id)} sx={{width:{xs:'100%',sm:'auto'}}}>Review session</AlexButton>
-          </AlexBox>)}
-        </AlexBox>
+        <AlexButton
+          tone="secondary"
+          disabled={!selectedReviewSession}
+          onClick={()=>selectedReviewSession&&onReviewSession?.(selectedReviewSession)}
+          sx={{width:{xs:'100%',sm:'auto'},minWidth:{sm:110}}}
+        >
+          Review
+        </AlexButton>
       </AlexSurface>}
 
       <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'1fr',sm:'repeat(2,minmax(0,1fr))'},gap:{xs:1,sm:1.5},mt:2}}>
