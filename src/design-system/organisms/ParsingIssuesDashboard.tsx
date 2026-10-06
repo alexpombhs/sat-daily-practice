@@ -130,7 +130,7 @@ export default function ParsingIssuesDashboard({questionsPdf,answersPdf}:Props){
 
           {selectedQuestion?<>
             <QuestionSourceReview question={selectedQuestion} questionsPdf={questionsPdf} answersPdf={answersPdf} showExplanation revision={revision}/>
-            <QuestionRepairEditor question={selectedQuestion} questionsPdf={questionsPdf} onSaved={()=>setRevision(value=>value+1)}/>
+            <QuestionRepairEditor question={selectedQuestion} questionsPdf={questionsPdf} issueMessage={selected.message} onSaved={()=>setRevision(value=>value+1)}/>
           </>:<AlexSurface sx={{p:3,border:'1px solid #FDA29B',borderRadius:3,bgcolor:'#FFFBFA'}}>
             <AlexText sx={{color:'#B42318'}}>The reported question is not currently available in the Question Bank, so its source and editable content cannot be loaded.</AlexText>
           </AlexSurface>}
