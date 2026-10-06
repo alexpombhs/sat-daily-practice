@@ -10,7 +10,7 @@ import QuestionContent from './design-system/molecules/QuestionContent'
 import AccountAuthPanel from './design-system/organisms/AccountAuthPanel'
 import AppSidebarLayout from './design-system/organisms/AppSidebarLayout'
 import ParsingIssuesDashboard from './design-system/organisms/ParsingIssuesDashboard'
-import PerformanceDashboard from './design-system/organisms/PerformanceDashboard'
+import PerformanceDashboard,{type PerformanceTimeRange} from './design-system/organisms/PerformanceDashboard'
 import DailyPracticeGoals from './design-system/organisms/DailyPracticeGoals'
 import PracticeAnswerPanel from './design-system/organisms/PracticeAnswerPanel'
 import PracticeSessionHeader from './design-system/organisms/PracticeSessionHeader'
@@ -58,6 +58,10 @@ export default function App(){
   const[settingsCloudReady,setSettingsCloudReady]=useState(false)
   const[questionBank,setQuestionBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
   const[resumableSession,setResumableSession]=useState<ActivePracticeSession|null>(null)
+  const[reviewMode,setReviewMode]=useState(false)
+  const[performanceTimeRange,setPerformanceTimeRange]=useState<PerformanceTimeRange>('30d')
+  const[performanceCustomStart,setPerformanceCustomStart]=useState('')
+  const[performanceCustomEnd,setPerformanceCustomEnd]=useState('')
 
   function navigateTo(next:View,{replace=false}:{replace?:boolean}={}){
     setView(next)
@@ -148,7 +152,7 @@ export default function App(){
     }
   },[settings,authUser?.id,settingsCloudReady])
   useEffect(()=>{
-    if(!authUser||view!=='practice'||!sid)return
+    if(!authUser||view!=='practice'||!sid||reviewMode)return
     const lastActivityAt=new Date().toISOString()
     setResumableSession(previous=>previous&&previous.id===sid
       ?{...previous,currentIndex:i,draftAnswer:selected,lastActivityAt}
@@ -157,12 +161,53 @@ export default function App(){
       void saveActiveSessionProgress(sid,i,selected).catch(error=>console.warn('Active session progress sync failed',error))
     },400)
     return()=>window.clearTimeout(timeout)
-  },[authUser?.id,view,sid,i,selected])
+  },[authUser?.id,view,sid,i,selected,reviewMode])
 
 
   const current=qs[i]
   const currentRec=current?currentAttempts.find(attempt=>attempt.questionId===current.id):undefined
   const performance=summarizePerformance(attempts,sessions,questionBank.length)
+  const performanceRangeBounds=(()=>{
+    const now=new Date()
+    const endOfToday=new Date(now)
+    endOfToday.setHours(23,59,59,999)
+    if(performanceTimeRange==='all')return {start:null as Date|null,end:null as Date|null}
+    if(performanceTimeRange==='custom'){
+      const start=performanceCustomStart?new Date(`${performanceCustomStart}T00:00:00`):null
+      const end=performanceCustomEnd?new Date(`${performanceCustomEnd}T23:59:59.999`):null
+      return {start,end}
+    }
+    const days=performanceTimeRange==='7d'?7:performanceTimeRange==='14d'?14:performanceTimeRange==='21d'?21:performanceTimeRange==='30d'?30:90
+    const start=new Date(endOfToday)
+    start.setDate(start.getDate()-(days-1))
+    start.setHours(0,0,0,0)
+    return {start,end:endOfToday}
+  })()
+  const performanceSessions=sessions.filter(session=>{
+    const time=new Date(session.startedAt).getTime()
+    if(!Number.isFinite(time))return false
+    if(performanceRangeBounds.start&&time<performanceRangeBounds.start.getTime())return false
+    if(performanceRangeBounds.end&&time>performanceRangeBounds.end.getTime())return false
+    return true
+  })
+  const performanceSessionIds=new Set(performanceSessions.map(session=>session.id))
+  const performanceAttempts=attempts.filter(attempt=>performanceSessionIds.has(attempt.sessionId))
+  const rangePerformanceBase=summarizePerformance(performanceAttempts,performanceSessions,questionBank.length)
+  const rangeScoreTrend=performance.scoreTrend.filter(point=>{
+    const time=new Date(point.startedAt).getTime()
+    if(!Number.isFinite(time))return false
+    if(performanceRangeBounds.start&&time<performanceRangeBounds.start.getTime())return false
+    if(performanceRangeBounds.end&&time>performanceRangeBounds.end.getTime())return false
+    return true
+  })
+  const rangePerformance={
+    ...rangePerformanceBase,
+    scoreTrend:rangeScoreTrend,
+    latestScoreEstimate:performance.latestScoreEstimate,
+    weeklyScoreChange:performance.weeklyScoreChange,
+    scorePredictionBasis:performance.scorePredictionBasis,
+    scoreEstimateConfidence:performance.scoreEstimateConfidence,
+  }
   const missedQuestionCount=countMissedPracticeQuestions(settings,attempts,questionBank)
   const failedQuestionCount=countFailedPracticeQuestions(settings,attempts,questionBank)
   const practiceRecommendation=buildPracticePlanRecommendation(settings,questionBank,attempts,performance)
@@ -177,6 +222,13 @@ export default function App(){
     const practicedIds=new Set(attempts.filter(attempt=>attempt.practiceTestId===value).map(attempt=>attempt.questionId))
     return{value,label:practiceTestLabel(value),questionCount:questions.length,practicedCount:questions.filter(question=>practicedIds.has(question.id)).length}
   })
+
+  const completedSessionHistory=[...sessions]
+    .sort((a,b)=>b.endedAt.localeCompare(a.endedAt))
+    .map(session=>{
+      const metrics=summarizeSession(session.attempts)
+      return {id:session.id,endedAt:session.endedAt,correct:metrics.correct,total:metrics.total,accuracy:metrics.accuracy}
+    })
 
   async function beginPractice(nextMode:SubjectMode=settings.mode,nextPracticeTest=settings.practiceTest??'all'){
     if(!authUser){
@@ -227,6 +279,7 @@ export default function App(){
         return
       }
     }
+    setReviewMode(false)
     setSettings(nextSettings)
     setQs(nextQuestions)
     setSid(sessionId)
@@ -251,6 +304,7 @@ export default function App(){
     const nextIndex=Math.min(Math.max(resumableSession.currentIndex,0),Math.max(0,resumedQuestions.length-1))
     const currentQuestion=resumedQuestions[nextIndex]
     const priorAttempt=currentQuestion?resumableSession.attempts.find(attempt=>attempt.questionId===currentQuestion.id):undefined
+    setReviewMode(false)
     setSettings({...settings,...resumableSession.settings})
     setQs(resumedQuestions)
     setSid(resumableSession.id)
@@ -276,6 +330,30 @@ export default function App(){
   }
 
   function start(){void beginPractice(settings.mode)}
+
+  function reviewSession(session:SessionSummary){
+    const reviewQuestions=session.attempts
+      .map(attempt=>questionBank.find(question=>question.id===attempt.questionId))
+      .filter((question):question is PracticeQuestion=>Boolean(question))
+    if(!reviewQuestions.length){
+      window.alert('This session has no reviewable questions.')
+      return
+    }
+    setReviewMode(true)
+    setQs(reviewQuestions)
+    setSid(session.id)
+    setStarted(session.startedAt)
+    setCurrentAttempts(session.attempts)
+    setI(0)
+    setSelected(session.attempts[0]?.selectedAnswer??'')
+    setSubmitted(true)
+    navigateTo('practice')
+  }
+
+  function reviewPastSession(sessionId:string){
+    const session=sessions.find(item=>item.id===sessionId)
+    if(session)reviewSession(session)
+  }
 
   async function record(correct:boolean,selfGraded=false){
     if(!current)return
@@ -312,7 +390,7 @@ export default function App(){
     setI(index)
     setSelected(attempt?.selectedAnswer??'')
     setSubmitted(Boolean(attempt))
-    if(!attempt)setQStart(Date.now())
+    if(!attempt&&!reviewMode)setQStart(Date.now())
   }
 
   async function finish(){
@@ -329,6 +407,15 @@ export default function App(){
   }
 
   async function next(){
+    if(reviewMode){
+      if(i+1>=qs.length){
+        setReviewMode(false)
+        navigateTo('home')
+        return
+      }
+      goTo(i+1)
+      return
+    }
     if(!currentRec)return
     if(i+1>=qs.length){await finish();return}
     goTo(i+1)
@@ -376,10 +463,11 @@ export default function App(){
         current={i+1}
         total={qs.length}
         canGoPrevious={i>0}
-        canGoNext={Boolean(currentRec)}
+        canGoNext={reviewMode||Boolean(currentRec)}
         isLast={i+1===qs.length}
         onPrevious={()=>goTo(i-1)}
         onNext={next}
+        reviewMode={reviewMode}
       />
       <div className="practice-workspace">
         <section className="question-panel">
@@ -390,7 +478,7 @@ export default function App(){
             </div>
             <AlexBox sx={{display:'flex',alignItems:'center',gap:.65,flex:'0 0 auto'}}>
               <ParsingIssueReporter question={current} context="practice" compact/>
-              <AlexStatusChip>READY</AlexStatusChip>
+              <AlexStatusChip>{reviewMode?'REVIEW':'READY'}</AlexStatusChip>
             </AlexBox>
           </div>
           <QuestionContent question={current} bytes={qpdf} alt={`${moduleLabel(current.module)} question ${current.number}`}/>
@@ -403,6 +491,8 @@ export default function App(){
           explanationBytes={apdf}
           onSelect={setSelected}
           onSubmit={submit}
+          revealFeedback={reviewMode||(settings.answerFeedbackTiming??'end')==='immediate'}
+          reviewMode={reviewMode}
         />
       </div>
     </main>,'#F7F6F2')
@@ -410,30 +500,35 @@ export default function App(){
 
   if(view==='results'){
     const session=summarizeSession(currentAttempts)
+    const completedSession=sessions.find(item=>item.id===sid)??(sid?{id:sid,startedAt:started,endedAt:new Date().toISOString(),mode:settings.mode,questionCount:qs.length,attempts:currentAttempts}:null)
     return withSidebar('practice-tests',<main className="shell">
       <section className="card results">
         <p className="eyebrow">Session complete</p>
         <h1>{session.accuracy}% accuracy</h1>
         <p>{session.correct} of {session.total} correct · {formatDuration(session.averageMs)} average</p>
-        <div className="review-list">
-          <h2>Session review</h2>
-          {currentAttempts.map((attempt,index)=>{
-            const question=questionBank.find(item=>item.id===attempt.questionId)
-            if(!question)return null
-            return <article className="review-item" key={attempt.id}>
-              <div className="review-head"><div><b>{index+1}. {moduleLabel(attempt.module)} · Q{attempt.questionNumber}</b><span>{attempt.correct?'Correct':'Review'} · {formatDuration(attempt.elapsedMs)}</span></div><div><span>Your answer: <b>{attempt.selectedAnswer||'—'}</b></span><span>Accepted: <b>{answerLabel(question)}</b></span></div></div>
-              <details><summary>Review question</summary><QuestionContent question={question} bytes={qpdf} alt={`${moduleLabel(question.module)} question ${question.number}`}/></details>
-              <ParsingIssueReporter question={question} context="session-review" compact/>
-              {apdf?<details><summary>Show walkthrough and explanation</summary><ExplanationContent question={question} bytes={apdf}/></details>:<p className="muted">Add the answer-explanations source in Resources to review explanations here.</p>}
-            </article>
-          })}
+        <div className="hero-actions">
+          {completedSession&&<AlexButton onClick={()=>reviewSession(completedSession)}>Review answers</AlexButton>}
+          <AlexButton tone="secondary" onClick={start}>Start another session</AlexButton>
+          <AlexButton tone="quiet" onClick={()=>navigateTo('home')}>Back to practice tests</AlexButton>
         </div>
-        <div className="hero-actions"><AlexButton onClick={start}>Start another session</AlexButton><AlexButton tone="secondary" onClick={()=>navigateTo('home')}>Back to practice tests</AlexButton></div>
       </section>
     </main>)
   }
 
-  if(view==='stats')return withSidebar('performance',<main className="shell"><PerformanceDashboard summary={performance} hasHistory={attempts.length>0} questionsPdf={qpdf} answersPdf={apdf}/></main>)
+  if(view==='stats')return withSidebar('performance',<main className="shell"><PerformanceDashboard
+    summary={rangePerformance}
+    hasHistory={performanceAttempts.length>0}
+    questionsPdf={qpdf}
+    answersPdf={apdf}
+    timeRange={performanceTimeRange}
+    customStartDate={performanceCustomStart}
+    customEndDate={performanceCustomEnd}
+    onTimeRangeChange={setPerformanceTimeRange}
+    onCustomStartDateChange={setPerformanceCustomStart}
+    onCustomEndDateChange={setPerformanceCustomEnd}
+    sessionHistory={completedSessionHistory}
+    onReviewSession={reviewPastSession}
+  /></main>)
 
   if(view==='question-bank')return withSidebar('question-bank',<QuestionBankReview questionsPdf={qpdf}/>,'#F7F6F2')
 
@@ -632,9 +727,11 @@ export default function App(){
       answeredCount:resumableSession.attempts.length,
       lastActivityAt:resumableSession.lastActivityAt,
     }:null}
+    sessionHistory={completedSessionHistory}
     onStartTest={value=>void beginPractice(settings.mode,value)}
     onOpenSetup={()=>navigateTo('settings')}
     onResumeSession={resumeActiveSession}
     onEndSession={()=>void endResumableSession()}
+    onReviewSession={reviewPastSession}
   />)
 }

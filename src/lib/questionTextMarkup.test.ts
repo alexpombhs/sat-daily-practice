@@ -1,5 +1,5 @@
 import {describe,expect,it} from 'vitest'
-import {hasUnderlineMarkup,refersToUnderlinedText,underlineSelection} from './questionTextMarkup'
+import {hasUnderlineMarkup,preserveUnderlineMarkup,refersToUnderlinedText,underlineSelection} from './questionTextMarkup'
 
 describe('questionTextMarkup',()=>{
   it('wraps a selected phrase with underline markup',()=>{
@@ -20,5 +20,11 @@ describe('questionTextMarkup',()=>{
     expect(refersToUnderlinedText('Which choice describes the underlined portion?')).toBe(true)
     expect(hasUnderlineMarkup('plain <u>important</u> text')).toBe(true)
     expect(hasUnderlineMarkup('plain text')).toBe(false)
+  })
+
+  it('preserves known underline markup when source text is re-extracted',()=>{
+    const previous='The text has <u>important wording</u> in it.'
+    const extracted='The text has important wording in it.'
+    expect(preserveUnderlineMarkup(previous,extracted)).toBe(previous)
   })
 })

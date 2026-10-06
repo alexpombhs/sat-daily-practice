@@ -15,12 +15,13 @@ type Props={
   isLast:boolean
   onPrevious:()=>void
   onNext:()=>void
+  reviewMode?:boolean
 }
 
-export default function PracticeSessionHeader({moduleLabel,subjectLabel,current,total,canGoPrevious,canGoNext,isLast,onPrevious,onNext}:Props){
+export default function PracticeSessionHeader({moduleLabel,subjectLabel,current,total,canGoPrevious,canGoNext,isLast,onPrevious,onNext,reviewMode=false}:Props){
   return <AlexBox component="header" className="practice-topbar">
     <AlexBox className="practice-title">
-      <AlexText component="span">SAT PRACTICE</AlexText>
+      <AlexText component="span">{reviewMode?'SESSION REVIEW':'SAT PRACTICE'}</AlexText>
       <AlexText component="b">{moduleLabel}</AlexText>
     </AlexBox>
     <AlexBox className="progress-block"><PracticeProgress label={subjectLabel} current={current} total={total}/></AlexBox>
@@ -55,7 +56,7 @@ export default function PracticeSessionHeader({moduleLabel,subjectLabel,current,
       </AlexButton>
 
       <AlexIconButton
-        label={isLast?'Finish practice':'Next question'}
+        label={isLast?(reviewMode?'Finish review':'Finish practice'):'Next question'}
         onClick={onNext}
         disabled={!canGoNext}
         sx={{
@@ -73,13 +74,13 @@ export default function PracticeSessionHeader({moduleLabel,subjectLabel,current,
         <ChevronRight size={19}/>
       </AlexIconButton>
       <AlexButton
-        aria-label={isLast?'Finish practice':'Next question'}
+        aria-label={isLast?(reviewMode?'Finish review':'Finish practice'):'Next question'}
         endIcon={<ChevronRight size={18}/>}
         onClick={onNext}
         disabled={!canGoNext}
         sx={{display:{xs:'none',sm:'inline-flex'}}}
       >
-        {isLast?'Finish':'Next'}
+        {isLast?(reviewMode?'Finish review':'Finish'):'Next'}
       </AlexButton>
     </AlexBox>
   </AlexBox>

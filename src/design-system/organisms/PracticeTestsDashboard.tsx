@@ -1,8 +1,11 @@
+import {useEffect,useState} from 'react'
 import AlexBox from '../atoms/AlexBox'
 import AlexButton from '../atoms/AlexButton'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
 import PracticeTestCard from '../molecules/PracticeTestCard'
+import SessionReviewSelector from '../molecules/SessionReviewSelector'
+import PracticeSettingField from '../molecules/PracticeSettingField'
 import type {PracticeTestFilter} from '../../types'
 
 type TestSummary={
@@ -18,17 +21,40 @@ type ActiveSessionSummary={
   lastActivityAt:string
 }
 
+type LastSessionSummary={
+  id:string
+  endedAt:string
+  correct:number
+  total:number
+  accuracy:number
+}
+
 type Props={
   tests:TestSummary[]
   sessionSummary:string
   activeSession?:ActiveSessionSummary|null
+  sessionHistory?:LastSessionSummary[]
   onStartTest:(value:PracticeTestFilter)=>void
   onOpenSetup:()=>void
   onResumeSession?:()=>void
   onEndSession?:()=>void
+  onReviewSession?:(sessionId:string)=>void
 }
 
-export default function PracticeTestsDashboard({tests,sessionSummary,activeSession,onStartTest,onOpenSetup,onResumeSession,onEndSession}:Props){
+export default function PracticeTestsDashboard({tests,sessionSummary,activeSession,sessionHistory=[],onStartTest,onOpenSetup,onResumeSession,onEndSession,onReviewSession}:Props){
+  const[selectedReviewSession,setSelectedReviewSession]=useState(sessionHistory[0]?.id??'')
+  useEffect(()=>{
+    if(!sessionHistory.length){
+      setSelectedReviewSession('')
+      return
+    }
+    if(!sessionHistory.some(session=>session.id===selectedReviewSession))setSelectedReviewSession(sessionHistory[0].id)
+  },[sessionHistory,selectedReviewSession])
+  const reviewSessionOptions=sessionHistory.map(session=>({
+    value:session.id,
+    label:`${new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(new Date(session.endedAt))} · ${session.accuracy}% · ${session.total} question${session.total===1?'':'s'}`,
+  }))
+
   return <AlexBox component="section" sx={{width:'100%',px:{xs:.5,sm:1.5,md:2.5,lg:4},py:{xs:2,sm:2.75,lg:4}}}>
     <AlexBox sx={{maxWidth:960,mx:'auto'}}>
       <AlexText component="h1" sx={{fontFamily:'Georgia, "Times New Roman", serif',fontSize:{xs:28,sm:32,lg:36},fontWeight:500,lineHeight:1.12,m:0,color:'#08275B'}}>Practice tests</AlexText>
@@ -46,13 +72,25 @@ export default function PracticeTestsDashboard({tests,sessionSummary,activeSessi
         </AlexBox>
       </AlexSurface>}
 
-      <AlexSurface sx={{mt:activeSession?2:3,p:2,border:'1px solid #E4E7EC',borderRadius:2.5,bgcolor:'#F8FAFC',display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:2,flexDirection:{xs:'column',sm:'row'}}}>
-        <AlexBox>
-          <AlexText sx={{fontSize:12,fontWeight:800,textTransform:'uppercase',letterSpacing:'.06em',color:'#667085'}}>Current setup</AlexText>
-          <AlexText sx={{mt:.35,fontSize:14.5,fontWeight:700,color:'#08275B'}}>{sessionSummary}</AlexText>
-        </AlexBox>
-        <AlexButton fullWidth tone="secondary" onClick={onOpenSetup} sx={{width:{xs:'100%',sm:'auto'}}}>Edit setup</AlexButton>
+      <AlexSurface sx={{mt:activeSession?2:3,px:{xs:2.5,md:3},border:'1px solid #E4E7EC',bgcolor:'#F8FAFC'}}>
+        <PracticeSettingField
+          label="Current setup"
+          helperText={sessionSummary}
+          control={<AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'1fr',sm:'minmax(0,1fr) 110px'},gap:1,alignItems:'center'}}>
+            <AlexBox/>
+            <AlexButton tone="secondary" onClick={onOpenSetup} sx={{width:'100%'}}>Edit setup</AlexButton>
+          </AlexBox>}
+        />
       </AlexSurface>
+
+      {sessionHistory.length>0&&<AlexSurface sx={{mt:2,px:{xs:2.5,md:3},border:'1px solid #E4E7EC',bgcolor:'#fff'}}>
+        <SessionReviewSelector
+          value={selectedReviewSession}
+          options={reviewSessionOptions}
+          onChange={setSelectedReviewSession}
+          onReview={()=>selectedReviewSession&&onReviewSession?.(selectedReviewSession)}
+        />
+      </AlexSurface>}
 
       <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'1fr',sm:'repeat(2,minmax(0,1fr))'},gap:{xs:1,sm:1.5},mt:2}}>
         {tests.map(test=><PracticeTestCard
