@@ -410,22 +410,33 @@ export default function PerformanceDashboard({
           <AlexText sx={{fontSize:12.5,color:'#667085',mt:.15}}>Open any completed session in read-only review</AlexText>
         </AlexBox>}
       >
-        <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'1fr',sm:'minmax(0,1fr) auto'},gap:1,alignItems:'center'}}>
-          <AlexDropdown
-            id="performance-session-review"
-            label="Completed session"
-            value={selectedReviewSession}
-            options={reviewSessionOptions}
-            onChange={setSelectedReviewSession}
-          />
-          <AlexButton
-            tone="secondary"
-            disabled={!selectedReviewSession}
-            onClick={()=>selectedReviewSession&&onReviewSession?.(selectedReviewSession)}
-            sx={{width:{xs:'100%',sm:'auto'},minWidth:{sm:110}}}
+        <AlexBox sx={{pt:1.75,borderTop:'1px solid #EAECF0'}}>
+          <AlexBox
+            sx={{
+              display:'grid',
+              gridTemplateColumns:{xs:'1fr',sm:'minmax(0,360px) 110px'},
+              gap:{xs:1.25,sm:1.5},
+              alignItems:'center',
+              justifyContent:'end',
+              minWidth:0,
+            }}
           >
-            Review
-          </AlexButton>
+            <AlexDropdown
+              id="performance-session-review"
+              label="Completed session"
+              value={selectedReviewSession}
+              options={reviewSessionOptions}
+              onChange={setSelectedReviewSession}
+            />
+            <AlexButton
+              tone="secondary"
+              disabled={!selectedReviewSession}
+              onClick={()=>selectedReviewSession&&onReviewSession?.(selectedReviewSession)}
+              sx={{width:'100%'}}
+            >
+              Review
+            </AlexButton>
+          </AlexBox>
         </AlexBox>
       </AlexAccordion>}
     </>}
