@@ -15,6 +15,8 @@ function attemptedQuestionIds(attempts:Attempt[]){
   return new Set(attempts.map(attempt=>attempt.questionId))
 }
 
+function failedRecoveryTarget(settings:Settings){return Math.max(1,Math.min(5,settings.failedRecoveryCorrectAnswers??2))}
+
 function eligibleQuestions(settings:Settings,questions:PracticeQuestion[]){
   return questions.filter(question=>
     (settings.mode==='both'||question.subject===settings.mode)&&
@@ -25,7 +27,7 @@ function eligibleQuestions(settings:Settings,questions:PracticeQuestion[]){
 export function practiceQuestionPool(settings:Settings,attempts:Attempt[],questions:PracticeQuestion[]=QUESTION_BANK):PracticeQuestion[]{
   const pool=eligibleQuestions(settings,questions)
   if(settings.failedEverOnly){
-    const failedIds=failedQuestionIds(attempts)
+    const failedIds=failedQuestionIds(attempts,failedRecoveryTarget(settings))
     return pool.filter(question=>failedIds.has(question.id))
   }
   if(settings.failedOnly){
@@ -41,7 +43,7 @@ export function countMissedPracticeQuestions(settings:Settings,attempts:Attempt[
 }
 
 export function countFailedPracticeQuestions(settings:Settings,attempts:Attempt[],questions:PracticeQuestion[]=QUESTION_BANK){
-  const failedIds=failedQuestionIds(attempts)
+  const failedIds=failedQuestionIds(attempts,failedRecoveryTarget(settings))
   return eligibleQuestions(settings,questions).filter(question=>failedIds.has(question.id)).length
 }
 
