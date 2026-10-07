@@ -35,6 +35,11 @@ describe('vocabulary practice',()=>{
     expect(vocabularySources()).toEqual(expect.arrayContaining(['practice-test-derived','sat-open-dataset']))
   })
 
+  it('assigns every vocabulary entry one of the three supported difficulty levels',()=>{
+    const allowed=new Set(['easy','medium','advanced'])
+    expect(VOCABULARY_BANK.every(entry=>entry.difficulty&&allowed.has(entry.difficulty))).toBe(true)
+  })
+
   it('builds four unique choices containing the correct answer in either direction',()=>{
     const entry=VOCABULARY_BANK[0]
     const meanings=buildVocabularyOptions(entry,'word-to-definition',VOCABULARY_BANK,zero)
