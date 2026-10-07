@@ -4,7 +4,7 @@ export type VocabularyDirectionMode=VocabularyDirection|'mixed'
 export type VocabularySource='practice-test-derived'|'sat-open-dataset'|'supplemental'
 export type VocabularyDifficulty='easy'|'medium'|'advanced'
 export type VocabularyHistoryFilter='all'|'new'|'failed'
-export type VocabularySelectionMode='random'|'bank-order'
+export type VocabularySelectionMode='random'|'adaptive'
 export type VocabularySessionSize=10|20|40|'all'
 
 export type VocabularyEntry={
@@ -41,7 +41,7 @@ export const DEFAULT_VOCABULARY_SETTINGS:VocabularyPracticeSettings={
   sources:['practice-test-derived'],
   difficulty:'all',
   history:'all',
-  selection:'random',
+  selection:'adaptive',
   direction:'word-to-definition',
   sessionSize:20,
 }
@@ -200,6 +200,31 @@ export function vocabularyFailedIds(attempts:VocabularyAttempt[]){
   return failed
 }
 
+export function vocabularyAdaptiveScore(entry:VocabularyEntry,attempts:VocabularyAttempt[]){
+  const wordAttempts=attempts.filter(attempt=>attempt.vocabularyId===entry.id)
+  if(!wordAttempts.length)return 80
+  const recent=wordAttempts.slice(-5)
+  const accuracy=recent.filter(attempt=>attempt.correct).length/recent.length
+  const failed=vocabularyFailedIds(wordAttempts).has(entry.id)
+  const difficultyWeight=entry.difficulty==='advanced'?8:entry.difficulty==='medium'?4:0
+  const recencyPenalty=Math.min(wordAttempts.length,6)
+  return (failed?100:0)+Math.round((1-accuracy)*60)+difficultyWeight-recencyPenalty
+}
+
+export function selectVocabularyEntry(
+  entries:VocabularyEntry[],
+  mode:VocabularySelectionMode,
+  attempts:VocabularyAttempt[],
+  rng:()=>number=Math.random,
+){
+  if(!entries.length)return null
+  if(mode==='random')return entries[Math.floor(rng()*entries.length)]
+  const scored=entries.map(entry=>({entry,score:vocabularyAdaptiveScore(entry,attempts)}))
+  const topScore=Math.max(...scored.map(item=>item.score))
+  const candidates=scored.filter(item=>item.score>=topScore-12).map(item=>item.entry)
+  return candidates[Math.floor(rng()*candidates.length)]
+}
+
 export function filterVocabularyBank(
   settings:VocabularyPracticeSettings,
   attempts:VocabularyAttempt[],
@@ -290,7 +315,7 @@ export function createConfiguredVocabularySession(
   rng:()=>number=Math.random,
 ){
   const eligible=filterVocabularyBank(settings,attempts,bank)
-  const ordered=settings.selection==='random'?shuffleVocabulary(eligible,rng):eligible
+  const ordered=settings.selection==='random'?shuffleVocabulary(eligible,rng):[...eligible].sort((a,b)=>vocabularyAdaptiveScore(b,attempts)-vocabularyAdaptiveScore(a,attempts))
   const count=settings.sessionSize==='all'?ordered.length:Math.min(settings.sessionSize,ordered.length)
   const targets=ordered.slice(0,count)
   const distractorBank=vocabularyDistractorBank(settings,bank)
