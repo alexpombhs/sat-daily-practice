@@ -7,7 +7,7 @@ import AlexText from '../atoms/AlexText'
 import SideNavigation from '../molecules/SideNavigation'
 import {getCurrentAuthUser,loadUserProfile,subscribeToAuth,type AuthUser,type UserProfile} from '../../lib/supabase'
 
-type NavKey='dashboard'|'practice-tests'|'practice-setup'|'question-bank'|'parsing-issues'|'performance'|'resources'
+type NavKey='dashboard'|'practice-tests'|'practice-setup'|'vocabulary'|'question-bank'|'parsing-issues'|'performance'|'resources'
 
 type Props={
   active:NavKey
@@ -16,6 +16,7 @@ type Props={
   onDashboard:()=>void
   onPracticeTests:()=>void
   onPracticeSetup:()=>void
+  onVocabulary:()=>void
   onQuestionBank:()=>void
   onParsingIssues:()=>void
   onPerformance:()=>void
@@ -25,7 +26,7 @@ type Props={
   contentBackground?:string
 }
 
-export default function AppSidebarLayout({active,collapsed,onToggleCollapsed,onDashboard,onPracticeTests,onPracticeSetup,onQuestionBank,onParsingIssues,onPerformance,onResources,onSettings,children,contentBackground='#FFFFFF'}:Props){
+export default function AppSidebarLayout({active,collapsed,onToggleCollapsed,onDashboard,onPracticeTests,onPracticeSetup,onVocabulary,onQuestionBank,onParsingIssues,onPerformance,onResources,onSettings,children,contentBackground='#FFFFFF'}:Props){
   const[user,setUser]=useState<AuthUser|null>(null)
   const[profile,setProfile]=useState<UserProfile|null>(null)
   const[mobileMenuOpen,setMobileMenuOpen]=useState(false)
@@ -61,6 +62,7 @@ export default function AppSidebarLayout({active,collapsed,onToggleCollapsed,onD
     {key:'dashboard',label:'Dashboard',active:active==='dashboard',onClick:onDashboard},
     {key:'practice-tests',label:'Practice Tests',active:active==='practice-tests',onClick:onPracticeTests},
     {key:'practice-setup',label:'Practice Setup',active:active==='practice-setup',onClick:onPracticeSetup},
+    {key:'vocabulary',label:'Vocabulary',active:active==='vocabulary',onClick:onVocabulary},
     {key:'question-bank',label:'Question Bank',active:active==='question-bank',onClick:onQuestionBank},
     {key:'parsing-issues',label:'Parsing Issues',active:active==='parsing-issues',onClick:onParsingIssues},
     {key:'performance',label:'Performance',active:active==='performance',onClick:onPerformance},
