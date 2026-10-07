@@ -34,9 +34,9 @@ export default function VocabularyChoiceRow({label,selected,disabled=false,onCli
     <AlexBox sx={{minWidth:0,width:'100%'}}>
       <AlexText component="span" sx={{
         display:'block',
-        fontSize:{xs:14,sm:14.5},
-        lineHeight:1.4,
-        fontWeight:selected?750:650,
+        fontSize:{xs:14,sm:14},
+        lineHeight:1.5,
+        fontWeight:selected?600:500,
         letterSpacing:0,
         color:'inherit',
       }}>{label}</AlexText>
