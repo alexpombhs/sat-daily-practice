@@ -35,7 +35,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "acumen",
     "definition": "The ability to make good judgments and take decisive action.",
     "partOfSpeech": "noun",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -116,7 +116,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "antithesis",
     "definition": "A person or thing that is the direct opposite of something.",
     "partOfSpeech": "noun",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -170,7 +170,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "audacious",
     "definition": "Showing a willingness to take surprisingly bold risks.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -188,7 +188,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "austere",
     "definition": "Severe or strict in manner; having no luxuries.",
     "partOfSpeech": "adjective",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -206,7 +206,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "banal",
     "definition": "So lacking in originality as to be obvious and boring.",
     "partOfSpeech": "adjective",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -215,7 +215,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "belligerent",
     "definition": "Hostile and aggressive; engaged in a war or conflict.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -224,7 +224,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "benevolent",
     "definition": "Well meaning and kindly; charitable.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -260,7 +260,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "byzantine",
     "definition": "Excessively complicated, typically involving a great deal of administrative detail.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -269,7 +269,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "cacophony",
     "definition": "A harsh, discordant mixture of sounds.",
     "partOfSpeech": "noun",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -296,7 +296,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "capitulate",
     "definition": "To cease to resist an opponent or an unwelcome demand; to yield.",
     "partOfSpeech": "verb",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -305,7 +305,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "capricious",
     "definition": "Given to sudden and unaccountable changes of mood or behavior.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -314,7 +314,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "caustic",
     "definition": "Sarcastic in a scathing and bitter way.",
     "partOfSpeech": "adjective",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -323,7 +323,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "censure",
     "definition": "To express severe disapproval of; formally condemn.",
     "partOfSpeech": "verb",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -332,7 +332,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "circumspect",
     "definition": "Wary and unwilling to take risks; cautious.",
     "partOfSpeech": "adjective",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -341,7 +341,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "clandestine",
     "definition": "Kept secret or done secretively, especially because illicit.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -368,7 +368,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "complacency",
     "definition": "A feeling of smug or uncritical satisfaction with oneself or one's achievements.",
     "partOfSpeech": "noun",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -395,7 +395,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "consternation",
     "definition": "A feeling of anxiety or dismay, typically at something unexpected.",
     "partOfSpeech": "noun",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -404,7 +404,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "contrite",
     "definition": "Feeling or expressing remorse at the recognition that one has done wrong.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -413,7 +413,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "conundrum",
     "definition": "A confusing and difficult problem or question.",
     "partOfSpeech": "noun",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -440,7 +440,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "corroborate",
     "definition": "To confirm or give support to a statement, theory, or finding.",
     "partOfSpeech": "verb",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -458,7 +458,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "culpable",
     "definition": "Deserving blame for a fault or wrong.",
     "partOfSpeech": "adjective",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -494,7 +494,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "decorum",
     "definition": "Behavior in keeping with good taste and propriety.",
     "partOfSpeech": "noun",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -503,7 +503,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "deleterious",
     "definition": "Causing harm or damage.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -512,7 +512,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "deprecate",
     "definition": "To express disapproval of; to belittle.",
     "partOfSpeech": "verb",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -521,7 +521,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "deride",
     "definition": "To express contempt for; ridicule.",
     "partOfSpeech": "verb",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -548,7 +548,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "discern",
     "definition": "To recognize or find out; to perceive or distinguish.",
     "partOfSpeech": "verb",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -557,7 +557,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "disparage",
     "definition": "To regard or represent as being of little worth.",
     "partOfSpeech": "verb",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -575,7 +575,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "dissonance",
     "definition": "Lack of harmony among musical notes; tension or clash resulting from the combination of incongruous ideas.",
     "partOfSpeech": "noun",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -584,7 +584,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "dogmatic",
     "definition": "Inclined to lay down principles as undeniably true; opinionated.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -602,7 +602,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "egregious",
     "definition": "Outstandingly bad; shocking.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -611,7 +611,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "elusive",
     "definition": "Difficult to find, catch, or achieve.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -620,7 +620,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "eminent",
     "definition": "Famous and respected within a particular sphere or profession.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -629,7 +629,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "empirical",
     "definition": "Based on, concerned with, or verifiable by observation or experience rather than theory.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -647,7 +647,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "endemic",
     "definition": "Regularly and only found among a particular people or in a certain region.",
     "partOfSpeech": "adjective",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -665,7 +665,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "ephemeral",
     "definition": "Lasting for a very short time.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -674,7 +674,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "equivocate",
     "definition": "To use ambiguous language so as to conceal the truth or avoid committing oneself.",
     "partOfSpeech": "verb",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -710,7 +710,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "exhaustive",
     "definition": "Examining, including, or considering all elements or aspects; fully comprehensive.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -719,7 +719,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "exonerate",
     "definition": "To officially absolve someone from blame or a criminal charge.",
     "partOfSpeech": "verb",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -728,7 +728,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "expedient",
     "definition": "Convenient and practical, though possibly improper or immoral.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -746,7 +746,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "extol",
     "definition": "To praise enthusiastically.",
     "partOfSpeech": "verb",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -755,7 +755,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "extraneous",
     "definition": "Irrelevant or unrelated to the subject being dealt with.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -791,7 +791,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "fastidious",
     "definition": "Very attentive to accuracy and detail; very concerned about matters of cleanliness.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -800,7 +800,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "feign",
     "definition": "To pretend to feel or be affected by something.",
     "partOfSpeech": "verb",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -818,7 +818,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "flagrant",
     "definition": "Conspicuously or obviously offensive.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -827,7 +827,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "flout",
     "definition": "To openly disregard a rule, law, or convention.",
     "partOfSpeech": "verb",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -836,7 +836,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "fortuitous",
     "definition": "Happening by accident or chance rather than design.",
     "partOfSpeech": "adjective",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -863,7 +863,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "furtive",
     "definition": "Attempting to avoid notice or attention; secretive.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -881,7 +881,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "garrulous",
     "definition": "Excessively talkative, especially on trivial matters.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -899,7 +899,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "grandiose",
     "definition": "Impressively large and ambitious, but often perceived as too elaborate.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -908,7 +908,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "gregarious",
     "definition": "Fond of company; sociable.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -917,7 +917,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "guile",
     "definition": "Sly or cunning intelligence used for deception.",
     "partOfSpeech": "noun",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -926,7 +926,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "hapless",
     "definition": "Unfortunate; unlucky.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -944,7 +944,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "heresy",
     "definition": "Belief or opinion contrary to orthodox religious or accepted doctrine.",
     "partOfSpeech": "noun",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -953,7 +953,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "hubris",
     "definition": "Excessive pride or self-confidence.",
     "partOfSpeech": "noun",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -962,7 +962,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "hypocrite",
     "definition": "A person who claims to have moral standards or beliefs to which their own behavior does not conform.",
     "partOfSpeech": "noun",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -989,7 +989,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "impudent",
     "definition": "Not showing due respect for another person; impertinent.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -998,7 +998,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "inadvertent",
     "definition": "Not resulting from deliberate planning; accidental.",
     "partOfSpeech": "adjective",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1007,7 +1007,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "incongruous",
     "definition": "Not in harmony or keeping with the surroundings or other aspects of something.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1025,7 +1025,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "insidious",
     "definition": "Proceeding in a gradual, subtle way, but with harmful effects.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1052,7 +1052,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "laconic",
     "definition": "Using very few words.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1079,7 +1079,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "magnanimous",
     "definition": "Generous or forgiving, especially toward a rival or less powerful person.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1088,7 +1088,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "malevolent",
     "definition": "Having or showing a wish to do evil to others.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1106,7 +1106,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "malleable",
     "definition": "Easily influenced; pliable; able to be hammered or pressed into shape.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1115,7 +1115,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "meticulous",
     "definition": "Showing great attention to detail or correct behavior.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1124,7 +1124,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "mitigate",
     "definition": "To make less severe, serious, or painful.",
     "partOfSpeech": "verb",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1142,7 +1142,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "myopic",
     "definition": "Lacking imagination, foresight, or intellectual insight; short-sighted.",
     "partOfSpeech": "adjective",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1160,7 +1160,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "nonchalant",
     "definition": "Feeling or appearing casually calm and relaxed; not displaying anxiety.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1169,7 +1169,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "obstinate",
     "definition": "Stubbornly refusing to change one's opinion or chosen course of action.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1178,7 +1178,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "ominous",
     "definition": "Giving the impression that something bad or unpleasant is about to happen.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1196,7 +1196,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "ostentation",
     "definition": "Pretentious and vulgar display, especially of wealth.",
     "partOfSpeech": "noun",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1205,7 +1205,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "ostracize",
     "definition": "To exclude from society or a group.",
     "partOfSpeech": "verb",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1214,7 +1214,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "paragon",
     "definition": "A person or thing regarded as a perfect example of a particular quality.",
     "partOfSpeech": "noun",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1223,7 +1223,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "pedantic",
     "definition": "Excessively concerned with minor details or rules; overscrupulous.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1232,7 +1232,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "penchant",
     "definition": "A strong or habitual liking for something.",
     "partOfSpeech": "noun",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1250,7 +1250,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "platitude",
     "definition": "A remark or statement that is used too often to be interesting or thoughtful.",
     "partOfSpeech": "noun",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1259,7 +1259,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "plausible",
     "definition": "Seeming reasonable or probable.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1268,7 +1268,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "portent",
     "definition": "A sign or warning that something momentous is about to happen.",
     "partOfSpeech": "noun",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1277,7 +1277,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "pragmatic",
     "definition": "Dealing with things sensibly and realistically in a way that is based on practical considerations.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1286,7 +1286,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "precarious",
     "definition": "Not securely held or in position; dangerously likely to fall or collapse.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1295,7 +1295,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "predilection",
     "definition": "A preference or special liking for something.",
     "partOfSpeech": "noun",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1313,7 +1313,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "probity",
     "definition": "The quality of having strong moral principles; complete honesty and integrity.",
     "partOfSpeech": "noun",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1331,7 +1331,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "proliferate",
     "definition": "To increase rapidly in number; multiply.",
     "partOfSpeech": "verb",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1358,7 +1358,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "quixotic",
     "definition": "Exceedingly idealistic; unrealistic and impractical.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1376,7 +1376,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "reprehensible",
     "definition": "Deserving censure or condemnation.",
     "partOfSpeech": "adjective",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1385,7 +1385,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "repudiate",
     "definition": "To refuse to accept or be associated with.",
     "partOfSpeech": "verb",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1403,7 +1403,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "reticent",
     "definition": "Not revealing one's thoughts or feelings readily.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1430,7 +1430,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "sagacious",
     "definition": "Having or showing keen mental discernment and good judgment; wise.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1439,7 +1439,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "sanguine",
     "definition": "Optimistic or positive, especially in a difficult situation.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1484,7 +1484,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "stoic",
     "definition": "Enduring pain and hardship without showing feelings or complaining.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1502,7 +1502,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "subvert",
     "definition": "To undermine the power and authority of an established system.",
     "partOfSpeech": "verb",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1511,7 +1511,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "superfluous",
     "definition": "Unnecessary, especially through being more than enough.",
     "partOfSpeech": "adjective",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1529,7 +1529,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "taciturn",
     "definition": "Reserved or uncommunicative in speech; saying little.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1547,7 +1547,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "tenacious",
     "definition": "Tending to keep a firm hold of something; not readily giving up.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1556,7 +1556,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "tirade",
     "definition": "A long, angry speech of criticism or accusation.",
     "partOfSpeech": "noun",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1574,7 +1574,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "transient",
     "definition": "Lasting only for a short time; impermanent.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1601,7 +1601,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "ubiquitous",
     "definition": "Present, appearing, or found everywhere.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1619,7 +1619,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "unequivocal",
     "definition": "Leaving no doubt; unambiguous.",
     "partOfSpeech": "adjective",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1628,7 +1628,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "vacuous",
     "definition": "Having or showing a lack of thought or intelligence; mindless.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1646,7 +1646,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "venerate",
     "definition": "To regard with great respect; to revere.",
     "partOfSpeech": "verb",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1655,7 +1655,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "verbose",
     "definition": "Using or expressed in more words than are needed.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1664,7 +1664,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "vicarious",
     "definition": "Experienced in the imagination through the feelings or actions of another person.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1682,7 +1682,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "vilify",
     "definition": "To speak or write about in an abusively disparaging manner.",
     "partOfSpeech": "verb",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1691,7 +1691,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "vindicate",
     "definition": "To clear someone of blame or suspicion; to justify.",
     "partOfSpeech": "verb",
-    "difficulty": "hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1700,7 +1700,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "vindictive",
     "definition": "Having or showing a strong or unreasoning desire for revenge.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1709,7 +1709,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "vitriolic",
     "definition": "Filled with bitter criticism or malice.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1736,7 +1736,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "voracious",
     "definition": "Wanting or devouring great quantities of food; having a very eager approach.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1754,7 +1754,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "whimsical",
     "definition": "Playfully quaint or fanciful, especially in an appealing and amusing way.",
     "partOfSpeech": "adjective",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   },
@@ -1763,7 +1763,7 @@ export const OPEN_SAT_VOCABULARY=[
     "word": "zenith",
     "definition": "The time at which something is most powerful or successful.",
     "partOfSpeech": "noun",
-    "difficulty": "very-hard",
+    "difficulty": "advanced",
     "source": "sat-open-dataset",
     "sourceLabel": "Core Word List · SAT"
   }
