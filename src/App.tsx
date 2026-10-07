@@ -28,7 +28,7 @@ import {availablePracticeTests,moduleLabel,practiceTestLabel,QUESTION_BANK} from
 import {buildPracticePlanRecommendation} from './lib/practicePlan'
 import {buildNationalMeritOutlook} from './lib/nationalMeritOutlook'
 import {loadSharedQuestionBank,mergeQuestionBanks} from './lib/sharedQuestionBank'
-import {choosePracticeQuestions,countFailedPracticeQuestions,countMissedPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
+import {choosePracticeQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
 import {pathForView,viewFromPathname,type AppRouteView} from './lib/appRoutes'
 import {DEFAULT_SETTINGS} from './lib/storage'
 import {abandonActiveSession,createActiveSession,getCurrentAuthUser,loadActiveSession,loadCloudHistory,loadUserSettings,saveActiveSessionProgress,saveUserSettings,subscribeToAuth,syncActiveAttempt,syncSession,type AuthUser} from './lib/supabase'
@@ -223,7 +223,7 @@ export default function App(){
     {value:'all' as const,label:'All available tests'},
     ...availablePracticeTests(questionBank).map(value=>({value,label:practiceTestLabel(value)})),
   ]
-  const practiceSummary=[settings.selectionMode==='random'?'Random':'Adaptive',settings.failedOnly?'Missed questions only':settings.failedEverOnly?'Failed questions only':''].filter(Boolean).join(' · ')
+  const practiceSummary=[settings.selectionMode==='random'?'Random':'Adaptive',settings.failedOnly?'New questions only':settings.failedEverOnly?'Failed questions only':''].filter(Boolean).join(' · ')
   const practiceTestSummaries=availablePracticeTests(questionBank).map(value=>{
     const questions=questionBank.filter(question=>question.practiceTestId===value)
     const practicedIds=new Set(attempts.filter(attempt=>attempt.practiceTestId===value).map(attempt=>attempt.questionId))
@@ -570,7 +570,7 @@ export default function App(){
     <PracticeSetupPanel
       settings={settings}
       practiceTests={practiceTestOptions}
-      missedQuestionCount={missedQuestionCount}
+      newQuestionCount={newQuestionCount}
       failedQuestionCount={failedQuestionCount}
       onChange={setSettings}
       onStart={()=>void beginPractice(settings.mode)}
