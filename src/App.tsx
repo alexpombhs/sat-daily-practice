@@ -20,6 +20,7 @@ import PracticeTestsDashboard from './design-system/organisms/PracticeTestsDashb
 import StudyPlanCalendar from './design-system/organisms/StudyPlanCalendar'
 import StudyPlanHero from './design-system/organisms/StudyPlanHero'
 import QuestionBankReview from './design-system/organisms/QuestionBankReview'
+import VocabularyPractice from './design-system/organisms/VocabularyPractice'
 import {dashboardTypography} from './design-system/theme'
 import {answerLabel,matchesAnswer} from './lib/answerCompare'
 import {getPdf} from './lib/pdfStore'
@@ -36,7 +37,7 @@ import type {ActivePracticeSession,Attempt,PracticeQuestion,SessionSummary,Setti
 const uid=()=>crypto.randomUUID()
 
 type View=AppRouteView
-type SidebarKey='dashboard'|'practice-tests'|'practice-setup'|'question-bank'|'parsing-issues'|'performance'|'resources'
+type SidebarKey='dashboard'|'practice-tests'|'practice-setup'|'vocabulary'|'question-bank'|'parsing-issues'|'performance'|'resources'
 
 export default function App(){
   const[settings,setSettings]=useState<Settings>(()=>({...DEFAULT_SETTINGS}))
@@ -435,6 +436,7 @@ export default function App(){
       onDashboard={()=>navigateTo('study')}
       onPracticeTests={()=>navigateTo('home')}
       onPracticeSetup={()=>navigateTo('settings')}
+      onVocabulary={()=>navigateTo('vocabulary')}
       onQuestionBank={()=>navigateTo('question-bank')}
       onParsingIssues={()=>navigateTo('parsing-issues')}
       onPerformance={()=>navigateTo('stats')}
@@ -546,6 +548,8 @@ export default function App(){
     sessionHistory={completedSessionHistory}
     onReviewSession={reviewPastSession}
   /></main>)
+
+  if(view==='vocabulary')return withSidebar('vocabulary',<VocabularyPractice/>,'#F7F6F2')
 
   if(view==='question-bank')return withSidebar('question-bank',<QuestionBankReview questionsPdf={qpdf}/>,'#F7F6F2')
 
