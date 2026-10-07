@@ -549,7 +549,7 @@ export default function App(){
     onReviewSession={reviewPastSession}
   /></main>)
 
-  if(view==='vocabulary')return withSidebar('vocabulary',<VocabularyPractice/>,'#F7F6F2')
+  if(view==='vocabulary')return withSidebar('vocabulary',<VocabularyPractice signedIn={Boolean(authUser)} onSignIn={()=>navigateTo('account')}/>,'#F7F6F2')
 
   if(view==='question-bank')return withSidebar('question-bank',<QuestionBankReview questionsPdf={qpdf}/>,'#F7F6F2')
 
