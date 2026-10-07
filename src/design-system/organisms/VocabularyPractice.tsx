@@ -235,20 +235,6 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
         />}
       />
 
-      <PracticeSettingField
-        label="Direction"
-        helperText="Switch direction without opening another menu."
-        control={<AlexTabs
-          value={settings.direction==='definition-to-word'?'definition-to-word':'word-to-definition'}
-          options={[
-            {value:'word-to-definition',label:'Word → meaning'},
-            {value:'definition-to-word',label:'Meaning → word'},
-          ]}
-          onChange={direction=>setSettings(previous=>({...previous,direction}))}
-          aria-label="Vocabulary direction"
-        />}
-      />
-
       <VocabularyPerformanceSummary
         practiced={practicedCount}
         total={scopeBank.length}
@@ -278,6 +264,17 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
               </AlexText>
               <AlexStatusChip>{accuracy===null?'NEW':accuracy+'% accuracy'}</AlexStatusChip>
             </AlexBox>
+
+            <AlexTabs
+              value={settings.direction==='definition-to-word'?'definition-to-word':'word-to-definition'}
+              options={[
+                {value:'word-to-definition',label:'Word → meaning'},
+                {value:'definition-to-word',label:'Meaning → word'},
+              ]}
+              onChange={direction=>setSettings(previous=>({...previous,direction}))}
+              aria-label="Vocabulary direction"
+              sx={{mt:1.5}}
+            />
 
             <AlexBox sx={{mt:2,p:{xs:1.75,sm:2.25},borderRadius:'8px',bgcolor:'#F8FAFC',border:'1px solid #EEF1F4'}}>
               <AlexText sx={{fontSize:11.5,fontWeight:800,textTransform:'uppercase',letterSpacing:'.045em',color:'#667085'}}>
