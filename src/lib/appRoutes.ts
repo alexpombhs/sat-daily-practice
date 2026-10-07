@@ -1,4 +1,4 @@
-export type AppRouteView='study'|'home'|'practice'|'results'|'stats'|'settings'|'sources'|'question-bank'|'parsing-issues'|'account'
+export type AppRouteView='study'|'home'|'practice'|'results'|'stats'|'settings'|'vocabulary'|'sources'|'question-bank'|'parsing-issues'|'account'
 
 const VIEW_TO_SEGMENT:Record<AppRouteView,string>={
   study:'dashboard',
@@ -7,6 +7,7 @@ const VIEW_TO_SEGMENT:Record<AppRouteView,string>={
   results:'practice/results',
   stats:'performance',
   settings:'practice-setup',
+  vocabulary:'vocabulary',
   sources:'resources',
   'question-bank':'question-bank',
   'parsing-issues':'parsing-issues',
