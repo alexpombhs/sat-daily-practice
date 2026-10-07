@@ -17,18 +17,19 @@ type PracticeTestOption={value:PracticeTestFilter;label:string}
 type Props={
   settings:Settings
   practiceTests:PracticeTestOption[]
-  missedQuestionCount:number
+  newQuestionCount:number
   failedQuestionCount:number
   onChange:(settings:Settings)=>void
   onStart:()=>void
   recommendation:PracticePlanRecommendation
 }
 
-export default function PracticeSetupPanel({settings,practiceTests,missedQuestionCount,failedQuestionCount,onChange,onStart,recommendation}:Props){
+export default function PracticeSetupPanel({settings,practiceTests,newQuestionCount,failedQuestionCount,onChange,onStart,recommendation}:Props){
   const selectionMode=settings.selectionMode??'adaptive'
   const practiceTest=settings.practiceTest??'all'
-  const missedOnly=settings.failedOnly??false
+  const newOnly=settings.failedOnly??false
   const failedEverOnly=settings.failedEverOnly??false
+  const failedRecoveryCorrectAnswers=settings.failedRecoveryCorrectAnswers??2
   const answerFeedbackTiming=settings.answerFeedbackTiming??'end'
   const dailyLabel=recommendation.estimatedDailyMinutes>0
     ?`${recommendation.estimatedDailyMinutes} min/day`
@@ -79,14 +80,14 @@ export default function PracticeSetupPanel({settings,practiceTests,missedQuestio
     />
 
     <PracticeSettingField
-      label="Missed questions"
-      helperText={missedQuestionCount
-        ?`${missedQuestionCount} missed question${missedQuestionCount===1?'':'s'} match the current filters. Missed questions are new questions you have not practiced yet.`
+      label="New questions"
+      helperText={newQuestionCount
+        ?`${newQuestionCount} new question${newQuestionCount===1?'':'s'} match the current filters. New questions are questions you have not practiced yet.`
         :'No new questions match the current filters.'}
       control={<AlexSwitch
-        label="Missed questions only"
-        checked={missedOnly}
-        disabled={!missedQuestionCount&&!missedOnly}
+        label="New questions only"
+        checked={newOnly}
+        disabled={!newQuestionCount&&!newOnly}
         onChange={checked=>onChange({...settings,failedOnly:checked,failedEverOnly:checked?false:failedEverOnly})}
       />}
     />
@@ -94,14 +95,29 @@ export default function PracticeSetupPanel({settings,practiceTests,missedQuestio
     <PracticeSettingField
       label="Failed questions"
       helperText={failedQuestionCount
-        ?`${failedQuestionCount} failed question${failedQuestionCount===1?'':'s'} match the current filters. A failed question stays here until you answer it correctly twice after the most recent incorrect answer.`
+        ?`${failedQuestionCount} failed question${failedQuestionCount===1?'':'s'} match the current filters. A failed question stays here until you answer it correctly ${failedRecoveryCorrectAnswers} time${failedRecoveryCorrectAnswers===1?'':'s'} after the most recent incorrect answer.`
         :'No failed questions match the current filters.'}
       control={<AlexSwitch
         label="Failed questions only"
         checked={failedEverOnly}
         disabled={!failedQuestionCount&&!failedEverOnly}
-        onChange={checked=>onChange({...settings,failedEverOnly:checked,failedOnly:checked?false:missedOnly})}
+        onChange={checked=>onChange({...settings,failedEverOnly:checked,failedOnly:checked?false:newOnly})}
       />}
+    />
+
+    <PracticeSettingField
+      label="Failed-question recovery"
+      helperText="Choose how many correct attempts after the latest miss are required before a question leaves the failed pool."
+      control={<AlexBox sx={{maxWidth:260}}>
+        <AlexNumberField
+          fullWidth
+          label="Correct answers to clear"
+          value={failedRecoveryCorrectAnswers}
+          min={1}
+          max={5}
+          onChange={failedRecoveryCorrectAnswers=>onChange({...settings,failedRecoveryCorrectAnswers})}
+        />
+      </AlexBox>}
     />
 
     <AlexAccordion
@@ -121,7 +137,7 @@ export default function PracticeSetupPanel({settings,practiceTests,missedQuestio
     </AlexAccordion>
 
     <AlexBox sx={{display:'flex',gap:1,flexWrap:'wrap',pt:2.5,mt:2.5,borderTop:'1px solid #EAECF0',flexDirection:{xs:'column',sm:'row'}}}>
-      <AlexButton fullWidth sx={{width:{xs:'100%',sm:'auto'}}} onClick={onStart} disabled={(missedOnly&&missedQuestionCount===0)||(failedEverOnly&&failedQuestionCount===0)}>Start practice</AlexButton>
+      <AlexButton fullWidth sx={{width:{xs:'100%',sm:'auto'}}} onClick={onStart} disabled={(newOnly&&newQuestionCount===0)||(failedEverOnly&&failedQuestionCount===0)}>Start practice</AlexButton>
     </AlexBox>
   </AlexSurface>
 }

@@ -17,6 +17,7 @@ export const DEFAULT_SETTINGS:Settings={
   selectionMode:'adaptive',
   failedOnly:false,
   failedEverOnly:false,
+  failedRecoveryCorrectAnswers:2,
   targetExamDate:dateInDays(30),
   targetPracticeSets:8,
   targetCoveragePercent:100,

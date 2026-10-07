@@ -15,6 +15,8 @@ function attemptedQuestionIds(attempts:Attempt[]){
   return new Set(attempts.map(attempt=>attempt.questionId))
 }
 
+function failedRecoveryTarget(settings:Settings){return Math.max(1,Math.min(5,settings.failedRecoveryCorrectAnswers??2))}
+
 function eligibleQuestions(settings:Settings,questions:PracticeQuestion[]){
   return questions.filter(question=>
     (settings.mode==='both'||question.subject===settings.mode)&&
@@ -25,7 +27,7 @@ function eligibleQuestions(settings:Settings,questions:PracticeQuestion[]){
 export function practiceQuestionPool(settings:Settings,attempts:Attempt[],questions:PracticeQuestion[]=QUESTION_BANK):PracticeQuestion[]{
   const pool=eligibleQuestions(settings,questions)
   if(settings.failedEverOnly){
-    const failedIds=failedQuestionIds(attempts)
+    const failedIds=failedQuestionIds(attempts,failedRecoveryTarget(settings))
     return pool.filter(question=>failedIds.has(question.id))
   }
   if(settings.failedOnly){
@@ -35,20 +37,20 @@ export function practiceQuestionPool(settings:Settings,attempts:Attempt[],questi
   return pool
 }
 
-export function countMissedPracticeQuestions(settings:Settings,attempts:Attempt[],questions:PracticeQuestion[]=QUESTION_BANK){
+export function countNewPracticeQuestions(settings:Settings,attempts:Attempt[],questions:PracticeQuestion[]=QUESTION_BANK){
   const attemptedIds=attemptedQuestionIds(attempts)
   return eligibleQuestions(settings,questions).filter(question=>!attemptedIds.has(question.id)).length
 }
 
 export function countFailedPracticeQuestions(settings:Settings,attempts:Attempt[],questions:PracticeQuestion[]=QUESTION_BANK){
-  const failedIds=failedQuestionIds(attempts)
+  const failedIds=failedQuestionIds(attempts,failedRecoveryTarget(settings))
   return eligibleQuestions(settings,questions).filter(question=>failedIds.has(question.id)).length
 }
 
 export function choosePracticeQuestions(settings:Settings,attempts:Attempt[],random:()=>number=Math.random,questions:PracticeQuestion[]=QUESTION_BANK):PracticeQuestion[]{
   const pool=practiceQuestionPool(settings,attempts,questions)
   const limit=Math.min(settings.questionsPerSession,pool.length)
-  if((settings.selectionMode??'adaptive')==='random'){
+  if(settings.failedEverOnly||(settings.selectionMode??'adaptive')==='random'){
     return pool.map(question=>({question,score:random()})).sort((a,b)=>a.score-b.score).slice(0,limit).map(item=>item.question)
   }
   const stats=new Map<string,{attempts:number;correct:number;lastIndex:number}>()

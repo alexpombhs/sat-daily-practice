@@ -9,7 +9,7 @@ export type QuestionMasteryState={
   latestAttempt:Attempt
 }
 
-export function buildQuestionMastery(attempts:Attempt[]){
+export function buildQuestionMastery(attempts:Attempt[],requiredCorrectAfterFailure=2){
   const states=new Map<string,QuestionMasteryState>()
   const ordered=attempts.map((attempt,index)=>({attempt,index}))
     .sort((a,b)=>a.attempt.createdAt.localeCompare(b.attempt.createdAt)||a.index-b.index)
@@ -31,7 +31,7 @@ export function buildQuestionMastery(attempts:Attempt[]){
       current.correctAfterFailure=0
     }else if(current.failed){
       current.correctAfterFailure++
-      if(current.correctAfterFailure>=2){
+      if(current.correctAfterFailure>=Math.max(1,requiredCorrectAfterFailure)){
         current.failed=false
         current.mastered=true
       }
@@ -44,7 +44,7 @@ export function buildQuestionMastery(attempts:Attempt[]){
   return states
 }
 
-export function failedQuestionIds(attempts:Attempt[]){
-  const states=buildQuestionMastery(attempts)
+export function failedQuestionIds(attempts:Attempt[],requiredCorrectAfterFailure=2){
+  const states=buildQuestionMastery(attempts,requiredCorrectAfterFailure)
   return new Set([...states.values()].filter(state=>state.failed).map(state=>state.questionId))
 }
