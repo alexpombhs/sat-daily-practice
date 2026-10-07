@@ -42,7 +42,7 @@ export const DEFAULT_VOCABULARY_SETTINGS:VocabularyPracticeSettings={
   difficulty:'all',
   history:'all',
   selection:'random',
-  direction:'mixed',
+  direction:'word-to-definition',
   sessionSize:20,
 }
 
