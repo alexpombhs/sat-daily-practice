@@ -8,6 +8,7 @@ import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
 import PracticeSettingField from '../molecules/PracticeSettingField'
 import VocabularyChoiceRow from '../molecules/VocabularyChoiceRow'
+import VocabularyPerformanceSummary from '../molecules/VocabularyPerformanceSummary'
 import {
   DEFAULT_VOCABULARY_SETTINGS,
   VOCABULARY_BANK,
@@ -16,6 +17,7 @@ import {
   createConfiguredVocabularySession,
   filterVocabularyBank,
   vocabularyDifficulties,
+  vocabularyFailedIds,
   vocabularySource,
   vocabularySources,
   type VocabularyAttempt,
@@ -66,6 +68,10 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
     [effectiveSettings,attempts],
   )
   const attemptedIds=new Set(attempts.map(attempt=>attempt.vocabularyId))
+  const failedIds=vocabularyFailedIds(attempts)
+  const practicedCount=attemptedIds.size
+  const accuracy=attempts.length?Math.round(attempts.filter(attempt=>attempt.correct).length/attempts.length*100):null
+  const masteredCount=Math.max(0,practicedCount-failedIds.size)
   const newCount=VOCABULARY_BANK.filter(entry=>settings.sources.includes(vocabularySource(entry))&&!attemptedIds.has(entry.id)).length
   const current=session[index]
   const answered=Boolean(selected)
@@ -200,10 +206,24 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
   return <PageShell>
     <PageHeading subtitle="Choose the words and practice style for this session."/>
 
-    <AlexSurface sx={{mt:2.5,p:{xs:1.75,sm:2.5},border:'1px solid #E4E7EC'}}>
+    <VocabularyPerformanceSummary
+      practiced={practicedCount}
+      total={VOCABULARY_BANK.length}
+      accuracy={accuracy}
+      failed={failedIds.size}
+      mastered={masteredCount}
+    />
+
+    <AlexSurface sx={{mt:2,p:{xs:1.75,sm:2.5},border:'1px solid #E4E7EC'}}>
+      <AlexBox sx={{mb:.5}}>
+        <AlexText sx={{fontSize:14,fontWeight:800,color:'#08275B'}}>Vocabulary setup</AlexText>
+        <AlexText sx={{fontSize:12.5,color:'#667085',mt:.25}}>Configure source, history, order, direction, and session size.</AlexText>
+      </AlexBox>
       <PracticeSettingField
         label="Word sources"
-        helperText="Combine any available vocabulary sources."
+        helperText={availableSources.length===1
+          ?VOCABULARY_BANK.length+' practice-test-derived words are currently loaded. More sources will appear here when imported.'
+          :'Select one or more vocabulary banks to combine.'}
         control={<AlexBox sx={{display:'grid',gap:.25}}>
           {availableSources.map(source=><AlexCheckbox
             key={source}
