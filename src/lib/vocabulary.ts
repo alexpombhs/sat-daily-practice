@@ -1,3 +1,4 @@
+import {OPEN_SAT_VOCABULARY} from '../data/openSatVocabulary'
 export type VocabularyDirection='word-to-definition'|'definition-to-word'
 export type VocabularyDirectionMode=VocabularyDirection|'mixed'
 export type VocabularySource='practice-test-derived'|'sat-open-dataset'|'supplemental'
@@ -10,8 +11,10 @@ export type VocabularyEntry={
   id:string
   word:string
   definition:string
-  sourceQuestionId:string
+  sourceQuestionId?:string
   source?:VocabularySource
+  sourceLabel?:string
+  partOfSpeech?:string
   difficulty?:VocabularyDifficulty
 }
 
@@ -60,7 +63,7 @@ export function vocabularySource(entry:VocabularyEntry):VocabularySource{
   return entry.source??'practice-test-derived'
 }
 
-export const VOCABULARY_BANK:VocabularyEntry[]=[
+export const PRACTICE_TEST_VOCABULARY:VocabularyEntry[]=[
   {id:'attached',word:'attached',definition:'fastened or joined to something',sourceQuestionId:'rw1-1'},
   {id:'collected',word:'collected',definition:'gathered or brought together',sourceQuestionId:'rw1-1'},
   {id:'followed',word:'followed',definition:'came after or moved behind',sourceQuestionId:'rw1-1'},
@@ -168,6 +171,11 @@ export const VOCABULARY_BANK:VocabularyEntry[]=[
   {id:'costly',word:'costly',definition:'requiring a large amount of money or resources',sourceQuestionId:'practice-test-7:rw2-3'},
   {id:'successful',word:'successful',definition:'achieving the intended result',sourceQuestionId:'practice-test-7:rw2-3'},
   {id:'disastrous',word:'disastrous',definition:'causing great damage, failure, or harm',sourceQuestionId:'practice-test-7:rw2-3'},
+]
+
+export const VOCABULARY_BANK:VocabularyEntry[]=[
+  ...PRACTICE_TEST_VOCABULARY,
+  ...OPEN_SAT_VOCABULARY,
 ]
 
 export function vocabularySources(bank:VocabularyEntry[]=VOCABULARY_BANK){
