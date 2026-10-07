@@ -29,6 +29,7 @@ export default function PracticeSetupPanel({settings,practiceTests,missedQuestio
   const practiceTest=settings.practiceTest??'all'
   const missedOnly=settings.failedOnly??false
   const failedEverOnly=settings.failedEverOnly??false
+  const failedRecoveryCorrectAnswers=settings.failedRecoveryCorrectAnswers??2
   const answerFeedbackTiming=settings.answerFeedbackTiming??'end'
   const dailyLabel=recommendation.estimatedDailyMinutes>0
     ?`${recommendation.estimatedDailyMinutes} min/day`
@@ -94,7 +95,7 @@ export default function PracticeSetupPanel({settings,practiceTests,missedQuestio
     <PracticeSettingField
       label="Failed questions"
       helperText={failedQuestionCount
-        ?`${failedQuestionCount} failed question${failedQuestionCount===1?'':'s'} match the current filters. A failed question stays here until you answer it correctly twice after the most recent incorrect answer.`
+        ?`${failedQuestionCount} failed question${failedQuestionCount===1?'':'s'} match the current filters. A failed question stays here until you answer it correctly ${failedRecoveryCorrectAnswers} time${failedRecoveryCorrectAnswers===1?'':'s'} after the most recent incorrect answer.`
         :'No failed questions match the current filters.'}
       control={<AlexSwitch
         label="Failed questions only"
@@ -102,6 +103,21 @@ export default function PracticeSetupPanel({settings,practiceTests,missedQuestio
         disabled={!failedQuestionCount&&!failedEverOnly}
         onChange={checked=>onChange({...settings,failedEverOnly:checked,failedOnly:checked?false:missedOnly})}
       />}
+    />
+
+    <PracticeSettingField
+      label="Failed-question recovery"
+      helperText="Choose how many correct attempts after the latest miss are required before a question leaves the failed pool."
+      control={<AlexBox sx={{maxWidth:260}}>
+        <AlexNumberField
+          fullWidth
+          label="Correct answers to clear"
+          value={failedRecoveryCorrectAnswers}
+          min={1}
+          max={5}
+          onChange={failedRecoveryCorrectAnswers=>onChange({...settings,failedRecoveryCorrectAnswers})}
+        />
+      </AlexBox>}
     />
 
     <AlexAccordion
