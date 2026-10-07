@@ -1,5 +1,6 @@
 import {createClient,type User} from '@supabase/supabase-js'
 import type {ActivePracticeSession,Attempt,SessionSummary,Settings} from '../types'
+import type {VocabularyAttempt} from './vocabulary'
 
 const DEFAULT_SUPABASE_URL='https://gnhmfhvvirpgawijsrej.supabase.co'
 const DEFAULT_SUPABASE_PUBLISHABLE_KEY='sb_publishable_TiLvsCcbJ6zdAvDcPuEZ6g_A0UrArMy'
@@ -373,6 +374,43 @@ export async function clearCloudHistory(){
   const userId=await currentUserId()
   if(!userId)return false
   const {error}=await supabase.from('sat_sessions').delete().eq('user_id',userId)
+  if(error)throw error
+  return true
+}
+
+
+export async function loadVocabularyAttempts():Promise<VocabularyAttempt[]>{
+  const userId=await currentUserId()
+  if(!userId)return []
+  const {data,error}=await supabase.from('sat_vocabulary_attempts')
+    .select('id,vocabulary_id,direction,selected_answer,correct_answer,correct,created_at')
+    .eq('user_id',userId)
+    .order('created_at',{ascending:true})
+  if(error)throw error
+  return (data??[]).map(row=>({
+    id:row.id,
+    vocabularyId:row.vocabulary_id,
+    direction:row.direction as VocabularyAttempt['direction'],
+    selectedAnswer:row.selected_answer,
+    correctAnswer:row.correct_answer,
+    correct:row.correct,
+    createdAt:row.created_at,
+  }))
+}
+
+export async function saveVocabularyAttempt(attempt:VocabularyAttempt){
+  const userId=await currentUserId()
+  if(!userId)throw new Error('Sign in before saving vocabulary progress.')
+  const {error}=await supabase.from('sat_vocabulary_attempts').insert({
+    id:attempt.id,
+    user_id:userId,
+    vocabulary_id:attempt.vocabularyId,
+    direction:attempt.direction,
+    selected_answer:attempt.selectedAnswer,
+    correct_answer:attempt.correctAnswer,
+    correct:attempt.correct,
+    created_at:attempt.createdAt,
+  })
   if(error)throw error
   return true
 }
