@@ -1,7 +1,9 @@
 import {describe,expect,it} from 'vitest'
 import {
   DEFAULT_VOCABULARY_SETTINGS,
+  PRACTICE_TEST_VOCABULARY,
   VOCABULARY_BANK,
+  vocabularySources,
   buildVocabularyOptions,
   buildVocabularyPrompt,
   createVocabularySession,
@@ -26,9 +28,11 @@ function attempt(vocabularyId:string,correct:boolean,createdAt:string):Vocabular
 
 describe('vocabulary practice',()=>{
   it('keeps the SAT-derived vocabulary bank unique and source-linked',()=>{
-    expect(VOCABULARY_BANK.length).toBe(86)
+    expect(PRACTICE_TEST_VOCABULARY.length).toBe(86)
+    expect(VOCABULARY_BANK.length).toBe(282)
     expect(new Set(VOCABULARY_BANK.map(entry=>entry.id)).size).toBe(VOCABULARY_BANK.length)
-    expect(VOCABULARY_BANK.every(entry=>entry.word&&entry.definition&&entry.sourceQuestionId)).toBe(true)
+    expect(VOCABULARY_BANK.every(entry=>entry.word&&entry.definition)).toBe(true)
+    expect(vocabularySources()).toEqual(expect.arrayContaining(['practice-test-derived','sat-open-dataset']))
   })
 
   it('builds four unique choices containing the correct answer in either direction',()=>{
