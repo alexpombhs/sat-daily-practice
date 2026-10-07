@@ -32,12 +32,13 @@ import {
   type VocabularySource,
 } from '../../lib/vocabulary'
 import {loadVocabularyAttempts,saveVocabularyAttempt} from '../../lib/supabase'
+import type {VocabularyPreferences} from '../../types'
 
-type Props={signedIn:boolean;onSignIn:()=>void}
+type Props={signedIn:boolean;onSignIn:()=>void;preferences?:VocabularyPreferences;onPreferencesChange:(preferences:VocabularyPreferences)=>void}
 const uid=()=>crypto.randomUUID()
 
-export default function VocabularyPractice({signedIn,onSignIn}:Props){
-  const[settings,setSettings]=useState<VocabularyPracticeSettings>(DEFAULT_VOCABULARY_SETTINGS)
+export default function VocabularyPractice({signedIn,onSignIn,preferences,onPreferencesChange}:Props){
+  const settings:VocabularyPracticeSettings={...DEFAULT_VOCABULARY_SETTINGS,...(preferences??{})}
   const[attempts,setAttempts]=useState<VocabularyAttempt[]>([])
   const[loadingHistory,setLoadingHistory]=useState(false)
   const[current,setCurrent]=useState<VocabularyPrompt|null>(null)
@@ -86,12 +87,23 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
   const answered=Boolean(selected)
   const correct=Boolean(current&&answered&&selected===current.answer)
 
+  function updateSettings(patch:Partial<VocabularyPracticeSettings>){
+    const next={...settings,...patch}
+    onPreferencesChange({
+      sources:next.sources,
+      difficulty:next.difficulty,
+      history:next.history,
+      selection:next.selection,
+      direction:next.direction==='mixed'?'word-to-definition':next.direction,
+    })
+  }
+
   function updateSources(source:VocabularySource,checked:boolean){
     const next=checked
       ?[...new Set([...settings.sources,source])]
       :settings.sources.filter(value=>value!==source)
     if(!next.length)return
-    setSettings(previous=>({...previous,sources:next,difficulty:'all'}))
+    updateSettings({sources:next,difficulty:'all'})
   }
 
   function makePrompt(previousId?:string):VocabularyPrompt|null{
@@ -198,7 +210,7 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
             {value:'all',label:'All'},
             ...availableDifficulties.map(value=>({value,label:VOCABULARY_DIFFICULTY_LABELS[value]})),
           ]}
-          onChange={difficulty=>setSettings(previous=>({...previous,difficulty:difficulty as 'all'|VocabularyDifficulty}))}
+          onChange={difficulty=>updateSettings({difficulty:difficulty as 'all'|VocabularyDifficulty})}
           aria-label="Vocabulary difficulty"
           sx={{'& .MuiTab-root':{px:{xs:1.1,sm:1.5},fontSize:{xs:12,sm:13}}}}
         />}
@@ -215,12 +227,12 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
           <AlexSwitch
             label="New only"
             checked={settings.history==='new'}
-            onChange={checked=>setSettings(previous=>({...previous,history:checked?'new':'all'}))}
+            onChange={checked=>updateSettings({history:checked?'new':'all'})}
           />
           <AlexSwitch
             label="Failed only"
             checked={settings.history==='failed'}
-            onChange={checked=>setSettings(previous=>({...previous,history:checked?'failed':'all'}))}
+            onChange={checked=>updateSettings({history:checked?'failed':'all'})}
           />
         </AlexBox>}
       />
@@ -234,7 +246,7 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
             {value:'adaptive',label:'Adaptive'},
             {value:'random',label:'Random'},
           ]}
-          onChange={selection=>setSettings(previous=>({...previous,selection}))}
+          onChange={selection=>updateSettings({selection})}
           aria-label="Vocabulary selection"
         />}
       />
@@ -275,7 +287,7 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
                 {value:'word-to-definition',label:'Word → meaning'},
                 {value:'definition-to-word',label:'Meaning → word'},
               ]}
-              onChange={direction=>setSettings(previous=>({...previous,direction}))}
+              onChange={direction=>updateSettings({direction})}
               aria-label="Vocabulary direction"
               sx={{mt:1.5}}
             />
