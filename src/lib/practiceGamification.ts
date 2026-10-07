@@ -48,7 +48,7 @@ export function countFailedPracticeQuestions(settings:Settings,attempts:Attempt[
 export function choosePracticeQuestions(settings:Settings,attempts:Attempt[],random:()=>number=Math.random,questions:PracticeQuestion[]=QUESTION_BANK):PracticeQuestion[]{
   const pool=practiceQuestionPool(settings,attempts,questions)
   const limit=Math.min(settings.questionsPerSession,pool.length)
-  if((settings.selectionMode??'adaptive')==='random'){
+  if(settings.failedEverOnly||(settings.selectionMode??'adaptive')==='random'){
     return pool.map(question=>({question,score:random()})).sort((a,b)=>a.score-b.score).slice(0,limit).map(item=>item.question)
   }
   const stats=new Map<string,{attempts:number;correct:number;lastIndex:number}>()
