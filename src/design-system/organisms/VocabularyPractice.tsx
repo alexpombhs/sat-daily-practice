@@ -189,7 +189,7 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
 
       {availableDifficulties.length>0&&<PracticeSettingField
         label="Difficulty"
-        helperText="Limit practice to a difficulty band from sources that provide it."
+        helperText="Limit the current vocabulary pool to Easy, Medium, or Advanced words."
         control={<AlexTabs
           value={settings.difficulty}
           variant="scrollable"
