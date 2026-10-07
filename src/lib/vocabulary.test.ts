@@ -91,7 +91,7 @@ describe('vocabulary practice',()=>{
     const settings={...DEFAULT_VOCABULARY_SETTINGS,history:'new' as const,sessionSize:'all' as const}
     const filtered=filterVocabularyBank(settings,[attempt(first.id,true,'2026-10-07T10:00:00Z')])
     expect(filtered.some(entry=>entry.id===first.id)).toBe(false)
-    expect(filtered.length).toBe(VOCABULARY_BANK.length-1)
+    expect(filtered.length).toBe(PRACTICE_TEST_VOCABULARY.length-1)
   })
 
   it('keeps failed vocabulary until two correct answers after the latest miss',()=>{
