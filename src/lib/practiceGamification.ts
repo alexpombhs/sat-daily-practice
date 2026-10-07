@@ -37,7 +37,7 @@ export function practiceQuestionPool(settings:Settings,attempts:Attempt[],questi
   return pool
 }
 
-export function countMissedPracticeQuestions(settings:Settings,attempts:Attempt[],questions:PracticeQuestion[]=QUESTION_BANK){
+export function countNewPracticeQuestions(settings:Settings,attempts:Attempt[],questions:PracticeQuestion[]=QUESTION_BANK){
   const attemptedIds=attemptedQuestionIds(attempts)
   return eligibleQuestions(settings,questions).filter(question=>!attemptedIds.has(question.id)).length
 }
