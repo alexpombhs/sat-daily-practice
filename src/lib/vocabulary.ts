@@ -1,10 +1,63 @@
 export type VocabularyDirection='word-to-definition'|'definition-to-word'
+export type VocabularyDirectionMode=VocabularyDirection|'mixed'
+export type VocabularySource='practice-test-derived'|'sat-open-dataset'|'supplemental'
+export type VocabularyDifficulty='easy'|'medium'|'hard'|'very-hard'
+export type VocabularyHistoryFilter='all'|'new'|'failed'
+export type VocabularySelectionMode='random'|'bank-order'
+export type VocabularySessionSize=10|20|40|'all'
 
 export type VocabularyEntry={
   id:string
   word:string
   definition:string
   sourceQuestionId:string
+  source?:VocabularySource
+  difficulty?:VocabularyDifficulty
+}
+
+export type VocabularyAttempt={
+  id:string
+  vocabularyId:string
+  direction:VocabularyDirection
+  selectedAnswer:string
+  correctAnswer:string
+  correct:boolean
+  createdAt:string
+}
+
+export type VocabularyPracticeSettings={
+  sources:VocabularySource[]
+  difficulty:'all'|VocabularyDifficulty
+  history:VocabularyHistoryFilter
+  selection:VocabularySelectionMode
+  direction:VocabularyDirectionMode
+  sessionSize:VocabularySessionSize
+}
+
+export const DEFAULT_VOCABULARY_SETTINGS:VocabularyPracticeSettings={
+  sources:['practice-test-derived'],
+  difficulty:'all',
+  history:'all',
+  selection:'random',
+  direction:'mixed',
+  sessionSize:20,
+}
+
+export const VOCABULARY_SOURCE_LABELS:Record<VocabularySource,string>={
+  'practice-test-derived':'Practice tests',
+  'sat-open-dataset':'Open SAT vocabulary',
+  supplemental:'Supplemental',
+}
+
+export const VOCABULARY_DIFFICULTY_LABELS:Record<VocabularyDifficulty,string>={
+  easy:'Easy',
+  medium:'Medium',
+  hard:'Hard',
+  'very-hard':'Very hard',
+}
+
+export function vocabularySource(entry:VocabularyEntry):VocabularySource{
+  return entry.source??'practice-test-derived'
 }
 
 export const VOCABULARY_BANK:VocabularyEntry[]=[
@@ -117,6 +170,58 @@ export const VOCABULARY_BANK:VocabularyEntry[]=[
   {id:'disastrous',word:'disastrous',definition:'causing great damage, failure, or harm',sourceQuestionId:'practice-test-7:rw2-3'},
 ]
 
+export function vocabularySources(bank:VocabularyEntry[]=VOCABULARY_BANK){
+  return [...new Set(bank.map(vocabularySource))]
+}
+
+export function vocabularyDifficulties(bank:VocabularyEntry[]=VOCABULARY_BANK){
+  return [...new Set(bank.flatMap(entry=>entry.difficulty?[entry.difficulty]:[]))]
+}
+
+export function vocabularyFailedIds(attempts:VocabularyAttempt[]){
+  const byWord=new Map<string,VocabularyAttempt[]>()
+  attempts.forEach(attempt=>byWord.set(attempt.vocabularyId,[...(byWord.get(attempt.vocabularyId)??[]),attempt]))
+  const failed=new Set<string>()
+  byWord.forEach((items,id)=>{
+    const ordered=[...items].sort((a,b)=>a.createdAt.localeCompare(b.createdAt))
+    let lastIncorrect=-1
+    ordered.forEach((attempt,index)=>{if(!attempt.correct)lastIncorrect=index})
+    if(lastIncorrect<0)return
+    const correctAfter=ordered.slice(lastIncorrect+1).filter(attempt=>attempt.correct).length
+    if(correctAfter<2)failed.add(id)
+  })
+  return failed
+}
+
+export function filterVocabularyBank(
+  settings:VocabularyPracticeSettings,
+  attempts:VocabularyAttempt[],
+  bank:VocabularyEntry[]=VOCABULARY_BANK,
+){
+  const sourceSet=new Set(settings.sources)
+  const attemptedIds=new Set(attempts.map(attempt=>attempt.vocabularyId))
+  const failedIds=vocabularyFailedIds(attempts)
+  return bank.filter(entry=>{
+    if(!sourceSet.has(vocabularySource(entry)))return false
+    if(settings.difficulty!=='all'&&entry.difficulty!==settings.difficulty)return false
+    if(settings.history==='new'&&attemptedIds.has(entry.id))return false
+    if(settings.history==='failed'&&!failedIds.has(entry.id))return false
+    return true
+  })
+}
+
+export function vocabularyDistractorBank(
+  settings:VocabularyPracticeSettings,
+  bank:VocabularyEntry[]=VOCABULARY_BANK,
+){
+  const sourceSet=new Set(settings.sources)
+  return bank.filter(entry=>{
+    if(!sourceSet.has(vocabularySource(entry)))return false
+    if(settings.difficulty!=='all'&&entry.difficulty!==settings.difficulty)return false
+    return true
+  })
+}
+
 export type VocabularyPrompt={
   entry:VocabularyEntry
   prompt:string
@@ -163,8 +268,28 @@ export function createVocabularySession(
   count=VOCABULARY_BANK.length,
   bank:VocabularyEntry[]=VOCABULARY_BANK,
   rng:()=>number=Math.random,
+  distractorBank:VocabularyEntry[]=bank,
 ){
   return shuffleVocabulary(bank,rng)
     .slice(0,Math.min(Math.max(1,count),bank.length))
-    .map(entry=>buildVocabularyPrompt(entry,direction,bank,rng))
+    .map(entry=>buildVocabularyPrompt(entry,direction,distractorBank,rng))
+}
+
+export function createConfiguredVocabularySession(
+  settings:VocabularyPracticeSettings,
+  attempts:VocabularyAttempt[],
+  bank:VocabularyEntry[]=VOCABULARY_BANK,
+  rng:()=>number=Math.random,
+){
+  const eligible=filterVocabularyBank(settings,attempts,bank)
+  const ordered=settings.selection==='random'?shuffleVocabulary(eligible,rng):eligible
+  const count=settings.sessionSize==='all'?ordered.length:Math.min(settings.sessionSize,ordered.length)
+  const targets=ordered.slice(0,count)
+  const distractorBank=vocabularyDistractorBank(settings,bank)
+  return targets.map(entry=>{
+    const direction:VocabularyDirection=settings.direction==='mixed'
+      ?(rng()<.5?'word-to-definition':'definition-to-word')
+      :settings.direction
+    return buildVocabularyPrompt(entry,direction,distractorBank,rng)
+  })
 }
