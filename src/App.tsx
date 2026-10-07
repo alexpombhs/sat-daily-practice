@@ -215,7 +215,7 @@ export default function App(){
     scorePredictionBasis:performance.scorePredictionBasis,
     scoreEstimateConfidence:performance.scoreEstimateConfidence,
   }
-  const missedQuestionCount=countMissedPracticeQuestions(settings,attempts,questionBank)
+  const newQuestionCount=countNewPracticeQuestions(settings,attempts,questionBank)
   const failedQuestionCount=countFailedPracticeQuestions(settings,attempts,questionBank)
   const practiceRecommendation=buildPracticePlanRecommendation(settings,questionBank,attempts,performance)
   const nationalMeritOutlook=buildNationalMeritOutlook(performance.scorePredictionBasis,performance.scoreEstimateConfidence)
