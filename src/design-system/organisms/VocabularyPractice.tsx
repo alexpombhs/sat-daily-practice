@@ -21,6 +21,7 @@ import {
   vocabularyDifficulties,
   vocabularyDistractorBank,
   vocabularyFailedIds,
+  selectVocabularyEntry,
   vocabularySource,
   vocabularySources,
   type VocabularyAttempt,
@@ -98,9 +99,8 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
       ?eligibleWords.filter(entry=>entry.id!==previousId)
       :eligibleWords
     if(!pool.length)return null
-    const entry=effectiveSettings.selection==='random'
-      ?pool[Math.floor(Math.random()*pool.length)]
-      :pool[0]
+    const entry=selectVocabularyEntry(pool,effectiveSettings.selection,attempts)
+    if(!entry)return null
     const direction:VocabularyDirection=effectiveSettings.direction==='mixed'
       ?(Math.random()<.5?'word-to-definition':'definition-to-word')
       :effectiveSettings.direction
@@ -226,12 +226,16 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
       />
 
       <PracticeSettingField
-        label="Order"
-        helperText="Turn off random order to practice in vocabulary-bank order."
-        control={<AlexSwitch
-          label="Random"
-          checked={settings.selection==='random'}
-          onChange={checked=>setSettings(previous=>({...previous,selection:checked?'random':'bank-order'}))}
+        label="Selection"
+        helperText="Adaptive prioritizes words you are struggling with while still varying the practice order."
+        control={<AlexTabs
+          value={settings.selection}
+          options={[
+            {value:'adaptive',label:'Adaptive'},
+            {value:'random',label:'Random'},
+          ]}
+          onChange={selection=>setSettings(previous=>({...previous,selection}))}
+          aria-label="Vocabulary selection"
         />}
       />
 
