@@ -3,8 +3,9 @@ import AlexAccordion from '../atoms/AlexAccordion'
 import AlexBox from '../atoms/AlexBox'
 import AlexButton from '../atoms/AlexButton'
 import AlexCheckbox from '../atoms/AlexCheckbox'
-import AlexDropdown from '../atoms/AlexDropdown'
 import AlexStatusChip from '../atoms/AlexStatusChip'
+import AlexSwitch from '../atoms/AlexSwitch'
+import AlexTabs from '../atoms/AlexTabs'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
 import PracticeSettingField from '../molecules/PracticeSettingField'
@@ -167,7 +168,7 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
           </AlexText>
         </AlexBox>
         <AlexText sx={{fontSize:12.5,fontWeight:750,color:'#0B376D',whiteSpace:'nowrap'}}>
-          {settings.history==='all'?'All words':settings.history==='new'?'New only':'Failed only'}
+          {practicedCount}/{scopeBank.length} practiced · {accuracy===null?'—':accuracy+'%'} accuracy
         </AlexText>
       </AlexBox>}
     >
@@ -188,78 +189,74 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
 
       {availableDifficulties.length>0&&<PracticeSettingField
         label="Difficulty"
-        helperText="Available when the selected source provides difficulty metadata."
-        control={<AlexDropdown
-          id="vocab-difficulty"
-          label="Difficulty"
+        helperText="Limit practice to a difficulty band from sources that provide it."
+        control={<AlexTabs
           value={settings.difficulty}
+          variant="scrollable"
+          scrollButtons={false}
           options={[
-            {value:'all',label:'All difficulties'},
+            {value:'all',label:'All'},
             ...availableDifficulties.map(value=>({value,label:VOCABULARY_DIFFICULTY_LABELS[value]})),
           ]}
           onChange={difficulty=>setSettings(previous=>({...previous,difficulty:difficulty as 'all'|VocabularyDifficulty}))}
+          aria-label="Vocabulary difficulty"
+          sx={{'& .MuiTab-root':{px:{xs:1.1,sm:1.5},fontSize:{xs:12,sm:13}}}}
         />}
       />}
 
       <PracticeSettingField
-        label="Question history"
+        label="Word status"
         helperText={settings.history==='new'
-          ?newCount+' words in this scope have not been practiced yet.'
+          ?newCount+' new words in this scope.'
           :settings.history==='failed'
             ?'Failed words stay eligible until answered correctly twice after the latest miss.'
-            :'Use the full selected vocabulary scope.'}
-        control={<AlexDropdown
-          id="vocab-history"
-          label="History"
-          value={settings.history}
-          options={[
-            {value:'all',label:'All words'},
-            {value:'new',label:'New only'},
-            {value:'failed',label:'Failed only'},
-          ]}
-          onChange={history=>setSettings(previous=>({...previous,history}))}
-        />}
+            :'Practice from the full selected vocabulary scope.'}
+        control={<AlexBox sx={{display:'flex',gap:{xs:.5,sm:2},flexWrap:'wrap'}}>
+          <AlexSwitch
+            label="New only"
+            checked={settings.history==='new'}
+            onChange={checked=>setSettings(previous=>({...previous,history:checked?'new':'all'}))}
+          />
+          <AlexSwitch
+            label="Failed only"
+            checked={settings.history==='failed'}
+            onChange={checked=>setSettings(previous=>({...previous,history:checked?'failed':'all'}))}
+          />
+        </AlexBox>}
       />
 
       <PracticeSettingField
-        label="Selection"
-        helperText="Random picks continuously from the eligible pool."
-        control={<AlexDropdown
-          id="vocab-selection"
-          label="Selection"
-          value={settings.selection}
-          options={[
-            {value:'random',label:'Random'},
-            {value:'bank-order',label:'Bank order'},
-          ]}
-          onChange={selection=>setSettings(previous=>({...previous,selection}))}
+        label="Order"
+        helperText="Turn off random order to practice in vocabulary-bank order."
+        control={<AlexSwitch
+          label="Random"
+          checked={settings.selection==='random'}
+          onChange={checked=>setSettings(previous=>({...previous,selection:checked?'random':'bank-order'}))}
         />}
       />
 
       <PracticeSettingField
         label="Direction"
-        helperText="Mixed alternates between recognizing meanings and recalling words."
-        control={<AlexDropdown
-          id="vocab-direction"
-          label="Direction"
-          value={settings.direction}
+        helperText="Switch direction without opening another menu."
+        control={<AlexTabs
+          value={settings.direction==='definition-to-word'?'definition-to-word':'word-to-definition'}
           options={[
-            {value:'mixed',label:'Mixed'},
             {value:'word-to-definition',label:'Word → meaning'},
             {value:'definition-to-word',label:'Meaning → word'},
           ]}
           onChange={direction=>setSettings(previous=>({...previous,direction}))}
+          aria-label="Vocabulary direction"
         />}
       />
-    </AlexAccordion>
 
-    <VocabularyPerformanceSummary
-      practiced={practicedCount}
-      total={scopeBank.length}
-      accuracy={accuracy}
-      failed={failedIds.size}
-      mastered={masteredCount}
-    />
+      <VocabularyPerformanceSummary
+        practiced={practicedCount}
+        total={scopeBank.length}
+        accuracy={accuracy}
+        failed={failedIds.size}
+        mastered={masteredCount}
+      />
+    </AlexAccordion>
 
     {!signedIn&&<AlexSurface sx={{mt:1.5,p:1.5,border:'1px solid #D8E3F1',bgcolor:'#F7FAFE'}}>
       <AlexText sx={{fontSize:13.5,color:'#344054'}}>Sign in to save vocabulary progress and use New/Failed tracking across devices.</AlexText>
