@@ -5,7 +5,7 @@ const zero=()=>0
 
 describe('vocabulary practice',()=>{
   it('keeps the SAT-derived vocabulary bank unique and source-linked',()=>{
-    expect(VOCABULARY_BANK.length).toBe(22)
+    expect(VOCABULARY_BANK.length).toBe(86)
     expect(new Set(VOCABULARY_BANK.map(entry=>entry.id)).size).toBe(VOCABULARY_BANK.length)
     expect(VOCABULARY_BANK.every(entry=>entry.word&&entry.definition&&entry.sourceQuestionId)).toBe(true)
   })
@@ -35,6 +35,6 @@ describe('vocabulary practice',()=>{
   it('creates a full-bank session without repeating target words',()=>{
     const session=createVocabularySession('word-to-definition',VOCABULARY_BANK.length,VOCABULARY_BANK,zero)
     expect(session).toHaveLength(VOCABULARY_BANK.length)
-    expect(new Set(session.map(item=>item.entry.id)).size).toBe(10)
+    expect(new Set(session.map(item=>item.entry.id)).size).toBe(VOCABULARY_BANK.length)
   })
 })
