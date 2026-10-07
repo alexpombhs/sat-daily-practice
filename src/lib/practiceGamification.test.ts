@@ -93,6 +93,22 @@ describe('choosePracticeQuestions',()=>{
     expect(countFailedPracticeQuestions(failedSettings,attempts)).toBe(0)
   })
 
+
+  it('uses the configured number of correct answers to clear a failed question',()=>{
+    const attempts=[
+      attempt('math1-1',false,0),
+      attempt('math1-1',true,1),
+      attempt('math1-1',true,2),
+    ]
+    const failedSettings={...settings,failedOnly:false,failedEverOnly:true,failedRecoveryCorrectAnswers:3}
+    expect(practiceQuestionPool(failedSettings,attempts).map(question=>question.id)).toContain('math1-1')
+    expect(countFailedPracticeQuestions(failedSettings,attempts)).toBe(1)
+
+    const recovered=[...attempts,attempt('math1-1',true,3)]
+    expect(practiceQuestionPool(failedSettings,recovered).map(question=>question.id)).not.toContain('math1-1')
+    expect(countFailedPracticeQuestions(failedSettings,recovered)).toBe(0)
+  })
+
   it('resets mastery progress when the question is failed again',()=>{
     const attempts=[
       attempt('math1-1',false,0),
