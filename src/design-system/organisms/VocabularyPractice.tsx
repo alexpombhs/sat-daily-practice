@@ -6,9 +6,9 @@ import AlexStatusChip from '../atoms/AlexStatusChip'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexTabs from '../atoms/AlexTabs'
 import AlexText from '../atoms/AlexText'
-import {createVocabularySession,type VocabularyDirection,type VocabularyPrompt} from '../../lib/vocabulary'
+import {VOCABULARY_BANK,createVocabularySession,type VocabularyDirection,type VocabularyPrompt} from '../../lib/vocabulary'
 
-const SESSION_SIZE=10
+const SESSION_SIZE=VOCABULARY_BANK.length
 
 export default function VocabularyPractice(){
   const[direction,setDirection]=useState<VocabularyDirection>('word-to-definition')
@@ -55,7 +55,7 @@ export default function VocabularyPractice(){
         <AlexText component="div" sx={{fontSize:{xs:42,sm:52},fontWeight:900,lineHeight:1,color:'#08275B',mt:1.5}}>{score}/{session.length}</AlexText>
         <AlexText sx={{fontSize:15,color:'#667085',mt:1}}>You answered {Math.round(score/session.length*100)}% correctly.</AlexText>
         <AlexBox sx={{display:'flex',justifyContent:'center',gap:1,mt:3,flexWrap:'wrap'}}>
-          <AlexButton onClick={()=>restart()}>Practice another 10</AlexButton>
+          <AlexButton onClick={()=>restart()}>Practice all {VOCABULARY_BANK.length}</AlexButton>
           <AlexButton tone="secondary" onClick={()=>restart(direction==='word-to-definition'?'definition-to-word':'word-to-definition')}>Switch direction</AlexButton>
         </AlexBox>
       </AlexSurface>
