@@ -27,6 +27,7 @@ const defaultIcon=(label:string)=>{
   if(label==='Study Plan')return <Compass size={19}/>
   if(label==='Practice Tests')return <ClipboardList size={19}/>
   if(label==='Practice Setup')return <SlidersHorizontal size={19}/>
+  if(label==='Vocabulary')return <BookOpen size={19}/>
   if(label==='Question Bank')return <BookOpen size={19}/>
   if(label==='Parsing Issues')return <Flag size={19}/>
   if(label==='Performance')return <BarChart3 size={19}/>
