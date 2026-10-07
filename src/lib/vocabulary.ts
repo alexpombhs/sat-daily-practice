@@ -224,6 +224,7 @@ export function vocabularyDistractorBank(
 
 export type VocabularyPrompt={
   entry:VocabularyEntry
+  direction:VocabularyDirection
   prompt:string
   answer:string
   options:string[]
@@ -259,8 +260,8 @@ export function buildVocabularyPrompt(
   rng:()=>number=Math.random,
 ):VocabularyPrompt{
   return direction==='word-to-definition'
-    ?{entry,prompt:entry.word,answer:entry.definition,options:buildVocabularyOptions(entry,direction,bank,rng)}
-    :{entry,prompt:entry.definition,answer:entry.word,options:buildVocabularyOptions(entry,direction,bank,rng)}
+    ?{entry,direction,prompt:entry.word,answer:entry.definition,options:buildVocabularyOptions(entry,direction,bank,rng)}
+    :{entry,direction,prompt:entry.definition,answer:entry.word,options:buildVocabularyOptions(entry,direction,bank,rng)}
 }
 
 export function createVocabularySession(
