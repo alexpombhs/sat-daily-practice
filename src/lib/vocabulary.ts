@@ -97,10 +97,10 @@ export const PRACTICE_TEST_VOCABULARY:VocabularyEntry[]=[
   {id:'redefined',word:'redefined',definition:'gave a new or different meaning to',sourceQuestionId:'practice-test-5:rw1-4',difficulty:'medium'},
   {id:'exploited',word:'exploited',definition:'used something to gain an advantage',sourceQuestionId:'practice-test-5:rw1-4',difficulty:'medium'},
 
-  {id:'sanction',word:'sanction',definition:'officially approve or authorize',sourceQuestionId:'practice-test-5:rw1-5',difficulty:'medium'},
+  {id:'sanction',word:'sanction',definition:'officially approve or authorize',sourceQuestionId:'practice-test-5:rw1-5',difficulty:'advanced'},
   {id:'ameliorate',word:'ameliorate',definition:'make a bad condition better',sourceQuestionId:'practice-test-5:rw1-5',difficulty:'advanced'},
   {id:'rationalize',word:'rationalize',definition:'try to justify with seemingly logical reasons',sourceQuestionId:'practice-test-5:rw1-5',difficulty:'medium'},
-  {id:'postulate',word:'postulate',definition:'suggest or assume something as a basis for reasoning',sourceQuestionId:'practice-test-5:rw1-5',difficulty:'medium'},
+  {id:'postulate',word:'postulate',definition:'suggest or assume something as a basis for reasoning',sourceQuestionId:'practice-test-5:rw1-5',difficulty:'advanced'},
 
   {id:'occupy',word:'occupy',definition:'take up or fill a place or position',sourceQuestionId:'practice-test-5:rw2-2',difficulty:'easy'},
   {id:'hoard',word:'hoard',definition:'collect and keep a large supply, often secretly',sourceQuestionId:'practice-test-5:rw2-2',difficulty:'medium'},
@@ -112,10 +112,10 @@ export const PRACTICE_TEST_VOCABULARY:VocabularyEntry[]=[
   {id:'determined',word:'determined',definition:'established or found out with certainty',sourceQuestionId:'practice-test-5:rw2-3',difficulty:'easy'},
   {id:'acquired',word:'acquired',definition:'gained or obtained something',sourceQuestionId:'practice-test-5:rw2-3',difficulty:'easy'},
 
-  {id:'tenuous',word:'tenuous',definition:'weak, slight, or not firmly established',sourceQuestionId:'practice-test-5:rw2-4',difficulty:'medium'},
+  {id:'tenuous',word:'tenuous',definition:'weak, slight, or not firmly established',sourceQuestionId:'practice-test-5:rw2-4',difficulty:'advanced'},
   {id:'enduring',word:'enduring',definition:'lasting for a long time',sourceQuestionId:'practice-test-5:rw2-4',difficulty:'easy'},
-  {id:'contentious',word:'contentious',definition:'likely to cause disagreement or argument',sourceQuestionId:'practice-test-5:rw2-4',difficulty:'medium'},
-  {id:'conspicuous',word:'conspicuous',definition:'easy to notice or attracting attention',sourceQuestionId:'practice-test-5:rw2-4',difficulty:'medium'},
+  {id:'contentious',word:'contentious',definition:'likely to cause disagreement or argument',sourceQuestionId:'practice-test-5:rw2-4',difficulty:'advanced'},
+  {id:'conspicuous',word:'conspicuous',definition:'easy to notice or attracting attention',sourceQuestionId:'practice-test-5:rw2-4',difficulty:'advanced'},
 
   {id:'imagine',word:'imagine',definition:'form a mental picture or idea of',sourceQuestionId:'practice-test-5:rw2-5',difficulty:'easy'},
   {id:'summarize',word:'summarize',definition:'state the main points briefly',sourceQuestionId:'practice-test-5:rw2-5',difficulty:'easy'},
@@ -138,9 +138,9 @@ export const PRACTICE_TEST_VOCABULARY:VocabularyEntry[]=[
   {id:'precluding',word:'precluding',definition:'preventing something from happening',sourceQuestionId:'practice-test-6:rw1-3',difficulty:'advanced'},
 
   {id:'controversial-among',word:'controversial among',definition:'causing disagreement within a group',sourceQuestionId:'practice-test-6:rw1-5',difficulty:'medium'},
-  {id:'antagonistic-toward',word:'antagonistic toward',definition:'hostile or strongly opposed to',sourceQuestionId:'practice-test-6:rw1-5',difficulty:'medium'},
+  {id:'antagonistic-toward',word:'antagonistic toward',definition:'hostile or strongly opposed to',sourceQuestionId:'practice-test-6:rw1-5',difficulty:'advanced'},
   {id:'imitated-by',word:'imitated by',definition:'copied or modeled by others',sourceQuestionId:'practice-test-6:rw1-5',difficulty:'easy'},
-  {id:'inconsequential-to',word:'inconsequential to',definition:'having little or no important effect on',sourceQuestionId:'practice-test-6:rw1-5',difficulty:'medium'},
+  {id:'inconsequential-to',word:'inconsequential to',definition:'having little or no important effect on',sourceQuestionId:'practice-test-6:rw1-5',difficulty:'advanced'},
 
   {id:'invented',word:'invented',definition:'created or devised something new',sourceQuestionId:'practice-test-6:rw2-1',difficulty:'easy'},
   {id:'adjusted',word:'adjusted',definition:'changed slightly to improve or correct',sourceQuestionId:'practice-test-6:rw2-1',difficulty:'easy'},
@@ -156,9 +156,9 @@ export const PRACTICE_TEST_VOCABULARY:VocabularyEntry[]=[
   {id:'accidental',word:'accidental',definition:'happening by chance rather than intentionally',sourceQuestionId:'practice-test-6:rw2-3',difficulty:'easy'},
   {id:'observable',word:'observable',definition:'able to be noticed or measured',sourceQuestionId:'practice-test-6:rw2-3',difficulty:'easy'},
 
-  {id:'insensible-to',word:'insensible to',definition:'unaware of or unaffected by',sourceQuestionId:'practice-test-6:rw2-4',difficulty:'medium'},
-  {id:'manifest-in',word:'manifest in',definition:'clearly shown or evident in',sourceQuestionId:'practice-test-6:rw2-4',difficulty:'medium'},
-  {id:'scrutinized-by',word:'scrutinized by',definition:'examined very carefully by',sourceQuestionId:'practice-test-6:rw2-4',difficulty:'medium'},
+  {id:'insensible-to',word:'insensible to',definition:'unaware of or unaffected by',sourceQuestionId:'practice-test-6:rw2-4',difficulty:'advanced'},
+  {id:'manifest-in',word:'manifest in',definition:'clearly shown or evident in',sourceQuestionId:'practice-test-6:rw2-4',difficulty:'advanced'},
+  {id:'scrutinized-by',word:'scrutinized by',definition:'examined very carefully by',sourceQuestionId:'practice-test-6:rw2-4',difficulty:'advanced'},
   {id:'complicated-by',word:'complicated by',definition:'made more difficult or complex by',sourceQuestionId:'practice-test-6:rw2-4',difficulty:'easy'},
 
   {id:'permanent',word:'permanent',definition:'lasting or intended to last indefinitely',sourceQuestionId:'practice-test-6:rw2-5',difficulty:'easy'},
