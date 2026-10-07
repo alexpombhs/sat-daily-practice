@@ -32,9 +32,9 @@ describe('vocabulary practice',()=>{
     expect(reverse.answer).toBe(entry.word)
   })
 
-  it('creates a ten-question session without repeating target words',()=>{
-    const session=createVocabularySession('word-to-definition',10,VOCABULARY_BANK,zero)
-    expect(session).toHaveLength(10)
+  it('creates a full-bank session without repeating target words',()=>{
+    const session=createVocabularySession('word-to-definition',VOCABULARY_BANK.length,VOCABULARY_BANK,zero)
+    expect(session).toHaveLength(VOCABULARY_BANK.length)
     expect(new Set(session.map(item=>item.entry.id)).size).toBe(10)
   })
 })
