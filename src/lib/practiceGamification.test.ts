@@ -64,6 +64,24 @@ describe('choosePracticeQuestions',()=>{
     expect(countFailedPracticeQuestions(failedSettings,attempts)).toBe(2)
   })
 
+  it('randomizes failed-question practice even when the main selection mode is adaptive',()=>{
+    const questions=QUESTION_BANK.filter(question=>['math1-1','math1-2','math1-3'].includes(question.id))
+    const attempts=[
+      attempt('math1-1',false,0),
+      attempt('math1-2',false,1),
+      attempt('math1-3',false,2),
+    ]
+    const values=[.9,.1,.5]
+    let index=0
+    const chosen=choosePracticeQuestions(
+      {...settings,questionsPerSession:3,selectionMode:'adaptive',failedOnly:false,failedEverOnly:true},
+      attempts,
+      ()=>values[index++]??0,
+      questions,
+    )
+    expect(chosen.map(question=>question.id)).toEqual(['math1-2','math1-3','math1-1'])
+  })
+
   it('removes a failed question after two correct answers following the most recent failure',()=>{
     const attempts=[
       attempt('math1-1',false,0),
