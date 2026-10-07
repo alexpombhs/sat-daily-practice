@@ -9,6 +9,7 @@ const baseProps={
   onDashboard:()=>undefined,
   onPracticeTests:()=>undefined,
   onPracticeSetup:()=>undefined,
+  onVocabulary:()=>undefined,
   onQuestionBank:()=>undefined,
   onParsingIssues:()=>undefined,
   onPerformance:()=>undefined,
