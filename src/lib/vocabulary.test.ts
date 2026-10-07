@@ -9,6 +9,7 @@ import {
   createVocabularySession,
   filterVocabularyBank,
   vocabularyFailedIds,
+  selectVocabularyEntry,
   type VocabularyAttempt,
 } from './vocabulary'
 
@@ -68,6 +69,21 @@ describe('vocabulary practice',()=>{
     const session=createVocabularySession('word-to-definition',VOCABULARY_BANK.length,VOCABULARY_BANK,zero)
     expect(session).toHaveLength(VOCABULARY_BANK.length)
     expect(new Set(session.map(item=>item.entry.id)).size).toBe(VOCABULARY_BANK.length)
+  })
+
+  it('adaptive selection prioritizes a recently failed word',()=>{
+    const a=VOCABULARY_BANK[0]
+    const b=VOCABULARY_BANK[1]
+    const picked=selectVocabularyEntry(
+      [a,b],
+      'adaptive',
+      [
+        attempt(a.id,false,'2026-10-07T10:00:00Z'),
+        attempt(b.id,true,'2026-10-07T10:01:00Z'),
+      ],
+      zero,
+    )
+    expect(picked?.id).toBe(a.id)
   })
 
   it('treats never-attempted vocabulary as new',()=>{
