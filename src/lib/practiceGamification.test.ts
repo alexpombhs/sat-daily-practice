@@ -1,6 +1,6 @@
 import {describe,expect,it} from 'vitest'
 import {QUESTION_BANK} from './questionBank'
-import {choosePracticeQuestions,countFailedPracticeQuestions,countMissedPracticeQuestions,formatDuration,practiceQuestionPool,summarizePerformance,summarizeSession} from './practiceGamification'
+import {choosePracticeQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,practiceQuestionPool,summarizePerformance,summarizeSession} from './practiceGamification'
 import type {Attempt,SessionSummary,Settings} from '../types'
 
 const settings:Settings={mode:'math',questionsPerSession:3,showExplanations:true,shuffle:true}
@@ -30,7 +30,7 @@ describe('choosePracticeQuestions',()=>{
     expect(chosen[0].id).toBe('math1-1')
   })
 
-  it('treats missed questions as questions the user has not attempted yet',()=>{
+  it('treats new questions as questions the user has not attempted yet',()=>{
     const questions=QUESTION_BANK.filter(question=>['math1-1','math1-2','math1-3'].includes(question.id))
     const attempts=[
       attempt('math1-1',false,0),
@@ -38,10 +38,10 @@ describe('choosePracticeQuestions',()=>{
     ]
     const missedSettings={...settings,failedOnly:true,failedEverOnly:false}
     expect(practiceQuestionPool(missedSettings,attempts,questions).map(question=>question.id)).toEqual(['math1-3'])
-    expect(countMissedPracticeQuestions(missedSettings,attempts,questions)).toBe(1)
+    expect(countNewPracticeQuestions(missedSettings,attempts,questions)).toBe(1)
   })
 
-  it('does not count a previously attempted question as missed regardless of whether it was correct',()=>{
+  it('does not count a previously attempted question as new regardless of whether it was correct',()=>{
     const questions=QUESTION_BANK.filter(question=>['math1-1','math1-2'].includes(question.id))
     const attempts=[
       attempt('math1-1',false,0),
@@ -49,7 +49,16 @@ describe('choosePracticeQuestions',()=>{
     ]
     const missedSettings={...settings,failedOnly:true,failedEverOnly:false}
     expect(practiceQuestionPool(missedSettings,attempts,questions)).toEqual([])
-    expect(countMissedPracticeQuestions(missedSettings,attempts,questions)).toBe(0)
+    expect(countNewPracticeQuestions(missedSettings,attempts,questions)).toBe(0)
+  })
+
+
+  it('uses the full eligible pool when neither new-only nor failed-only is selected',()=>{
+    const questions=QUESTION_BANK.filter(question=>['math1-1','math1-2','math1-3'].includes(question.id))
+    const attempts=[attempt('math1-1',false,0)]
+    const fullPoolSettings={...settings,failedOnly:false,failedEverOnly:false}
+    expect(practiceQuestionPool(fullPoolSettings,attempts,questions).map(question=>question.id))
+      .toEqual(['math1-1','math1-2','math1-3'])
   })
 
   it('keeps failed questions until they are answered correctly twice after the failure',()=>{
