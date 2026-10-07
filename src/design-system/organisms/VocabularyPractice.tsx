@@ -314,7 +314,7 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
             }}>
               <AlexText sx={{fontSize:13.5,fontWeight:750,color:correct?'#177245':'#8E3932'}}>{correct?'Correct':'Not quite'}</AlexText>
               {!correct&&<AlexText sx={{fontSize:13.5,color:'#344054',mt:.3}}>Correct answer: <b>{current.answer}</b></AlexText>}
-              <AlexText sx={{fontSize:12,color:'#667085',mt:.4}}>Source: {current.entry.sourceQuestionId}</AlexText>
+              <AlexText sx={{fontSize:12,color:'#667085',mt:.4}}>Source: {current.entry.sourceLabel??VOCABULARY_SOURCE_LABELS[vocabularySource(current.entry)]}{current.entry.sourceQuestionId?' · '+current.entry.sourceQuestionId:''}</AlexText>
               {saveError&&<AlexText sx={{fontSize:12,color:'#A33A31',mt:.4}}>{saveError}</AlexText>}
             </AlexSurface>}
 
