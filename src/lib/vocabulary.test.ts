@@ -1,7 +1,28 @@
 import {describe,expect,it} from 'vitest'
-import {VOCABULARY_BANK,buildVocabularyOptions,buildVocabularyPrompt,createVocabularySession} from './vocabulary'
+import {
+  DEFAULT_VOCABULARY_SETTINGS,
+  VOCABULARY_BANK,
+  buildVocabularyOptions,
+  buildVocabularyPrompt,
+  createVocabularySession,
+  filterVocabularyBank,
+  vocabularyFailedIds,
+  type VocabularyAttempt,
+} from './vocabulary'
 
 const zero=()=>0
+
+function attempt(vocabularyId:string,correct:boolean,createdAt:string):VocabularyAttempt{
+  return {
+    id:vocabularyId+createdAt,
+    vocabularyId,
+    direction:'word-to-definition',
+    selectedAnswer:correct?'correct':'wrong',
+    correctAnswer:'correct',
+    correct,
+    createdAt,
+  }
+}
 
 describe('vocabulary practice',()=>{
   it('keeps the SAT-derived vocabulary bank unique and source-linked',()=>{
@@ -26,8 +47,10 @@ describe('vocabulary practice',()=>{
     const entry=VOCABULARY_BANK[0]
     const forward=buildVocabularyPrompt(entry,'word-to-definition',VOCABULARY_BANK,zero)
     const reverse=buildVocabularyPrompt(entry,'definition-to-word',VOCABULARY_BANK,zero)
+    expect(forward.direction).toBe('word-to-definition')
     expect(forward.prompt).toBe(entry.word)
     expect(forward.answer).toBe(entry.definition)
+    expect(reverse.direction).toBe('definition-to-word')
     expect(reverse.prompt).toBe(entry.definition)
     expect(reverse.answer).toBe(entry.word)
   })
@@ -36,5 +59,26 @@ describe('vocabulary practice',()=>{
     const session=createVocabularySession('word-to-definition',VOCABULARY_BANK.length,VOCABULARY_BANK,zero)
     expect(session).toHaveLength(VOCABULARY_BANK.length)
     expect(new Set(session.map(item=>item.entry.id)).size).toBe(VOCABULARY_BANK.length)
+  })
+
+  it('treats never-attempted vocabulary as new',()=>{
+    const first=VOCABULARY_BANK[0]
+    const settings={...DEFAULT_VOCABULARY_SETTINGS,history:'new' as const,sessionSize:'all' as const}
+    const filtered=filterVocabularyBank(settings,[attempt(first.id,true,'2026-10-07T10:00:00Z')])
+    expect(filtered.some(entry=>entry.id===first.id)).toBe(false)
+    expect(filtered.length).toBe(VOCABULARY_BANK.length-1)
+  })
+
+  it('keeps failed vocabulary until two correct answers after the latest miss',()=>{
+    const id=VOCABULARY_BANK[0].id
+    const oneRecovery=[
+      attempt(id,false,'2026-10-07T10:00:00Z'),
+      attempt(id,true,'2026-10-07T10:01:00Z'),
+    ]
+    expect(vocabularyFailedIds(oneRecovery).has(id)).toBe(true)
+    expect(vocabularyFailedIds([
+      ...oneRecovery,
+      attempt(id,true,'2026-10-07T10:02:00Z'),
+    ]).has(id)).toBe(false)
   })
 })
