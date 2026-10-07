@@ -84,7 +84,7 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
   const newCount=scopeBank.filter(entry=>!practicedIds.has(entry.id)).length
 
   const answered=Boolean(selected)
-  const correct=Boolean(current)&&answered&&selected===current.answer
+  const correct=Boolean(current&&answered&&selected===current.answer)
 
   function updateSources(source:VocabularySource,checked:boolean){
     const next=checked
