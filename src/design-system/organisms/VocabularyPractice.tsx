@@ -1,4 +1,5 @@
 import {useEffect,useMemo,useState,type ReactNode} from 'react'
+import AlexAccordion from '../atoms/AlexAccordion'
 import AlexBox from '../atoms/AlexBox'
 import AlexButton from '../atoms/AlexButton'
 import AlexCheckbox from '../atoms/AlexCheckbox'
@@ -14,21 +15,22 @@ import {
   VOCABULARY_BANK,
   VOCABULARY_DIFFICULTY_LABELS,
   VOCABULARY_SOURCE_LABELS,
-  createConfiguredVocabularySession,
+  buildVocabularyPrompt,
   filterVocabularyBank,
   vocabularyDifficulties,
+  vocabularyDistractorBank,
   vocabularyFailedIds,
   vocabularySource,
   vocabularySources,
   type VocabularyAttempt,
   type VocabularyDifficulty,
+  type VocabularyDirection,
   type VocabularyPracticeSettings,
-  type VocabularySessionSize,
+  type VocabularyPrompt,
   type VocabularySource,
 } from '../../lib/vocabulary'
 import {loadVocabularyAttempts,saveVocabularyAttempt} from '../../lib/supabase'
 
-type Phase='setup'|'practice'|'results'
 type Props={signedIn:boolean;onSignIn:()=>void}
 const uid=()=>crypto.randomUUID()
 
@@ -36,11 +38,8 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
   const[settings,setSettings]=useState<VocabularyPracticeSettings>(DEFAULT_VOCABULARY_SETTINGS)
   const[attempts,setAttempts]=useState<VocabularyAttempt[]>([])
   const[loadingHistory,setLoadingHistory]=useState(false)
-  const[phase,setPhase]=useState<Phase>('setup')
-  const[session,setSession]=useState(()=>createConfiguredVocabularySession(DEFAULT_VOCABULARY_SETTINGS,[]))
-  const[index,setIndex]=useState(0)
+  const[current,setCurrent]=useState<VocabularyPrompt|null>(null)
   const[selected,setSelected]=useState('')
-  const[score,setScore]=useState(0)
   const[saveError,setSaveError]=useState('')
 
   useEffect(()=>{
@@ -63,20 +62,27 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
   const effectiveSettings:VocabularyPracticeSettings=availableDifficulties.length||settings.difficulty==='all'
     ?settings
     :{...settings,difficulty:'all'}
-  const matchingWords=useMemo(
+
+  const scopeBank=useMemo(()=>sourceScopedBank.filter(entry=>
+    effectiveSettings.difficulty==='all'||entry.difficulty===effectiveSettings.difficulty
+  ),[sourceScopedBank,effectiveSettings.difficulty])
+
+  const eligibleWords=useMemo(
     ()=>filterVocabularyBank(effectiveSettings,attempts,VOCABULARY_BANK),
     [effectiveSettings,attempts],
   )
-  const attemptedIds=new Set(attempts.map(attempt=>attempt.vocabularyId))
-  const failedIds=vocabularyFailedIds(attempts)
-  const practicedCount=attemptedIds.size
-  const accuracy=attempts.length?Math.round(attempts.filter(attempt=>attempt.correct).length/attempts.length*100):null
+
+  const scopeIds=useMemo(()=>new Set(scopeBank.map(entry=>entry.id)),[scopeBank])
+  const scopeAttempts=useMemo(()=>attempts.filter(attempt=>scopeIds.has(attempt.vocabularyId)),[attempts,scopeIds])
+  const practicedIds=useMemo(()=>new Set(scopeAttempts.map(attempt=>attempt.vocabularyId)),[scopeAttempts])
+  const failedIds=useMemo(()=>vocabularyFailedIds(scopeAttempts),[scopeAttempts])
+  const practicedCount=practicedIds.size
+  const accuracy=scopeAttempts.length?Math.round(scopeAttempts.filter(attempt=>attempt.correct).length/scopeAttempts.length*100):null
   const masteredCount=Math.max(0,practicedCount-failedIds.size)
-  const newCount=VOCABULARY_BANK.filter(entry=>settings.sources.includes(vocabularySource(entry))&&!attemptedIds.has(entry.id)).length
-  const current=session[index]
+  const newCount=scopeBank.filter(entry=>!practicedIds.has(entry.id)).length
+
   const answered=Boolean(selected)
   const correct=Boolean(current)&&answered&&selected===current.answer
-  const sessionTarget=settings.sessionSize==='all'?matchingWords.length:Math.min(settings.sessionSize,matchingWords.length)
 
   function updateSources(source:VocabularySource,checked:boolean){
     const next=checked
@@ -86,30 +92,49 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
     setSettings(previous=>({...previous,sources:next,difficulty:'all'}))
   }
 
-  function start(){
-    if(!signedIn){onSignIn();return}
-    const next=createConfiguredVocabularySession(effectiveSettings,attempts,VOCABULARY_BANK)
-    if(!next.length)return
-    setSession(next)
-    setIndex(0)
-    setSelected('')
-    setScore(0)
-    setSaveError('')
-    setPhase('practice')
+  function makePrompt(previousId?:string):VocabularyPrompt|null{
+    const pool=eligibleWords.length>1&&previousId
+      ?eligibleWords.filter(entry=>entry.id!==previousId)
+      :eligibleWords
+    if(!pool.length)return null
+    const entry=effectiveSettings.selection==='random'
+      ?pool[Math.floor(Math.random()*pool.length)]
+      :pool[0]
+    const direction:VocabularyDirection=effectiveSettings.direction==='mixed'
+      ?(Math.random()<.5?'word-to-definition':'definition-to-word')
+      :effectiveSettings.direction
+    return buildVocabularyPrompt(
+      entry,
+      direction,
+      vocabularyDistractorBank(effectiveSettings,VOCABULARY_BANK),
+    )
   }
+
+  useEffect(()=>{
+    if(loadingHistory)return
+    setCurrent(previous=>makePrompt(previous?.entry.id))
+    setSelected('')
+    setSaveError('')
+  },[
+    loadingHistory,
+    effectiveSettings.sources.join('|'),
+    effectiveSettings.difficulty,
+    effectiveSettings.history,
+    effectiveSettings.selection,
+    effectiveSettings.direction,
+  ])
 
   async function choose(option:string){
     if(answered||!current)return
-    const isCorrect=option===current.answer
+    if(!signedIn){onSignIn();return}
     setSelected(option)
-    if(isCorrect)setScore(value=>value+1)
     const attempt:VocabularyAttempt={
       id:uid(),
       vocabularyId:current.entry.id,
       direction:current.direction,
       selectedAnswer:option,
       correctAnswer:current.answer,
-      correct:isCorrect,
+      correct:option===current.answer,
       createdAt:new Date().toISOString(),
     }
     setAttempts(previous=>[...previous,attempt])
@@ -122,103 +147,30 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
   }
 
   function next(){
-    if(!answered)return
-    if(index>=session.length-1){setPhase('results');return}
-    setIndex(value=>value+1)
+    if(!answered||!current)return
+    const previousId=current.entry.id
     setSelected('')
     setSaveError('')
+    setCurrent(makePrompt(previousId))
   }
-
-  function backToSetup(){
-    setPhase('setup')
-    setIndex(0)
-    setSelected('')
-    setScore(0)
-    setSaveError('')
-  }
-
-  if(phase==='results')return <PageShell>
-    <PageHeading subtitle="Your vocabulary session is complete."/>
-    <AlexSurface sx={{mt:2.5,p:{xs:2.25,sm:3},border:'1px solid #E4E7EC'}}>
-      <AlexBox sx={{display:'flex',alignItems:'baseline',gap:1.25,flexWrap:'wrap'}}>
-        <AlexText component="div" sx={{fontSize:{xs:30,sm:34},fontWeight:800,lineHeight:1,color:'#08275B'}}>{score}/{session.length}</AlexText>
-        <AlexText sx={{fontSize:14,color:'#667085'}}>{session.length?Math.round(score/session.length*100):0}% correct</AlexText>
-      </AlexBox>
-      <AlexBox sx={{display:'flex',gap:1,mt:2.5,flexWrap:'wrap'}}>
-        <AlexButton onClick={start}>Practice again</AlexButton>
-        <AlexButton tone="secondary" onClick={backToSetup}>Edit setup</AlexButton>
-      </AlexBox>
-    </AlexSurface>
-  </PageShell>
-
-  if(phase==='practice'&&current)return <PageShell>
-    <PageHeading subtitle="Choose the closest match, then move to the next word."/>
-
-    <AlexSurface sx={{mt:2.5,p:{xs:1.75,sm:2.25},border:'1px solid #E4E7EC'}}>
-      <AlexBox sx={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:2}}>
-        <AlexText sx={{fontSize:12.5,fontWeight:750,color:'#667085'}}>Question {index+1} of {session.length}</AlexText>
-        <AlexStatusChip>{score} correct</AlexStatusChip>
-      </AlexBox>
-
-      <AlexBox sx={{mt:2.25,p:{xs:1.75,sm:2.25},borderRadius:'8px',bgcolor:'#F8FAFC',border:'1px solid #EEF1F4'}}>
-        <AlexText sx={{fontSize:11.5,fontWeight:800,textTransform:'uppercase',letterSpacing:'.045em',color:'#667085'}}>
-          {current.direction==='word-to-definition'?'Choose the best meaning':'Choose the matching word'}
-        </AlexText>
-        <AlexText component="div" sx={{
-          fontSize:{xs:22,sm:25},
-          fontWeight:750,
-          lineHeight:1.3,
-          letterSpacing:'-.01em',
-          color:'#08275B',
-          mt:.75,
-        }}>
-          {current.prompt}
-        </AlexText>
-      </AlexBox>
-
-      <AlexBox sx={{display:'grid',gap:.8,mt:1.5}}>
-        {current.options.map(option=><VocabularyChoiceRow
-          key={option}
-          label={option}
-          selected={selected===option}
-          disabled={answered&&selected!==option}
-          onClick={()=>void choose(option)}
-        />)}
-      </AlexBox>
-
-      {answered&&<AlexSurface sx={{
-        mt:1.5,p:1.5,border:'1px solid',borderColor:correct?'#B7DEC5':'#E9C5C1',
-        bgcolor:correct?'#F5FAF7':'#FFF8F7',
-      }}>
-        <AlexText sx={{fontSize:13.5,fontWeight:750,color:correct?'#177245':'#8E3932'}}>{correct?'Correct':'Not quite'}</AlexText>
-        {!correct&&<AlexText sx={{fontSize:13.5,color:'#344054',mt:.3}}>Correct answer: <b>{current.answer}</b></AlexText>}
-        <AlexText sx={{fontSize:12,color:'#667085',mt:.4}}>Source: {current.entry.sourceQuestionId}</AlexText>
-        {saveError&&<AlexText sx={{fontSize:12,color:'#A33A31',mt:.4}}>{saveError}</AlexText>}
-      </AlexSurface>}
-
-      <AlexBox sx={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:1,mt:2}}>
-        <AlexButton tone="quiet" onClick={backToSetup}>Setup</AlexButton>
-        <AlexButton disabled={!answered} onClick={next}>{index===session.length-1?'Finish':'Next'}</AlexButton>
-      </AlexBox>
-    </AlexSurface>
-  </PageShell>
 
   return <PageShell>
-    <PageHeading subtitle="Choose the words and practice style for this session."/>
+    <PageHeading subtitle="Continuous vocabulary practice based on your selected word pool."/>
 
-    <VocabularyPerformanceSummary
-      practiced={practicedCount}
-      total={VOCABULARY_BANK.length}
-      accuracy={accuracy}
-      failed={failedIds.size}
-      mastered={masteredCount}
-    />
-
-    <AlexSurface sx={{mt:2,p:{xs:1.75,sm:2.5},border:'1px solid #E4E7EC'}}>
-      <AlexBox sx={{mb:.5}}>
-        <AlexText sx={{fontSize:14,fontWeight:800,color:'#08275B'}}>Vocabulary setup</AlexText>
-        <AlexText sx={{fontSize:12.5,color:'#667085',mt:.25}}>Configure source, history, order, direction, and session size.</AlexText>
-      </AlexBox>
+    <AlexAccordion
+      sx={{mt:1.75}}
+      summary={<AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1.25,width:'100%',pr:1,flexDirection:{xs:'column',sm:'row'}}}>
+        <AlexBox>
+          <AlexText sx={{fontSize:14,fontWeight:800,color:'#08275B'}}>Practice configuration</AlexText>
+          <AlexText sx={{fontSize:12.5,color:'#667085',mt:.15}}>
+            {scopeBank.length} words in scope · {eligibleWords.length} currently eligible
+          </AlexText>
+        </AlexBox>
+        <AlexText sx={{fontSize:12.5,fontWeight:750,color:'#0B376D',whiteSpace:'nowrap'}}>
+          {settings.history==='all'?'All words':settings.history==='new'?'New only':'Failed only'}
+        </AlexText>
+      </AlexBox>}
+    >
       <PracticeSettingField
         label="Word sources"
         helperText={availableSources.length===1
@@ -236,7 +188,7 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
 
       {availableDifficulties.length>0&&<PracticeSettingField
         label="Difficulty"
-        helperText="Only shown for sources that provide difficulty metadata."
+        helperText="Available when the selected source provides difficulty metadata."
         control={<AlexDropdown
           id="vocab-difficulty"
           label="Difficulty"
@@ -252,10 +204,10 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
       <PracticeSettingField
         label="Question history"
         helperText={settings.history==='new'
-          ?newCount+' words have not been practiced yet.'
+          ?newCount+' words in this scope have not been practiced yet.'
           :settings.history==='failed'
-            ?'Failed words stay here until answered correctly twice after the latest miss.'
-            :'Include new and previously practiced words.'}
+            ?'Failed words stay eligible until answered correctly twice after the latest miss.'
+            :'Use the full selected vocabulary scope.'}
         control={<AlexDropdown
           id="vocab-history"
           label="History"
@@ -271,7 +223,7 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
 
       <PracticeSettingField
         label="Selection"
-        helperText="Random reshuffles the eligible vocabulary each session."
+        helperText="Random picks continuously from the eligible pool."
         control={<AlexDropdown
           id="vocab-selection"
           label="Selection"
@@ -299,36 +251,77 @@ export default function VocabularyPractice({signedIn,onSignIn}:Props){
           onChange={direction=>setSettings(previous=>({...previous,direction}))}
         />}
       />
+    </AlexAccordion>
 
-      <PracticeSettingField
-        label="Words per session"
-        helperText="The session uses up to this many words from the matching pool."
-        control={<AlexDropdown
-          id="vocab-size"
-          label="Session size"
-          value={String(settings.sessionSize)}
-          options={[
-            {value:'10',label:'10 words'},
-            {value:'20',label:'20 words'},
-            {value:'40',label:'40 words'},
-            {value:'all',label:'All matching words'},
-          ]}
-          onChange={value=>setSettings(previous=>({...previous,sessionSize:(value==='all'?'all':Number(value)) as VocabularySessionSize}))}
-        />}
-      />
+    <VocabularyPerformanceSummary
+      practiced={practicedCount}
+      total={scopeBank.length}
+      accuracy={accuracy}
+      failed={failedIds.size}
+      mastered={masteredCount}
+    />
 
-      <AlexBox sx={{mt:2,pt:2,borderTop:'1px solid #EAECF0',display:'flex',alignItems:{xs:'stretch',sm:'center'},justifyContent:'space-between',gap:1.5,flexDirection:{xs:'column',sm:'row'}}}>
-        <AlexBox>
-          <AlexText sx={{fontSize:14,fontWeight:800,color:'#08275B'}}>{matchingWords.length} words match these settings</AlexText>
-          <AlexText sx={{fontSize:12.5,color:'#667085',mt:.25}}>
-            {matchingWords.length?sessionTarget+' will be practiced in this session.':'Change the filters to include at least one word.'}
-            {loadingHistory?' Loading vocabulary history…':''}
-          </AlexText>
-        </AlexBox>
-        <AlexButton onClick={start} disabled={!matchingWords.length||loadingHistory}>
-          {signedIn?'Start vocabulary practice':'Sign in to practice'}
-        </AlexButton>
-      </AlexBox>
+    {!signedIn&&<AlexSurface sx={{mt:1.5,p:1.5,border:'1px solid #D8E3F1',bgcolor:'#F7FAFE'}}>
+      <AlexText sx={{fontSize:13.5,color:'#344054'}}>Sign in to save vocabulary progress and use New/Failed tracking across devices.</AlexText>
+      <AlexButton sx={{mt:1}} onClick={onSignIn}>Sign in</AlexButton>
+    </AlexSurface>}
+
+    <AlexSurface sx={{mt:1.5,p:{xs:1.75,sm:2.25},border:'1px solid #E4E7EC'}}>
+      {loadingHistory
+        ?<AlexText sx={{fontSize:14,color:'#667085'}}>Loading vocabulary progress…</AlexText>
+        :!current
+          ?<AlexBox>
+            <AlexText sx={{fontSize:15,fontWeight:800,color:'#08275B'}}>No words match the current configuration.</AlexText>
+            <AlexText sx={{fontSize:13,color:'#667085',mt:.5}}>Open Practice configuration above and broaden the source, difficulty, or history filter.</AlexText>
+          </AlexBox>
+          :<>
+            <AlexBox sx={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:2}}>
+              <AlexText sx={{fontSize:12.5,fontWeight:750,color:'#667085'}}>
+                {eligibleWords.length} eligible word{eligibleWords.length===1?'':'s'}
+              </AlexText>
+              <AlexStatusChip>{accuracy===null?'NEW':accuracy+'% accuracy'}</AlexStatusChip>
+            </AlexBox>
+
+            <AlexBox sx={{mt:2,p:{xs:1.75,sm:2.25},borderRadius:'8px',bgcolor:'#F8FAFC',border:'1px solid #EEF1F4'}}>
+              <AlexText sx={{fontSize:11.5,fontWeight:800,textTransform:'uppercase',letterSpacing:'.045em',color:'#667085'}}>
+                {current.direction==='word-to-definition'?'Choose the best meaning':'Choose the matching word'}
+              </AlexText>
+              <AlexText component="div" sx={{
+                fontSize:{xs:22,sm:25},
+                fontWeight:750,
+                lineHeight:1.3,
+                letterSpacing:'-.01em',
+                color:'#08275B',
+                mt:.75,
+              }}>
+                {current.prompt}
+              </AlexText>
+            </AlexBox>
+
+            <AlexBox sx={{display:'grid',gap:.8,mt:1.5}}>
+              {current.options.map(option=><VocabularyChoiceRow
+                key={option}
+                label={option}
+                selected={selected===option}
+                disabled={answered&&selected!==option}
+                onClick={()=>void choose(option)}
+              />)}
+            </AlexBox>
+
+            {answered&&<AlexSurface sx={{
+              mt:1.5,p:1.5,border:'1px solid',borderColor:correct?'#B7DEC5':'#E9C5C1',
+              bgcolor:correct?'#F5FAF7':'#FFF8F7',
+            }}>
+              <AlexText sx={{fontSize:13.5,fontWeight:750,color:correct?'#177245':'#8E3932'}}>{correct?'Correct':'Not quite'}</AlexText>
+              {!correct&&<AlexText sx={{fontSize:13.5,color:'#344054',mt:.3}}>Correct answer: <b>{current.answer}</b></AlexText>}
+              <AlexText sx={{fontSize:12,color:'#667085',mt:.4}}>Source: {current.entry.sourceQuestionId}</AlexText>
+              {saveError&&<AlexText sx={{fontSize:12,color:'#A33A31',mt:.4}}>{saveError}</AlexText>}
+            </AlexSurface>}
+
+            <AlexBox sx={{display:'flex',justifyContent:'flex-end',mt:2}}>
+              <AlexButton disabled={!answered} onClick={next}>Next word</AlexButton>
+            </AlexBox>
+          </>}
     </AlexSurface>
   </PageShell>
 }
