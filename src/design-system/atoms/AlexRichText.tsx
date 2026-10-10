@@ -55,6 +55,96 @@ function renderMathAwareText(text:string,keyPrefix:string){
       continue
     }
 
+    // A dollar sign followed by an amount and a separator starts currency,
+    // not math. This check must precede searching for a closing '
+      pushText(currency)
+      cursor=dollar+currency.length
+      continue
+    }
+
+    const end=text.indexOf('$',dollar+1)
+    if(end<0){
+      pushText('$')
+      cursor=dollar+1
+      continue
+    }
+
+    const math=text.slice(dollar+1,end)
+    nodes.push(renderMath(math,false,`${keyPrefix}-math-${index++}`))
+    cursor=end+1
+  }
+
+  return nodes.length?nodes:[text]
+}
+
+export default function AlexRichText({text,className}:Props){
+  const nodes:ReactNode[]=[]
+  let cursor=0
+  let index=0
+  UNDERLINE_MARKUP.lastIndex=0
+
+  let match:RegExpExecArray|null
+  while((match=UNDERLINE_MARKUP.exec(text))!==null){
+    if(match.index>cursor){
+      nodes.push(<Fragment key={`text-${index}`}>{renderMathAwareText(text.slice(cursor,match.index),`text-${index}`)}</Fragment>)
+    }
+    nodes.push(<u className="rich-underline" key={`underline-${index}`}>{renderMathAwareText(match[1],`underline-${index}`)}</u>)
+    cursor=match.index+match[0].length
+    index++
+  }
+
+  if(cursor<text.length){
+    nodes.push(<Fragment key={`text-${index}`}>{renderMathAwareText(text.slice(cursor),`text-${index}`)}</Fragment>)
+  }
+
+  return <span className={className}>{nodes.length?nodes:renderMathAwareText(text,'text')}</span>
+}
+, otherwise
+    // "$25 and $30" could accidentally be interpreted as one math expression.
+    // "$25$" still renders as math because the next character is a closing '
+      pushText(currency)
+      cursor=dollar+currency.length
+      continue
+    }
+
+    const end=text.indexOf('$',dollar+1)
+    if(end<0){
+      pushText('$')
+      cursor=dollar+1
+      continue
+    }
+
+    const math=text.slice(dollar+1,end)
+    nodes.push(renderMath(math,false,`${keyPrefix}-math-${index++}`))
+    cursor=end+1
+  }
+
+  return nodes.length?nodes:[text]
+}
+
+export default function AlexRichText({text,className}:Props){
+  const nodes:ReactNode[]=[]
+  let cursor=0
+  let index=0
+  UNDERLINE_MARKUP.lastIndex=0
+
+  let match:RegExpExecArray|null
+  while((match=UNDERLINE_MARKUP.exec(text))!==null){
+    if(match.index>cursor){
+      nodes.push(<Fragment key={`text-${index}`}>{renderMathAwareText(text.slice(cursor,match.index),`text-${index}`)}</Fragment>)
+    }
+    nodes.push(<u className="rich-underline" key={`underline-${index}`}>{renderMathAwareText(match[1],`underline-${index}`)}</u>)
+    cursor=match.index+match[0].length
+    index++
+  }
+
+  if(cursor<text.length){
+    nodes.push(<Fragment key={`text-${index}`}>{renderMathAwareText(text.slice(cursor),`text-${index}`)}</Fragment>)
+  }
+
+  return <span className={className}>{nodes.length?nodes:renderMathAwareText(text,'text')}</span>
+}
+.
     const currency=currencyAt(text,dollar)
     if(currency){
       pushText(currency)
