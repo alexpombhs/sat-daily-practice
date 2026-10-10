@@ -118,9 +118,9 @@ export default function StudyPlanCalendar({sessions,attempts,settings,recommenda
         const title=[
           style.label,
           isExamDate?'Exam date':'',
-          day.practiced
+          day.questionCount>0
             ?`${day.questionCount}${day.targetQuestionCount>0?` of ${day.targetQuestionCount}`:''} questions`
-            :hasTrackedGoal?'No practice recorded':'',
+            :hasTrackedGoal?'0 questions · No practice recorded':'',
         ].filter(Boolean).join(' · ')
         return <AlexTooltip
           key={day.date}
@@ -140,7 +140,7 @@ export default function StudyPlanCalendar({sessions,attempts,settings,recommenda
             borderColor={style.border}
             textColor={day.status==='neutral'?'#7A8495':'#08275B'}
             isToday={isToday}
-            marker={day.practiced?'check':undefined}
+            marker={day.questionCount>0?'check':hasTrackedGoal&&day.status==='behind'?'close':undefined}
             tabIndex={0}
             title={title}
             aria-label={`${day.date}: ${title}`}
