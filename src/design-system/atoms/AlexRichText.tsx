@@ -12,19 +12,12 @@ function renderMath(math:string,displayMode:boolean,key:string){
   />
 }
 
-const NATURAL_LANGUAGE_WORD=/\b(?:a|an|and|at|by|each|for|from|in|is|of|on|or|per|purchase|than|that|the|to|was|were|with)\b/i
 const CURRENCY_AT_START=/^\$(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{1,2})?(?=$|[\s.,;:!?)\]}])/
 const UNDERLINE_MARKUP=/<u>([\s\S]*?)<\/u>/gi
 
 export function isLikelyMathToken(math:string,displayMode=false){
   if(displayMode)return true
-  const value=math.trim()
-  if(!value)return false
-  if(/\\[A-Za-z]+|[=<>^_{}]|[+*/]|[≤≥≈≠±×÷√∞π]/.test(value))return true
-  if(NATURAL_LANGUAGE_WORD.test(value))return false
-  const plainWords=value.match(/[A-Za-z]{2,}/g)??[]
-  if(plainWords.some(word=>word===word.toLowerCase()&&!/^(sin|cos|tan|log|ln|max|min)$/i.test(word)))return false
-  return /^[A-Za-z0-9\s.,:;()\[\]|'′″%\-]+$/.test(value)
+  return math.trim().length>0
 }
 
 function currencyAt(text:string,index:number){
