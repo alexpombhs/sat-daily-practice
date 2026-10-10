@@ -77,14 +77,8 @@ function renderMathAwareText(text:string,keyPrefix:string){
     }
 
     const math=text.slice(dollar+1,end)
-    if(isLikelyMathToken(math,false)){
-      nodes.push(renderMath(math,false,`${keyPrefix}-math-${index++}`))
-      cursor=end+1
-      continue
-    }
-
-    pushText('$')
-    cursor=dollar+1
+    nodes.push(renderMath(math,false,`${keyPrefix}-math-${index++}`))
+    cursor=end+1
   }
 
   return nodes.length?nodes:[text]
