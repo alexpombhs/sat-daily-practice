@@ -90,7 +90,7 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
         }
         if(cancelled)return
 
-        const sharedHasText=Boolean(shared?.questionLines.length)
+        const sharedHasText=Boolean(shared?.questionLines.length)&&!(question.id==='practice-test-6:math2-26'&&shared?.questionLines.some(line=>/no test material on this page/i.test(line)))
         const verifiedHasText=Boolean(verified?.lines?.length)
         const localHasText=Boolean(local?.questionLines.length)
         const questionLines=sharedHasText?shared!.questionLines:verifiedHasText?verified!.lines:local?.questionLines??[]

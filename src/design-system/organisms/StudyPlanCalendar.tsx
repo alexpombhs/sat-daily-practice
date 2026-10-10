@@ -140,13 +140,7 @@ export default function StudyPlanCalendar({sessions,attempts,settings,recommenda
             borderColor={style.border}
             textColor={day.status==='neutral'?'#7A8495':'#08275B'}
             isToday={isToday}
-            marker={
-              day.status==='ahead'||day.status==='on-track'
-                ?'check'
-                :hasTrackedGoal&&day.status==='behind'
-                  ?'close'
-                  :undefined
-            }
+            marker={day.practiced?'check':undefined}
             tabIndex={0}
             title={title}
             aria-label={`${day.date}: ${title}`}

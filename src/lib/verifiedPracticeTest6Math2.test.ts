@@ -2,6 +2,12 @@ import {describe,expect,it} from 'vitest'
 import {verifiedPracticeTest6Math2Content} from './verifiedPracticeTest6Math2'
 
 describe('Practice Test 6 Math Module 2 verified repairs',()=>{
+  it('provides question 26 text and requires its graph',()=>{
+    const content=verifiedPracticeTest6Math2Content(26)
+    expect(content?.lines).toHaveLength(5)
+    expect(content?.lines[0]).toContain('Data set')
+    expect(content?.needsVisual).toBe(true)
+  })
   it('preserves the exact geometry notation for question 25',()=>{
     const content=verifiedPracticeTest6Math2Content(25)
     expect(content).toBeTruthy()

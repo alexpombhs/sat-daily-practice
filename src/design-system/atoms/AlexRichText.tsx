@@ -77,7 +77,7 @@ function renderMathAwareText(text:string,keyPrefix:string){
     }
 
     const math=text.slice(dollar+1,end)
-    if(isLikelyMathToken(math,false)){
+    if(math.trim()){
       nodes.push(renderMath(math,false,`${keyPrefix}-math-${index++}`))
       cursor=end+1
       continue

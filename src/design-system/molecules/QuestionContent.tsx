@@ -99,7 +99,7 @@ export default function QuestionContent({question,bytes,alt,showOriginalLayout=t
                 ?verifiedPracticeTest7Math2Content(question.number)
                 :undefined
             :undefined
-        const sharedHasText=Boolean(shared?.questionLines.length)
+        const sharedHasText=Boolean(shared?.questionLines.length)&&!(question.id==='practice-test-6:math2-26'&&shared?.questionLines.some(line=>/no test material on this page/i.test(line)))
         const sharedControlsVisual=Boolean(shared&&shared.contentStatus!=='metadata'&&!(verifiedBundled&&!sharedHasText))
         const sharedVisuals=shared?.visualSpecs??[]
         const hasRequiredBundledVisuals=question.id==='practice-test-5:math1-16'
