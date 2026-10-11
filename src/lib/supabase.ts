@@ -55,12 +55,13 @@ export async function joinLaunchWaitlist(email:string,birthDate:string,captchaTo
   if(error||!data||data.message!=='Waitlist request received.')throw new Error(data?.message??'Unable to join waitlist.')
 }
 
-export async function signUpWithPassword(email:string,password:string,birthDate:string){
+export async function signUpWithPassword(email:string,password:string,birthDate:string,captchaToken:string){
+  if(!captchaToken)throw new Error('Complete the security check.')
   if(!supabase)throw new Error('Supabase is not configured.')
   const {data,error}=await supabase.auth.signUp({
     email:email.trim(),
     password,
-    options:{emailRedirectTo:window.location.origin,data:{sat_signup_birth_date:birthDate}},
+    options:{emailRedirectTo:window.location.origin,captchaToken,data:{sat_signup_birth_date:birthDate}},
   })
   if(error)throw error
   return {user:toAuthUser(data.user),needsEmailConfirmation:!data.session}
