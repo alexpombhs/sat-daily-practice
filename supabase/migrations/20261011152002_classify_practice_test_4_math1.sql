@@ -1,5 +1,4 @@
-insert into public.sat_question_difficulty(question_id,difficulty,concepts,reasoning_steps,integration_level,confidence,rubric_version)
-select v.* from (values
+insert into public.sat_question_difficulty(question_id,difficulty,concepts,reasoning_steps,integration_level,confidence,rubric_version) values
 ('math1-1','easy','["bar graph reading","categorical frequency"]'::jsonb,1,'low',0.77,'content-rubric-v1'),
 ('math1-2','easy','["percent as part of whole","fraction-to-percent conversion"]'::jsonb,1,'low',0.98,'content-rubric-v1'),
 ('math1-3','easy','["square equations","square roots","isolating a variable"]'::jsonb,2,'low',0.96,'content-rubric-v1'),
@@ -27,7 +26,4 @@ select v.* from (values
 ('math1-25','medium','["45-45-90 triangles","radicals","perimeter"]'::jsonb,3,'medium',0.97,'content-rubric-v1'),
 ('math1-26','advanced','["vertex form","quadratic sign constraints","evaluate quadratic at x equals one","feasible parameter reasoning"]'::jsonb,5,'high',0.91,'content-rubric-v1'),
 ('math1-27','advanced','["exponential function intercept","systems of parameter constraints","product relationships","rational algebra"]'::jsonb,5,'high',0.94,'content-rubric-v1')
-) as v(question_id,difficulty,concepts,reasoning_steps,integration_level,confidence,rubric_version)
-join public.sat_question_bank b on b.id=v.question_id and b.practice_test_id='practice-test-4' and b.module='math1'
-where jsonb_array_length(coalesce(b.question_lines,'[]'::jsonb))>0
-on conflict (question_id) do nothing;
+on conflict(question_id) do nothing;

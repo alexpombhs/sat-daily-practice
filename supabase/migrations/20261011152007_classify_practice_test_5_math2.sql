@@ -1,5 +1,4 @@
-insert into public.sat_question_difficulty(question_id,difficulty,concepts,reasoning_steps,integration_level,confidence,rubric_version)
-select v.* from (values
+insert into public.sat_question_difficulty(question_id,difficulty,concepts,reasoning_steps,integration_level,confidence,rubric_version) values
 ('practice-test-5:math2-1','easy','["percent of whole","arithmetic multiplication"]'::jsonb,1,'low',0.99,'content-rubric-v1'),
 ('practice-test-5:math2-2','easy','["graphical function lookup","temperature and pressure units"]'::jsonb,1,'low',0.73,'content-rubric-v1'),
 ('practice-test-5:math2-3','easy','["evaluate linear function","integer arithmetic"]'::jsonb,1,'low',0.99,'content-rubric-v1'),
@@ -10,7 +9,7 @@ select v.* from (values
 ('practice-test-5:math2-8','easy','["slope-intercept form","y intercept"]'::jsonb,1,'low',0.98,'content-rubric-v1'),
 ('practice-test-5:math2-9','medium','["graph intercept","physical interpretation","quadratic height function"]'::jsonb,2,'medium',0.73,'content-rubric-v1'),
 ('practice-test-5:math2-10','easy','["function notation","units in context","kinetic-energy expression"]'::jsonb,2,'low',0.98,'content-rubric-v1'),
-('practice-test-5:math2-11','medium','["scatterplot residuals","prediction versus observation","count points above trend line"]'::jsonb,3,'medium',0.7,'content-rubric-v1'),
+('practice-test-5:math2-11','medium','["scatterplot residuals","prediction versus observation","count points above trend line"]'::jsonb,3,'medium',0.70,'content-rubric-v1'),
 ('practice-test-5:math2-12','medium','["mutually exclusive probabilities","complement rule","count estimation"]'::jsonb,3,'medium',0.98,'content-rubric-v1'),
 ('practice-test-5:math2-13','medium','["linear expressions","distribution and combination","identify slope"]'::jsonb,3,'medium',0.98,'content-rubric-v1'),
 ('practice-test-5:math2-14','medium','["cube geometry","surface area","missing face"]'::jsonb,3,'medium',0.97,'content-rubric-v1'),
@@ -27,7 +26,4 @@ select v.* from (values
 ('practice-test-5:math2-25','advanced','["exponential growth","time-unit conversion","interpretation of exponent"]'::jsonb,4,'high',0.94,'content-rubric-v1'),
 ('practice-test-5:math2-26','advanced','["circle radius","perpendicular tangent slope","two-point line equation"]'::jsonb,5,'high',0.95,'content-rubric-v1'),
 ('practice-test-5:math2-27','advanced','["area scaling","ratios of square areas","electric flux definition","proportional allocation"]'::jsonb,5,'high',0.94,'content-rubric-v1')
-) as v(question_id,difficulty,concepts,reasoning_steps,integration_level,confidence,rubric_version)
-join public.sat_question_bank b on b.id=v.question_id and b.practice_test_id='practice-test-5' and b.module='math2'
-where jsonb_array_length(coalesce(b.question_lines,'[]'::jsonb))>0
-on conflict (question_id) do nothing;
+on conflict(question_id) do nothing;

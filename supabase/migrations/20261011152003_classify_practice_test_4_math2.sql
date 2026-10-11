@@ -1,5 +1,4 @@
-insert into public.sat_question_difficulty(question_id,difficulty,concepts,reasoning_steps,integration_level,confidence,rubric_version)
-select v.* from (values
+insert into public.sat_question_difficulty(question_id,difficulty,concepts,reasoning_steps,integration_level,confidence,rubric_version) values
 ('math2-1','easy','["line graph reading","maximum of a time series"]'::jsonb,1,'low',0.73,'content-rubric-v1'),
 ('math2-2','easy','["unit conversions","division with large numbers"]'::jsonb,2,'low',0.98,'content-rubric-v1'),
 ('math2-3','easy','["combining like terms","polynomial exponents"]'::jsonb,1,'low',0.98,'content-rubric-v1'),
@@ -27,7 +26,4 @@ select v.* from (values
 ('math2-25','medium','["circle equation","vertical translation","center coordinates"]'::jsonb,3,'medium',0.96,'content-rubric-v1'),
 ('math2-26','advanced','["surface area of rectangular prisms","composite solids","symbolic equation from ratios","nonlinear solving"]'::jsonb,5,'high',0.97,'content-rubric-v1'),
 ('math2-27','medium','["percent increase","relative change","reverse proportional reasoning"]'::jsonb,2,'medium',0.95,'content-rubric-v1')
-) as v(question_id,difficulty,concepts,reasoning_steps,integration_level,confidence,rubric_version)
-join public.sat_question_bank b on b.id=v.question_id and b.practice_test_id='practice-test-4' and b.module='math2'
-where jsonb_array_length(coalesce(b.question_lines,'[]'::jsonb))>0
-on conflict (question_id) do nothing;
+on conflict(question_id) do nothing;

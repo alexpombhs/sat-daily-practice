@@ -1,6 +1,5 @@
-insert into public.sat_question_difficulty(question_id,difficulty,concepts,reasoning_steps,integration_level,confidence,rubric_version)
-select v.* from (values
-('practice-test-5:math1-1','medium','["graphing nonlinear and linear systems","intersection coordinate reading"]'::jsonb,2,'medium',0.7,'content-rubric-v1'),
+insert into public.sat_question_difficulty(question_id,difficulty,concepts,reasoning_steps,integration_level,confidence,rubric_version) values
+('practice-test-5:math1-1','medium','["graphing nonlinear and linear systems","intersection coordinate reading"]'::jsonb,2,'medium',0.70,'content-rubric-v1'),
 ('practice-test-5:math1-2','easy','["linear growth","arithmetic rate","elapsed days"]'::jsonb,2,'low',0.97,'content-rubric-v1'),
 ('practice-test-5:math1-3','easy','["linear graph","y intercept"]'::jsonb,1,'low',0.73,'content-rubric-v1'),
 ('practice-test-5:math1-4','easy','["linear system substitution","ordered-pair conventions"]'::jsonb,2,'low',0.97,'content-rubric-v1'),
@@ -27,7 +26,4 @@ select v.* from (values
 ('practice-test-5:math1-25','medium','["percent increase exceeding one hundred percent","inverse calculation"]'::jsonb,2,'medium',0.97,'content-rubric-v1'),
 ('practice-test-5:math1-26','advanced','["factored quadratic from zeros","coefficient comparison","integer restrictions","possible parameter values"]'::jsonb,4,'high',0.95,'content-rubric-v1'),
 ('practice-test-5:math1-27','advanced','["polynomial roots with multiplicity","composite argument","enumeration and sum of solutions"]'::jsonb,4,'high',0.96,'content-rubric-v1')
-) as v(question_id,difficulty,concepts,reasoning_steps,integration_level,confidence,rubric_version)
-join public.sat_question_bank b on b.id=v.question_id and b.practice_test_id='practice-test-5' and b.module='math1'
-where jsonb_array_length(coalesce(b.question_lines,'[]'::jsonb))>0
-on conflict (question_id) do nothing;
+on conflict(question_id) do nothing;

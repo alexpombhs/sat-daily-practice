@@ -1,5 +1,4 @@
-insert into public.sat_question_difficulty(question_id,difficulty,concepts,reasoning_steps,integration_level,confidence,rubric_version)
-select v.* from (values
+insert into public.sat_question_difficulty(question_id,difficulty,concepts,reasoning_steps,integration_level,confidence,rubric_version) values
 ('practice-test-5:rw1-1','easy','["vocabulary in context","figurative word sense"]'::jsonb,2,'low',0.95,'content-rubric-v1'),
 ('practice-test-5:rw1-2','easy','["context clues","precise adjective selection"]'::jsonb,1,'low',0.98,'content-rubric-v1'),
 ('practice-test-5:rw1-3','medium','["temporal cues","precise academic vocabulary","scientific prediction"]'::jsonb,2,'medium',0.95,'content-rubric-v1'),
@@ -33,7 +32,4 @@ select v.* from (values
 ('practice-test-5:rw1-31','easy','["synthesis of notes","relevant facts","identifying person"]'::jsonb,2,'low',0.98,'content-rubric-v1'),
 ('practice-test-5:rw1-32','medium','["synthesis of notes","mechanistic explanation","process sequencing"]'::jsonb,3,'medium',0.96,'content-rubric-v1'),
 ('practice-test-5:rw1-33','easy','["synthesis of notes","formal category definitions","direct inference"]'::jsonb,2,'low',0.98,'content-rubric-v1')
-) as v(question_id,difficulty,concepts,reasoning_steps,integration_level,confidence,rubric_version)
-join public.sat_question_bank b on b.id=v.question_id and b.practice_test_id='practice-test-5' and b.module='rw1'
-where jsonb_array_length(coalesce(b.question_lines,'[]'::jsonb))>0
-on conflict (question_id) do nothing;
+on conflict(question_id) do nothing;
