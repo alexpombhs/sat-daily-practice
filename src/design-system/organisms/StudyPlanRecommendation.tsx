@@ -22,6 +22,8 @@ function RecommendationBody({recommendation,compact}:{recommendation:PracticePla
       </AlexText>}
     </AlexBox>
 
+    {!complete&&recommendation.estimatedSessionMinutes>recommendation.estimatedDailyMinutes&&<AlexText sx={{mt:.6,fontSize:12.75,color:'#667085'}}>A flexible daily time target; a full session may take about {recommendation.estimatedSessionMinutes} minutes at your current pace.</AlexText>}
+
     {!complete&&recommendation.focusLabel&&recommendation.focusSharePercent&&
       <AlexText sx={{mt:1.25,fontSize:13.5,lineHeight:1.5,color:'#344054'}}>
         Focus about {recommendation.focusSharePercent}% of targeted work on <b>{recommendation.focusLabel}</b>, and use the rest for mixed practice.
@@ -60,7 +62,7 @@ export default function StudyPlanRecommendation({recommendation,compact=false}:P
   return <SectionPanel
     eyebrow="Daily plan"
     title="Recommended daily practice"
-    description="Based on your exam date, current practice pace, question coverage, and score goal."
+    description="A manageable daily target based on your practice pace and goals. Adding more questions does not automatically increase your daily workload."
     tone="accent"
   >
     <RecommendationBody recommendation={recommendation} compact={false}/>
