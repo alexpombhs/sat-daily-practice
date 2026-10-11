@@ -73,3 +73,20 @@ Invoke by trusted operator action only. Send one queued invitation per invocatio
 
 ## Current verification status
 At first live inspection, project `gnhmfhvvirpgawijsrej` has two confirmed users, none of the PR #57 migrations installed, and Supabase security advisor flags leaked-password protection as disabled.
+
+## Prepaid early-adopter access (PayPal / Venmo / other)
+Students **do not enter a payment account, transaction screenshot, or personal payment details inside the app**. An eligible adult/business operator handles payment arrangements and verifies receipt using the provider's official records. Do not publish personal Venmo/PayPal handles aimed at minors or treat an unverified payment message as proof of payment. Follow provider age rules and applicable commercial/privacy laws.
+
+After a confirmed, non-duplicate payment, the operator invokes `sat-issue-prepaid-code` with the private `LA_OPERATOR_SECRET` header and JSON:
+```json
+{"provider":"paypal","paymentReference":"verified-provider-transaction-id","operator":"Authorized operator"}
+```
+Use `venmo` or `other` as appropriate. The response contains one human-readable `SAT-XXXXXX-XXXXXX-XXXXXX` code, **shown only once**. Deliver it to the payer using an approved private channel. The database retains only a salted-independent SHA-256 digest of the high-entropy token, issuing metadata and the associated payment reference. A duplicate payment reference is rejected.
+
+The user signs in to **their own account**, enters the code on the Account page, and gets 90 days of Plus access. The code cannot be reused, is initially redeemable for 90 days after issuance, and **does not automatically renew**. An additional purchased code adds 90 days after any existing active pass expires.
+
+The code issuance tool is intentionally not exposed to regular users or browsers. The operator should define refund, dispute, transaction retention, and manual revocation procedures before opening paid access. The code workflow complements (but does not require) the Stripe hosted checkout; keep Stripe disabled if only prepaid codes are offered.
+
+## Session separation across environments
+Localhost and the published GitHub Pages URL are different browser origins. Supabase Auth already stores sessions per browser origin; the app additionally assigns an explicit origin-scoped storage key. **Both still connect to the same production Supabase project** unless you set a different `VITE_SUPABASE_URL` and publishable key for local development. Account credentials, profiles and practice history belong to the same backend account when you sign in as the same person on both; sign in using two different existing accounts to maintain independent progress. A separate Supabase staging project is recommended for development data isolation.
+
