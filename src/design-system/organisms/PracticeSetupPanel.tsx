@@ -60,6 +60,18 @@ export default function PracticeSetupPanel({settings,practiceTests,newQuestionCo
     />
 
     <PracticeSettingField
+      label="Question difficulty"
+      helperText="Difficulty is provisionally estimated from question position within each module, not an official College Board label. Choose Hard or Advanced to focus your practice."
+      control={<AlexDropdown
+        id="practice-difficulty"
+        label="Question difficulty"
+        value={settings.difficulty??'all'}
+        options={[{value:'all',label:'All difficulties'},{value:'easy',label:'Easy only'},{value:'medium',label:'Medium only'},{value:'hard',label:'Hard only'},{value:'advanced',label:'Advanced only'}]}
+        onChange={difficulty=>onChange({...settings,difficulty})}
+      />}
+    />
+
+    <PracticeSettingField
       label="Questions per session"
       helperText="Up to this many eligible questions will be included."
       control={<AlexNumberField fullWidth label="Questions per session" value={settings.questionsPerSession} min={1} max={30} onChange={questionsPerSession=>onChange({...settings,questionsPerSession})}/>}
