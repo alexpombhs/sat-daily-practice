@@ -58,8 +58,9 @@ export async function loadSharedQuestionBank():Promise<PracticeQuestion[]|null>{
   if(error)throw error
   const {data:difficultyRows,error:difficultyError}=await supabase
     .from('sat_question_difficulty').select('question_id,difficulty')
-  if(difficultyError)throw difficultyError
-  const difficulties=new Map((difficultyRows??[]).map(row=>[row.question_id,row.difficulty]))
+  // Public question content remains available when optional difficulty metadata is restricted.
+  if(difficultyError)console.warn('Difficulty metadata unavailable; continuing with shared questions.',difficultyError)
+  const difficulties=new Map((difficultyError?[]:difficultyRows??[]).map(row=>[row.question_id,row.difficulty]))
   const remote=(data??[]).filter(row=>idMatchesPracticeTest(row.id,row.practice_test_id)).map(row=>({
     id:row.id,
     difficulty:difficulties.get(row.id) as PracticeQuestion['difficulty'],
