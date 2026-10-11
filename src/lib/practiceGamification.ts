@@ -1,7 +1,7 @@
 import {QUESTION_BANK} from './questionBank'
 import {buildPerformanceAnalytics,type PerformanceAnalytics} from './performanceAnalytics'
 import {failedQuestionIds} from './questionMastery'
-import type {Attempt,PracticeQuestion,SessionSummary,Settings} from '../types'
+import type {Attempt,PracticeQuestion,QuestionDifficulty,SessionSummary,Settings} from '../types'
 
 export type PerformanceSummary=PerformanceAnalytics
 export type SessionMetrics={accuracy:number;averageMs:number;correct:number;total:number}
@@ -17,10 +17,24 @@ function attemptedQuestionIds(attempts:Attempt[]){
 
 function failedRecoveryTarget(settings:Settings){return Math.max(1,Math.min(5,settings.failedRecoveryCorrectAnswers??2))}
 
+// Only content-reviewed ratings stored in the canonical database are eligible.
+// Unreviewed questions remain available when all difficulties are selected.
+export function questionDifficulty(question:PracticeQuestion):QuestionDifficulty|undefined{
+  return question.difficulty
+}
+
+export function selectedDifficultyLevels(settings:Settings):QuestionDifficulty[]{
+  if(settings.difficultyLevels!==undefined)return settings.difficultyLevels
+  return settings.difficulty&&settings.difficulty!=='all'?[settings.difficulty]:['easy','medium','advanced']
+}
+
 function eligibleQuestions(settings:Settings,questions:PracticeQuestion[]){
+  const levels=selectedDifficultyLevels(settings)
+  const includeAll=settings.difficultyLevels===undefined&&(settings.difficulty??'all')==='all'
   return questions.filter(question=>
     (settings.mode==='both'||question.subject===settings.mode)&&
-    ((settings.practiceTest??'all')==='all'||question.practiceTestId===settings.practiceTest)
+    ((settings.practiceTest??'all')==='all'||question.practiceTestId===settings.practiceTest)&&
+    (includeAll||(question.difficulty!==undefined&&levels.includes(question.difficulty)))
   )
 }
 
@@ -35,6 +49,16 @@ export function practiceQuestionPool(settings:Settings,attempts:Attempt[],questi
     return pool.filter(question=>!attemptedIds.has(question.id))
   }
   return pool
+}
+
+export function countDifficultyQuestions(settings:Settings,questions:PracticeQuestion[]=QUESTION_BANK){
+  const scoped=eligibleQuestions({...settings,difficulty:'all',difficultyLevels:undefined},questions)
+  return {
+    all:scoped.length,
+    easy:scoped.filter(q=>q.difficulty==='easy').length,
+    medium:scoped.filter(q=>q.difficulty==='medium').length,
+    advanced:scoped.filter(q=>q.difficulty==='advanced').length,
+  }
 }
 
 export function countNewPracticeQuestions(settings:Settings,attempts:Attempt[],questions:PracticeQuestion[]=QUESTION_BANK){
@@ -67,7 +91,7 @@ export function choosePracticeQuestions(settings:Settings,attempts:Attempt[],ran
   }).sort((a,b)=>b.score-a.score).slice(0,limit).map(item=>item.question)
 }
 
-export function summarizePerformance(attempts:Attempt[],sessions:SessionSummary[],totalQuestions:number):PerformanceSummary{return buildPerformanceAnalytics(attempts,sessions,totalQuestions)}
+export function summarizePerformance(attempts:Attempt[],sessions:SessionSummary[],totalQuestions:number,questions:PracticeQuestion[]=QUESTION_BANK):PerformanceSummary{return buildPerformanceAnalytics(attempts,sessions,totalQuestions,questions)}
 export function summarizeSession(attempts:Attempt[]):SessionMetrics{
   const correct=attempts.filter(attempt=>attempt.correct).length
   return{accuracy:attempts.length?Math.round(100*correct/attempts.length):0,averageMs:attempts.length?attempts.reduce((sum,attempt)=>sum+attempt.elapsedMs,0)/attempts.length:0,correct,total:attempts.length}

@@ -10,6 +10,7 @@ import {dashboardTypography} from '../theme'
 type Props={
   accuracy:number|null
   estimatedScore:number|null
+  scoreBreakdown:{english:{score:number;probability:number;questions:number}|null;math:{score:number;probability:number;questions:number}|null;change:number|null}|null
   nationalMeritChance:number|null
   projectedSelectionIndex:number|null
   estimateConfidence:{label:string;within80:number;sigmaPoints:number}|null
@@ -21,7 +22,7 @@ type Props={
 }
 
 export default function StudyPlanHero({
-  accuracy,estimatedScore,nationalMeritChance,projectedSelectionIndex,estimateConfidence,targetScore,daysRemaining,questionsPerSession,
+  accuracy,estimatedScore,scoreBreakdown,nationalMeritChance,projectedSelectionIndex,estimateConfidence,targetScore,daysRemaining,questionsPerSession,
   onChoosePracticeTest,onStartPractice,
 }:Props){
   return <AlexSurface
@@ -69,7 +70,14 @@ export default function StudyPlanHero({
           <AlexInfoTooltipButton
             label="Score estimate information"
             title={<>
-              <b>National Merit outlook</b><br/>
+              <b>Score calculation</b><br/>
+              {scoreBreakdown?.english&&scoreBreakdown.math?<>
+                Reading &amp; Writing: {scoreBreakdown.english.score} ({scoreBreakdown.english.probability}% estimated correct across {scoreBreakdown.english.questions} recent distinct questions).<br/>
+                Math: {scoreBreakdown.math.score} ({scoreBreakdown.math.probability}% estimated correct across {scoreBreakdown.math.questions} recent distinct questions).<br/>
+                Total: {estimatedScore}. Each question’s probability incorporates its earlier answers, weighted toward more recent attempts.<br/>
+                {scoreBreakdown.change!==null&&<>Change since previous completed session: {scoreBreakdown.change>0?'+':''}{scoreBreakdown.change} points.<br/></>}
+              </>:<>Complete questions in both sections to see a breakdown.<br/></>}
+              <br/><b>National Merit outlook</b><br/>
               {nationalMeritChance!==null
                 ?`${nationalMeritChance}% estimated qualifying outlook${projectedSelectionIndex!==null?` · projected Selection Index ~${projectedSelectionIndex}`:''}.`
                 :'The National Merit outlook is still calibrating.'}
@@ -85,6 +93,14 @@ export default function StudyPlanHero({
           />
         </AlexBox>}
         subtitle={<AlexBox sx={{minWidth:0,pr:{xs:7,sm:8}}}>
+          <AlexBox sx={{display:'flex',flexWrap:'wrap',alignItems:'center',columnGap:{xs:1,sm:1.5},rowGap:.25,mb:.3}}>
+            <AlexText sx={{fontSize:'inherit',fontWeight:800,color:'inherit',whiteSpace:'nowrap'}}>
+              Reading &amp; Writing {estimatedScore!==null&&scoreBreakdown?.english?scoreBreakdown.english.score:'—'}
+            </AlexText>
+            <AlexText sx={{fontSize:'inherit',fontWeight:800,color:'inherit',whiteSpace:'nowrap'}}>
+              Math {estimatedScore!==null&&scoreBreakdown?.math?scoreBreakdown.math.score:'—'}
+            </AlexText>
+          </AlexBox>
           <AlexText sx={{fontSize:'inherit',color:'inherit',minWidth:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
             {nationalMeritChance!==null
               ?`${nationalMeritChance}% National Merit outlook${projectedSelectionIndex!==null?` · SI ~${projectedSelectionIndex}`:''}`

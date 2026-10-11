@@ -5,18 +5,20 @@ import AlexDropdown from '../atoms/AlexDropdown'
 import AlexNumberField from '../atoms/AlexNumberField'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexSwitch from '../atoms/AlexSwitch'
+import AlexCheckbox from '../atoms/AlexCheckbox'
 import AlexText from '../atoms/AlexText'
 import PracticeGoalSettings from '../molecules/PracticeGoalSettings'
 import PracticeSettingField from '../molecules/PracticeSettingField'
 import StudyPlanRecommendation from './StudyPlanRecommendation'
 import type {PracticePlanRecommendation} from '../../lib/practicePlan'
-import type {PracticeTestFilter,Settings} from '../../types'
+import type {PracticeTestFilter,QuestionDifficulty,Settings} from '../../types'
 
 type PracticeTestOption={value:PracticeTestFilter;label:string}
 
 type Props={
   settings:Settings
   practiceTests:PracticeTestOption[]
+  difficultyCounts:{all:number;easy:number;medium:number;advanced:number}
   newQuestionCount:number
   failedQuestionCount:number
   onChange:(settings:Settings)=>void
@@ -24,7 +26,14 @@ type Props={
   recommendation:PracticePlanRecommendation
 }
 
-export default function PracticeSetupPanel({settings,practiceTests,newQuestionCount,failedQuestionCount,onChange,onStart,recommendation}:Props){
+export default function PracticeSetupPanel({settings,practiceTests,difficultyCounts,newQuestionCount,failedQuestionCount,onChange,onStart,recommendation}:Props){
+  const difficultyLevels=settings.difficultyLevels??(settings.difficulty&&settings.difficulty!=='all'?[settings.difficulty]:['easy','medium','advanced'] as QuestionDifficulty[])
+  const difficultyAll=difficultyLevels.length===3
+  const filteredDifficultyCount=difficultyAll?difficultyCounts.all:difficultyLevels.reduce((sum,level)=>sum+difficultyCounts[level],0)
+  const setDifficultyLevel=(level:QuestionDifficulty,checked:boolean)=>{
+    const updated=checked?[...new Set([...difficultyLevels,level])]:difficultyLevels.filter(item=>item!==level)
+    onChange({...settings,difficulty:'all',difficultyLevels:updated})
+  }
   const selectionMode=settings.selectionMode??'adaptive'
   const practiceTest=settings.practiceTest??'all'
   const newOnly=settings.failedOnly??false
@@ -35,7 +44,7 @@ export default function PracticeSetupPanel({settings,practiceTests,newQuestionCo
     ?`${recommendation.estimatedDailyMinutes} min/day`
     :'On track'
 
-  return <AlexSurface sx={{width:'100%',maxWidth:860,p:{xs:1.6,sm:2.25,md:3.5},borderRadius:3,border:'1px solid #E4E7EC'}}>
+  return <AlexSurface sx={{width:'100%',maxWidth:1100,p:{xs:1.6,sm:2.25,md:3.5},borderRadius:3,border:'1px solid #E4E7EC'}}>
     <AlexBox sx={{display:'grid',gap:.5,mb:2}}>
       <AlexText component="h2" sx={{fontFamily:'Georgia, "Times New Roman", serif',fontSize:{xs:22,sm:24},fontWeight:500,color:'#08275B'}}>Practice setup</AlexText>
       <AlexText sx={{fontSize:14,color:'#667085',lineHeight:1.5}}>Choose what to practice and how long each session should be.</AlexText>
@@ -57,6 +66,17 @@ export default function PracticeSetupPanel({settings,practiceTests,newQuestionCo
       label="Question selection"
       helperText="Adaptive prioritizes unseen and weaker questions."
       control={<AlexDropdown id="practice-selection-mode" label="Selection mode" value={selectionMode} options={[{value:'adaptive',label:'Adaptive'},{value:'random',label:'Random'}]} onChange={value=>onChange({...settings,selectionMode:value})}/>}
+    />
+
+    <PracticeSettingField
+      label="Question difficulty"
+      helperText={`${filteredDifficultyCount} question${filteredDifficultyCount===1?'':'s'} match the current practice test, subject, and difficulty filters.`}
+      control={<AlexBox sx={{display:'flex',flexWrap:{xs:'wrap',md:'nowrap'},gap:{xs:0,sm:.5},alignItems:'center',justifyContent:'space-between'}}>
+        <AlexCheckbox label="All" checked={difficultyAll} onChange={checked=>onChange({...settings,difficulty:'all',difficultyLevels:checked?['easy','medium','advanced']:[]})}/>
+        {(['easy','medium','advanced'] as QuestionDifficulty[]).map(level=>
+          <AlexCheckbox key={level} checked={difficultyLevels.includes(level)} onChange={checked=>setDifficultyLevel(level,checked)} label={level[0].toUpperCase()+level.slice(1)}/>
+        )}
+      </AlexBox>}
     />
 
     <PracticeSettingField

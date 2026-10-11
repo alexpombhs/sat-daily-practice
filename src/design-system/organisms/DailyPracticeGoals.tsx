@@ -36,6 +36,7 @@ export default function DailyPracticeGoals({attempts,sessions,dailyQuestions,dai
   const questionsDone=todayAttempts.length
   const reviewedFailedQuestionIds=new Set<string>()
   const masteryByQuestion=new Map<string,{failed:boolean;correctAfterFailure:number}>()
+  const previouslyFailedIds=new Set<string>()
   const orderedAttempts=attempts
     .map((attempt,index)=>({attempt,index}))
     .sort((a,b)=>a.attempt.createdAt.localeCompare(b.attempt.createdAt)||a.index-b.index)
@@ -46,11 +47,15 @@ export default function DailyPracticeGoals({attempts,sessions,dailyQuestions,dai
     // A failed-question review counts when the question was already in the
     // failed pool before today's attempt, regardless of whether this retry
     // is answered correctly.
-    if(localDayKey(attempt.createdAt)===todayKey&&mastery.failed){
+    // Older sessions may have lost their failed-only setting at completion.
+    // Their prior incorrect answers still establish review credit, even when
+    // the question has since reached mastery and left the failed pool.
+    if(localDayKey(attempt.createdAt)===todayKey&&(mastery.failed||previouslyFailedIds.has(attempt.questionId))){
       reviewedFailedQuestionIds.add(attempt.questionId)
     }
 
     if(!attempt.correct){
+      previouslyFailedIds.add(attempt.questionId)
       mastery.failed=true
       mastery.correctAfterFailure=0
     }else if(mastery.failed){
@@ -62,8 +67,20 @@ export default function DailyPracticeGoals({attempts,sessions,dailyQuestions,dai
     masteryByQuestion.set(attempt.questionId,mastery)
   })
 
+  // Completed failed-only sessions are authoritative evidence that these
+  // questions were reviewed while they were still in the failed pool. Keep
+  // this credit even if correct answers remove them from the live pool.
+  sessions.forEach(session=>{
+    if(!session.settings?.failedEverOnly)return
+    const sessionAttempts=attempts.filter(attempt=>attempt.sessionId===session.id)
+    sessionAttempts.forEach(attempt=>{
+      if(localDayKey(attempt.createdAt)===todayKey)reviewedFailedQuestionIds.add(attempt.questionId)
+    })
+  })
+
   const reviewedFailedCount=reviewedFailedQuestionIds.size
   const reviewedFailedToday=reviewedFailedCount>0
+  const failedGoalDenominator=Math.max(failedQuestionCount,reviewedFailedCount)
   const minutesDone=Math.round(todayAttempts.reduce((total,attempt)=>total+attempt.elapsedMs,0)/60000)
   const questionTarget=Math.max(1,dailyQuestions)
   const minuteTarget=Math.max(1,dailyMinutes)
@@ -83,7 +100,7 @@ export default function DailyPracticeGoals({attempts,sessions,dailyQuestions,dai
   const goals=[
     {label:'Practice questions',value:`${questionsDone}/${questionTarget}`},
     {label:'Practice time',value:`${minutesDone}/${minuteTarget} min`},
-    {label:'Review failed questions',value:failedQuestionCount?`${reviewedFailedCount}/${failedQuestionCount}`:'Clear'},
+    {label:'Review failed questions',value:failedGoalDenominator?`${reviewedFailedCount}/${failedGoalDenominator}`:'Clear'},
   ]
   const weeklyQuestions=attempts.filter(attempt=>new Date(attempt.createdAt)>=weekStart).length
   const weeklyMinutes=Math.round(attempts.filter(attempt=>new Date(attempt.createdAt)>=weekStart).reduce((total,attempt)=>total+attempt.elapsedMs,0)/60000)

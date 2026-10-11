@@ -8,8 +8,8 @@ function basis(rw:number,math:number):ScorePredictionBasis{
     questionCount:80,
     averageQuestionSuccessRate:Math.round((rw+math)/2),
     sections:[
-      {subject:'english',label:'Reading & Writing',questions:40,successRate:rw},
-      {subject:'math',label:'Math',questions:40,successRate:math},
+      {subject:'english',label:'Reading & Writing',questions:40,observedQuestions:40,successRate:rw},
+      {subject:'math',label:'Math',questions:40,observedQuestions:40,successRate:math},
     ],
   }
 }
@@ -68,8 +68,8 @@ describe('National Merit outlook',()=>{
     const sparse:ScorePredictionBasis={
       ...basis(95,95),
       sections:[
-        {subject:'english',label:'Reading & Writing',questions:2,successRate:95},
-        {subject:'math',label:'Math',questions:40,successRate:95},
+        {subject:'english',label:'Reading & Writing',questions:2,observedQuestions:2,successRate:95},
+        {subject:'math',label:'Math',questions:40,observedQuestions:40,successRate:95},
       ],
     }
     expect(buildNationalMeritOutlook(sparse,confidence())).toBeNull()

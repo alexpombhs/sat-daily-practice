@@ -27,8 +27,9 @@ import {getPdf} from './lib/pdfStore'
 import {availablePracticeTests,moduleLabel,practiceTestLabel,QUESTION_BANK} from './lib/questionBank'
 import {buildPracticePlanRecommendation} from './lib/practicePlan'
 import {buildNationalMeritOutlook} from './lib/nationalMeritOutlook'
+import {estimateSectionPracticeScore} from './lib/performanceAnalytics'
 import {loadSharedQuestionBank,mergeQuestionBanks} from './lib/sharedQuestionBank'
-import {choosePracticeQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
+import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
 import {pathForView,viewFromPathname,type AppRouteView} from './lib/appRoutes'
 import {DEFAULT_SETTINGS} from './lib/storage'
 import {abandonActiveSession,createActiveSession,getCurrentAuthUser,loadActiveSession,loadCloudHistory,loadUserSettings,saveActiveSessionProgress,saveUserSettings,subscribeToAuth,syncActiveAttempt,syncSession,type AuthUser} from './lib/supabase'
@@ -173,7 +174,7 @@ export default function App(){
 
   const current=qs[i]
   const currentRec=current?currentAttempts.find(attempt=>attempt.questionId===current.id):undefined
-  const performance=summarizePerformance(attempts,sessions,questionBank.length)
+  const performance=summarizePerformance(attempts,sessions,questionBank.length,questionBank)
   const performanceRangeBounds=(()=>{
     const now=new Date()
     const endOfToday=new Date(now)
@@ -199,7 +200,7 @@ export default function App(){
   })
   const performanceSessionIds=new Set(performanceSessions.map(session=>session.id))
   const performanceAttempts=attempts.filter(attempt=>performanceSessionIds.has(attempt.sessionId))
-  const rangePerformanceBase=summarizePerformance(performanceAttempts,performanceSessions,questionBank.length)
+  const rangePerformanceBase=summarizePerformance(performanceAttempts,performanceSessions,questionBank.length,questionBank)
   const rangeScoreTrend=performance.scoreTrend.filter(point=>{
     const time=new Date(point.startedAt).getTime()
     if(!Number.isFinite(time))return false
@@ -215,6 +216,7 @@ export default function App(){
     scorePredictionBasis:performance.scorePredictionBasis,
     scoreEstimateConfidence:performance.scoreEstimateConfidence,
   }
+  const difficultyCounts=countDifficultyQuestions(settings,questionBank)
   const newQuestionCount=countNewPracticeQuestions(settings,attempts,questionBank)
   const failedQuestionCount=countFailedPracticeQuestions(settings,attempts,questionBank)
   const practiceRecommendation=buildPracticePlanRecommendation(settings,questionBank,attempts,performance)
@@ -401,7 +403,7 @@ export default function App(){
   }
 
   async function finish(){
-    const session:SessionSummary={id:sid,startedAt:started,endedAt:new Date().toISOString(),mode:settings.mode,questionCount:qs.length,attempts:currentAttempts,dailyQuestionGoal:practiceRecommendation.questionsPerSession*practiceRecommendation.recommendedSessionsPerDay}
+    const session:SessionSummary={id:sid,startedAt:started,endedAt:new Date().toISOString(),mode:settings.mode,questionCount:qs.length,attempts:currentAttempts,dailyQuestionGoal:practiceRecommendation.questionsPerSession*practiceRecommendation.recommendedSessionsPerDay,settings:{...settings}}
     try{
       await syncSession(session)
       setSessions(previous=>[...previous,session])
@@ -571,6 +573,7 @@ export default function App(){
       settings={settings}
       practiceTests={practiceTestOptions}
       newQuestionCount={newQuestionCount}
+      difficultyCounts={difficultyCounts}
       failedQuestionCount={failedQuestionCount}
       onChange={setSettings}
       onStart={()=>void beginPractice(settings.mode)}
@@ -592,6 +595,11 @@ export default function App(){
       <StudyPlanHero
         accuracy={attempts.length?performance.accuracy:null}
         estimatedScore={performance.latestScoreEstimate}
+        scoreBreakdown={performance.scorePredictionBasis?{
+          english:(()=>{const section=performance.scorePredictionBasis?.sections.find(item=>item.subject==='english');return section?{score:estimateSectionPracticeScore(section.successRate),probability:section.successRate,questions:section.questions}:null})(),
+          math:(()=>{const section=performance.scorePredictionBasis?.sections.find(item=>item.subject==='math');return section?{score:estimateSectionPracticeScore(section.successRate),probability:section.successRate,questions:section.questions}:null})(),
+          change:performance.scoreTrend.length>1?performance.scoreTrend[performance.scoreTrend.length-1].delta:null,
+        }:null}
         nationalMeritChance={nationalMeritOutlook?.qualifyingChance??null}
         projectedSelectionIndex={nationalMeritOutlook?.projectedSelectionIndex??null}
         estimateConfidence={performance.scoreEstimateConfidence}

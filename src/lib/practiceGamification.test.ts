@@ -1,6 +1,6 @@
 import {describe,expect,it} from 'vitest'
 import {QUESTION_BANK} from './questionBank'
-import {choosePracticeQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,practiceQuestionPool,summarizePerformance,summarizeSession} from './practiceGamification'
+import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,practiceQuestionPool,summarizePerformance,summarizeSession} from './practiceGamification'
 import type {Attempt,SessionSummary,Settings} from '../types'
 
 const settings:Settings={mode:'math',questionsPerSession:3,showExplanations:true,shuffle:true}
@@ -22,6 +22,42 @@ describe('choosePracticeQuestions',()=>{
     const chosen=choosePracticeQuestions({...settings,practiceTest:'practice-test-4'},[],()=>0)
     expect(chosen).toHaveLength(3)
     expect(chosen.every(question=>question.practiceTestId==='practice-test-4')).toBe(true)
+  })
+
+  it('only includes content-classified questions in a difficulty-specific pool',()=>{
+    const original=QUESTION_BANK.find(q=>q.id==='math1-1')!
+    const advanced={...original,difficulty:'advanced' as const}
+    const unclassified=QUESTION_BANK.find(q=>q.id==='math1-2')!
+    expect(practiceQuestionPool({...settings,difficulty:'advanced'},[],[advanced,unclassified])).toEqual([advanced])
+    expect(practiceQuestionPool({...settings,difficulty:'easy'},[],[advanced,unclassified])).toEqual([])
+    expect(practiceQuestionPool({...settings,difficulty:'all'},[],[advanced,unclassified])).toHaveLength(2)
+  })
+
+  it('combines selected difficulty levels and respects test and subject filters',()=>{
+    const questions=QUESTION_BANK.filter(q=>q.practiceTestId==='practice-test-4'&&q.subject==='math').slice(0,4)
+      .map((q,i)=>({...q,difficulty:(['easy','medium','advanced',undefined] as const)[i]}))
+    const multiple={...settings,practiceTest:'practice-test-4' as const,difficulty:'all' as const,difficultyLevels:['medium','advanced'] as const}
+    expect(practiceQuestionPool({...multiple,difficultyLevels:[...multiple.difficultyLevels]},[],questions).map(q=>q.id)).toEqual(questions.slice(1,3).map(q=>q.id))
+    expect(practiceQuestionPool({...multiple,difficultyLevels:undefined},[],questions)).toHaveLength(4)
+    expect(practiceQuestionPool({...multiple,difficultyLevels:['easy','advanced']},[],questions).map(q=>q.id)).toEqual([questions[0].id,questions[2].id])
+    expect(practiceQuestionPool({...multiple,mode:'english',difficultyLevels:['medium','advanced']},[],questions)).toHaveLength(0)
+  })
+
+  it('treats no checked difficulty levels as an empty pool, not All',()=>{
+    const questions=QUESTION_BANK.filter(q=>q.practiceTestId==='practice-test-4'&&q.subject==='math').slice(0,3)
+      .map((q,i)=>({...q,difficulty:(['easy','medium','advanced'] as const)[i]}))
+    expect(practiceQuestionPool({...settings,difficultyLevels:[]},[],questions)).toHaveLength(0)
+    expect(practiceQuestionPool({...settings,difficultyLevels:['easy','medium','advanced']},[],questions)).toHaveLength(3)
+    expect(practiceQuestionPool({...settings,difficultyLevels:['medium','advanced']},[],questions)).toHaveLength(2)
+  })
+
+  it('counts each content-reviewed difficulty by subject and test, independent of active difficulty',()=>{
+    const math=QUESTION_BANK.filter(q=>q.practiceTestId==='practice-test-4'&&q.subject==='math').slice(0,4)
+    const classified=math.map((q,i)=>({...q,difficulty:(i===0?'easy':i===1?'medium':i===2?'advanced':undefined) as 'easy'|'medium'|'advanced'|undefined}))
+    expect(countDifficultyQuestions({...settings,difficulty:'advanced'},classified))
+      .toEqual({all:4,easy:1,medium:1,advanced:1})
+    expect(countDifficultyQuestions({...settings,mode:'english'},classified))
+      .toEqual({all:0,easy:0,medium:0,advanced:0})
   })
 
   it('supports random selection without adaptive prioritization',()=>{

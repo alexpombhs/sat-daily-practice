@@ -4,12 +4,14 @@ export type ModuleKey = 'rw1' | 'rw2' | 'math1' | 'math2'
 export type PracticeTestId = `practice-test-${number}`
 export type PracticeTestFilter = 'all' | PracticeTestId
 export type PracticeSelectionMode = 'adaptive' | 'random'
+export type QuestionDifficulty = 'easy' | 'medium' | 'advanced'
+export type DifficultyFilter = 'all' | QuestionDifficulty
 export type AnswerFeedbackTiming = 'immediate' | 'end'
 export interface VocabularyPreferences { sources:Array<'practice-test-derived'|'sat-open-dataset'|'supplemental'>; difficulty:'all'|'easy'|'medium'|'advanced'; history:'all'|'new'|'failed'; selection:'adaptive'|'random'; direction:'word-to-definition'|'definition-to-word' }
 export type SourceCrop = {x:number;y:number;width:number;height:number}
-export interface PracticeQuestion { id:string; practiceTestId:PracticeTestId; subject:Subject; module:ModuleKey; number:number; sourcePage:number; answerPage:number; correctAnswer:string; acceptedAnswers?:string[]; responseType:'multiple-choice'|'student-produced'; sourceCrop?:SourceCrop|null; contentStatus?:'metadata'|'imported'|'verified'; questionMode?:'text'|'image-fallback' }
+export interface PracticeQuestion { id:string; practiceTestId:PracticeTestId; subject:Subject; module:ModuleKey; number:number; sourcePage:number; answerPage:number; correctAnswer:string; acceptedAnswers?:string[]; responseType:'multiple-choice'|'student-produced'; sourceCrop?:SourceCrop|null; contentStatus?:'metadata'|'imported'|'verified'; questionMode?:'text'|'image-fallback'; difficulty?:QuestionDifficulty }
 export interface Attempt { id:string; sessionId:string; questionId:string; practiceTestId?:PracticeTestId; subject:Subject; module:ModuleKey; questionNumber:number; selectedAnswer:string; correctAnswer:string; correct:boolean; selfGraded?:boolean; elapsedMs:number; createdAt:string }
-export interface SessionSummary { id:string; startedAt:string; endedAt:string; mode:SubjectMode; questionCount:number; attempts:Attempt[]; dailyQuestionGoal?:number }
+export interface SessionSummary { id:string; startedAt:string; endedAt:string; mode:SubjectMode; questionCount:number; attempts:Attempt[]; dailyQuestionGoal?:number; settings?:Settings }
 export type SessionStatus = 'active' | 'completed' | 'abandoned'
 export interface ActivePracticeSession { id:string; startedAt:string; mode:SubjectMode; questionCount:number; questionIds:string[]; currentIndex:number; draftAnswer:string; lastActivityAt:string; settings:Settings; attempts:Attempt[] }
-export interface Settings { mode:SubjectMode; questionsPerSession:number; showExplanations:boolean; answerFeedbackTiming?:AnswerFeedbackTiming; shuffle:boolean; practiceTest?:PracticeTestFilter; selectionMode?:PracticeSelectionMode; failedOnly?:boolean; failedEverOnly?:boolean; failedRecoveryCorrectAnswers?:number; targetExamDate?:string; targetPracticeSets?:number; targetCoveragePercent?:number; fallbackMinutesPerQuestion?:number; targetScore?:number; vocabulary?:VocabularyPreferences }
+export interface Settings { mode:SubjectMode; questionsPerSession:number; showExplanations:boolean; answerFeedbackTiming?:AnswerFeedbackTiming; shuffle:boolean; practiceTest?:PracticeTestFilter; selectionMode?:PracticeSelectionMode; difficulty?:DifficultyFilter; difficultyLevels?:QuestionDifficulty[]; failedOnly?:boolean; failedEverOnly?:boolean; failedRecoveryCorrectAnswers?:number; targetExamDate?:string; targetPracticeSets?:number; targetCoveragePercent?:number; fallbackMinutesPerQuestion?:number; targetScore?:number; vocabulary?:VocabularyPreferences }

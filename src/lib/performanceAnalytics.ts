@@ -1,4 +1,5 @@
-import type {Attempt,ModuleKey,PracticeTestId,SessionSummary,Subject} from '../types'
+import {QUESTION_BANK} from './questionBank'
+import type {Attempt,ModuleKey,PracticeQuestion,PracticeTestId,SessionSummary,Subject} from '../types'
 
 export type SectionPerformance={
   subject:Subject
@@ -52,7 +53,7 @@ export type ScorePredictionBasis={
   sessionCount:number
   questionCount:number
   averageQuestionSuccessRate:number
-  sections:Array<{subject:Subject;label:string;questions:number;successRate:number}>
+  sections:Array<{subject:Subject;label:string;questions:number;observedQuestions:number;successRate:number}>
 }
 
 export type ScoreEstimateConfidence={
@@ -113,44 +114,74 @@ function buildSections(attempts:Attempt[]):SectionPerformance[]{
   })
 }
 
-function estimateOverallScore(sections:SectionPerformance[]){
+function estimateOverallScore(sections:SectionPerformance[],observedAttempts:Attempt[]){
   const english=sections.find(section=>section.subject==='english')
   const math=sections.find(section=>section.subject==='math')
-  if(!english||!math||english.attempts<MIN_SECTION_QUESTIONS_FOR_SCORE||math.attempts<MIN_SECTION_QUESTIONS_FOR_SCORE)return null
+  const observed=(subject:Subject)=>new Set(observedAttempts.filter(a=>a.subject===subject).map(a=>a.questionId)).size
+  if(!english||!math||observed('english')<MIN_SECTION_QUESTIONS_FOR_SCORE||observed('math')<MIN_SECTION_QUESTIONS_FOR_SCORE)return null
   return estimateSectionPracticeScore(english.successRate)+estimateSectionPracticeScore(math.successRate)
 }
 
-function buildScoreSections(poolAttempts:Attempt[]):SectionPerformance[]{
+// Use the most recent 60 distinct questions from each subject (120 total).
+// Historical retries of each selected question still inform its probability.
+export const SCORE_RECENT_DISTINCT_QUESTIONS=120
+const SUBJECT_SAMPLE_SIZE:Record<Subject,number>={english:60,math:60}
+const OLDER_ATTEMPT_WEIGHT=.6
+const PRIOR_STRENGTH=.1
+
+function recentQuestionSample(historyAttempts:Attempt[],questionBank:PracticeQuestion[]){
+  const validIds=new Set(questionBank.map(q=>q.id))
+  const seen=new Set<string>()
+  const counts:Record<Subject,number>={english:0,math:0}
+  const sample:Attempt[]=[]
+  const chronological=[...historyAttempts].sort((a,b)=>b.createdAt.localeCompare(a.createdAt))
+  chronological.forEach(attempt=>{
+    if(!validIds.has(attempt.questionId)||seen.has(attempt.questionId)||counts[attempt.subject]>=SUBJECT_SAMPLE_SIZE[attempt.subject])return
+    seen.add(attempt.questionId)
+    counts[attempt.subject]++
+    sample.push(attempt)
+  })
+  return sample
+}
+
+function buildScoreSections(historyAttempts:Attempt[],questionBank:PracticeQuestion[]):SectionPerformance[]{
+  const sample=recentQuestionSample(historyAttempts,questionBank)
+  const sampledIds=new Set(sample.map(a=>a.questionId))
   const grouped=new Map<string,Attempt[]>()
-  poolAttempts.forEach(attempt=>grouped.set(attempt.questionId,[...(grouped.get(attempt.questionId)??[]),attempt]))
+  historyAttempts.forEach(attempt=>{
+    if(sampledIds.has(attempt.questionId))grouped.set(attempt.questionId,[...(grouped.get(attempt.questionId)??[]),attempt])
+  })
 
   return (['english','math'] as Subject[]).map(subject=>{
-    const questionGroups=[...grouped.values()].filter(rows=>rows[rows.length-1]?.subject===subject)
-    const questionRates=questionGroups.map(rows=>100*rows.filter(attempt=>attempt.correct).length/rows.length)
-    const equivalentCorrect=questionRates.reduce((sum,rate)=>sum+rate/100,0)
-    const subjectAttempts=poolAttempts.filter(attempt=>attempt.subject===subject)
+    const selected=sample.filter(a=>a.subject===subject)
+    const rates=selected.map(({questionId})=>{
+      const rows=[...(grouped.get(questionId)??[])].sort((a,b)=>a.createdAt.localeCompare(b.createdAt))
+      // Recency-weighted probability with a small neutral prior. Earlier
+      // failures matter less after additional correct reviews.
+      let weight=0,weightedCorrect=0
+      rows.forEach(a=>{
+        weight=weight*OLDER_ATTEMPT_WEIGHT+1
+        weightedCorrect=weightedCorrect*OLDER_ATTEMPT_WEIGHT+(a.correct?1:0)
+      })
+      return (PRIOR_STRENGTH*.5+weightedCorrect)/(PRIOR_STRENGTH+weight)
+    })
+    const expected=rates.reduce((sum,p)=>sum+p,0)
     return {
-      subject,
-      label:SECTION_LABELS[subject],
-      attempts:questionGroups.length,
-      correct:equivalentCorrect,
-      successRate:questionRates.length?Math.round(average(questionRates)):0,
-      averageMs:average(subjectAttempts.map(attempt=>attempt.elapsedMs)),
+      subject,label:SECTION_LABELS[subject],
+      attempts:selected.length,
+      correct:expected,
+      successRate:selected.length?Math.round(100*expected/selected.length):0,
+      averageMs:average(selected.map(a=>a.elapsedMs)),
     }
   })
 }
 
-function attemptsForSessions(attempts:Attempt[],sessions:SessionSummary[]){
+function attemptsForSessions(attempts:Attempt[],sessions:SessionSummary[]):Attempt[]{
   const ids=new Set(sessions.map(session=>session.id))
   return attempts.filter(attempt=>ids.has(attempt.sessionId))
 }
 
-function attemptsForSessionWindow(attempts:Attempt[],sessions:SessionSummary[],endIndex:number){
-  const first=Math.max(0,endIndex-SCORE_SESSION_WINDOW+1)
-  return attemptsForSessions(attempts,sessions.slice(first,endIndex+1))
-}
-
-function predictionBasis(sections:SectionPerformance[],sessionCount:number):ScorePredictionBasis{
+function predictionBasis(sections:SectionPerformance[],sessionCount:number,historyAttempts:Attempt[]):ScorePredictionBasis{
   const questionCount=sections.reduce((sum,section)=>sum+section.attempts,0)
   const weightedRate=questionCount
     ?sections.reduce((sum,section)=>sum+section.successRate*section.attempts,0)/questionCount
@@ -163,6 +194,7 @@ function predictionBasis(sections:SectionPerformance[],sessionCount:number):Scor
       subject:section.subject,
       label:section.label,
       questions:section.attempts,
+      observedQuestions:section.attempts,
       successRate:section.successRate,
     })),
   }
@@ -190,7 +222,7 @@ function buildQuestions(attempts:Attempt[]):QuestionPerformance[]{
   }).sort((a,b)=>a.successRate-b.successRate||b.attempts-a.attempts||b.averageMs-a.averageMs||a.questionNumber-b.questionNumber)
 }
 
-function buildSessions(attempts:Attempt[],sessions:SessionSummary[]){
+function buildSessions(attempts:Attempt[],sessions:SessionSummary[],questionBank:PracticeQuestion[]){
   const bySession=new Map<string,Attempt[]>()
   attempts.forEach(attempt=>bySession.set(attempt.sessionId,[...(bySession.get(attempt.sessionId)??[]),attempt]))
   const ordered=[...sessions].sort((a,b)=>a.startedAt.localeCompare(b.startedAt))
@@ -214,11 +246,11 @@ function buildSessions(attempts:Attempt[],sessions:SessionSummary[]){
   let latestScoreEstimate:number|null=null
   let latestScorePredictionBasis:ScorePredictionBasis|null=null
   ordered.forEach((session,index)=>{
-    const recentAttempts=attemptsForSessionWindow(attempts,ordered,index)
-    const scoreSections=buildScoreSections(recentAttempts)
-    const score=estimateOverallScore(scoreSections)
+    const historicalAttempts=attemptsForSessions(attempts,ordered.slice(0,index+1))
+    const scoreSections=buildScoreSections(historicalAttempts,questionBank)
+    const score=estimateOverallScore(scoreSections,historicalAttempts)
     latestScoreEstimate=score
-    latestScorePredictionBasis=predictionBasis(scoreSections,Math.min(SCORE_SESSION_WINDOW,index+1))
+    latestScorePredictionBasis=predictionBasis(scoreSections,Math.min(SCORE_SESSION_WINDOW,index+1),historicalAttempts)
     if(score===null)return
     scoreTrend.push({
       sessionId:session.id,
@@ -276,7 +308,7 @@ function buildScoreEstimateConfidence(
   if(!basis)return null
   const english=basis.sections.find(section=>section.subject==='english')
   const math=basis.sections.find(section=>section.subject==='math')
-  if(!english||!math||english.questions<3||math.questions<3)return null
+  if(!english||!math||english.observedQuestions<3||math.observedQuestions<3)return null
 
   // Approximate question-pool sampling uncertainty for each section using
   // Bernoulli variance at the observed success rate, then convert the
@@ -286,8 +318,8 @@ function buildScoreEstimateConfidence(
     const sePercent=100*Math.sqrt(p*(1-p)/Math.max(1,questions))
     return sePercent*6
   }
-  const readingWritingQuestionSigmaPoints=sectionSigma(english.successRate,english.questions)
-  const mathQuestionSigmaPoints=sectionSigma(math.successRate,math.questions)
+  const readingWritingQuestionSigmaPoints=sectionSigma(english.successRate,english.observedQuestions)
+  const mathQuestionSigmaPoints=sectionSigma(math.successRate,math.observedQuestions)
   const questionPoolSigma=Math.sqrt(
     readingWritingQuestionSigmaPoints**2+
     mathQuestionSigmaPoints**2
@@ -351,10 +383,10 @@ function buildRecommendation(sections:SectionPerformance[]):PracticeRecommendati
   return {subject:focus.subject,label:focus.label,reason}
 }
 
-export function buildPerformanceAnalytics(attempts:Attempt[],sessions:SessionSummary[],totalQuestions:number):PerformanceAnalytics{
+export function buildPerformanceAnalytics(attempts:Attempt[],sessions:SessionSummary[],totalQuestions:number,questionBank:PracticeQuestion[]=QUESTION_BANK):PerformanceAnalytics{
   const correct=attempts.filter(attempt=>attempt.correct).length
   const sections=buildSections(attempts)
-  const {sessionMetrics,scoreTrend,latestScoreEstimate,latestScorePredictionBasis}=buildSessions(attempts,sessions)
+  const {sessionMetrics,scoreTrend,latestScoreEstimate,latestScorePredictionBasis}=buildSessions(attempts,sessions,questionBank)
   return {
     accuracy:percent(correct,attempts.length),
     averageMs:average(attempts.map(attempt=>attempt.elapsedMs)),

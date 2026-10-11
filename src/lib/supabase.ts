@@ -186,7 +186,7 @@ function sessionRow(s:SessionSummary,userId:string){
     ended_at:s.endedAt,
     mode:s.mode,
     question_count:s.questionCount,
-    session_settings:s.dailyQuestionGoal?{dailyQuestionGoal:s.dailyQuestionGoal}:null,
+    session_settings:s.settings||s.dailyQuestionGoal?{...(s.settings??{}),...(s.dailyQuestionGoal?{dailyQuestionGoal:s.dailyQuestionGoal}:{})}:null,
     status:'completed',
     last_activity_at:s.endedAt,
     updated_at:new Date().toISOString(),
@@ -311,12 +311,16 @@ export async function syncSession(s:SessionSummary){
   const userId=await currentUserId()
   if(!userId)return false
   const {data:existing,error:lookupError}=await supabase.from('sat_sessions')
-    .select('id')
+    .select('id,session_settings')
     .eq('id',s.id)
     .eq('user_id',userId)
     .maybeSingle()
   if(lookupError)throw lookupError
   const row=sessionRow(s,userId)
+  // Preserve the original session setup (including failed-only mode) when
+  // finishing a session. The previous update replaced it with goal metadata.
+  const savedSettings=(existing?.session_settings??{}) as Record<string,unknown>
+  row.session_settings={...savedSettings,...(row.session_settings??{})}
   const sessionResult=existing
     ?await supabase.from('sat_sessions').update(row).eq('id',s.id).eq('user_id',userId)
     :await supabase.from('sat_sessions').insert(row)
@@ -365,6 +369,7 @@ export async function loadCloudHistory():Promise<{attempts:Attempt[];sessions:Se
     questionCount:row.question_count,
     attempts:bySession.get(row.id)??[],
     dailyQuestionGoal:typeof row.session_settings?.dailyQuestionGoal==='number'?row.session_settings.dailyQuestionGoal:undefined,
+    settings:row.session_settings?row.session_settings as Settings:undefined,
   }))
   return {attempts,sessions}
 }
