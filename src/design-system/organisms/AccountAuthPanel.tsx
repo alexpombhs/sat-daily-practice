@@ -20,6 +20,7 @@ export default function AccountAuthPanel({email}:Props){
   const[mode,setMode]=useState<'signin'|'signup'>('signin')
   const[busy,setBusy]=useState(false)
   const[message,setMessage]=useState('')
+  const[pendingConfirmationEmail,setPendingConfirmationEmail]=useState('')
   const[error,setError]=useState('')
   const[registrationFull,setRegistrationFull]=useState(false)
   const[waitlistEmail,setWaitlistEmail]=useState('')
@@ -63,9 +64,16 @@ export default function AccountAuthPanel({email}:Props){
     try{
       if(mode==='signup'){
         const result=await signUpWithPassword(nextEmail,password,ageConfirmed===true,captchaToken??'')
-        setMessage(result.needsEmailConfirmation?'Check your email to confirm your account, then return here to sign in.':'Account created and signed in.')
+        if(result.needsEmailConfirmation){
+          setPendingConfirmationEmail(nextEmail.trim())
+          setMessage('')
+        }else{
+          setPendingConfirmationEmail('')
+          setMessage('Account created and signed in.')
+        }
       }else{
         await signInWithPassword(nextEmail,password)
+        setPendingConfirmationEmail('')
         setMessage('Signed in. Your practice history will sync automatically.')
       }
     }catch(nextError){
@@ -173,7 +181,18 @@ export default function AccountAuthPanel({email}:Props){
             <AlexButton disabled={busy||deleteText!=='DELETE MY ACCOUNT'} onClick={()=>void deleteAccount()} sx={{alignSelf:'flex-start'}}>Permanently delete my account</AlexButton>
           </AlexStack>
         </AlexSurface>
-      </AlexStack>:registrationFull?<AlexStack spacing={2}>
+      </AlexStack>:pendingConfirmationEmail?<AlexSurface variant="outlined" role="status" aria-live="polite" sx={{p:{xs:2,sm:3},borderRadius:2,borderColor:'primary.light'}}>
+        <AlexStack spacing={1.75}>
+          <AlexText component="h3" sx={{fontSize:22,fontWeight:800,m:0}}>Check your email to finish signing up</AlexText>
+          <AlexText>We sent an account confirmation link to <strong>{pendingConfirmationEmail}</strong>.</AlexText>
+          <AlexText sx={{color:'text.secondary'}}>Open that email and click the confirmation link to activate your account. Then return to SAT Daily Practice and sign in.</AlexText>
+          <AlexText sx={{fontSize:13,color:'text.secondary'}}>Can't find it? Check your spam or junk folder, and make sure the email address above is correct.</AlexText>
+          <AlexStack direction="row" spacing={1.25} sx={{flexWrap:'wrap'}}>
+            <AlexButton onClick={()=>{setPendingConfirmationEmail('');setMode('signin');setError('');setMessage('')}}>I've confirmed my email — sign in</AlexButton>
+            <AlexButton tone="secondary" onClick={()=>{setPendingConfirmationEmail('');setMode('signup');setError('');setMessage('')}}>Use a different email</AlexButton>
+          </AlexStack>
+        </AlexStack>
+      </AlexSurface>:registrationFull?<AlexStack spacing={2}>
         <AlexText sx={{fontWeight:700}}>The first 100 account places are filled.</AlexText>
         <AlexText sx={{fontSize:14,fontWeight:700}}>You must be 13 or older to join the waitlist.</AlexText>
         <AlexText sx={{fontSize:14,color:'text.secondary'}}>Enter your email to request a registration invitation. An invitation reserves an available place for 24 hours. You can unsubscribe from the email invitation.</AlexText>
