@@ -22,15 +22,15 @@ describe('choosePracticeQuestions',()=>{
     const all=questionsForPractice('both','all')
     expect(all).toHaveLength(480)
     expect(all.some(question=>question.practiceTestId==='practice-test-8')).toBe(false)
-    expect(questionsForPractice('both','practice-test-8')).toHaveLength(24)
+    expect(questionsForPractice('both','practice-test-8')).toHaveLength(48)
   })
 
   it('exposes the mock question set as a selectable source with 24 bundled questions',()=>{
     const mock=QUESTION_BANK.filter(question=>question.practiceTestId==='practice-test-8')
-    expect(mock).toHaveLength(24)
-    expect(mock.filter(question=>question.subject==='english')).toHaveLength(12)
-    expect(mock.filter(question=>question.subject==='math')).toHaveLength(12)
-    expect(practiceQuestionPool({...settings,mode:'both',practiceTest:'practice-test-8',questionsPerSession:24},[])).toHaveLength(24)
+    expect(mock).toHaveLength(48)
+    expect(mock.filter(question=>question.subject==='english')).toHaveLength(24)
+    expect(mock.filter(question=>question.subject==='math')).toHaveLength(24)
+    expect(practiceQuestionPool({...settings,mode:'both',practiceTest:'practice-test-8',questionsPerSession:24},[])).toHaveLength(48)
   })
 
   it('keeps original mock questions separate from ordinary all-tests practice',()=>{
