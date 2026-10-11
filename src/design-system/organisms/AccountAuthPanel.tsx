@@ -30,6 +30,7 @@ export default function AccountAuthPanel({email}:Props){
   const[deleteText,setDeleteText]=useState('')
   const[plusActive,setPlusActive]=useState(false)
   const[plusExpiration,setPlusExpiration]=useState<string|null>(null)
+  const checkoutOpen=import.meta.env.VITE_CHECKOUT_AVAILABLE==='true'
   const[profile,setProfile]=useState<UserProfile>(EMPTY_USER_PROFILE)
 
   useEffect(()=>{if(!email)void isRegistrationFull().then(setRegistrationFull).catch(()=>{ /* Signup server remains authoritative */ })},[email])
@@ -143,7 +144,7 @@ export default function AccountAuthPanel({email}:Props){
           <AlexStack spacing={1}>
             <AlexText sx={{fontWeight:750}}>90-day Plus access</AlexText>
             <AlexText sx={{fontSize:13,color:'text.secondary'}}>{plusActive?`Your Plus access is active${plusExpiration?` through ${new Date(plusExpiration).toLocaleDateString()}`:""}.`:'Get unlimited sessions, personalized configuration, study planning and progress insights for $10 once. No subscription or automatic renewal.'}</AlexText>
-            {!plusActive&&<AlexButton disabled={busy} onClick={()=>{setError('');void openOneTimeCheckout().catch(nextError=>setError(messageFromError(nextError)))}} sx={{alignSelf:'flex-start'}}>Get 90 days for $10</AlexButton>}
+            {!plusActive&&<AlexButton disabled={busy||!checkoutOpen} onClick={()=>{setError('');void openOneTimeCheckout().catch(nextError=>setError(messageFromError(nextError)))}} sx={{alignSelf:'flex-start'}}>{checkoutOpen?'Get 90 days for $10':'Early adopter passes coming soon'}</AlexButton>}
           </AlexStack>
         </AlexSurface>
         <UserProfileForm profile={profile} busy={busy} onSave={saveProfile}/>
