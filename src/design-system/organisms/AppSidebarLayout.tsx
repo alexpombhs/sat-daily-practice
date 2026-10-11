@@ -24,9 +24,10 @@ type Props={
   onSettings:()=>void
   children:ReactNode
   contentBackground?:string
+  showContentAdmin?:boolean
 }
 
-export default function AppSidebarLayout({active,collapsed,onToggleCollapsed,onDashboard,onPracticeTests,onPracticeSetup,onVocabulary,onQuestionBank,onParsingIssues,onPerformance,onResources,onSettings,children,contentBackground='#FFFFFF'}:Props){
+export default function AppSidebarLayout({active,collapsed,onToggleCollapsed,onDashboard,onPracticeTests,onPracticeSetup,onVocabulary,onQuestionBank,onParsingIssues,onPerformance,onResources,onSettings,children,contentBackground='#FFFFFF',showContentAdmin=false}:Props){
   const[user,setUser]=useState<AuthUser|null>(null)
   const[profile,setProfile]=useState<UserProfile|null>(null)
   const[mobileMenuOpen,setMobileMenuOpen]=useState(false)
@@ -63,8 +64,8 @@ export default function AppSidebarLayout({active,collapsed,onToggleCollapsed,onD
     {key:'practice-tests',label:'Practice Tests',active:active==='practice-tests',onClick:onPracticeTests},
     {key:'practice-setup',label:'Practice Setup',active:active==='practice-setup',onClick:onPracticeSetup},
     {key:'vocabulary',label:'Vocabulary',active:active==='vocabulary',onClick:onVocabulary},
-    {key:'question-bank',label:'Question Bank',active:active==='question-bank',onClick:onQuestionBank},
-    {key:'parsing-issues',label:'Parsing Issues',active:active==='parsing-issues',onClick:onParsingIssues},
+    ...(showContentAdmin?[{key:'question-bank',label:'Question Bank',active:active==='question-bank',onClick:onQuestionBank},
+    {key:'parsing-issues',label:'Parsing Issues',active:active==='parsing-issues',onClick:onParsingIssues}]:[]),
     {key:'performance',label:'Performance',active:active==='performance',onClick:onPerformance},
   ]
   const secondaryDesktop=[{key:'resources',label:'Resources',active:active==='resources',onClick:onResources}]
