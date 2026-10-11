@@ -122,6 +122,12 @@ export default function App(){
   },[authUser?.id])
 
   useEffect(()=>{
+    const refresh=()=>{void hasPlusAccess().then(setPlusActive).catch(error=>console.warn('Access status unavailable',error))}
+    window.addEventListener('sat-access-updated',refresh)
+    return()=>window.removeEventListener('sat-access-updated',refresh)
+  },[])
+
+  useEffect(()=>{
     if(!authUser){setPlusActive(false);return}
     let cancelled=false
     void hasPlusAccess().then(active=>{if(!cancelled)setPlusActive(active)}).catch(error=>{
