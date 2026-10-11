@@ -47,9 +47,9 @@ export async function isRegistrationFull():Promise<boolean>{
   return data===true
 }
 
-export async function joinLaunchWaitlist(email:string):Promise<void>{
+export async function joinLaunchWaitlist(email:string,birthDate:string):Promise<void>{
   const normalized=email.trim().toLowerCase()
-  const {error}=await supabase.rpc('sat_join_waitlist',{email_input:normalized})
+  const {error}=await supabase.rpc('sat_join_waitlist',{email_input:normalized,birth_date_input:birthDate})
   if(error)throw error
 }
 
