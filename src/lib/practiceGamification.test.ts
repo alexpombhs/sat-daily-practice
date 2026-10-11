@@ -24,6 +24,26 @@ describe('choosePracticeQuestions',()=>{
     expect(chosen.every(question=>question.practiceTestId==='practice-test-4')).toBe(true)
   })
 
+  it('filters hard and advanced questions independently and combines difficulty with failed-only',()=>{
+    const questions=QUESTION_BANK.filter(q=>q.practiceTestId==='practice-test-4'&&q.subject==='math')
+    const hard=practiceQuestionPool({...settings,difficulty:'hard'},[],questions)
+    const advanced=practiceQuestionPool({...settings,difficulty:'advanced'},[],questions)
+    expect(hard.length).toBeGreaterThan(0)
+    expect(advanced.length).toBeGreaterThan(0)
+    expect(hard.every(q=>q.number/27>.55&&q.number/27<=.8)).toBe(true)
+    expect(advanced.every(q=>q.number/27>.8)).toBe(true)
+    const failed=attempt(advanced[0].id,false)
+    expect(practiceQuestionPool({...settings,difficulty:'advanced',failedEverOnly:true},[failed],questions).map(q=>q.id)).toEqual([advanced[0].id])
+    expect(practiceQuestionPool({...settings,difficulty:'hard',failedEverOnly:true},[failed],questions)).toEqual([])
+  })
+
+  it('uses verified difficulty metadata instead of provisional position when available',()=>{
+    const original=QUESTION_BANK.find(q=>q.id==='math1-1')!
+    const advanced={...original,difficulty:'advanced' as const}
+    expect(practiceQuestionPool({...settings,difficulty:'advanced'},[],[advanced])).toEqual([advanced])
+    expect(practiceQuestionPool({...settings,difficulty:'easy'},[],[advanced])).toEqual([])
+  })
+
   it('supports random selection without adaptive prioritization',()=>{
     let call=0
     const chosen=choosePracticeQuestions({...settings,questionsPerSession:1,selectionMode:'random'},[attempt('math1-1',false)],()=>call++===0?0:1)
