@@ -63,7 +63,7 @@ begin
  select count(*) into own_hold from public.sat_la_reservations r
  where lower(r.email)=lower(new.email) and r.expires_at>now()
        and r.consumed_at is null;
- if mode='la' and occupied-own_hold >= max_users then
+ if mode='la' and occupied-own_hold > max_users then
   raise exception 'Registration is currently full.';
  end if;
  update public.sat_la_reservations set consumed_at=now()
