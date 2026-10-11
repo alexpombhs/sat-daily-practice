@@ -8,7 +8,7 @@ export function validateSignupBirthDate(value:string,now=new Date()):string {
   const today=new Date(Date.UTC(now.getFullYear(),now.getMonth(),now.getDate()))
   if(birth>today)throw new Error('Enter a valid date of birth.')
   const threshold=new Date(Date.UTC(today.getUTCFullYear()-13,today.getUTCMonth(),today.getUTCDate()))
-  if(birth>threshold)throw new Error('Registration is not available for this date of birth.')
+  if(birth>threshold)throw new Error('SAT Daily Practice is for students ages 13 and older. You can create an account once you turn 13.')
   if(year<1900)throw new Error('Enter a valid date of birth.')
   return value
 }
