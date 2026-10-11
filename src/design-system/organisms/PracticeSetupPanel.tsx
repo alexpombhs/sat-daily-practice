@@ -5,6 +5,7 @@ import AlexDropdown from '../atoms/AlexDropdown'
 import AlexNumberField from '../atoms/AlexNumberField'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexSwitch from '../atoms/AlexSwitch'
+import AlexTabs from '../atoms/AlexTabs'
 import AlexText from '../atoms/AlexText'
 import PracticeGoalSettings from '../molecules/PracticeGoalSettings'
 import PracticeSettingField from '../molecules/PracticeSettingField'
@@ -62,12 +63,14 @@ export default function PracticeSetupPanel({settings,practiceTests,newQuestionCo
     <PracticeSettingField
       label="Question difficulty"
       helperText="Difficulty is provisionally estimated from question position within each module, not an official College Board label. Choose Hard or Advanced to focus your practice."
-      control={<AlexDropdown
-        id="practice-difficulty"
-        label="Question difficulty"
+      control={<AlexTabs
         value={settings.difficulty??'all'}
-        options={[{value:'all',label:'All difficulties'},{value:'easy',label:'Easy only'},{value:'medium',label:'Medium only'},{value:'hard',label:'Hard only'},{value:'advanced',label:'Advanced only'}]}
+        variant="scrollable"
+        scrollButtons={false}
+        options={[{value:'all',label:'All'},{value:'easy',label:'Easy'},{value:'medium',label:'Medium'},{value:'hard',label:'Hard'},{value:'advanced',label:'Advanced'}]}
         onChange={difficulty=>onChange({...settings,difficulty})}
+        aria-label="SAT question difficulty"
+        sx={{'& .MuiTab-root':{px:{xs:1.1,sm:1.5},fontSize:{xs:12,sm:13}}}}
       />}
     />
 
