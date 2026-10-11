@@ -1,67 +1,48 @@
-# MVP readiness and launch gates
+# MVP LA / GA launch preparation
 
-Status: **NOT approved for public launch**. This document is a release checklist, not a legal compliance certification.
+## Phase 1 — implementation
 
-## Age screening (implemented in this PR; requires activation)
-- [x] Neutral date-of-birth entry shown only during signup.
-- [x] Frontend checks valid DOB and 13th birthday boundary.
-- [x] Server-side Supabase Before User Created Postgres hook supplied as migration.
-- [x] Hook denies missing/invalid/under-13 birthdates for any signup client **when enabled**.
-- [ ] Merge PR and confirm migration was applied successfully in production.
-- [ ] Supabase Dashboard > Authentication > Hooks > Before User Created: enable **Postgres** function `public.sat_before_user_created`. GitHub migration alone **does not enable this**.
-- [ ] Test age 12, exactly 13, age 17, age 18, invalid/missing DOB, and a direct Auth REST signup bypassing the React form.
-- [ ] Document and review what birthdate is stored in Supabase Auth user metadata; implement retention/deletion rules before public signup.
-- [ ] Confirm alternative auth methods, anonymous signup, and invitations cannot bypass restrictions.
-- [ ] Define a procedure for identifying/removing ineligible accounts.
+This checklist records code and configuration contracts. Quality assurance is deliberately tracked separately in `docs/QA_LA_GA_TEST_PLAN.md`.
 
-## 100-seat LA registration (implemented in code; not yet production verified)
-- [x] Database trigger serializes account creation and refuses a 101st Auth account, including direct Auth API use.
-- [x] Existing Auth accounts count against the 100-account limit (conservative; includes unconfirmed accounts).
-- [x] Protected waitlist table: public clients cannot read email addresses.
-- [x] Waitlist RPC validates 13+ eligibility without persisting the submitted birthdate.
-- [x] Frontend provides waitlist signup when capacity is reached.
-- [ ] Test 99-to-100 and 100-to-101 account boundaries and simultaneous signup requests.
-- [ ] Test behavior with preexisting Auth accounts, abandoned/unconfirmed registrations and deleted accounts.
-- [x] Cloudflare Turnstile frontend challenge and server-side verification added to waitlist; direct public RPC bypass revoked.
-- [x] Signup challenge token wired to Supabase Auth.
-- [ ] Configure CAPTCHA in Supabase and provider keys; test real production rejection of malicious and direct API requests, set rate limits.
-- [x] First draft operator-triggered invite email Edge Function committed; requires verified sender, server secrets, deployment and end-to-end testing.
-- [x] Atomic claim/release flow for operator-triggered invitations; provider idempotency key included.
-- [ ] Implement guaranteed seat reservation and automatic scheduling if needed; invitations currently do not reserve a place.
-- [ ] Confirm email-provider idempotency and invitation retry behavior in staging.
-- [x] Token-based waitlist unsubscribe endpoint, removal timestamp and opt-out link in invitation emails added.
-- [ ] Set operator-approved retention durations and remove stale waitlist records on a schedule.
-- [ ] Prevent non-signup Auth creation flows (admin imports/invites) from exhausting capacity unexpectedly.
-- [x] Server-controlled launch mode supports closed, LA (capacity 100), and GA; closed is the default until operator opens enrollment.
-- [ ] Confirm operator-controlled launch mode and release procedures for GA.
+### Signup and launch admission
+- [x] Display the age 13+ requirement and validate date of birth before asking for email or password.
+- [x] Supabase Before User Created age hook rejects invalid/under-13 registrations from any signup client.
+- [x] Strip full birthdate from persisted Supabase Auth metadata after registration.
+- [x] Operator-controlled closed, LA, GA launch mode (closed by default).
+- [x] LA counts 100 confirmed accounts plus expiring 24-hour pending-signup and invitation reservations; no permanent seat consumption for abandoned confirmations.
+- [x] GA mode removes the LA user-cap restriction.
 
-## Core product release blocking
-- [ ] Cross-device account/history/settings/resumable session persistence tested.
-- [ ] Default 10 questions/session remains consistent after refresh and device changes.
-- [ ] Failed questions remain in review until configured correct-repetition count.
-- [ ] Question modes: all = canonical only, new only, failed only, targeted mock separate.
-- [ ] Audit canonical question content, answer keys, explanations, visuals, math/LaTeX formatting, and content repairs in Supabase.
-- [ ] Dashboard goal, streak, calendar, review credit, predicted score calculations verified against known test fixtures.
-- [ ] All breakpoints tested with real accounts on phone/tablet/laptop/desktop.
-- [ ] No error leakage, failed deployment, or silent data loss; build and tests green.
-- [ ] Two-account RLS negative tests for attempts, sessions, settings, profiles and question edit permission; check unrestricted canonical question write policy.
-- [ ] Rate limits, database quotas, recovery/backup and error monitoring reviewed.
-- [x] First draft confirmed-delete UI and authenticated Edge Function committed.
-- [x] Feedback foreign key switched to ON DELETE CASCADE in pending migration.
-- [ ] Deploy and verify full deletion of Auth record, SAT rows, sessions, storage and external provider data.
+### Waitlist and email
+- [x] Age-first waitlist, CAPTCHA and server-side Turnstile verification.
+- [x] Email-address confirmation and resend cooldown before invitations.
+- [x] Automatic FIFO invitation claims with transactional 24-hour reservations and idempotency headers.
+- [x] GitHub Actions scheduled operator invitation delivery every 15 minutes.
+- [x] One-click confirmation UI for email and unsubscribe links (no state change on automatic GET preview).
+- [x] Waitlist unsubscribing deletes email record and releases its reservation.
 
-## Privacy, IP and commercialization release blocking
-- [ ] Counsel/adult operator review whether the service is general-audience, mixed-audience, or child-directed; age screening is not by itself COPPA compliance.
-- [ ] Operator-approved Privacy Notice detailing personal information, Supabase hosting/processors, email, usage analytics, retention, rights, contact and account deletion.
-- [ ] Operator-approved Terms of Use with proper entity/contact, limits, disclaimers and payment terms before charging.
-- [ ] Mechanism to delete account and personal practice history from Auth and all relevant tables; test deletion end-to-end.
-- [ ] Data minimization: reconsider collecting school, guardian identity/email, free-text bio and full DOB when not essential.
-- [ ] Verify state laws for minors and marketing/analytics, including jurisdiction of launch audience.
-- [ ] Audit original/official SAT question provenance, copyright/licensing, branding/trademark and non-affiliation disclosure.
-- [ ] Confirm adult-operated payment provider, refunds, taxes, billing cancellation and subscription disclosures before charging.
-- [ ] Security and legal signoff before opening registrations beyond private testing.
+### Free and one-time Plus
+- [x] Free: two random 10-question practice sessions per UTC day; no configuration controls.
+- [x] Server-side free quota ledger is independent of session deletion.
+- [x] Free users retain immediate feedback; history is removed when leaving results and by data-retention cleanup.
+- [x] Plus: unlimited sessions, configurable practice, study plan and performance dashboard.
+- [x] One-time $10 USD Stripe hosted checkout for a 90-day pass; no recurring charge.
+- [x] Signed Stripe webhook provisions server-controlled expiring entitlements; purchase retries are idempotent and consecutive passes stack.
+- [x] Checkout disabled until operator confirms legal and content licensing approvals.
 
-## Alpha success gates
-- [ ] Recruit 20-30 consenting 13+ students under appropriate privacy protections.
-- [ ] Measure first-session completion, 4+ practice days in first week, 7-day retention and qualitative feedback.
-- [ ] Test willingness to pay without misleading checkout or collecting payment until policies are ready.
+### Privacy and content administration
+- [x] Account deletion control and authenticated server-side deletion.
+- [x] Cascade linked per-user practice tables and feedback with Auth user deletion.
+- [x] Optional display name is the only remaining editable profile detail; historical optional school/guardian/bio data is removed by migration.
+- [x] Privacy and Terms pages in the app, currently identified as drafts.
+- [x] Private content-editor roles and protected canonical question-edit controls.
+- [x] Operator cleanup functions for free-session and waitlist retention.
+
+### Non-code operator dependencies (not representable as completed implementation)
+- [ ] Name the legal/adult operator and publish a genuine support email.
+- [ ] Approve and finalize Privacy Notice, Terms and refund terms.
+- [ ] Resolve rights to use official SAT passages, visuals, answer keys and related content in this product; checkout remains disabled until authorized.
+- [ ] Provision Stripe, Resend, Turnstile and Supabase keys/secrets, enable Auth hook and Auth security options, and designate authorized content admins.
+- [ ] Configure GitHub Actions secrets and enable LA access in the launch config when opening enrollment.
+
+## Phase 2 — quality assurance
+All operational, user-experience, security, data-deletion, end-to-end, concurrent enrollment and device acceptance work is tracked **separately** in `docs/QA_LA_GA_TEST_PLAN.md` and is not part of this Phase 1 implementation report.
