@@ -1,6 +1,6 @@
 import {describe,expect,it} from 'vitest'
 import {QUESTION_BANK} from './questionBank'
-import {choosePracticeQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,practiceQuestionPool,summarizePerformance,summarizeSession} from './practiceGamification'
+import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,practiceQuestionPool,summarizePerformance,summarizeSession} from './practiceGamification'
 import type {Attempt,SessionSummary,Settings} from '../types'
 
 const settings:Settings={mode:'math',questionsPerSession:3,showExplanations:true,shuffle:true}
@@ -31,6 +31,15 @@ describe('choosePracticeQuestions',()=>{
     expect(practiceQuestionPool({...settings,difficulty:'advanced'},[],[advanced,unclassified])).toEqual([advanced])
     expect(practiceQuestionPool({...settings,difficulty:'easy'},[],[advanced,unclassified])).toEqual([])
     expect(practiceQuestionPool({...settings,difficulty:'all'},[],[advanced,unclassified])).toHaveLength(2)
+  })
+
+  it('counts each content-reviewed difficulty by subject and test, independent of active difficulty',()=>{
+    const math=QUESTION_BANK.filter(q=>q.practiceTestId==='practice-test-4'&&q.subject==='math').slice(0,4)
+    const classified=math.map((q,i)=>({...q,difficulty:(i===0?'easy':i===1?'medium':i===2?'advanced':undefined) as 'easy'|'medium'|'advanced'|undefined}))
+    expect(countDifficultyQuestions({...settings,difficulty:'advanced'},classified))
+      .toEqual({all:4,easy:1,medium:1,advanced:1})
+    expect(countDifficultyQuestions({...settings,mode:'english'},classified))
+      .toEqual({all:0,easy:0,medium:0,advanced:0})
   })
 
   it('supports random selection without adaptive prioritization',()=>{
