@@ -215,7 +215,7 @@
     "question_number": 7,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "In an original poem about a public archive, the speaker recalls being told that the institution is 'a wall built from other people's names.' The next lines describe freely accessible records and neighbors helping one another trace family histories. Why does the speaker introduce the image of a wall?",
+    "stem": "In an original poem about a public archive, the speaker recalls being told that the institution is <u>a wall built from other people's names</u>. The next lines describe freely accessible records and neighbors helping one another trace family histories. Why does the speaker introduce the underlined image?",
     "options": [
       {
         "label": "A",
@@ -243,7 +243,14 @@
       "institution as metaphor",
       "speaker's purpose"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "In an original poem about a public archive, the speaker recalls being told that the institution is <u>a wall built from other people's names</u>. The next lines describe freely accessible records and neighbors helping one another trace family histories. Why does the speaker introduce the underlined image?",
+      "A) To concede that archives are inevitably inaccessible",
+      "B) To establish an interpretation that the later details challenge",
+      "C) To suggest that the building was constructed as a memorial",
+      "D) To compare the archive's architecture with nearby homes"
+    ]
   },
   {
     "id": "pt1-rw1-08",
@@ -357,7 +364,7 @@
     "question_number": 11,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "In a fictional poem, the speaker calls a promise 'a compass whose needle trembles when the clouds descend.' In context, the image most likely suggests that the promise",
+    "stem": "In a fictional poem, the speaker calls a promise <u>a compass whose needle trembles when the clouds descend</u>. In context, the underlined image most likely suggests that the promise",
     "options": [
       {
         "label": "A",
@@ -384,7 +391,14 @@
       "poetic diction",
       "mapping source and target ideas"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "In a fictional poem, the speaker calls a promise <u>a compass whose needle trembles when the clouds descend</u>. In context, the underlined image most likely suggests that the promise",
+      "A) offers direction even when circumstances make its guidance uncertain.",
+      "B) guarantees that every decision will be straightforward.",
+      "C) depends entirely on being spoken aloud.",
+      "D) has become irrelevant once conditions change."
+    ]
   },
   {
     "id": "pt1-rw1-12",
@@ -1452,7 +1466,7 @@
     "question_number": 9,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "After discussing how urban animals adapt, the author describes foxes using railway embankments as nighttime paths. This detail serves to",
+    "stem": "A science writer explains that city animals often repurpose human-built infrastructure as habitats and travel routes. <u>For example, foxes sometimes travel along railway embankments after dark.</u> What is the function of the underlined sentence in the text?",
     "options": [
       {
         "label": "A",
@@ -1478,7 +1492,14 @@
       "sentence function",
       "example of behavior"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "A science writer explains that city animals often repurpose human-built infrastructure as habitats and travel routes. <u>For example, foxes sometimes travel along railway embankments after dark.</u> What is the function of the underlined sentence in the text?",
+      "A) disprove urban animal movement",
+      "B) change the topic to trains",
+      "C) define railway construction",
+      "D) illustrate a specific adaptation"
+    ]
   },
   {
     "id": "pt1-rw2-10",
@@ -1670,7 +1691,7 @@
     "question_number": 15,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "A character says, 'I could have taken the road that opened before me, but fear held the map.' This image most directly expresses",
+    "stem": "A character says, '<u>I could have taken the road that opened before me, but fear held the map.</u>' The underlined metaphor most directly expresses",
     "options": [
       {
         "label": "A",
@@ -1697,7 +1718,14 @@
       "literary regret",
       "textual evidence"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "A character says, '<u>I could have taken the road that opened before me, but fear held the map.</u>' The underlined metaphor most directly expresses",
+      "A) disgust at maps",
+      "B) regret about an avoided opportunity",
+      "C) confidence in a finished journey",
+      "D) indifference to travel"
+    ]
   },
   {
     "id": "pt1-rw2-16",
