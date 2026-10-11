@@ -18,7 +18,7 @@ Deno.serve(async(req:Request)=>{
  const verifiedPrice=await stripe.prices.retrieve(price)
  if(!verifiedPrice.active||verifiedPrice.currency!=='usd'||verifiedPrice.unit_amount!==1000||verifiedPrice.recurring)return new Response('One-time pricing is not configured correctly',{status:503})
  const session=await stripe.checkout.sessions.create({
-  mode:'payment',customer_email:user.email,client_reference_id:user.id,
+  mode:'payment',payment_method_types:['card'],customer_email:user.email,client_reference_id:user.id,
   line_items:[{price,quantity:1}],
   success_url:new URL('account?checkout=success',origin.href.endsWith('/')?origin.href:origin.href+'/').toString(),
   cancel_url:new URL('account?checkout=cancelled',origin.href.endsWith('/')?origin.href:origin.href+'/').toString(),
