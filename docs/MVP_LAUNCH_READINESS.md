@@ -14,6 +14,20 @@ Status: **NOT approved for public launch**. This document is a release checklist
 - [ ] Confirm alternative auth methods, anonymous signup, and invitations cannot bypass restrictions.
 - [ ] Define a procedure for identifying/removing ineligible accounts.
 
+## 100-seat LA registration (implemented in code; not yet production verified)
+- [x] Database trigger serializes account creation and refuses a 101st Auth account, including direct Auth API use.
+- [x] Existing Auth accounts count against the 100-account limit (conservative; includes unconfirmed accounts).
+- [x] Protected waitlist table: public clients cannot read email addresses.
+- [x] Waitlist RPC validates 13+ eligibility without persisting the submitted birthdate.
+- [x] Frontend provides waitlist signup when capacity is reached.
+- [ ] Test 99-to-100 and 100-to-101 account boundaries and simultaneous signup requests.
+- [ ] Test behavior with preexisting Auth accounts, abandoned/unconfirmed registrations and deleted accounts.
+- [ ] Rate-limit waitlist abuse and add a bot challenge at the public entry point.
+- [ ] Implement operator-controlled invite and notification flow (currently manual; do not promise automatic emails).
+- [ ] Define waiting-list retention, opt-out and deletion process and disclose in privacy notice.
+- [ ] Prevent non-signup Auth creation flows (admin imports/invites) from exhausting capacity unexpectedly.
+- [ ] Review count policy before GA (the database trigger must be explicitly removed/disabled to exceed 100).
+
 ## Core product release blocking
 - [ ] Cross-device account/history/settings/resumable session persistence tested.
 - [ ] Default 10 questions/session remains consistent after refresh and device changes.
@@ -25,6 +39,7 @@ Status: **NOT approved for public launch**. This document is a release checklist
 - [ ] No error leakage, failed deployment, or silent data loss; build and tests green.
 - [ ] Two-account RLS negative tests for attempts, sessions, settings, profiles and question edit permission; check unrestricted canonical question write policy.
 - [ ] Rate limits, database quotas, recovery/backup and error monitoring reviewed.
+- [ ] Provide self-service verified account deletion; deleting practice history alone does not delete Auth account.
 
 ## Privacy, IP and commercialization release blocking
 - [ ] Counsel/adult operator review whether the service is general-audience, mixed-audience, or child-directed; age screening is not by itself COPPA compliance.
