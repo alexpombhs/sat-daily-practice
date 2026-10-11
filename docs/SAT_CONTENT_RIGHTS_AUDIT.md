@@ -10,3 +10,11 @@ Before any external LA/GA launch:
 - Do not market official practice questions or score guarantees without permission/evidence.
 
 **No content is marked cleared by this audit draft.**
+
+## Implemented licensing guard
+The database now includes `sat_question_bank.commercial_rights_status`, `commercial_rights_basis`, and `commercial_rights_reviewed_at`. All existing canonical questions default to **unverified**, not original or licensed.
+The Stripe checkout function requires all canonical database questions to have documented operator approval as either `original` or `licensed`, as well as the server-side `SAT_CONTENT_RIGHTS_APPROVED` and `SAT_LEGAL_APPROVED` flags. Checkout is fail-closed.
+
+The operator must additionally audit bundled question metadata, local PDFs/proxies, passages, visuals, generated targeted practice and explanations; per-row database clearance alone is not proof of rights for every asset. Mark individual rows as commercially cleared only after verified original authorship or permission.
+
+As of this implementation, **no College Board content permission has been established**, so enabling paid checkout would be premature.
