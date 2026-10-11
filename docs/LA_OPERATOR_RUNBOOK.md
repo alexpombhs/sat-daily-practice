@@ -12,6 +12,15 @@
 - Enable email confirmation, appropriate Supabase Auth rate limits, CAPTCHA on signup, and leaked-password protection in Supabase settings. This repo does not configure provider CAPTCHA tokens yet.
 - Test student data access with two accounts, and run security/performance advisors.
 
+## Public waitlist anti-bot setup
+- Provision a Cloudflare Turnstile site key and secret in a real domain/site configuration.
+- Set frontend environment variable `VITE_TURNSTILE_SITE_KEY` and Edge secret `TURNSTILE_SECRET_KEY`.
+- Deploy `sat-waitlist-register` with `verify_jwt = false`; it validates the Turnstile response server-side before writing the waitlist.
+- Deploy `20261011173000_protect_waitlist_rpc.sql` so users cannot directly bypass CAPTCHA via the public waitlist RPC.
+- Load-test and add edge/provider rate controls for IP, account, and email abuse before public LA.
+- Ensure the challenge works on mobile Safari and privacy-focused browsers.
+- Signup requires separate Auth CAPTCHA protection in Supabase (NOT implemented in frontend yet).
+
 ## 2. Account deletion
 Deploy `supabase/functions/sat-delete-account` with JWT verification enabled and with server-side service-role secret. The browser must never receive the service-role key.
 - Test with disposable users. Verify deletion of Auth user and all SAT tables that reference auth.users; verify storage and external logs/analytics separately.
