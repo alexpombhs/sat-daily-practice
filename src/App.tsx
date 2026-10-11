@@ -29,7 +29,7 @@ import {buildPracticePlanRecommendation} from './lib/practicePlan'
 import {buildNationalMeritOutlook} from './lib/nationalMeritOutlook'
 import {estimateSectionPracticeScore} from './lib/performanceAnalytics'
 import {loadSharedQuestionBank,mergeQuestionBanks} from './lib/sharedQuestionBank'
-import {choosePracticeQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
+import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
 import {pathForView,viewFromPathname,type AppRouteView} from './lib/appRoutes'
 import {DEFAULT_SETTINGS} from './lib/storage'
 import {abandonActiveSession,createActiveSession,getCurrentAuthUser,loadActiveSession,loadCloudHistory,loadUserSettings,saveActiveSessionProgress,saveUserSettings,subscribeToAuth,syncActiveAttempt,syncSession,type AuthUser} from './lib/supabase'
@@ -216,6 +216,7 @@ export default function App(){
     scorePredictionBasis:performance.scorePredictionBasis,
     scoreEstimateConfidence:performance.scoreEstimateConfidence,
   }
+  const difficultyCounts=countDifficultyQuestions(settings,questionBank)
   const newQuestionCount=countNewPracticeQuestions(settings,attempts,questionBank)
   const failedQuestionCount=countFailedPracticeQuestions(settings,attempts,questionBank)
   const practiceRecommendation=buildPracticePlanRecommendation(settings,questionBank,attempts,performance)
@@ -572,6 +573,7 @@ export default function App(){
       settings={settings}
       practiceTests={practiceTestOptions}
       newQuestionCount={newQuestionCount}
+      difficultyCounts={difficultyCounts}
       failedQuestionCount={failedQuestionCount}
       onChange={setSettings}
       onStart={()=>void beginPractice(settings.mode)}
