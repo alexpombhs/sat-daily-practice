@@ -36,7 +36,9 @@ export default function QuestionSourceReview({question,questionsPdf,answersPdf=n
         <AlexBox sx={{px:2,py:1.25,borderBottom:'1px solid #E6E2DB',bgcolor:'#F7F6F2'}}>
           <AlexText sx={{fontSize:12,fontWeight:800,color:'#475467',textTransform:'uppercase',letterSpacing:'.07em'}}>Original source</AlexText>
         </AlexBox>
-        {hasQuestionSource&&resolvedQuestionsPdf
+        {question.practiceTestId==='practice-test-1'
+          ?<AlexBox sx={{p:3}}><AlexText sx={{fontSize:14,color:'#667085'}}>This is an original SAT-style question authored for PT1. There is no third-party source PDF; the canonical question and its diagrams appear in Text reconstruction.</AlexText></AlexBox>
+          :hasQuestionSource&&resolvedQuestionsPdf
           ?<SourceViewer pdfKey="questions" bytes={resolvedQuestionsPdf} page={question.sourcePage} questionNumber={question.number} alt={`${label} original PDF`} practiceTestId={question.practiceTestId} module={question.module} sourceCrop={question.sourceCrop}/>
           :<AlexBox sx={{p:3}}><AlexText sx={{fontSize:14,color:questionSource.error?'#B42318':'#667085'}}>{questionSource.loading?'Loading shared source PDF…':questionSource.error||'Shared source PDF is unavailable right now.'}</AlexText></AlexBox>}
       </AlexSurface>
