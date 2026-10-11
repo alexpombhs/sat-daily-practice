@@ -8,7 +8,11 @@ const DEFAULT_SUPABASE_PUBLISHABLE_KEY='sb_publishable_TiLvsCcbJ6zdAvDcPuEZ6g_A0
 const url=(import.meta.env.VITE_SUPABASE_URL as string|undefined)||DEFAULT_SUPABASE_URL
 const publishableKey=((import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY??import.meta.env.VITE_SUPABASE_ANON_KEY) as string|undefined)||DEFAULT_SUPABASE_PUBLISHABLE_KEY
 
-export const supabase=createClient(url,publishableKey)
+const authStorageScope=typeof window==='undefined'?'server':window.location.origin.replace(/[^a-zA-Z0-9]/g,'_')
+const authStorageKey='sat-auth-'+new URL(url).hostname+'-'+authStorageScope
+export const supabase=createClient(url,publishableKey,{
+ auth:{storageKey:authStorageKey,persistSession:true,autoRefreshToken:true,detectSessionInUrl:true},
+})
 export const isSupabaseConfigured=true
 
 export type AuthUser={id:string;email:string|null}
