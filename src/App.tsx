@@ -32,7 +32,7 @@ import {loadSharedQuestionBank,mergeQuestionBanks} from './lib/sharedQuestionBan
 import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
 import {pathForView,viewFromPathname,type AppRouteView} from './lib/appRoutes'
 import {DEFAULT_SETTINGS} from './lib/storage'
-import {abandonActiveSession,createActiveSession,freeSessionsRemaining,hasPlusAccess,getCurrentAuthUser,loadActiveSession,loadCloudHistory,loadUserSettings,saveActiveSessionProgress,saveUserSettings,subscribeToAuth,syncActiveAttempt,syncSession,type AuthUser} from './lib/supabase'
+import {abandonActiveSession,createActiveSession,discardFreeSessionHistory,freeSessionsRemaining,hasPlusAccess,getCurrentAuthUser,loadActiveSession,loadCloudHistory,loadUserSettings,saveActiveSessionProgress,saveUserSettings,subscribeToAuth,syncActiveAttempt,syncSession,type AuthUser} from './lib/supabase'
 import type {ActivePracticeSession,Attempt,PracticeQuestion,SessionSummary,Settings,SubjectMode} from './types'
 
 const uid=()=>crypto.randomUUID()
@@ -69,6 +69,11 @@ export default function App(){
   const[performanceCustomEnd,setPerformanceCustomEnd]=useState('')
 
   function navigateTo(next:View,{replace=false}:{replace?:boolean}={}){
+    if(view==='results'&&next!=='results'&&!plusActive&&sid){
+      void discardFreeSessionHistory(sid).catch(error=>console.warn('Unable to clear free session history',error))
+      setAttempts(previous=>previous.filter(attempt=>attempt.sessionId!==sid))
+      setSessions(previous=>previous.filter(session=>session.id!==sid))
+    }
     setView(next)
     const path=pathForView(next)
     if(window.location.pathname===path)return
