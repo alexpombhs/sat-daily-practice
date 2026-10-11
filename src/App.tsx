@@ -32,7 +32,7 @@ import {loadSharedQuestionBank,mergeQuestionBanks} from './lib/sharedQuestionBan
 import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
 import {pathForView,viewFromPathname,type AppRouteView} from './lib/appRoutes'
 import {DEFAULT_SETTINGS} from './lib/storage'
-import {abandonActiveSession,createActiveSession,getCurrentAuthUser,loadActiveSession,loadCloudHistory,loadUserSettings,saveActiveSessionProgress,saveUserSettings,subscribeToAuth,syncActiveAttempt,syncSession,type AuthUser} from './lib/supabase'
+import {abandonActiveSession,createActiveSession,freeSessionsRemaining,hasPlusAccess,getCurrentAuthUser,loadActiveSession,loadCloudHistory,loadUserSettings,saveActiveSessionProgress,saveUserSettings,subscribeToAuth,syncActiveAttempt,syncSession,type AuthUser} from './lib/supabase'
 import type {ActivePracticeSession,Attempt,PracticeQuestion,SessionSummary,Settings,SubjectMode} from './types'
 
 const uid=()=>crypto.randomUUID()
@@ -257,8 +257,25 @@ export default function App(){
         return
       }
     }
-    const nextSettings={...settings,mode:nextMode,practiceTest:nextPracticeTest}
-    const nextQuestions=choosePracticeQuestions(nextSettings,attempts,Math.random,questionBank)
+    let entitled=false
+    try{
+      entitled=await hasPlusAccess()
+      if(!entitled&&await freeSessionsRemaining()<=0){
+        window.alert('You have completed your two free sessions for today. More free practice is available tomorrow, or you can get 90-day Plus access.')
+        navigateTo('account')
+        return
+      }
+    }catch(error){
+      console.warn('Unable to check practice allowance',error)
+      window.alert('We could not check your practice allowance. Please try again.')
+      return
+    }
+    const nextSettings=entitled?{...settings,mode:nextMode,practiceTest:nextPracticeTest}:{
+      ...DEFAULT_SETTINGS,mode:'both' as const,questionsPerSession:10,practiceTest:'all' as const,
+      selectionMode:'random' as const,shuffle:true,failedOnly:false,failedEverOnly:false,
+      difficulty:'all' as const
+    }
+    const nextQuestions=choosePracticeQuestions(nextSettings,entitled?attempts:[],Math.random,questionBank)
     if(!nextQuestions.length){
       window.alert('No questions match these practice settings yet. Adjust the practice test, subject, or question-history filter.')
       navigateTo('settings')
