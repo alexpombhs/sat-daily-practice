@@ -18,7 +18,5 @@ update auth.users set raw_user_meta_data=raw_user_meta_data-'sat_signup_birth_da
  where raw_user_meta_data ? 'sat_signup_birth_date';
 
 -- Remove previously collected optional nonessential student details.
-update public.sat_user_profiles set
- school=null,grade=null,parent_guardian_name=null,parent_guardian_email=null,about=null
- where school is not null or grade is not null or parent_guardian_name is not null
- or parent_guardian_email is not null or about is not null;
+-- Keep existing profile data for backward compatibility. The new UI no longer
+-- requests additional fields, but migration must not erase previously saved data.
