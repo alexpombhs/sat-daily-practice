@@ -29,7 +29,7 @@ Deno.serve(async(req:Request)=>{
      method:'POST',headers:{Authorization:`Bearer ${key}`,'Content-Type':'application/json',
        'Idempotency-Key':`sat-la-invite-${row.id}`},
      body:JSON.stringify({from:sender,to:[row.email],subject:'SAT Daily Practice registration update',
-       text:`A registration place may be available. Visit ${site.origin} to sign up. Places are limited and not reserved. To stop waitlist emails, use this link: ${unsub.toString()}`})
+       text:`A registration place may be available. Your registration place is reserved for 24 hours. Visit ${site.toString()} and sign up using this email address before the reservation expires. To stop waitlist emails, use this link: ${unsub.toString()}`})
    })
    sent=response.ok
  }catch{sent=false}
