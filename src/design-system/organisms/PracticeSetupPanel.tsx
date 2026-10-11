@@ -52,8 +52,8 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
 
     <PracticeSettingField
       label="Practice test"
-      helperText="Choose one test or mix all available questions."
-      control={<AlexDropdown id="practice-test" label="Question source" value={practiceTest} options={practiceTests} onChange={value=>onChange({...settings,practiceTest:value})}/>}
+      helperText={practiceTest==='practice-test-8'?'24 original questions focused on recurring errors. Recommended: 5 vocabulary, 4 exponents/radicals, 3 parallel-line geometry, 3 sentence boundaries, 3 data tables, 3 parameter problems, 2 circle geometry, and 1 evidence question.':'Choose an official test, all official tests, or the separate targeted mock set.'}
+      control={<AlexDropdown id="practice-test" label="Question source" value={practiceTest} options={practiceTests} onChange={value=>onChange({...settings,practiceTest:value,...(value==='practice-test-8'?{questionsPerSession:24,mode:'both' as const,failedOnly:false,failedEverOnly:false,difficultyLevels:undefined,difficulty:'all' as const}: {})})}/>}
     />
 
     <PracticeSettingField
