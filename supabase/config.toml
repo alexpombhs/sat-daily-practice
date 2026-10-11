@@ -25,3 +25,6 @@ verify_jwt = true
 
 [functions.sat-stripe-webhook]
 verify_jwt = false # Stripe signature verification inside handler
+
+[functions.sat-waitlist-verify]
+verify_jwt = false # One-time email verification token grants limited action.
