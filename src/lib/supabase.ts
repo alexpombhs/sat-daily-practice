@@ -46,10 +46,15 @@ export function subscribeToAuth(callback:(user:AuthUser|null)=>void){
   return()=>data.subscription.unsubscribe()
 }
 
+export type RegistrationStatus='open'|'closed'|'full'
+export async function getRegistrationStatus():Promise<RegistrationStatus>{
+ const {data,error}=await supabase.rpc('sat_registration_status')
+ if(error)throw error
+ if(data==='open'||data==='closed'||data==='full')return data
+ throw new Error('Unexpected registration status.')
+}
 export async function isRegistrationFull():Promise<boolean>{
-  const {data,error}=await supabase.rpc('sat_registration_is_full')
-  if(error)throw error
-  return data===true
+ return (await getRegistrationStatus())!=='open'
 }
 
 export async function joinLaunchWaitlist(email:string,ageConfirmed:boolean,captchaToken:string):Promise<void>{
