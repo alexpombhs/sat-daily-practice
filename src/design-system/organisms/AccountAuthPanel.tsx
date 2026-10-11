@@ -22,6 +22,7 @@ export default function AccountAuthPanel({email}:Props){
   const[error,setError]=useState('')
   const[registrationFull,setRegistrationFull]=useState(false)
   const[waitlistEmail,setWaitlistEmail]=useState('')
+  const[waitlistBirthDate,setWaitlistBirthDate]=useState('')
   const[profile,setProfile]=useState<UserProfile>(EMPTY_USER_PROFILE)
 
   useEffect(()=>{if(!email)void isRegistrationFull().then(setRegistrationFull).catch(()=>{ /* Signup server remains authoritative */ })},[email])
@@ -60,7 +61,7 @@ export default function AccountAuthPanel({email}:Props){
   async function joinWaitlist(){
     setBusy(true);setError('');setMessage('')
     try{
-      await joinLaunchWaitlist(waitlistEmail)
+      await joinLaunchWaitlist(waitlistEmail,validateSignupBirthDate(waitlistBirthDate))
       setMessage('You are on the waitlist. We will contact you if a place becomes available.')
     }catch(nextError){setError(messageFromError(nextError))}
     finally{setBusy(false)}
@@ -117,10 +118,11 @@ export default function AccountAuthPanel({email}:Props){
       </AlexStack>:registrationFull?<AlexStack spacing={2}>
         <AlexText sx={{fontWeight:700}}>The first 100 account places are filled.</AlexText>
         <AlexText sx={{fontSize:14,color:'text.secondary'}}>Join the waitlist to be notified if registration opens.</AlexText>
+        <AlexTextField label="Date of birth" type="date" value={waitlistBirthDate} onChange={event=>setWaitlistBirthDate(event.target.value)} InputLabelProps={{shrink:true}} />
         <AlexTextField label="Email for waitlist" type="email" value={waitlistEmail} onChange={event=>setWaitlistEmail(event.target.value)} />
         {error&&<AlexText role="alert" sx={{color:'error.main'}}>{error}</AlexText>}
         {message&&<AlexText role="status" sx={{color:'success.main'}}>{message}</AlexText>}
-        <AlexButton disabled={busy||!waitlistEmail.includes('@')} onClick={()=>void joinWaitlist()}>Join waitlist</AlexButton>
+        <AlexButton disabled={busy||!waitlistEmail.includes('@')||!waitlistBirthDate} onClick={()=>void joinWaitlist()}>Join waitlist</AlexButton>
         <AlexButton tone="secondary" onClick={()=>setRegistrationFull(false)}>I already have an account — sign in</AlexButton>
       </AlexStack>:<AuthCredentialsForm
         mode={mode}
