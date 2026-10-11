@@ -36,6 +36,7 @@ This checklist records code and configuration contracts. Quality assurance is de
 - [x] Privacy and Terms pages in the app, currently identified as drafts.
 - [x] Private content-editor roles and protected canonical question-edit controls.
 - [x] Operator cleanup functions for free-session and waitlist retention.
+- [x] Privacy-preserving aggregate LA metrics for seat usage, waitlist confirmations, paid passes, and daily free practice.
 
 ### Non-code operator dependencies (not representable as completed implementation)
 - [ ] Name the legal/adult operator and publish a genuine support email.
