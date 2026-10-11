@@ -1,4 +1,4 @@
-export type AppRouteView='study'|'home'|'practice'|'results'|'stats'|'settings'|'vocabulary'|'sources'|'question-bank'|'parsing-issues'|'account'
+export type AppRouteView='study'|'home'|'practice'|'results'|'stats'|'settings'|'vocabulary'|'sources'|'question-bank'|'parsing-issues'|'account'|'upgrade'
 
 const VIEW_TO_SEGMENT:Record<AppRouteView,string>={
   study:'dashboard',
@@ -12,6 +12,7 @@ const VIEW_TO_SEGMENT:Record<AppRouteView,string>={
   'question-bank':'question-bank',
   'parsing-issues':'parsing-issues',
   account:'account',
+  upgrade:'upgrade',
 }
 
 const SEGMENT_TO_VIEW=new Map(Object.entries(VIEW_TO_SEGMENT).map(([view,segment])=>[segment,view as AppRouteView]))
