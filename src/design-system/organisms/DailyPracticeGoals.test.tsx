@@ -82,6 +82,21 @@ describe('DailyPracticeGoals weekly streak',()=>{
     expect(screen.getByText('· 1/1')).toBeInTheDocument()
   })
 
+  it('reconstructs credit for legacy sessions whose failed-only setting was erased',()=>{
+    const yesterdayFailure={...attempt('fail','q-legacy','2026-09-28T16:00:00.000Z'),correct:false}
+    const yesterdayRecovery=attempt('recovery','q-legacy','2026-09-28T17:00:00.000Z')
+    const todayRetry=attempt('retry','q-legacy','2026-09-29T16:00:00.000Z')
+    const legacySession=session('s-retry','2026-09-29T15:55:00.000Z','2026-09-29T16:05:00.000Z')
+    render(<DailyPracticeGoals
+      attempts={[yesterdayFailure,yesterdayRecovery,todayRetry]}
+      sessions={[legacySession]}
+      dailyQuestions={20}
+      dailyMinutes={20}
+      failedQuestionCount={0}
+    />)
+    expect(screen.getByText('· 1/1')).toBeInTheDocument()
+  })
+
   it('shows actual questions completed when today exceeds the goal',()=>{
     const attemptsToday=Array.from({length:28},(_,index)=>attempt(
       `today-${index}`,
