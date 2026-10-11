@@ -236,7 +236,21 @@
       "linear table interpretation",
       "slope and intercept"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "A linear relationship is represented by the table.",
+      "[TABLE]",
+      "x|y",
+      "0|7",
+      "2|13",
+      "5|22",
+      "[/TABLE]",
+      "What is $y$ when $x=8$?",
+      "A) 28",
+      "B) 30",
+      "C) 31",
+      "D) 34"
+    ]
   },
   {
     "id": "pt1-math1-09",
@@ -1204,7 +1218,17 @@
       "frequency table",
       "unconditional proportion"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "A box contains the cards shown in the table.",
+      "[TABLE]",
+      "Card color|Number",
+      "Green|20",
+      "Blue|30",
+      "White|30",
+      "[/TABLE]",
+      "If one card is randomly selected, what is the probability that it is green?"
+    ]
   },
   {
     "id": "pt1-math2-14",
