@@ -168,7 +168,7 @@ const items=[
       "D) None"
     ],
     "explanationLines": [
-      "165−120=45 kWh."
+      "February exceeded January by 165−120=45 kilowatt-hours."
     ]
   },
   {
@@ -339,7 +339,7 @@ const items=[
       "D) 4"
     ],
     "explanationLines": [
-      "81=3^4, so x+2=4."
+      "Rewrite 81 as 3 to the fourth power, so x+2=4 and x=2."
     ]
   },
   {
@@ -377,7 +377,7 @@ const items=[
       "D) 12"
     ],
     "explanationLines": [
-      "2x+9=25, so x=8."
+      "Square both sides to get 2x+9=25, so x=8."
     ]
   },
   {
