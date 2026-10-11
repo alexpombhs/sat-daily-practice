@@ -43,6 +43,14 @@ describe('choosePracticeQuestions',()=>{
     expect(practiceQuestionPool({...multiple,mode:'english',difficultyLevels:['medium','advanced']},[],questions)).toHaveLength(0)
   })
 
+  it('treats no checked difficulty levels as an empty pool, not All',()=>{
+    const questions=QUESTION_BANK.filter(q=>q.practiceTestId==='practice-test-4'&&q.subject==='math').slice(0,3)
+      .map((q,i)=>({...q,difficulty:(['easy','medium','advanced'] as const)[i]}))
+    expect(practiceQuestionPool({...settings,difficultyLevels:[]},[],questions)).toHaveLength(0)
+    expect(practiceQuestionPool({...settings,difficultyLevels:['easy','medium','advanced']},[],questions)).toHaveLength(3)
+    expect(practiceQuestionPool({...settings,difficultyLevels:['medium','advanced']},[],questions)).toHaveLength(2)
+  })
+
   it('counts each content-reviewed difficulty by subject and test, independent of active difficulty',()=>{
     const math=QUESTION_BANK.filter(q=>q.practiceTestId==='practice-test-4'&&q.subject==='math').slice(0,4)
     const classified=math.map((q,i)=>({...q,difficulty:(i===0?'easy':i===1?'medium':i===2?'advanced':undefined) as 'easy'|'medium'|'advanced'|undefined}))
