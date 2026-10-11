@@ -83,6 +83,6 @@ export function availablePracticeTests(questions:PracticeQuestion[]=QUESTION_BAN
 export function practiceTestLabel(id:PracticeTestId){return id==='practice-test-8'?'Targeted Mock Practice':`Practice Test ${practiceTestNumber(id)}`}
 export function questionsForMode(mode:SubjectMode){return mode==='both'?QUESTION_BANK:QUESTION_BANK.filter(q=>q.subject===mode)}
 export function questionsForPractice(mode:SubjectMode,practiceTest:PracticeTestFilter='all'){
-  return questionsForMode(mode).filter(question=>practiceTest==='all'||question.practiceTestId===practiceTest)
+  return questionsForMode(mode).filter(question=>practiceTest==='all'?question.practiceTestId!=='practice-test-8':question.practiceTestId===practiceTest)
 }
 export function moduleLabel(module:ModuleKey){return module==='rw1'?'Reading & Writing · Module 1':module==='rw2'?'Reading & Writing · Module 2':module==='math1'?'Math · Module 1':'Math · Module 2'}
