@@ -34,3 +34,6 @@ verify_jwt = false # Restricted by LA_OPERATOR_SECRET for scheduled cleanup.
 
 [functions.sat-issue-prepaid-code]
 verify_jwt = false # Requires LA_OPERATOR_SECRET; restricted operator use only.
+
+[functions.sat-master-test-activate]
+verify_jwt = true # Signed-in user, Edge allowlist, and server-side master code required.
