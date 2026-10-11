@@ -4,6 +4,7 @@ import AlexStack from '../atoms/AlexStack'
 import AlexText from '../atoms/AlexText'
 import AlexTextField from '../atoms/AlexTextField'
 import TurnstileChallenge from './TurnstileChallenge'
+import {validateSignupBirthDate} from '../../lib/signupAge'
 
 type Props={
   mode:'signin'|'signup'
@@ -19,12 +20,30 @@ export default function AuthCredentialsForm({mode,busy=false,message,error,onSub
   const[password,setPassword]=useState('')
   const[birthDate,setBirthDate]=useState('')
   const[captchaToken,setCaptchaToken]=useState('')
+  const[ageApproved,setAgeApproved]=useState(false)
+  const[ageError,setAgeError]=useState('')
   const onCaptchaToken=useCallback((token:string)=>setCaptchaToken(token),[])
 
   async function submit(event:FormEvent){
     event.preventDefault()
     await onSubmit(email,password,mode==='signup'?birthDate:undefined,mode==='signup'?captchaToken:undefined)
   }
+
+  function checkAge(){
+    try{validateSignupBirthDate(birthDate);setAgeApproved(true);setAgeError('')}
+    catch(nextError){setAgeApproved(false);setAgeError(nextError instanceof Error?nextError.message:'Unable to verify eligibility.')}
+  }
+
+  if(mode==='signup'&&!ageApproved)return <AlexStack spacing={2}>
+    <AlexText sx={{fontWeight:700}}>You must be 13 or older to create an account.</AlexText>
+    <AlexText sx={{fontSize:14,color:'text.secondary'}}>Confirm your age before entering an email or password. Your date of birth stays in this browser until you submit registration.</AlexText>
+    <AlexTextField label="Date of birth" type="date" value={birthDate} onChange={event=>{setBirthDate(event.target.value);setAgeError('')}} InputLabelProps={{shrink:true}} inputProps={{max:new Date().toISOString().slice(0,10)}}/>
+    {ageError&&<AlexText role="alert" sx={{fontSize:13,color:'error.main'}}>{ageError}</AlexText>}
+    <AlexStack direction="row" spacing={1.25}>
+      <AlexButton disabled={!birthDate||busy} onClick={checkAge}>Continue</AlexButton>
+      <AlexButton tone="secondary" onClick={()=>onModeChange('signin')}>I already have an account</AlexButton>
+    </AlexStack>
+  </AlexStack>
 
   return <AlexStack component="form" spacing={2} onSubmit={submit}>
     <AlexTextField
@@ -45,10 +64,10 @@ export default function AuthCredentialsForm({mode,busy=false,message,error,onSub
       inputProps={{minLength:6}}
       helperText={mode==='signup'?'Use at least 6 characters.':undefined}
     />
-    {mode==='signup'&&<>
-      <AlexTextField label="Date of birth" type="date" value={birthDate} onChange={event=>setBirthDate(event.target.value)} required InputLabelProps={{shrink:true}} inputProps={{max:new Date().toISOString().slice(0,10)}} helperText="Used to check signup eligibility. You must enter your real date of birth." />
-      <AlexText sx={{fontSize:12,color:'text.secondary'}}>Your date of birth is used for eligibility screening. Review the privacy information before public launch.</AlexText>
-    </>}
+    {mode==='signup'&&<AlexStack spacing={1}>
+      <AlexText sx={{fontSize:13,color:'text.secondary'}}>Age eligibility confirmed (13+).</AlexText>
+      <AlexButton type="button" tone="secondary" onClick={()=>{setAgeApproved(false);setCaptchaToken('');setEmail('');setPassword('')}} sx={{alignSelf:'flex-start'}}>Change date of birth</AlexButton>
+    </AlexStack>}
     {mode==='signup'&&<TurnstileChallenge onToken={onCaptchaToken}/>}
     {error&&<AlexText role="alert" sx={{fontSize:13,color:'error.main'}}>{error}</AlexText>}
     {message&&<AlexText role="status" sx={{fontSize:13,color:'success.main'}}>{message}</AlexText>}
