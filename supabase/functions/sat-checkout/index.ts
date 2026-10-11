@@ -17,8 +17,8 @@ Deno.serve(async(req:Request)=>{
  const session=await stripe.checkout.sessions.create({
   mode:'payment',customer_email:user.email,client_reference_id:user.id,
   line_items:[{price,quantity:1}],
-  success_url:origin.origin+'/account?checkout=success',
-  cancel_url:origin.origin+'/account?checkout=cancelled',
+  success_url:new URL('account?checkout=success',origin.href.endsWith('/')?origin.href:origin.href+'/').toString(),
+  cancel_url:new URL('account?checkout=cancelled',origin.href.endsWith('/')?origin.href:origin.href+'/').toString(),
   metadata:{user_id:user.id,product:'sat-90-day-pass'},
  })
  return new Response(JSON.stringify({url:session.url}),{headers:{'Content-Type':'application/json','Cache-Control':'no-store'}})
