@@ -24,6 +24,7 @@ export default function AccountAuthPanel({email}:Props){
   const[registrationFull,setRegistrationFull]=useState(false)
   const[waitlistEmail,setWaitlistEmail]=useState('')
   const[waitlistBirthDate,setWaitlistBirthDate]=useState('')
+  const[waitlistAgeApproved,setWaitlistAgeApproved]=useState(false)
   const[captchaToken,setCaptchaToken]=useState('')
   const handleCaptchaToken=useCallback((token:string)=>setCaptchaToken(token),[])
   const[deleteText,setDeleteText]=useState('')
@@ -141,13 +142,15 @@ export default function AccountAuthPanel({email}:Props){
         </AlexSurface>
       </AlexStack>:registrationFull?<AlexStack spacing={2}>
         <AlexText sx={{fontWeight:700}}>The first 100 account places are filled.</AlexText>
+        <AlexText sx={{fontSize:14,fontWeight:700}}>You must be 13 or older to join the waitlist.</AlexText>
         <AlexText sx={{fontSize:14,color:'text.secondary'}}>Enter your email to request a registration invitation. An invitation does not reserve a place. Your email will be used for waitlist updates; contact support to request removal.</AlexText>
-        <AlexTextField label="Date of birth" type="date" value={waitlistBirthDate} onChange={event=>setWaitlistBirthDate(event.target.value)} InputLabelProps={{shrink:true}} />
-        <AlexTextField label="Email for waitlist" type="email" value={waitlistEmail} onChange={event=>setWaitlistEmail(event.target.value)} />
-        <TurnstileChallenge onToken={handleCaptchaToken}/>
+        <AlexTextField label="Date of birth" type="date" value={waitlistBirthDate} onChange={event=>{setWaitlistBirthDate(event.target.value);setWaitlistAgeApproved(false);setError('')}} InputLabelProps={{shrink:true}} />
+        {!waitlistAgeApproved?<AlexButton disabled={!waitlistBirthDate} onClick={()=>{try{validateSignupBirthDate(waitlistBirthDate);setError('');setWaitlistAgeApproved(true)}catch(nextError){setError(messageFromError(nextError))}}}>Continue</AlexButton>:<AlexButton tone="secondary" onClick={()=>{setWaitlistAgeApproved(false);setWaitlistEmail('');setCaptchaToken('')}}>Change date of birth</AlexButton>}
+        {waitlistAgeApproved&&<AlexTextField label="Email for waitlist" type="email" value={waitlistEmail} onChange={event=>setWaitlistEmail(event.target.value)} />}
+        {waitlistAgeApproved&&<TurnstileChallenge onToken={handleCaptchaToken}/>}
         {error&&<AlexText role="alert" sx={{color:'error.main'}}>{error}</AlexText>}
         {message&&<AlexText role="status" sx={{color:'success.main'}}>{message}</AlexText>}
-        <AlexButton disabled={busy||!waitlistEmail.includes('@')||!waitlistBirthDate||!captchaToken} onClick={()=>void joinWaitlist()}>Join waitlist</AlexButton>
+        {waitlistAgeApproved&&<AlexButton disabled={busy||!waitlistEmail.includes('@')||!waitlistBirthDate||!captchaToken} onClick={()=>void joinWaitlist()}>Join waitlist</AlexButton>}
         <AlexButton tone="secondary" onClick={()=>setRegistrationFull(false)}>I already have an account — sign in</AlexButton>
       </AlexStack>:<AuthCredentialsForm
         mode={mode}
