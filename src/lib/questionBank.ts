@@ -78,7 +78,7 @@ export function availablePracticeTests(questions:PracticeQuestion[]=QUESTION_BAN
   return ids.sort((a,b)=>practiceTestNumber(a)-practiceTestNumber(b))
 }
 
-export function practiceTestLabel(id:PracticeTestId){return `Practice Test ${practiceTestNumber(id)}`}
+export function practiceTestLabel(id:PracticeTestId){return id==='practice-test-8'?'Targeted Mock Practice (original questions)':`Practice Test ${practiceTestNumber(id)}`}
 export function questionsForMode(mode:SubjectMode){return mode==='both'?QUESTION_BANK:QUESTION_BANK.filter(q=>q.subject===mode)}
 export function questionsForPractice(mode:SubjectMode,practiceTest:PracticeTestFilter='all'){
   return questionsForMode(mode).filter(question=>practiceTest==='all'||question.practiceTestId===practiceTest)
