@@ -3,6 +3,7 @@ import '../../structured.css'
 import QuestionVisualSlice from '../../components/QuestionVisualSlice'
 import SourceViewer from './SourceViewer'
 import StructuredQuestionLines from './StructuredQuestionLines'
+import OriginalPT1Graph from './OriginalPT1Graph'
 import ReadingQuestionLines from './ReadingQuestionLines'
 import {ensureQuestionText} from '../../lib/pdfStructuredImport'
 import {getQuestionContent,isCurrentQuestionContent,QUESTION_CONTENT_VERSION,type StoredQuestionContent} from '../../lib/questionContentStore'
@@ -194,6 +195,7 @@ export default function QuestionContent({question,bytes,alt,showOriginalLayout=t
   if(!content)return <div className="structured-loading">Preparing text question…</div>
 
   return <div className={question.subject==='english'?'structured-question reading-structured-question':'structured-question'}>
+    <OriginalPT1Graph question={question}/>
     <div className="structured-lines">
       {visuals.length&&sourceBytes
         ?<LinesWithSourceVisuals question={question} bytes={sourceBytes} lines={content.questionLines} alt={alt} visuals={visuals} sourceCrop={question.sourceCrop} reflowProse={reflowProse}/>
