@@ -9,6 +9,27 @@ The migration `20261011180000_operator_launch_mode.sql` creates a single launch 
 The `sat-waitlist-unsubscribe` function accepts a private token embedded in invitation emails; deploy with JWT verification disabled. The token is specific to a waitlist row and allows only removal.
 `sat_claim_waitlist_invite` now returns the unsubscribe token for the email. Apply the migrations in filename order, including the `20261011181000` and `20261011182000` additions.
 
+
+## Current implemented LA / GA architecture
+- LA capacity is **100 confirmed users**, plus short-lived 24-hour provisional signup holds and invitation reservations. Pending users do not occupy a seat forever. Operator-configured LA capacity remains 100 by default; GA lifts the limit.
+- Registration stays **closed** until an operator explicitly enables it. The Auth hook rejects users below 13, including direct API signups. Birthdates are stripped from persisted Auth metadata after signup.
+- Joining the waitlist requires a CAPTCHA and 13+ eligibility. Resend sends an email-confirmation link. Invitations are sent only to verified waitlist addresses, reserve a place for 24 hours, and include an opt-out link. Confirmation and unsubscribe links require a deliberate button press to protect against email-scanner prefetching.
+- `.github/workflows/la-waitlist-invitations.yml` schedules the operator invite endpoint every 15 minutes after the workflow secrets are configured and merged into the default branch.
+- Free accounts receive **two random ten-question sessions each UTC calendar day**. Server-side counters resist user deletion of prior sessions. Free history is discarded when leaving session feedback; `sat_cleanup_launch_data` can remove older free records.
+- Plus access uses one Stripe `mode=payment` checkout for **$10 / 90 days**, no recurring subscription. Signed Stripe webhooks grant idempotent, consecutively stackable passes. The app and database enforce entitlement limits.
+- Payment remains disabled until `LA_CHECKOUT_ENABLED=true`, `SAT_CONTENT_RIGHTS_APPROVED=true`, and `SAT_LEGAL_APPROVED=true` are set on the backend. The frontend `VITE_CHECKOUT_AVAILABLE=true` is an additional presentation switch, not a security boundary.
+- Canonical question edits and the editing-enable toggle are restricted to accounts explicitly registered in `sat_content_admins`; operator grants role only after reviewing the user ID.
+
+## Required operator secrets and launch settings
+**Supabase Edge secrets:** `TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, `LA_FROM_EMAIL`, `LA_OPERATOR_SECRET`, `LA_APP_URL`, `STRIPE_SECRET_KEY`, `STRIPE_LA_PRICE_ID`, `STRIPE_WEBHOOK_SECRET`.
+**Payment approval flags:** `LA_CHECKOUT_ENABLED`, `SAT_CONTENT_RIGHTS_APPROVED`, `SAT_LEGAL_APPROVED`.
+**Frontend build:** `VITE_TURNSTILE_SITE_KEY`, `VITE_CHECKOUT_AVAILABLE`.
+**GitHub Actions secrets:** `LA_INVITE_FUNCTION_URL`, `LA_OPERATOR_SECRET`.
+Configure Stripe to deliver `checkout.session.completed` and `charge.refunded` to `sat-stripe-webhook` with the correct signing secret. Do not put Stripe secret keys or operator secrets in the frontend.
+
+## Data retention
+`public.sat_cleanup_launch_data()` is a service-role-only maintenance routine. Suggested implementation defaults: free completed/abandoned sessions 48 hours, unverified waitlist 7 days, old invited waitlist 30 days, verified waiting entries 180 days, and free daily quota counters 31 days. Schedule the `sat-launch-maintenance` operator endpoint at least daily using an approved server-side scheduler. Operator must review retention against legal requirements before deployment.
+
 ## 1. CI and staging
 - Confirm PR checks `npm test` and `npm run build` pass.
 - Apply the SQL migrations from PR #57 in a **staging project** before production.
