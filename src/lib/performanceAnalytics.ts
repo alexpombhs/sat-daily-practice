@@ -245,20 +245,26 @@ function buildSessions(attempts:Attempt[],sessions:SessionSummary[],questionBank
   let previousScore:number|null=null
   let latestScoreEstimate:number|null=null
   let latestScorePredictionBasis:ScorePredictionBasis|null=null
+  let officialSessionCount=0
   ordered.forEach((session,index)=>{
+    // Mock questions train weak skills but must not inflate or depress an SAT score estimate.
+    const sessionAttempts=bySession.get(session.id)??[]
+    if(sessionAttempts.length>0&&sessionAttempts.every(attempt=>attempt.practiceTestId==='practice-test-8'||attempt.questionId.startsWith('practice-test-8:')))return
+    officialSessionCount++
     const historicalAttempts=attemptsForSessions(attempts,ordered.slice(0,index+1))
-    const scoreSections=buildScoreSections(historicalAttempts,questionBank)
+      .filter(attempt=>attempt.practiceTestId!=='practice-test-8'&&!attempt.questionId.startsWith('practice-test-8:'))
+    const scoreSections=buildScoreSections(historicalAttempts,questionBank.filter(question=>question.practiceTestId!=='practice-test-8'))
     const score=estimateOverallScore(scoreSections,historicalAttempts)
     latestScoreEstimate=score
-    latestScorePredictionBasis=predictionBasis(scoreSections,Math.min(SCORE_SESSION_WINDOW,index+1),historicalAttempts)
+    latestScorePredictionBasis=predictionBasis(scoreSections,Math.min(SCORE_SESSION_WINDOW,officialSessionCount),historicalAttempts)
     if(score===null)return
     scoreTrend.push({
       sessionId:session.id,
       startedAt:session.startedAt,
       score,
       delta:previousScore===null?0:score-previousScore,
-      sessionNumber:index+1,
-      calibrating:index+1<SCORE_SESSION_WINDOW,
+      sessionNumber:officialSessionCount,
+      calibrating:officialSessionCount<SCORE_SESSION_WINDOW,
     })
     previousScore=score
   })
