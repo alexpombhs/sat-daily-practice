@@ -2,6 +2,13 @@
 
 **Do not open public registrations until this checklist is verified.**
 
+## Launch mode (operator controlled)
+The migration `20261011180000_operator_launch_mode.sql` creates a single launch configuration row with **closed** as the default. Once the operator has approved opening LA, update the row to `launch_mode='la'` and `capacity=100` through an authorized admin database action. GA is `launch_mode='ga'`; the trigger remains installed, but allows enrollment beyond the LA cap. Do not expose configuration updates to regular users.
+
+## Waitlist removal and invitations
+The `sat-waitlist-unsubscribe` function accepts a private token embedded in invitation emails; deploy with JWT verification disabled. The token is specific to a waitlist row and allows only removal.
+`sat_claim_waitlist_invite` now returns the unsubscribe token for the email. Apply the migrations in filename order, including the `20261011181000` and `20261011182000` additions.
+
 ## 1. CI and staging
 - Confirm PR checks `npm test` and `npm run build` pass.
 - Apply the SQL migrations from PR #57 in a **staging project** before production.
