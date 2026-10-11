@@ -53,8 +53,9 @@ export function buildPracticePlanRecommendation(settings:Settings,questions:Prac
   const estimatedScore=performance.latestScoreEstimate
   const scoreGap=targetScore!==null&&estimatedScore!==null?targetScore-estimatedScore:null
   const needsScoreWork=targetScore!==null&&(estimatedScore===null||(scoreGap!==null&&scoreGap>0))
-  const coverageSessionsPerDay=remainingSessions?Math.max(1,Math.ceil(remainingSessions/daysRemaining)):0
-  const recommendedSessionsPerDay=Math.max(coverageSessionsPerDay,remainingQuestions===0&&needsScoreWork?1:0)
+  // Bank growth must never force extra sessions into a bite-size daily plan.
+  // Coverage and remainingSessions stay informational, not a daily workload mandate.
+  const recommendedSessionsPerDay=remainingQuestions>0||needsScoreWork?1:0
 
   const timed=attempts.filter(attempt=>attempt.elapsedMs>0&&attempt.elapsedMs<20*60*1000)
   const historyMinutes=timed.length>=5?timed.reduce((sum,attempt)=>sum+attempt.elapsedMs,0)/timed.length/60000:null
@@ -76,7 +77,8 @@ export function buildPracticePlanRecommendation(settings:Settings,questions:Prac
   return{
     bankQuestionCount,availablePracticeSetCount,targetPracticeSets,daysRemaining,uniqueQuestionsCompleted,targetQuestions,remainingQuestions,
     questionsPerSession,remainingSessions,recommendedSessionsPerDay,estimatedSessionMinutes,
-    estimatedDailyMinutes:estimatedSessionMinutes*recommendedSessionsPerDay,
+    // The daily goal is a time box, not a promise to finish every item in the bank.
+    estimatedDailyMinutes:recommendedSessionsPerDay?Math.min(20,estimatedSessionMinutes):0,
     paceSource:historyMinutes===null?'configured fallback':'history',
     targetScore,estimatedScore,scoreGap,focusLabel,focusSharePercent,scoreGuidance,
   }
