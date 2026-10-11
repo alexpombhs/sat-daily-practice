@@ -36,6 +36,7 @@ function parseVisualSpecs(crop:unknown,afterLine:unknown):QuestionVisualSpec[]{
 }
 
 function idMatchesPracticeTest(id:string,practiceTestId:string){
+  if(practiceTestId==='practice-test-1')return /^pt1-(?:rw[12]|math[12])-\d{2}$/.test(id)
   if(practiceTestId==='practice-test-4')return !id.startsWith('practice-test-')
   return id.startsWith(`${practiceTestId}:`)
 }
