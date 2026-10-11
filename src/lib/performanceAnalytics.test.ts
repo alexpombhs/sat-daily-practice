@@ -1,5 +1,6 @@
 import {describe,expect,it} from 'vitest'
 import {buildPerformanceAnalytics,estimateSectionPracticeScore,SCORE_SESSION_WINDOW} from './performanceAnalytics'
+import {QUESTION_BANK} from './questionBank'
 import type {Attempt,SessionSummary} from '../types'
 
 const makeAttempt=(id:string,sessionId:string,questionId:string,subject:Attempt['subject'],module:Attempt['module'],questionNumber:number,correct:boolean,elapsedMs:number,createdAt:string):Attempt=>({
@@ -47,7 +48,7 @@ describe('performance analytics',()=>{
     expect(analytics.scoreTrend.every(point=>point.calibrating)).toBe(true)
     expect(analytics.scorePredictionBasis).toMatchObject({
       sessionCount:2,
-      questionCount:480,
+      questionCount:QUESTION_BANK.length,
     })
   })
 
@@ -86,33 +87,18 @@ describe('performance analytics',()=>{
     expect(analytics.weeklyScoreChange).toBeNull()
   })
 
-  it('uses only the latest ten completed sessions for the prediction pool',()=>{
-    expect(SCORE_SESSION_WINDOW).toBe(10)
-    const oldFailures:Attempt[]=[
-      ...['e-1','e-2','e-3'].map((id,index)=>makeAttempt(`old-e-${index}`,'s1',id,'english','rw1',index+1,false,1000,`2026-08-01T12:00:0${index+1}.000Z`)),
-      ...['m-1','m-2','m-3'].map((id,index)=>makeAttempt(`old-m-${index}`,'s1',id,'math','math1',index+1,false,1000,`2026-08-01T12:00:1${index+1}.000Z`)),
-    ]
-    const recentCorrect:Attempt[]=[
-      ...['e-1','e-2','e-3'].map((id,index)=>makeAttempt(`new-e-${index}`,'s11',id,'english','rw1',index+1,true,1000,`2026-08-11T12:00:0${index+1}.000Z`)),
-      ...['m-1','m-2','m-3'].map((id,index)=>makeAttempt(`new-m-${index}`,'s11',id,'math','math1',index+1,true,1000,`2026-08-11T12:00:1${index+1}.000Z`)),
-    ]
-    const all=[...oldFailures,...recentCorrect]
-    const windowSessions:SessionSummary[]=Array.from({length:11},(_,index)=>{
-      const number=index+1
-      const id=`s${number}`
-      const day=String(number).padStart(2,'0')
-      const rows=all.filter(attempt=>attempt.sessionId===id)
-      return {id,startedAt:`2026-08-${day}T12:00:00.000Z`,endedAt:`2026-08-${day}T12:05:00.000Z`,mode:'both',questionCount:6,attempts:rows}
-    })
-    const analytics=buildPerformanceAnalytics(all,windowSessions,98)
-    expect(analytics.latestScoreEstimate).toBeLessThan(1600)
-    expect(analytics.scoreTrend.find(point=>point.sessionNumber===9)?.calibrating).toBe(true)
-    expect(analytics.scoreTrend.find(point=>point.sessionNumber===10)?.calibrating).toBe(false)
-    expect(analytics.scoreTrend.find(point=>point.sessionNumber===11)?.calibrating).toBe(false)
-    expect(analytics.scorePredictionBasis).toMatchObject({
-      sessionCount:10,
-      questionCount:480,
-    })
+  it('keeps all previously practiced questions in the probability model beyond ten sessions',()=>{
+    const q=QUESTION_BANK.filter(q=>q.subject==='math').slice(0,3)
+    const first=q.map((question,index)=>makeAttempt(`f-${index}`,'s1',question.id,'math',question.module,question.number,false,1000,`2026-08-01T12:00:0${index}.000Z`))
+    const final=q.map((question,index)=>makeAttempt(`c-${index}`,'s11',question.id,'math',question.module,question.number,true,1000,`2026-08-11T12:00:0${index}.000Z`))
+    const rows=[...first,...final]
+    const windowSessions:SessionSummary[]=Array.from({length:11},(_,index)=>({
+      id:`s${index+1}`,startedAt:`2026-08-${String(index+1).padStart(2,'0')}T12:00:00.000Z`,endedAt:`2026-08-${String(index+1).padStart(2,'0')}T12:05:00.000Z`,mode:'both',questionCount:3,
+      attempts:rows.filter(a=>a.sessionId===`s${index+1}`),
+    }))
+    const analytics=buildPerformanceAnalytics(rows,windowSessions,QUESTION_BANK.length)
+    expect(analytics.scorePredictionBasis?.questionCount).toBe(QUESTION_BANK.length)
+    expect(analytics.scoreTrend).toHaveLength(11)
   })
 
   it('raises the predicted score after a second successful review of formerly failed questions',()=>{
