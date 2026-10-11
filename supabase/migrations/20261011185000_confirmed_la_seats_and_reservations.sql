@@ -90,7 +90,7 @@ begin
  if mode='la' and (select public.sat_la_occupied_seats())>=max_users then return; end if;
  return query with next_entry as (
   select w.id from public.sat_launch_waitlist w
-  where w.status='waiting'
+  where w.status='waiting' or (w.status='sending' and w.claimed_at<now()-interval '15 minutes')
   order by w.created_at for update skip locked limit 1
  ), claimed as (
   update public.sat_launch_waitlist w
