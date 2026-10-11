@@ -9,23 +9,29 @@
     "options": [
       {
         "label": "A",
-        "text": "Chess"
-      },
-      {
-        "label": "B",
         "text": "Robotics"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "Art"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "Music"
+      },
+      {
+        "label": "D",
+        "text": "Chess"
       }
     ],
-    "correct_answer": "B",
-    "explanation": "Robotics has the greatest count, 31."
+    "correct_answer": "A",
+    "explanation": "Robotics has the greatest count, 31.",
+    "difficulty": "easy",
+    "concepts": [
+      "bar graph reading",
+      "categorical frequency"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-02",
@@ -37,23 +43,29 @@
     "options": [
       {
         "label": "A",
-        "text": "25%"
-      },
-      {
-        "label": "B",
-        "text": "30%"
-      },
-      {
-        "label": "C",
         "text": "35%"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "40%"
+      },
+      {
+        "label": "C",
+        "text": "25%"
+      },
+      {
+        "label": "D",
+        "text": "30%"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "14/40=0.35=35%."
+    "correct_answer": "A",
+    "explanation": "14/40=0.35=35%.",
+    "difficulty": "easy",
+    "concepts": [
+      "percent as part of whole",
+      "fraction-to-percent conversion"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-03",
@@ -65,23 +77,30 @@
     "options": [
       {
         "label": "A",
-        "text": "4"
+        "text": "52"
       },
       {
         "label": "B",
-        "text": "7"
+        "text": "4"
       },
       {
         "label": "C",
-        "text": "10"
+        "text": "7"
       },
       {
         "label": "D",
-        "text": "52"
+        "text": "10"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "The positive root gives x-3=7, so x=10."
+    "correct_answer": "D",
+    "explanation": "The positive root gives x-3=7, so x=10.",
+    "difficulty": "easy",
+    "concepts": [
+      "square equations",
+      "square roots",
+      "isolating a variable"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-04",
@@ -109,7 +128,13 @@
       }
     ],
     "correct_answer": "B",
-    "explanation": "Six groups of n give 6n; adding five gives 6n+5."
+    "explanation": "Six groups of n give 6n; adding five gives 6n+5.",
+    "difficulty": "easy",
+    "concepts": [
+      "translating words to linear equations",
+      "arithmetic operations"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-05",
@@ -121,23 +146,30 @@
     "options": [
       {
         "label": "A",
-        "text": "Cost at zero miles"
-      },
-      {
-        "label": "B",
         "text": "Total trips"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "Additional dollars per mile"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "Number of passengers"
+      },
+      {
+        "label": "D",
+        "text": "Cost at zero miles"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "The coefficient is the constant rate per mile."
+    "correct_answer": "B",
+    "explanation": "The coefficient is the constant rate per mile.",
+    "difficulty": "easy",
+    "concepts": [
+      "linear functions",
+      "slope as rate of change",
+      "context interpretation"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-06",
@@ -147,7 +179,13 @@
     "response_type": "student-produced",
     "stem": "A pump moves 84 liters in 7 minutes at a constant rate. How many liters does it move per minute?",
     "correct_answer": "12",
-    "explanation": "Divide 84 by 7 to get 12 liters per minute."
+    "explanation": "Divide 84 by 7 to get 12 liters per minute.",
+    "difficulty": "easy",
+    "concepts": [
+      "unit rate",
+      "multiplicative division"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-07",
@@ -157,7 +195,14 @@
     "response_type": "student-produced",
     "stem": "A shop offers 20% off notebooks priced at $15 each. A customer pays $72 before taxes. How many notebooks were purchased?",
     "correct_answer": "6",
-    "explanation": "Each discounted notebook costs 15(0.8)=12 dollars, and 72/12=6."
+    "explanation": "Each discounted notebook costs 15(0.8)=12 dollars, and 72/12=6.",
+    "difficulty": "medium",
+    "concepts": [
+      "multi-step linear word problems",
+      "discounts",
+      "unit price"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-08",
@@ -185,7 +230,13 @@
       }
     ],
     "correct_answer": "C",
-    "explanation": "Slope=(11-5)/2=3; f(4)=5+12=17."
+    "explanation": "Slope=(11-5)/2=3; f(4)=5+12=17.",
+    "difficulty": "easy",
+    "concepts": [
+      "linear table interpretation",
+      "slope and intercept"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-09",
@@ -197,23 +248,30 @@
     "options": [
       {
         "label": "A",
-        "text": "38°"
-      },
-      {
-        "label": "B",
         "text": "42°"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "52°"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "62°"
+      },
+      {
+        "label": "D",
+        "text": "38°"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "Complementary acute angles sum to 90°, so 90-38=52°."
+    "correct_answer": "B",
+    "explanation": "Complementary acute angles sum to 90°, so 90-38=52°.",
+    "difficulty": "medium",
+    "concepts": [
+      "similar triangles",
+      "corresponding angles",
+      "complementary angles"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-10",
@@ -225,23 +283,30 @@
     "options": [
       {
         "label": "A",
-        "text": "y=2x+3"
-      },
-      {
-        "label": "B",
-        "text": "y=3x+3"
-      },
-      {
-        "label": "C",
         "text": "y=6x+3"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "y=3x+9"
+      },
+      {
+        "label": "C",
+        "text": "y=2x+3"
+      },
+      {
+        "label": "D",
+        "text": "y=3x+3"
       }
     ],
-    "correct_answer": "B",
-    "explanation": "Rise of 6 over run of 2 gives slope 3, and intercept is 3."
+    "correct_answer": "D",
+    "explanation": "Rise of 6 over run of 2 gives slope 3, and intercept is 3.",
+    "difficulty": "medium",
+    "concepts": [
+      "scatterplot trend",
+      "slope magnitude",
+      "linear model selection"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-11",
@@ -253,23 +318,29 @@
     "options": [
       {
         "label": "A",
-        "text": "8t+3"
+        "text": "3t-8"
       },
       {
         "label": "B",
-        "text": "11t"
+        "text": "8t+3"
       },
       {
         "label": "C",
-        "text": "8+3t"
+        "text": "11t"
       },
       {
         "label": "D",
-        "text": "3t-8"
+        "text": "8+3t"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Each ticket costs 8 dollars, with one fixed 3-dollar fee."
+    "correct_answer": "B",
+    "explanation": "Each ticket costs 8 dollars, with one fixed 3-dollar fee.",
+    "difficulty": "easy",
+    "concepts": [
+      "substitution into linear equations",
+      "context constraints"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-12",
@@ -297,7 +368,14 @@
       }
     ],
     "correct_answer": "B",
-    "explanation": "Slope=(7-(-2))/(3-0)=9/3=3."
+    "explanation": "Slope=(7-(-2))/(3-0)=9/3=3.",
+    "difficulty": "easy",
+    "concepts": [
+      "line graphs",
+      "slope",
+      "y intercept"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-13",
@@ -307,7 +385,13 @@
     "response_type": "student-produced",
     "stem": "If 5/a = 1/4, what is a?",
     "correct_answer": "20",
-    "explanation": "Cross-multiplying gives 5×4=a, so a=20."
+    "explanation": "Cross-multiplying gives 5×4=a, so a=20.",
+    "difficulty": "easy",
+    "concepts": [
+      "reciprocal relationships",
+      "one-step equations"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-14",
@@ -317,7 +401,14 @@
     "response_type": "student-produced",
     "stem": "If 2x+3y=1 and 2x-y=9, what is y?",
     "correct_answer": "-2",
-    "explanation": "Subtract the second equation from the first: 4y=-8, hence y=-2."
+    "explanation": "Subtract the second equation from the first: 4y=-8, hence y=-2.",
+    "difficulty": "medium",
+    "concepts": [
+      "systems of linear equations",
+      "elimination",
+      "negative rational solutions"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-15",
@@ -329,23 +420,30 @@
     "options": [
       {
         "label": "A",
-        "text": "y-5=(-2/3)(x-3)"
+        "text": "y-5=(3/2)(x-3)"
       },
       {
         "label": "B",
-        "text": "y+5=(-2/3)(x-3)"
+        "text": "y-5=(-2/3)(x-3)"
       },
       {
         "label": "C",
-        "text": "y-3=(-2/3)(x-5)"
+        "text": "y+5=(-2/3)(x-3)"
       },
       {
         "label": "D",
-        "text": "y-5=(3/2)(x-3)"
+        "text": "y-3=(-2/3)(x-5)"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Point-slope form uses y-y1=m(x-x1), with m=-2/3 and (3,5)."
+    "correct_answer": "B",
+    "explanation": "Point-slope form uses y-y1=m(x-x1), with m=-2/3 and (3,5).",
+    "difficulty": "medium",
+    "concepts": [
+      "point-slope form",
+      "fractional slope",
+      "equation of a line"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-16",
@@ -373,7 +471,14 @@
       }
     ],
     "correct_answer": "B",
-    "explanation": "Each two-hour period multiplies by 3, so the exponent is t/2."
+    "explanation": "Each two-hour period multiplies by 3, so the exponent is t/2.",
+    "difficulty": "medium",
+    "concepts": [
+      "exponential growth models",
+      "function notation",
+      "time-origin translation"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-17",
@@ -385,23 +490,30 @@
     "options": [
       {
         "label": "A",
-        "text": "It triples."
-      },
-      {
-        "label": "B",
         "text": "It becomes 6 times as large."
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "It becomes 9 times as large."
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "It remains the same."
+      },
+      {
+        "label": "D",
+        "text": "It triples."
       }
     ],
-    "correct_answer": "C",
-    "explanation": "Areas scale by the square of the length factor: 3²=9."
+    "correct_answer": "B",
+    "explanation": "Areas scale by the square of the length factor: 3²=9.",
+    "difficulty": "medium",
+    "concepts": [
+      "ratios",
+      "proportional scaling",
+      "change in dimensions"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-18",
@@ -413,23 +525,30 @@
     "options": [
       {
         "label": "A",
-        "text": "p²/4"
-      },
-      {
-        "label": "B",
-        "text": "p²/8"
-      },
-      {
-        "label": "C",
         "text": "p²/16"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "4p²"
+      },
+      {
+        "label": "C",
+        "text": "p²/4"
+      },
+      {
+        "label": "D",
+        "text": "p²/8"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "Each side is p/4; area=(p/4)²=p²/16."
+    "correct_answer": "A",
+    "explanation": "Each side is p/4; area=(p/4)²=p²/16.",
+    "difficulty": "medium",
+    "concepts": [
+      "perimeter to side length conversion",
+      "square area",
+      "function composition"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-19",
@@ -441,23 +560,30 @@
     "options": [
       {
         "label": "A",
-        "text": "1"
+        "text": "41"
       },
       {
         "label": "B",
-        "text": "11"
+        "text": "1"
       },
       {
         "label": "C",
-        "text": "31"
+        "text": "11"
       },
       {
         "label": "D",
-        "text": "41"
+        "text": "31"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "Square both sides to get x+5=36, so x=31."
+    "correct_answer": "D",
+    "explanation": "Square both sides to get x+5=36, so x=31.",
+    "difficulty": "medium",
+    "concepts": [
+      "radical equations",
+      "symbolic manipulation",
+      "isolating variables"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-20",
@@ -467,7 +593,13 @@
     "response_type": "student-produced",
     "stem": "A circle's central angle measures 117°. What is the measure of the intercepted minor arc in degrees?",
     "correct_answer": "117",
-    "explanation": "The measure of a minor arc equals its central angle, 117 degrees."
+    "explanation": "The measure of a minor arc equals its central angle, 117 degrees.",
+    "difficulty": "easy",
+    "concepts": [
+      "arc measure",
+      "central angle relationship"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-21",
@@ -477,7 +609,15 @@
     "response_type": "student-produced",
     "stem": "For positive a, (a^3)^(1/2)×a^(1/2)=a^k. What is k?",
     "correct_answer": "2",
-    "explanation": "Add exponents: 3/2+1/2=2."
+    "explanation": "Add exponents: 3/2+1/2=2.",
+    "difficulty": "advanced",
+    "concepts": [
+      "nth-root exponent laws",
+      "radical simplification",
+      "multiplication of powers",
+      "symbolic parameter identification"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-22",
@@ -489,23 +629,30 @@
     "options": [
       {
         "label": "A",
-        "text": "45"
-      },
-      {
-        "label": "B",
-        "text": "54"
-      },
-      {
-        "label": "C",
         "text": "60"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "108"
+      },
+      {
+        "label": "C",
+        "text": "45"
+      },
+      {
+        "label": "D",
+        "text": "54"
       }
     ],
-    "correct_answer": "B",
-    "explanation": "Area=(1/2)(9)(12)=54."
+    "correct_answer": "D",
+    "explanation": "Area=(1/2)(9)(12)=54.",
+    "difficulty": "medium",
+    "concepts": [
+      "Pythagorean theorem",
+      "radicals",
+      "right-triangle area"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-23",
@@ -517,23 +664,30 @@
     "options": [
       {
         "label": "A",
-        "text": "x+2"
+        "text": "x+6/5"
       },
       {
         "label": "B",
-        "text": "x+3"
+        "text": "x+2"
       },
       {
         "label": "C",
-        "text": "x+5"
+        "text": "x+3"
       },
       {
         "label": "D",
-        "text": "x+6/5"
+        "text": "x+5"
       }
     ],
-    "correct_answer": "B",
-    "explanation": "The polynomial factors as (x+3)(x+8)."
+    "correct_answer": "C",
+    "explanation": "The polynomial factors as (x+3)(x+8).",
+    "difficulty": "advanced",
+    "concepts": [
+      "factoring quadratics",
+      "integer factor constraints",
+      "algebraic structure and divisibility"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-24",
@@ -561,7 +715,15 @@
       }
     ],
     "correct_answer": "B",
-    "explanation": "Set equal: x²-6x+9-c=0. Tangency requires discriminant 36-4(9-c)=4c=0, so c=0."
+    "explanation": "Set equal: x²-6x+9-c=0. Tangency requires discriminant 36-4(9-c)=4c=0, so c=0.",
+    "difficulty": "advanced",
+    "concepts": [
+      "line parabola intersections",
+      "quadratic discriminant",
+      "tangency condition",
+      "symbolic parameter elimination"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-25",
@@ -573,23 +735,30 @@
     "options": [
       {
         "label": "A",
-        "text": "10+5√2"
-      },
-      {
-        "label": "B",
         "text": "15"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "5+10√2"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "20"
+      },
+      {
+        "label": "D",
+        "text": "10+5√2"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The hypotenuse is 5√2, so total is 10+5√2."
+    "correct_answer": "D",
+    "explanation": "The hypotenuse is 5√2, so total is 10+5√2.",
+    "difficulty": "medium",
+    "concepts": [
+      "45-45-90 triangles",
+      "radicals",
+      "perimeter"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-26",
@@ -601,23 +770,31 @@
     "options": [
       {
         "label": "A",
-        "text": "Its maximum is 5."
-      },
-      {
-        "label": "B",
-        "text": "Its minimum is 5."
-      },
-      {
-        "label": "C",
         "text": "Its x-intercept is 2."
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "Its y-intercept is 5."
+      },
+      {
+        "label": "C",
+        "text": "Its maximum is 5."
+      },
+      {
+        "label": "D",
+        "text": "Its minimum is 5."
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Because a<0 the parabola opens down; its vertex value 5 is the maximum."
+    "correct_answer": "C",
+    "explanation": "Because a<0 the parabola opens down; its vertex value 5 is the maximum.",
+    "difficulty": "advanced",
+    "concepts": [
+      "vertex form",
+      "quadratic sign constraints",
+      "evaluate quadratic at x equals one",
+      "feasible parameter reasoning"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math1-27",
@@ -627,7 +804,15 @@
     "response_type": "student-produced",
     "stem": "For f(x)=a·2^x and f(0)=6, what is f(3)?",
     "correct_answer": "48",
-    "explanation": "f(0)=a=6. Then f(3)=6×8=48."
+    "explanation": "f(0)=a=6. Then f(3)=6×8=48.",
+    "difficulty": "advanced",
+    "concepts": [
+      "exponential function intercept",
+      "systems of parameter constraints",
+      "product relationships",
+      "rational algebra"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-01",
@@ -639,23 +824,29 @@
     "options": [
       {
         "label": "A",
-        "text": "Monday"
-      },
-      {
-        "label": "B",
         "text": "Tuesday"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "Wednesday"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "Thursday"
+      },
+      {
+        "label": "D",
+        "text": "Monday"
       }
     ],
-    "correct_answer": "D",
-    "explanation": "Thursday's 52 is the largest value."
+    "correct_answer": "C",
+    "explanation": "Thursday's 52 is the largest value.",
+    "difficulty": "easy",
+    "concepts": [
+      "line graph reading",
+      "maximum of a time series"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-02",
@@ -667,23 +858,29 @@
     "options": [
       {
         "label": "A",
-        "text": "25"
-      },
-      {
-        "label": "B",
-        "text": "250"
-      },
-      {
-        "label": "C",
         "text": "2,500"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "25,000"
+      },
+      {
+        "label": "C",
+        "text": "25"
+      },
+      {
+        "label": "D",
+        "text": "250"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "One kilometer is 1,000 meters, giving 2.5×1,000=2,500."
+    "correct_answer": "A",
+    "explanation": "One kilometer is 1,000 meters, giving 2.5×1,000=2,500.",
+    "difficulty": "easy",
+    "concepts": [
+      "unit conversions",
+      "division with large numbers"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-03",
@@ -695,23 +892,29 @@
     "options": [
       {
         "label": "A",
-        "text": "x²+12x"
+        "text": "5x²-2x"
       },
       {
         "label": "B",
-        "text": "5x²+12x"
+        "text": "x²+12x"
       },
       {
         "label": "C",
-        "text": "x²-2x"
+        "text": "5x²+12x"
       },
       {
         "label": "D",
-        "text": "5x²-2x"
+        "text": "x²-2x"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Combine like terms: (3-2)x²+(5+7)x=x²+12x."
+    "correct_answer": "B",
+    "explanation": "Combine like terms: (3-2)x²+(5+7)x=x²+12x.",
+    "difficulty": "easy",
+    "concepts": [
+      "combining like terms",
+      "polynomial exponents"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-04",
@@ -739,7 +942,13 @@
       }
     ],
     "correct_answer": "B",
-    "explanation": "2x+1=13-x gives 3x=12, hence x=4."
+    "explanation": "2x+1=13-x gives 3x=12, hence x=4.",
+    "difficulty": "easy",
+    "concepts": [
+      "two-equation substitution",
+      "linear systems"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-05",
@@ -751,23 +960,29 @@
     "options": [
       {
         "label": "A",
-        "text": "(-3,4)"
-      },
-      {
-        "label": "B",
         "text": "(3,4)"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "(-3,-4)"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "(3,-4)"
+      },
+      {
+        "label": "D",
+        "text": "(-3,4)"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Quadrant II has x<0,y>0, and y=4 exceeds 2."
+    "correct_answer": "D",
+    "explanation": "Quadrant II has x<0,y>0, and y=4 exceeds 2.",
+    "difficulty": "easy",
+    "concepts": [
+      "inequality sign checks",
+      "coordinate plane quadrants"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-06",
@@ -777,7 +992,13 @@
     "response_type": "student-produced",
     "stem": "One positive solution of |x-8|=5 is 13. What is the other solution?",
     "correct_answer": "3",
-    "explanation": "The equations x-8=±5 yield 13 and 3."
+    "explanation": "The equations x-8=±5 yield 13 and 3.",
+    "difficulty": "easy",
+    "concepts": [
+      "absolute value equations",
+      "two possible roots"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-07",
@@ -787,7 +1008,13 @@
     "response_type": "student-produced",
     "stem": "The model d(t)=4t+11 gives distance in kilometers after t hours. What is d(6)?",
     "correct_answer": "35",
-    "explanation": "d(6)=4(6)+11=35."
+    "explanation": "d(6)=4(6)+11=35.",
+    "difficulty": "easy",
+    "concepts": [
+      "function evaluation",
+      "contextual substitutions"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-08",
@@ -815,7 +1042,13 @@
       }
     ],
     "correct_answer": "C",
-    "explanation": "g(4)=16-8+3=11."
+    "explanation": "g(4)=16-8+3=11.",
+    "difficulty": "easy",
+    "concepts": [
+      "quadratic evaluation",
+      "function tables"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-09",
@@ -827,23 +1060,29 @@
     "options": [
       {
         "label": "A",
-        "text": "8"
-      },
-      {
-        "label": "B",
         "text": "9"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "14"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "16"
+      },
+      {
+        "label": "D",
+        "text": "8"
       }
     ],
-    "correct_answer": "B",
-    "explanation": "7^0=1 and 2³=8, sum 9."
+    "correct_answer": "A",
+    "explanation": "7^0=1 and 2³=8, sum 9.",
+    "difficulty": "easy",
+    "concepts": [
+      "exponential expressions",
+      "zero exponent"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-10",
@@ -855,23 +1094,30 @@
     "options": [
       {
         "label": "A",
-        "text": "54%-58%"
-      },
-      {
-        "label": "B",
-        "text": "58%-66%"
-      },
-      {
-        "label": "C",
         "text": "62%-70%"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "60%-64%"
+      },
+      {
+        "label": "C",
+        "text": "54%-58%"
+      },
+      {
+        "label": "D",
+        "text": "58%-66%"
       }
     ],
-    "correct_answer": "B",
-    "explanation": "62±4 gives 58 through 66 percent."
+    "correct_answer": "D",
+    "explanation": "62±4 gives 58 through 66 percent.",
+    "difficulty": "medium",
+    "concepts": [
+      "sampling and estimation",
+      "margins of error",
+      "reasonable interval interpretation"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-11",
@@ -883,23 +1129,30 @@
     "options": [
       {
         "label": "A",
-        "text": "10"
+        "text": "13"
       },
       {
         "label": "B",
-        "text": "11"
+        "text": "10"
       },
       {
         "label": "C",
-        "text": "12"
+        "text": "11"
       },
       {
         "label": "D",
-        "text": "13"
+        "text": "12"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "Remaining capacity is 540 kg, enough for 540/45=12 boxes."
+    "correct_answer": "D",
+    "explanation": "Remaining capacity is 540 kg, enough for 540/45=12 boxes.",
+    "difficulty": "medium",
+    "concepts": [
+      "linear inequalities",
+      "weight constraints",
+      "integer solution rounding"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-12",
@@ -927,7 +1180,14 @@
       }
     ],
     "correct_answer": "C",
-    "explanation": "Factoring gives (x-4)(x-5)=0, so the larger root is 5."
+    "explanation": "Factoring gives (x-4)(x-5)=0, so the larger root is 5.",
+    "difficulty": "medium",
+    "concepts": [
+      "quadratic equations",
+      "factoring",
+      "positive root selection"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-13",
@@ -937,7 +1197,14 @@
     "response_type": "student-produced",
     "stem": "Of 80 cards, 20 are green, 30 blue, and 30 white. What is the probability of drawing green?",
     "correct_answer": "0.25",
-    "explanation": "20/80=1/4=0.25."
+    "explanation": "20/80=1/4=0.25.",
+    "difficulty": "easy",
+    "concepts": [
+      "probability",
+      "frequency table",
+      "unconditional proportion"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-14",
@@ -947,7 +1214,13 @@
     "response_type": "student-produced",
     "stem": "A line parallel to y=-4x+7 has slope m. What is m?",
     "correct_answer": "-4",
-    "explanation": "Parallel nonvertical lines have equal slope."
+    "explanation": "Parallel nonvertical lines have equal slope.",
+    "difficulty": "easy",
+    "concepts": [
+      "parallel lines",
+      "slope from equation"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-15",
@@ -959,23 +1232,30 @@
     "options": [
       {
         "label": "A",
-        "text": "25"
+        "text": "75"
       },
       {
         "label": "B",
-        "text": "40"
+        "text": "25"
       },
       {
         "label": "C",
-        "text": "50"
+        "text": "40"
       },
       {
         "label": "D",
-        "text": "75"
+        "text": "50"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "One ratio part equals 25; children account for 2 parts, or 50 tickets."
+    "correct_answer": "D",
+    "explanation": "One ratio part equals 25; children account for 2 parts, or 50 tickets.",
+    "difficulty": "medium",
+    "concepts": [
+      "linear word problems",
+      "ratio relationships",
+      "difference between quantities"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-16",
@@ -1003,7 +1283,14 @@
       }
     ],
     "correct_answer": "C",
-    "explanation": "Corresponding angles are equal: 4x+8=6x-18, so 2x=26 and x=13."
+    "explanation": "Corresponding angles are equal: 4x+8=6x-18, so 2x=26 and x=13.",
+    "difficulty": "advanced",
+    "concepts": [
+      "parallel-line angle relationships",
+      "algebraic expressions",
+      "multi-step geometry"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-17",
@@ -1015,23 +1302,30 @@
     "options": [
       {
         "label": "A",
-        "text": "0"
-      },
-      {
-        "label": "B",
         "text": "2"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "3"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "6"
+      },
+      {
+        "label": "D",
+        "text": "0"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "When k=3, the x terms cancel and leave 6=9, impossible."
+    "correct_answer": "B",
+    "explanation": "When k=3, the x terms cancel and leave 6=9, impossible.",
+    "difficulty": "medium",
+    "concepts": [
+      "no-solution linear equations",
+      "parameter cancellation",
+      "coefficients"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-18",
@@ -1043,23 +1337,30 @@
     "options": [
       {
         "label": "A",
-        "text": "3"
-      },
-      {
-        "label": "B",
-        "text": "4"
-      },
-      {
-        "label": "C",
         "text": "5"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "8"
+      },
+      {
+        "label": "C",
+        "text": "3"
+      },
+      {
+        "label": "D",
+        "text": "4"
       }
     ],
-    "correct_answer": "B",
-    "explanation": "The axis of symmetry is the midpoint (-1+9)/2=4."
+    "correct_answer": "D",
+    "explanation": "The axis of symmetry is the midpoint (-1+9)/2=4.",
+    "difficulty": "medium",
+    "concepts": [
+      "quadratic vertex",
+      "roots and midpoint",
+      "minimum value"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-19",
@@ -1071,23 +1372,30 @@
     "options": [
       {
         "label": "A",
-        "text": "4"
+        "text": "24"
       },
       {
         "label": "B",
-        "text": "16"
+        "text": "4"
       },
       {
         "label": "C",
-        "text": "20"
+        "text": "16"
       },
       {
         "label": "D",
-        "text": "24"
+        "text": "20"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "The vertex occurs at t=4, yielding the maximum height 20."
+    "correct_answer": "D",
+    "explanation": "The vertex occurs at t=4, yielding the maximum height 20.",
+    "difficulty": "medium",
+    "concepts": [
+      "vertex form",
+      "minimum in physical context",
+      "domain restrictions"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-20",
@@ -1097,7 +1405,14 @@
     "response_type": "student-produced",
     "stem": "In a right triangle, the two legs are 8 and 15. What is the sine of the acute angle opposite the leg of length 8?",
     "correct_answer": "8/17",
-    "explanation": "Hypotenuse √(8²+15²)=17. Sine is opposite/hypotenuse=8/17."
+    "explanation": "Hypotenuse √(8²+15²)=17. Sine is opposite/hypotenuse=8/17.",
+    "difficulty": "advanced",
+    "concepts": [
+      "trigonometric ratios",
+      "complementary acute angles",
+      "Pythagorean theorem"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-21",
@@ -1107,7 +1422,14 @@
     "response_type": "student-produced",
     "stem": "What is the least positive integer k for which x²-8x+k=0 has no real solutions?",
     "correct_answer": "17",
-    "explanation": "No real solutions means discriminant 64-4k<0, so k>16; least integer is 17."
+    "explanation": "No real solutions means discriminant 64-4k<0, so k>16; least integer is 17.",
+    "difficulty": "advanced",
+    "concepts": [
+      "discriminant and no real roots",
+      "integer parameters",
+      "optimizing bounds"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-22",
@@ -1119,23 +1441,30 @@
     "options": [
       {
         "label": "A",
-        "text": "2"
-      },
-      {
-        "label": "B",
-        "text": "3"
-      },
-      {
-        "label": "C",
         "text": "4"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "5"
+      },
+      {
+        "label": "C",
+        "text": "2"
+      },
+      {
+        "label": "D",
+        "text": "3"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "Intersection has 3x=9, x=3 and y=7. Then 7=3k-2, giving k=3."
+    "correct_answer": "D",
+    "explanation": "The first two lines meet where 2x+1=-x+10, giving x=3 and y=7. Thus 7=3k-2, so k=3.",
+    "difficulty": "advanced",
+    "concepts": [
+      "three linear equations",
+      "consistency of overdetermined systems",
+      "graph intersection"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-23",
@@ -1147,23 +1476,30 @@
     "options": [
       {
         "label": "A",
-        "text": "0.95/12"
+        "text": "0.95^12"
       },
       {
         "label": "B",
-        "text": "0.95^(1/12)"
+        "text": "0.95/12"
       },
       {
         "label": "C",
-        "text": "(1-0.05/12)^12"
+        "text": "0.95^(1/12)"
       },
       {
         "label": "D",
-        "text": "0.95^12"
+        "text": "(1-0.05/12)^12"
       }
     ],
-    "correct_answer": "B",
-    "explanation": "C"
+    "correct_answer": "C",
+    "explanation": "The equivalent monthly multiplier m satisfies m^12=0.95, so m=0.95^(1/12).",
+    "difficulty": "medium",
+    "concepts": [
+      "exponential decay",
+      "annual versus monthly units",
+      "percent-rate interpretation"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-24",
@@ -1191,7 +1527,14 @@
       }
     ],
     "correct_answer": "D",
-    "explanation": "Adding the same constant to minimum and maximum preserves their difference."
+    "explanation": "Adding the same constant to minimum and maximum preserves their difference.",
+    "difficulty": "medium",
+    "concepts": [
+      "medians and ranges",
+      "translation of a data set",
+      "invariance of spread"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-25",
@@ -1203,23 +1546,30 @@
     "options": [
       {
         "label": "A",
-        "text": "(-4,6)"
-      },
-      {
-        "label": "B",
         "text": "(4,6)"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "(-4,-4)"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "(4,-4)"
+      },
+      {
+        "label": "D",
+        "text": "(-4,6)"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Original center (-4,1) becomes (-4,6) when shifted up five."
+    "correct_answer": "D",
+    "explanation": "Original center (-4,1) becomes (-4,6) when shifted up five.",
+    "difficulty": "medium",
+    "concepts": [
+      "circle equation",
+      "vertical translation",
+      "center coordinates"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-26",
@@ -1231,23 +1581,31 @@
     "options": [
       {
         "label": "A",
-        "text": "54"
-      },
-      {
-        "label": "B",
-        "text": "72"
-      },
-      {
-        "label": "C",
         "text": "90"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "108"
+      },
+      {
+        "label": "C",
+        "text": "54"
+      },
+      {
+        "label": "D",
+        "text": "72"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "Two cubes have 12 faces; two shared faces are internal, leaving 10×9=90."
+    "correct_answer": "A",
+    "explanation": "Two cubes have 12 faces; two shared faces are internal, leaving 10×9=90.",
+    "difficulty": "advanced",
+    "concepts": [
+      "surface area of rectangular prisms",
+      "composite solids",
+      "symbolic equation from ratios",
+      "nonlinear solving"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-math2-27",
@@ -1257,6 +1615,13 @@
     "response_type": "student-produced",
     "stem": "A price rose by 25% to $150. What was the original price?",
     "correct_answer": "120",
-    "explanation": "If original is p, then 1.25p=150, so p=120."
+    "explanation": "If original is p, then 1.25p=150, so p=120.",
+    "difficulty": "medium",
+    "concepts": [
+      "percent increase",
+      "relative change",
+      "reverse proportional reasoning"
+    ],
+    "practice_test_id": "practice-test-1"
   }
 ]
