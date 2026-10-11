@@ -36,6 +36,7 @@ export default function DailyPracticeGoals({attempts,sessions,dailyQuestions,dai
   const questionsDone=todayAttempts.length
   const reviewedFailedQuestionIds=new Set<string>()
   const masteryByQuestion=new Map<string,{failed:boolean;correctAfterFailure:number}>()
+  const previouslyFailedIds=new Set<string>()
   const orderedAttempts=attempts
     .map((attempt,index)=>({attempt,index}))
     .sort((a,b)=>a.attempt.createdAt.localeCompare(b.attempt.createdAt)||a.index-b.index)
@@ -46,11 +47,15 @@ export default function DailyPracticeGoals({attempts,sessions,dailyQuestions,dai
     // A failed-question review counts when the question was already in the
     // failed pool before today's attempt, regardless of whether this retry
     // is answered correctly.
-    if(localDayKey(attempt.createdAt)===todayKey&&mastery.failed){
+    // Older sessions may have lost their failed-only setting at completion.
+    // Their prior incorrect answers still establish review credit, even when
+    // the question has since reached mastery and left the failed pool.
+    if(localDayKey(attempt.createdAt)===todayKey&&(mastery.failed||previouslyFailedIds.has(attempt.questionId))){
       reviewedFailedQuestionIds.add(attempt.questionId)
     }
 
     if(!attempt.correct){
+      previouslyFailedIds.add(attempt.questionId)
       mastery.failed=true
       mastery.correctAfterFailure=0
     }else if(mastery.failed){
@@ -66,8 +71,11 @@ export default function DailyPracticeGoals({attempts,sessions,dailyQuestions,dai
   // questions were reviewed while they were still in the failed pool. Keep
   // this credit even if correct answers remove them from the live pool.
   sessions.forEach(session=>{
-    if(!session.settings?.failedEverOnly||localDayKey(session.endedAt||session.startedAt)!==todayKey)return
-    session.attempts.forEach(attempt=>reviewedFailedQuestionIds.add(attempt.questionId))
+    if(!session.settings?.failedEverOnly)return
+    const sessionAttempts=attempts.filter(attempt=>attempt.sessionId===session.id)
+    sessionAttempts.forEach(attempt=>{
+      if(localDayKey(attempt.createdAt)===todayKey)reviewedFailedQuestionIds.add(attempt.questionId)
+    })
   })
 
   const reviewedFailedCount=reviewedFailedQuestionIds.size
