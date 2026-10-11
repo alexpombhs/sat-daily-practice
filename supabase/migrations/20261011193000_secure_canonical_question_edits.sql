@@ -4,6 +4,9 @@ create table if not exists public.sat_content_admins(
  created_at timestamptz not null default now()
 );
 alter table public.sat_content_admins enable row level security;
+-- Existing users already had canonical editor access; preserve that permission.
+insert into public.sat_content_admins(user_id)
+ select user_id from public.sat_legacy_full_access on conflict(user_id) do nothing;
 revoke all on public.sat_content_admins from anon,authenticated;
 
 create or replace function public.sat_is_content_admin()
