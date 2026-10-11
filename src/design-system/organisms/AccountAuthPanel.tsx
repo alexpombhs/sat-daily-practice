@@ -8,6 +8,7 @@ import AuthCredentialsForm from '../molecules/AuthCredentialsForm'
 import TurnstileChallenge from '../molecules/TurnstileChallenge'
 import UserProfileForm from '../molecules/UserProfileForm'
 import {validateSignupBirthDate} from '../../lib/signupAge'
+import {pathForView} from '../../lib/appRoutes'
 import {deleteCurrentAccount,hasPlusAccess,openOneTimeCheckout,plusExpiresAt,EMPTY_USER_PROFILE,isRegistrationFull,joinLaunchWaitlist,isSupabaseConfigured,loadUserProfile,saveUserProfile,signInWithPassword,signOut,signUpWithPassword,type UserProfile} from '../../lib/supabase'
 
 type Props={
@@ -179,6 +180,10 @@ export default function AccountAuthPanel({email}:Props){
         onSubmit={submit}
         onModeChange={nextMode=>{setMode(nextMode);setError('');setMessage('')}}
       />}
+      <AlexStack direction="row" spacing={2} sx={{flexWrap:'wrap'}}>
+        <a href={pathForView('privacy')}>Privacy Notice</a>
+        <a href={pathForView('terms')}>Terms of Use</a>
+      </AlexStack>
     </AlexStack>
   </AlexSurface>
 }
