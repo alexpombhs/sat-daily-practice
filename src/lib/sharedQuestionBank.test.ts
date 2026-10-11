@@ -1,6 +1,6 @@
 import {describe,expect,it} from 'vitest'
 import type {PracticeQuestion} from '../types'
-import {mergeQuestionBanks,questionLinesEqual} from './sharedQuestionBank'
+import {idMatchesPracticeTest,mergeQuestionBanks,questionLinesEqual} from './sharedQuestionBank'
 
 function question(id:string,practiceTestId:PracticeQuestion['practiceTestId'],correctAnswer:string):PracticeQuestion{
   return{
@@ -43,5 +43,14 @@ describe('questionLinesEqual',()=>{
   it('rejects missing or altered lines so saves cannot report false success',()=>{
     expect(questionLinesEqual(['Intro • First bullet • Second bullet'],['Intro','• First bullet','• Second bullet'])).toBe(false)
     expect(questionLinesEqual(null,['Intro'])).toBe(false)
+  })
+})
+
+describe('PT1 canonical question IDs',()=>{
+  it('accepts only the independently authored PT1 identifiers',()=>{
+    expect(idMatchesPracticeTest('pt1-rw1-01','practice-test-1')).toBe(true)
+    expect(idMatchesPracticeTest('pt1-math2-27','practice-test-1')).toBe(true)
+    expect(idMatchesPracticeTest('math1-1','practice-test-1')).toBe(false)
+    expect(idMatchesPracticeTest('practice-test-4:math1-1','practice-test-1')).toBe(false)
   })
 })
