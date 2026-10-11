@@ -9,7 +9,7 @@
 - Test registration with 99/100/101 users, simultaneous attempts, deletes, email confirmation and direct Auth API calls.
 - Confirm Auth hook is enabled under Supabase Authentication > Hooks > Before User Created: `public.sat_before_user_created`. A migration does not enable this automatically.
 - Verify the auth hook accepts exactly 13 years old and rejects younger users, including leap-day birthdays.
-- Enable email confirmation, appropriate Supabase Auth rate limits, CAPTCHA on signup, and leaked-password protection in Supabase settings. This repo does not configure provider CAPTCHA tokens yet.
+- Enable email confirmation, appropriate Supabase Auth rate limits, CAPTCHA on signup, and leaked-password protection in Supabase settings. Frontend CAPTCHA token is implemented, but provider configuration and live enforcement must be verified.
 - Test student data access with two accounts, and run security/performance advisors.
 
 ## Public waitlist anti-bot setup
@@ -19,7 +19,7 @@
 - Deploy `20261011173000_protect_waitlist_rpc.sql` so users cannot directly bypass CAPTCHA via the public waitlist RPC.
 - Load-test and add edge/provider rate controls for IP, account, and email abuse before public LA.
 - Ensure the challenge works on mobile Safari and privacy-focused browsers.
-- Signup requires separate Auth CAPTCHA protection in Supabase (NOT implemented in frontend yet).
+- Signup frontend now passes the Turnstile challenge response as Supabase Auth `captchaToken`. Enable and configure the same CAPTCHA provider in Supabase Authentication security settings; otherwise enrollment may be blocked or unprotected. Test against direct Auth API.
 
 ## 2. Account deletion
 Deploy `supabase/functions/sat-delete-account` with JWT verification enabled and with server-side service-role secret. The browser must never receive the service-role key.
