@@ -110,27 +110,27 @@
     "question_number": 4,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The proposal was not entirely ___; despite disagreements about cost, every committee member supported its safety goals.",
+    "stem": "Although the project was praised for its environmental benefits, the final design was not entirely ___: engineers identified several unresolved safety problems.",
     "options": [
       {
         "label": "A",
-        "text": "rejected"
+        "text": "flawless"
       },
       {
         "label": "B",
-        "text": "funded"
+        "text": "expensive"
       },
       {
         "label": "C",
-        "text": "documented"
+        "text": "ambitious"
       },
       {
         "label": "D",
-        "text": "feasible"
+        "text": "innovative"
       }
     ],
     "correct_answer": "A",
-    "explanation": "The concession that members supported part of the proposal rules out complete rejection.",
+    "explanation": "Not entirely flawless fits the concession: the design had genuine strengths but also unresolved safety flaws.",
     "difficulty": "medium",
     "concepts": [
       "words in context",
@@ -711,23 +711,23 @@
     "options": [
       {
         "label": "A",
-        "text": ","
+        "text": ";"
       },
       {
         "label": "B",
-        "text": "and"
+        "text": " ,"
       },
       {
         "label": "C",
-        "text": "because"
+        "text": "and"
       },
       {
         "label": "D",
-        "text": ";"
+        "text": "because"
       }
     ],
-    "correct_answer": "D",
-    "explanation": "A semicolon joins the two complete independent clauses; a comma alone creates a comma splice.",
+    "correct_answer": "A",
+    "explanation": "The two clauses are independently complete; a semicolon joins them without a coordinating conjunction.",
     "difficulty": "medium",
     "concepts": [
       "sentence boundaries",
@@ -1841,27 +1841,27 @@
     "question_number": 21,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The volunteers who arrived early ___ assigned to prepare the tables.",
+    "stem": "The specimens that had been stored below freezing ___ analyzed separately from the remaining samples.",
     "options": [
       {
         "label": "A",
-        "text": " , were"
+        "text": "were"
       },
       {
         "label": "B",
-        "text": "; were"
+        "text": " , were"
       },
       {
         "label": "C",
-        "text": ": were"
+        "text": "; were"
       },
       {
         "label": "D",
-        "text": "were"
+        "text": ": were"
       }
     ],
-    "correct_answer": "D",
-    "explanation": "The restrictive who-clause is not set off with punctuation.",
+    "correct_answer": "A",
+    "explanation": "The restrictive that-clause identifies which specimens are meant; no punctuation separates it from the main verb.",
     "difficulty": "medium",
     "concepts": [
       "restrictive relative clauses",
@@ -1910,27 +1910,27 @@
     "question_number": 23,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The first system had a single backup battery ___ the revised system used two independent batteries.",
+    "stem": "The engineers replaced the worn hinges ___ the door then opened without scraping the frame.",
     "options": [
       {
         "label": "A",
-        "text": "and"
-      },
-      {
-        "label": "B",
         "text": ";"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": " ,"
       },
       {
+        "label": "C",
+        "text": "and"
+      },
+      {
         "label": "D",
-        "text": " : and"
+        "text": "because"
       }
     ],
-    "correct_answer": "B",
-    "explanation": "Two independent clauses can be joined by a semicolon.",
+    "correct_answer": "A",
+    "explanation": "A semicolon correctly joins the two related independent clauses.",
     "difficulty": "medium",
     "concepts": [
       "sentence boundary",
@@ -1944,7 +1944,7 @@
     "question_number": 24,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The group added soil sensors ___ identify which planters needed water.",
+    "stem": "The researcher checked the calculations twice ___ make certain the reported figures were accurate.",
     "options": [
       {
         "label": "A",
@@ -1964,7 +1964,7 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "The infinitive to identify expresses purpose.",
+    "explanation": "The infinitive to make certain expresses the researcher's purpose.",
     "difficulty": "medium",
     "concepts": [
       "infinitive phrase of purpose",
@@ -1978,27 +1978,27 @@
     "question_number": 25,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "After inspecting the cracked beam, ___ recommended reinforcing the support.",
+    "stem": "After inspecting the cracked beam with a handheld sensor, ___ proposed an additional support beneath the joint.",
     "options": [
       {
         "label": "A",
-        "text": "the crack"
+        "text": "the structural engineer"
       },
       {
         "label": "B",
-        "text": "the reinforcement"
+        "text": "the crack detected in the beam"
       },
       {
         "label": "C",
-        "text": "the recommendation"
+        "text": "the inspection report"
       },
       {
         "label": "D",
-        "text": "the engineer"
+        "text": "the proposed reinforcement"
       }
     ],
-    "correct_answer": "D",
-    "explanation": "The inspecting subject must be the engineer.",
+    "correct_answer": "A",
+    "explanation": "The introductory phrase must modify the person who performed the inspection.",
     "difficulty": "advanced",
     "concepts": [
       "introductory modifiers",
@@ -2184,27 +2184,27 @@
     "question_number": 31,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Notes: Star K has a surface temperature of 5,000 K; star M has 8,000 K. Which sentence emphasizes the comparison?",
+    "stem": "Notes: The surface temperature of star A is about 4,800 K. Star B has a surface temperature of about 7,200 K. The student wants to emphasize the relative temperature of B. Which sentence achieves this goal?",
     "options": [
       {
         "label": "A",
-        "text": "Scientists classify stars using several properties."
+        "text": "At approximately 7,200 K, star B has a surface temperature 50% higher than star A's."
       },
       {
         "label": "B",
-        "text": "Star M's surface temperature is 3,000 K higher than star K's."
+        "text": "Star A has a measurable surface temperature."
       },
       {
         "label": "C",
-        "text": "Both stars have measurable temperatures."
+        "text": "Both stars have temperatures expressed in kelvins."
       },
       {
         "label": "D",
-        "text": "Stars radiate energy into space."
+        "text": "Scientists study a variety of stars."
       }
     ],
-    "correct_answer": "B",
-    "explanation": "The sentence explicitly quantifies the temperature difference.",
+    "correct_answer": "A",
+    "explanation": "The difference is 2,400 K, equal to half of 4,800 K, so B is 50% hotter in absolute temperature as measured in kelvins.",
     "difficulty": "medium",
     "concepts": [
       "rhetorical synthesis",
