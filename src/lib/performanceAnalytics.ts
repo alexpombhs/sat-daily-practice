@@ -53,7 +53,7 @@ export type ScorePredictionBasis={
   sessionCount:number
   questionCount:number
   averageQuestionSuccessRate:number
-  sections:Array<{subject:Subject;label:string;questions:number;successRate:number}>
+  sections:Array<{subject:Subject;label:string;questions:number;observedQuestions:number;successRate:number}>
 }
 
 export type ScoreEstimateConfidence={
@@ -114,10 +114,11 @@ function buildSections(attempts:Attempt[]):SectionPerformance[]{
   })
 }
 
-function estimateOverallScore(sections:SectionPerformance[]){
+function estimateOverallScore(sections:SectionPerformance[],observedAttempts:Attempt[]){
   const english=sections.find(section=>section.subject==='english')
   const math=sections.find(section=>section.subject==='math')
-  if(!english||!math||english.attempts<MIN_SECTION_QUESTIONS_FOR_SCORE||math.attempts<MIN_SECTION_QUESTIONS_FOR_SCORE)return null
+  const observed=(subject:Subject)=>new Set(observedAttempts.filter(a=>a.subject===subject).map(a=>a.questionId)).size
+  if(!english||!math||observed('english')<MIN_SECTION_QUESTIONS_FOR_SCORE||observed('math')<MIN_SECTION_QUESTIONS_FOR_SCORE)return null
   return estimateSectionPracticeScore(english.successRate)+estimateSectionPracticeScore(math.successRate)
 }
 
@@ -161,7 +162,7 @@ function buildScoreSections(historyAttempts:Attempt[],questionBank:PracticeQuest
   })
 }
 
-function predictionBasis(sections:SectionPerformance[],sessionCount:number):ScorePredictionBasis{
+function predictionBasis(sections:SectionPerformance[],sessionCount:number,historyAttempts:Attempt[]):ScorePredictionBasis{
   const questionCount=sections.reduce((sum,section)=>sum+section.attempts,0)
   const weightedRate=questionCount
     ?sections.reduce((sum,section)=>sum+section.successRate*section.attempts,0)/questionCount
@@ -174,6 +175,7 @@ function predictionBasis(sections:SectionPerformance[],sessionCount:number):Scor
       subject:section.subject,
       label:section.label,
       questions:section.attempts,
+      observedQuestions:new Set(historyAttempts.filter(a=>a.subject===section.subject).map(a=>a.questionId)).size,
       successRate:section.successRate,
     })),
   }
@@ -227,9 +229,9 @@ function buildSessions(attempts:Attempt[],sessions:SessionSummary[],questionBank
   ordered.forEach((session,index)=>{
     const historicalAttempts=attemptsForSessions(attempts,ordered.slice(0,index+1))
     const scoreSections=buildScoreSections(historicalAttempts,questionBank)
-    const score=estimateOverallScore(scoreSections)
+    const score=estimateOverallScore(scoreSections,historicalAttempts)
     latestScoreEstimate=score
-    latestScorePredictionBasis=predictionBasis(scoreSections,Math.min(SCORE_SESSION_WINDOW,index+1))
+    latestScorePredictionBasis=predictionBasis(scoreSections,Math.min(SCORE_SESSION_WINDOW,index+1),historicalAttempts)
     if(score===null)return
     scoreTrend.push({
       sessionId:session.id,
@@ -287,7 +289,7 @@ function buildScoreEstimateConfidence(
   if(!basis)return null
   const english=basis.sections.find(section=>section.subject==='english')
   const math=basis.sections.find(section=>section.subject==='math')
-  if(!english||!math||english.questions<3||math.questions<3)return null
+  if(!english||!math||english.observedQuestions<3||math.observedQuestions<3)return null
 
   // Approximate question-pool sampling uncertainty for each section using
   // Bernoulli variance at the observed success rate, then convert the
@@ -297,8 +299,8 @@ function buildScoreEstimateConfidence(
     const sePercent=100*Math.sqrt(p*(1-p)/Math.max(1,questions))
     return sePercent*6
   }
-  const readingWritingQuestionSigmaPoints=sectionSigma(english.successRate,english.questions)
-  const mathQuestionSigmaPoints=sectionSigma(math.successRate,math.questions)
+  const readingWritingQuestionSigmaPoints=sectionSigma(english.successRate,english.observedQuestions)
+  const mathQuestionSigmaPoints=sectionSigma(math.successRate,math.observedQuestions)
   const questionPoolSigma=Math.sqrt(
     readingWritingQuestionSigmaPoints**2+
     mathQuestionSigmaPoints**2
