@@ -62,12 +62,12 @@ export default function PracticeSetupPanel({settings,practiceTests,newQuestionCo
 
     <PracticeSettingField
       label="Question difficulty"
-      helperText="Difficulty is provisionally estimated from question position within each module, not an official College Board label. Choose Hard or Advanced to focus your practice."
+      helperText="Difficulty is based on content-reviewed questions. Unclassified questions are available under All."
       control={<AlexTabs
         value={settings.difficulty??'all'}
         variant="scrollable"
         scrollButtons={false}
-        options={[{value:'all',label:'All'},{value:'easy',label:'Easy'},{value:'medium',label:'Medium'},{value:'hard',label:'Hard'},{value:'advanced',label:'Advanced'}]}
+        options={[{value:'all',label:'All'},{value:'easy',label:'Easy'},{value:'medium',label:'Medium'},{value:'advanced',label:'Advanced'}]}
         onChange={difficulty=>onChange({...settings,difficulty})}
         aria-label="SAT question difficulty"
         sx={{'& .MuiTab-root':{px:{xs:1.1,sm:1.5},fontSize:{xs:12,sm:13}}}}
