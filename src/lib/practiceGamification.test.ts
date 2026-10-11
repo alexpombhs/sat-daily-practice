@@ -25,7 +25,7 @@ describe('choosePracticeQuestions',()=>{
     expect(questionsForPractice('both','practice-test-8')).toHaveLength(48)
   })
 
-  it('exposes the mock question set as a selectable source with 24 bundled questions',()=>{
+  it('exposes 48 targeted mock questions as a distinct source',()=>{
     const mock=QUESTION_BANK.filter(question=>question.practiceTestId==='practice-test-8')
     expect(mock).toHaveLength(48)
     expect(mock.filter(question=>question.subject==='english')).toHaveLength(24)
