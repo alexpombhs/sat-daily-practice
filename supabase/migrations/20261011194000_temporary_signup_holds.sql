@@ -9,7 +9,7 @@ alter table public.sat_la_signup_holds enable row level security;
 revoke all on public.sat_la_signup_holds from anon,authenticated;
 
 create or replace function public.sat_la_occupied_seats()
-returns bigint language sql stable security definer set search_path='' as $$
+returns bigint language sql volatile security definer set search_path='' as $$
  select (select count(*) from auth.users where email_confirmed_at is not null)
       + (select count(*) from public.sat_la_reservations where consumed_at is null and expires_at>now())
       + (select count(*) from public.sat_la_signup_holds where consumed_at is null and expires_at>now());
