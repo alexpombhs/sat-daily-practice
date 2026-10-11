@@ -7,7 +7,7 @@ import AlexText from '../atoms/AlexText'
 import SideNavigation from '../molecules/SideNavigation'
 import {getCurrentAuthUser,loadUserProfile,subscribeToAuth,type AuthUser,type UserProfile} from '../../lib/supabase'
 
-type NavKey='dashboard'|'practice-tests'|'practice-setup'|'vocabulary'|'question-bank'|'parsing-issues'|'performance'|'resources'
+type NavKey='dashboard'|'practice-tests'|'practice-setup'|'vocabulary'|'question-bank'|'parsing-issues'|'performance'|'resources'|'upgrade'
 
 type Props={
   active:NavKey
@@ -21,13 +21,14 @@ type Props={
   onParsingIssues:()=>void
   onPerformance:()=>void
   onResources:()=>void
+  onUpgrade:()=>void
   onSettings:()=>void
   children:ReactNode
   contentBackground?:string
   showContentAdmin?:boolean
 }
 
-export default function AppSidebarLayout({active,collapsed,onToggleCollapsed,onDashboard,onPracticeTests,onPracticeSetup,onVocabulary,onQuestionBank,onParsingIssues,onPerformance,onResources,onSettings,children,contentBackground='#FFFFFF',showContentAdmin=false}:Props){
+export default function AppSidebarLayout({active,collapsed,onToggleCollapsed,onDashboard,onPracticeTests,onPracticeSetup,onVocabulary,onQuestionBank,onParsingIssues,onPerformance,onResources,onUpgrade,onSettings,children,contentBackground='#FFFFFF',showContentAdmin=false}:Props){
   const[user,setUser]=useState<AuthUser|null>(null)
   const[profile,setProfile]=useState<UserProfile|null>(null)
   const[mobileMenuOpen,setMobileMenuOpen]=useState(false)
@@ -68,7 +69,7 @@ export default function AppSidebarLayout({active,collapsed,onToggleCollapsed,onD
     {key:'parsing-issues',label:'Parsing Issues',active:active==='parsing-issues',onClick:onParsingIssues}]:[]),
     {key:'performance',label:'Performance',active:active==='performance',onClick:onPerformance},
   ]
-  const secondaryDesktop=[{key:'resources',label:'Resources',active:active==='resources',onClick:onResources}]
+  const secondaryDesktop=[{key:'upgrade',label:'Upgrade',active:active==='upgrade',onClick:onUpgrade},{key:'resources',label:'Resources',active:active==='resources',onClick:onResources}]
   const primaryMobile=primaryDesktop.map(item=>({...item,onClick:closeAnd(item.onClick)}))
   const secondaryMobile=secondaryDesktop.map(item=>({...item,onClick:closeAnd(item.onClick)}))
 
