@@ -67,7 +67,7 @@ export function choosePracticeQuestions(settings:Settings,attempts:Attempt[],ran
   }).sort((a,b)=>b.score-a.score).slice(0,limit).map(item=>item.question)
 }
 
-export function summarizePerformance(attempts:Attempt[],sessions:SessionSummary[],totalQuestions:number):PerformanceSummary{return buildPerformanceAnalytics(attempts,sessions,totalQuestions)}
+export function summarizePerformance(attempts:Attempt[],sessions:SessionSummary[],totalQuestions:number,questions:PracticeQuestion[]=QUESTION_BANK):PerformanceSummary{return buildPerformanceAnalytics(attempts,sessions,totalQuestions,questions)}
 export function summarizeSession(attempts:Attempt[]):SessionMetrics{
   const correct=attempts.filter(attempt=>attempt.correct).length
   return{accuracy:attempts.length?Math.round(100*correct/attempts.length):0,averageMs:attempts.length?attempts.reduce((sum,attempt)=>sum+attempt.elapsedMs,0)/attempts.length:0,correct,total:attempts.length}
