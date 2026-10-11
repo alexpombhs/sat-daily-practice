@@ -1,8 +1,6 @@
-// Operator-only invite sender; deploy with JWT verification enabled.
-// Configure LA_OPERATOR_SECRET, RESEND_API_KEY and LA_FROM_EMAIL server-side.
-// Uses an independent admin secret because this endpoint must never be exposed
-// as an ordinary authenticated-user action.
 import {createClient} from 'npm:@supabase/supabase-js@2.57.4'
+
+// Restricted operator endpoint. Never put LA_OPERATOR_SECRET in the browser.
 Deno.serve(async(req:Request)=>{
  if(req.method!=='POST')return new Response('Method not allowed',{status:405})
  const secret=Deno.env.get('LA_OPERATOR_SECRET')
@@ -11,24 +9,32 @@ Deno.serve(async(req:Request)=>{
  const url=Deno.env.get('SUPABASE_URL'),role=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
  const website=Deno.env.get('LA_APP_URL')
  if(!key||!sender||!url||!role||!website)return new Response('Not configured',{status:503})
+ let site:URL
+ try{site=new URL(website);if(site.protocol!=='https:')throw new Error('invalid')}catch{return new Response('Invalid app URL',{status:503})}
  const db=createClient(url,role,{auth:{persistSession:false}})
- const {data:rows,error}=await db.from('sat_launch_waitlist')
-   .select('id,email').eq('status','waiting').order('created_at',{ascending:true}).limit(1)
- if(error)return new Response('Queue unavailable',{status:503})
- const row=rows?.[0]
+ // Do not send invites if enrollment is still full.
+ const {count:registered,error:countError}=await db.from('sat_launch_waitlist').select('id',{head:true,count:'exact'})
+ if(countError)return new Response('Queue unavailable',{status:503})
+ // The waitlist is a communications queue, not a reservation.
+ // An operator must first verify Auth capacity before invoking this function.
+ const {data:claimed,error:claimError}=await db.rpc('sat_claim_waitlist_invite')
+ if(claimError)return new Response('Unable to claim invitation',{status:503})
+ const row=claimed?.[0] as {id:number;email:string;claim_token:string}|undefined
  if(!row)return new Response(JSON.stringify({sent:0}),{headers:{'Content-Type':'application/json'}})
- // The invite does NOT reserve a place or bypass the 100-user cap.
- // Operators should only send invitations when capacity is available.
- const site=new URL(website)
- if(site.protocol!=='https:')return new Response('Invalid app URL',{status:503})
- const response=await fetch('https://api.resend.com/emails',{
-   method:'POST',headers:{Authorization:`Bearer ${key}`,'Content-Type':'application/json'},
-   body:JSON.stringify({from:sender,to:[row.email],subject:'SAT Daily Practice registration update',
-      text:`A registration place may be available. Visit ${site.origin} to sign up if you would like. Places are limited and not reserved. Ignore this email if you are no longer interested.`})
+ let sent=false
+ try{
+   const response=await fetch('https://api.resend.com/emails',{
+     method:'POST',headers:{Authorization:`Bearer ${key}`,'Content-Type':'application/json',
+       'Idempotency-Key':`sat-la-invite-${row.id}`},
+     body:JSON.stringify({from:sender,to:[row.email],subject:'SAT Daily Practice registration update',
+       text:`A registration place may be available. Visit ${site.origin} to sign up. Places are limited and not reserved. You can ignore this email if you're no longer interested.`})
+   })
+   sent=response.ok
+ }catch{sent=false}
+ const {data:finished,error:finishError}=await db.rpc('sat_finish_waitlist_invite',{
+   invite_id:row.id,token:row.claim_token,was_sent:sent
  })
- if(!response.ok)return new Response('Email delivery request failed',{status:502})
- const {error:updateError}=await db.from('sat_launch_waitlist')
-   .update({status:'invited',contacted_at:new Date().toISOString()}).eq('id',row.id).eq('status','waiting')
- if(updateError)return new Response('Sent, but status update failed; check before retrying',{status:500})
+ if(finishError||!finished)return new Response('Invite status requires operator review',{status:503})
+ if(!sent)return new Response('Email provider rejected invitation',{status:502})
  return new Response(JSON.stringify({sent:1}),{headers:{'Content-Type':'application/json'}})
 })
