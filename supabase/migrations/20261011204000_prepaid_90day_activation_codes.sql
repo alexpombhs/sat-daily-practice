@@ -13,8 +13,8 @@ create table if not exists public.sat_prepaid_codes (
  redeemed_by uuid references auth.users(id) on delete set null,
  redeemed_at timestamptz,
  access_pass_id bigint references public.sat_access_passes(id) on delete set null,
- revoked_at timestamptz,
- constraint sat_prepaid_redeem_pair check((redeemed_by is null)=(redeemed_at is null))
+ revoked_at timestamptz
+
 );
 alter table public.sat_prepaid_codes enable row level security;
 revoke all on public.sat_prepaid_codes from public,anon,authenticated;
