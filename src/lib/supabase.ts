@@ -84,6 +84,16 @@ export async function isContentAdmin():Promise<boolean>{
  return data===true
 }
 
+export async function redeemPrepaidAccessCode(code:string):Promise<string>{
+ const normalized=code.trim().toUpperCase()
+ if(!/^SAT-[A-Z0-9]{6}-[A-Z0-9]{6}-[A-Z0-9]{6}$/.test(normalized))
+  throw new Error('Enter the activation code in the format SAT-XXXXXX-XXXXXX-XXXXXX.')
+ const {data,error}=await supabase.rpc('sat_redeem_prepaid_code',{p_code:normalized})
+ if(error)throw error
+ if(typeof data!=='string')throw new Error('Unable to activate access. Please contact support.')
+ return data
+}
+
 export async function hasPlusAccess():Promise<boolean>{
   const {data,error}=await supabase.rpc('sat_my_plus_access')
   if(error)throw error
