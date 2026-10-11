@@ -3,10 +3,11 @@ import AlexButton from '../atoms/AlexButton'
 import AlexStack from '../atoms/AlexStack'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
+import AlexTextField from '../atoms/AlexTextField'
 import AuthCredentialsForm from '../molecules/AuthCredentialsForm'
 import UserProfileForm from '../molecules/UserProfileForm'
 import {validateSignupBirthDate} from '../../lib/signupAge'
-import {EMPTY_USER_PROFILE,isSupabaseConfigured,loadUserProfile,saveUserProfile,signInWithPassword,signOut,signUpWithPassword,type UserProfile} from '../../lib/supabase'
+import {EMPTY_USER_PROFILE,isRegistrationFull,joinLaunchWaitlist,isSupabaseConfigured,loadUserProfile,saveUserProfile,signInWithPassword,signOut,signUpWithPassword,type UserProfile} from '../../lib/supabase'
 
 type Props={
   email:string|null
@@ -19,7 +20,11 @@ export default function AccountAuthPanel({email}:Props){
   const[busy,setBusy]=useState(false)
   const[message,setMessage]=useState('')
   const[error,setError]=useState('')
+  const[registrationFull,setRegistrationFull]=useState(false)
+  const[waitlistEmail,setWaitlistEmail]=useState('')
   const[profile,setProfile]=useState<UserProfile>(EMPTY_USER_PROFILE)
+
+  useEffect(()=>{if(!email)void isRegistrationFull().then(setRegistrationFull).catch(()=>{ /* Signup server remains authoritative */ })},[email])
 
   useEffect(()=>{
     if(!email){setProfile(EMPTY_USER_PROFILE);return}
@@ -50,6 +55,15 @@ export default function AccountAuthPanel({email}:Props){
     }finally{
       setBusy(false)
     }
+  }
+
+  async function joinWaitlist(){
+    setBusy(true);setError('');setMessage('')
+    try{
+      await joinLaunchWaitlist(waitlistEmail)
+      setMessage('You are on the waitlist. We will contact you if a place becomes available.')
+    }catch(nextError){setError(messageFromError(nextError))}
+    finally{setBusy(false)}
   }
 
   async function saveProfile(nextProfile:UserProfile){
@@ -100,6 +114,14 @@ export default function AccountAuthPanel({email}:Props){
         {error&&<AlexText role="alert" sx={{fontSize:13,color:'error.main'}}>{error}</AlexText>}
         {message&&<AlexText role="status" sx={{fontSize:13,color:'success.main'}}>{message}</AlexText>}
         <AlexButton tone="secondary" disabled={busy} onClick={logout} sx={{alignSelf:'flex-start'}}>Sign out</AlexButton>
+      </AlexStack>:registrationFull?<AlexStack spacing={2}>
+        <AlexText sx={{fontWeight:700}}>The first 100 account places are filled.</AlexText>
+        <AlexText sx={{fontSize:14,color:'text.secondary'}}>Join the waitlist to be notified if registration opens.</AlexText>
+        <AlexTextField label="Email for waitlist" type="email" value={waitlistEmail} onChange={event=>setWaitlistEmail(event.target.value)} />
+        {error&&<AlexText role="alert" sx={{color:'error.main'}}>{error}</AlexText>}
+        {message&&<AlexText role="status" sx={{color:'success.main'}}>{message}</AlexText>}
+        <AlexButton disabled={busy||!waitlistEmail.includes('@')} onClick={()=>void joinWaitlist()}>Join waitlist</AlexButton>
+        <AlexButton tone="secondary" onClick={()=>setRegistrationFull(false)}>I already have an account — sign in</AlexButton>
       </AlexStack>:<AuthCredentialsForm
         mode={mode}
         busy={busy}
