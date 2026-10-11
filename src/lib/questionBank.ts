@@ -62,7 +62,6 @@ function makePracticeTest(
 }
 
 export const QUESTION_BANK=[
-  ...TARGETED_MOCK_QUESTIONS,
   ...makePracticeTest('practice-test-4',pages,answerPages,answers,acceptedStudentAnswers),
   ...makePracticeTest('practice-test-5',PRACTICE_TEST_5_PAGES,PRACTICE_TEST_5_ANSWER_PAGES,PRACTICE_TEST_5_ANSWERS,PRACTICE_TEST_5_ACCEPTED),
   ...makePracticeTest('practice-test-6',PRACTICE_TEST_6_PAGES,PRACTICE_TEST_6_ANSWER_PAGES,PRACTICE_TEST_6_ANSWERS,PRACTICE_TEST_6_ACCEPTED,{sourceCrops:PRACTICE_TEST_6_CROPS,contentStatus:'verified',questionMode:'image-fallback'})
@@ -71,6 +70,7 @@ export const QUESTION_BANK=[
   ...makeModule('rw2','english',33,'practice-test-7',PRACTICE_TEST_7_PAGES,PRACTICE_TEST_7_ANSWER_PAGES,PRACTICE_TEST_7_ANSWERS,PRACTICE_TEST_7_ACCEPTED,{sourceCrops:PRACTICE_TEST_7_CROPS,contentStatus:'verified',questionMode:'text'}),
   ...makeModule('math1','math',27,'practice-test-7',PRACTICE_TEST_7_PAGES,PRACTICE_TEST_7_ANSWER_PAGES,PRACTICE_TEST_7_ANSWERS,PRACTICE_TEST_7_ACCEPTED,{sourceCrops:PRACTICE_TEST_7_CROPS,contentStatus:'verified',questionMode:'text'}),
   ...makeModule('math2','math',27,'practice-test-7',PRACTICE_TEST_7_PAGES,PRACTICE_TEST_7_ANSWER_PAGES,PRACTICE_TEST_7_ANSWERS,PRACTICE_TEST_7_ACCEPTED,{sourceCrops:PRACTICE_TEST_7_CROPS,contentStatus:'verified',questionMode:'text'}),
+  ...TARGETED_MOCK_QUESTIONS,
 ]
 
 function practiceTestNumber(id:PracticeTestId){return Number(id.replace('practice-test-',''))}
