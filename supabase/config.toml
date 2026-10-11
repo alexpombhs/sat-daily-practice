@@ -19,3 +19,9 @@ verify_jwt = true
 
 [functions.sat-waitlist-unsubscribe]
 verify_jwt = false # Unsubscribe token grants only its own queue-row removal.
+
+[functions.sat-checkout]
+verify_jwt = true
+
+[functions.sat-stripe-webhook]
+verify_jwt = false # Stripe signature verification inside handler
