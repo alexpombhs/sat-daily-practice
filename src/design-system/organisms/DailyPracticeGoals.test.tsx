@@ -57,6 +57,31 @@ describe('DailyPracticeGoals weekly streak',()=>{
     expect(screen.getByRole('heading',{name:'2 day streak'})).toBeInTheDocument()
     expect(screen.getByText('2 items completed · 2 minutes learned')).toBeInTheDocument()
   })
+  it('keeps failed-review credit when correct answers clear questions from the failed pool',()=>{
+    const reviewed=attempt('reviewed','q-reviewed','2026-09-29T16:10:00.000Z')
+    const failedOnlySession:SessionSummary={
+      id:'failed-only-session',
+      startedAt:'2026-09-29T16:00:00.000Z',
+      endedAt:'2026-09-29T16:15:00.000Z',
+      mode:'math',
+      questionCount:1,
+      attempts:[reviewed],
+      settings:{mode:'math',questionsPerSession:10,showExplanations:true,shuffle:true,failedEverOnly:true},
+    }
+
+    render(
+      <DailyPracticeGoals
+        attempts={[reviewed]}
+        sessions={[failedOnlySession]}
+        dailyQuestions={20}
+        dailyMinutes={20}
+        failedQuestionCount={0}
+      />,
+    )
+
+    expect(screen.getByText('· 1/1')).toBeInTheDocument()
+  })
+
   it('shows actual questions completed when today exceeds the goal',()=>{
     const attemptsToday=Array.from({length:28},(_,index)=>attempt(
       `today-${index}`,
