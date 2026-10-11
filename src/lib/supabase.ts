@@ -59,13 +59,14 @@ export async function joinLaunchWaitlist(email:string,birthDate:string,captchaTo
   if(error||!data||data.message!=='Please check your email for a waitlist confirmation link.')throw new Error(data?.message??'Unable to join waitlist.')
 }
 
-export async function signUpWithPassword(email:string,password:string,birthDate:string,captchaToken:string){
-  if(!captchaToken)throw new Error('Complete the security check.')
+export async function signUpWithPassword(email:string,password:string,ageConfirmed:boolean,captchaToken:string){
+  if(import.meta.env.VITE_TURNSTILE_SITE_KEY&&!captchaToken)throw new Error('Complete the security check.')
   if(!supabase)throw new Error('Supabase is not configured.')
+  if(!ageConfirmed)throw new Error('Please confirm you are 13 or older before creating an account.')
   const {data,error}=await supabase.auth.signUp({
     email:email.trim(),
     password,
-    options:{emailRedirectTo:window.location.origin,captchaToken,data:{sat_signup_birth_date:birthDate}},
+    options:{emailRedirectTo:window.location.origin,...(captchaToken?{captchaToken}:{}),data:{sat_age_13_confirmed:true}},
   })
   if(error)throw error
   return {user:toAuthUser(data.user),needsEmailConfirmation:!data.session}
