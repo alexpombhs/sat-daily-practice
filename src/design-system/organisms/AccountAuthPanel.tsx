@@ -8,7 +8,7 @@ import AuthCredentialsForm from '../molecules/AuthCredentialsForm'
 import TurnstileChallenge from '../molecules/TurnstileChallenge'
 import UserProfileForm from '../molecules/UserProfileForm'
 import {validateSignupBirthDate} from '../../lib/signupAge'
-import {deleteCurrentAccount,EMPTY_USER_PROFILE,isRegistrationFull,joinLaunchWaitlist,isSupabaseConfigured,loadUserProfile,saveUserProfile,signInWithPassword,signOut,signUpWithPassword,type UserProfile} from '../../lib/supabase'
+import {deleteCurrentAccount,hasPlusAccess,openOneTimeCheckout,EMPTY_USER_PROFILE,isRegistrationFull,joinLaunchWaitlist,isSupabaseConfigured,loadUserProfile,saveUserProfile,signInWithPassword,signOut,signUpWithPassword,type UserProfile} from '../../lib/supabase'
 
 type Props={
   email:string|null
@@ -28,9 +28,17 @@ export default function AccountAuthPanel({email}:Props){
   const[captchaToken,setCaptchaToken]=useState('')
   const handleCaptchaToken=useCallback((token:string)=>setCaptchaToken(token),[])
   const[deleteText,setDeleteText]=useState('')
+  const[plusActive,setPlusActive]=useState(false)
   const[profile,setProfile]=useState<UserProfile>(EMPTY_USER_PROFILE)
 
   useEffect(()=>{if(!email)void isRegistrationFull().then(setRegistrationFull).catch(()=>{ /* Signup server remains authoritative */ })},[email])
+
+  useEffect(()=>{
+    if(!email){setPlusActive(false);return}
+    let active=true
+    void hasPlusAccess().then(value=>{if(active)setPlusActive(value)}).catch(()=>{if(active)setPlusActive(false)})
+    return()=>{active=false}
+  },[email])
 
   useEffect(()=>{
     if(!email){setProfile(EMPTY_USER_PROFILE);return}
@@ -127,6 +135,13 @@ export default function AccountAuthPanel({email}:Props){
         <AlexSurface variant="outlined" sx={{p:2,borderRadius:2}}>
           <AlexText sx={{fontSize:12,color:'text.secondary',mb:.25}}>Signed in as</AlexText>
           <AlexText sx={{fontWeight:750}}>{email}</AlexText>
+        </AlexSurface>
+        <AlexSurface variant="outlined" sx={{p:2,borderRadius:2}}>
+          <AlexStack spacing={1}>
+            <AlexText sx={{fontWeight:750}}>90-day Plus access</AlexText>
+            <AlexText sx={{fontSize:13,color:'text.secondary'}}>{plusActive?'Your Plus access is active.':'Get unlimited sessions, personalized configuration, study planning and progress insights for $10 once. No subscription or automatic renewal.'}</AlexText>
+            {!plusActive&&<AlexButton disabled={busy} onClick={()=>{setError('');void openOneTimeCheckout().catch(nextError=>setError(messageFromError(nextError)))}} sx={{alignSelf:'flex-start'}}>Get 90 days for $10</AlexButton>}
+          </AlexStack>
         </AlexSurface>
         <UserProfileForm profile={profile} busy={busy} onSave={saveProfile}/>
         {error&&<AlexText role="alert" sx={{fontSize:13,color:'error.main'}}>{error}</AlexText>}
