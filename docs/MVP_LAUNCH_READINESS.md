@@ -29,9 +29,11 @@ Status: **NOT approved for public launch**. This document is a release checklist
 - [x] Atomic claim/release flow for operator-triggered invitations; provider idempotency key included.
 - [ ] Implement guaranteed seat reservation and automatic scheduling if needed; invitations currently do not reserve a place.
 - [ ] Confirm email-provider idempotency and invitation retry behavior in staging.
-- [ ] Define waiting-list retention, opt-out and deletion process and disclose in privacy notice.
+- [x] Token-based waitlist unsubscribe endpoint, removal timestamp and opt-out link in invitation emails added.
+- [ ] Set operator-approved retention durations and remove stale waitlist records on a schedule.
 - [ ] Prevent non-signup Auth creation flows (admin imports/invites) from exhausting capacity unexpectedly.
-- [ ] Review count policy before GA (the database trigger must be explicitly removed/disabled to exceed 100).
+- [x] Server-controlled launch mode supports closed, LA (capacity 100), and GA; closed is the default until operator opens enrollment.
+- [ ] Confirm operator-controlled launch mode and release procedures for GA.
 
 ## Core product release blocking
 - [ ] Cross-device account/history/settings/resumable session persistence tested.
