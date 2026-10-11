@@ -122,42 +122,56 @@ function estimateOverallScore(sections:SectionPerformance[],observedAttempts:Att
   return estimateSectionPracticeScore(english.successRate)+estimateSectionPracticeScore(math.successRate)
 }
 
-// Estimate all questions on the canonical test forms, not only the questions
-// sampled in a moving session window. A successful review can never make the
-// probability for that specific question go down.
+// Latest 60 distinct questions form the evidence sample: 33 Reading &
+// Writing and 27 Math (matching each 120-question practice form).
+export const SCORE_RECENT_DISTINCT_QUESTIONS=60
+const SUBJECT_SAMPLE_SIZE:Record<Subject,number>={english:33,math:27}
 const OLDER_ATTEMPT_WEIGHT=.6
-const PRIOR_STRENGTH=2
+const PRIOR_STRENGTH=1
+
+function recentQuestionSample(historyAttempts:Attempt[],questionBank:PracticeQuestion[]){
+  const validIds=new Set(questionBank.map(q=>q.id))
+  const seen=new Set<string>()
+  const counts:Record<Subject,number>={english:0,math:0}
+  const sample:Attempt[]=[]
+  const chronological=[...historyAttempts].sort((a,b)=>b.createdAt.localeCompare(a.createdAt))
+  chronological.forEach(attempt=>{
+    if(!validIds.has(attempt.questionId)||seen.has(attempt.questionId)||counts[attempt.subject]>=SUBJECT_SAMPLE_SIZE[attempt.subject])return
+    seen.add(attempt.questionId)
+    counts[attempt.subject]++
+    sample.push(attempt)
+  })
+  return sample
+}
 
 function buildScoreSections(historyAttempts:Attempt[],questionBank:PracticeQuestion[]):SectionPerformance[]{
+  const sample=recentQuestionSample(historyAttempts,questionBank)
+  const sampledIds=new Set(sample.map(a=>a.questionId))
   const grouped=new Map<string,Attempt[]>()
-  historyAttempts.forEach(attempt=>grouped.set(attempt.questionId,[...(grouped.get(attempt.questionId)??[]),attempt]))
+  historyAttempts.forEach(attempt=>{
+    if(sampledIds.has(attempt.questionId))grouped.set(attempt.questionId,[...(grouped.get(attempt.questionId)??[]),attempt])
+  })
 
   return (['english','math'] as Subject[]).map(subject=>{
-    const eligible=questionBank.filter(question=>question.subject===subject)
-    const relevant=historyAttempts.filter(attempt=>attempt.subject===subject)
-    // Estimate a section-level prior from each practiced question's initial
-    // attempt (avoids overrepresenting repeated reviews of hard questions).
-    const initial=[...grouped.values()].map(rows=>rows[0]).filter(a=>a.subject===subject)
-    const baseline=(initial.filter(a=>a.correct).length+1)/(initial.length+2)
-    const questionProbabilities=eligible.map(question=>{
-      const attempts=[...(grouped.get(question.id)??[])].sort((a,b)=>a.createdAt.localeCompare(b.createdAt))
-      if(!attempts.length)return baseline
-      let weight=0,correct=0
-      attempts.forEach(a=>{
+    const selected=sample.filter(a=>a.subject===subject)
+    const rates=selected.map(({questionId})=>{
+      const rows=[...(grouped.get(questionId)??[])].sort((a,b)=>a.createdAt.localeCompare(b.createdAt))
+      // Recency-weighted probability with a small neutral prior. Earlier
+      // failures matter less after additional correct reviews.
+      let weight=0,weightedCorrect=0
+      rows.forEach(a=>{
         weight=weight*OLDER_ATTEMPT_WEIGHT+1
-        correct=correct*OLDER_ATTEMPT_WEIGHT+(a.correct?1:0)
+        weightedCorrect=weightedCorrect*OLDER_ATTEMPT_WEIGHT+(a.correct?1:0)
       })
-      return (PRIOR_STRENGTH*baseline+correct)/(PRIOR_STRENGTH+weight)
+      return (PRIOR_STRENGTH*.5+weightedCorrect)/(PRIOR_STRENGTH+weight)
     })
-    // The bank contains complete 120-question forms (66 RW + 54 Math).
-    // Each question contributes once to its section expectation.
-    const expected=questionProbabilities.reduce((sum,p)=>sum+p,0)
+    const expected=rates.reduce((sum,p)=>sum+p,0)
     return {
       subject,label:SECTION_LABELS[subject],
-      attempts:eligible.length,
+      attempts:selected.length,
       correct:expected,
-      successRate:eligible.length?Math.round(100*expected/eligible.length):0,
-      averageMs:average(relevant.map(a=>a.elapsedMs)),
+      successRate:selected.length?Math.round(100*expected/selected.length):0,
+      averageMs:average(selected.map(a=>a.elapsedMs)),
     }
   })
 }
@@ -180,7 +194,7 @@ function predictionBasis(sections:SectionPerformance[],sessionCount:number,histo
       subject:section.subject,
       label:section.label,
       questions:section.attempts,
-      observedQuestions:new Set(historyAttempts.filter(a=>a.subject===section.subject).map(a=>a.questionId)).size,
+      observedQuestions:section.attempts,
       successRate:section.successRate,
     })),
   }
