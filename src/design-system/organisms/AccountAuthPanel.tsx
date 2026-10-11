@@ -42,14 +42,14 @@ export default function AccountAuthPanel({email}:Props){
     return()=>{cancelled=true}
   },[email])
 
-  async function submit(nextEmail:string,password:string,birthDate?:string){
+  async function submit(nextEmail:string,password:string,birthDate?:string,captchaToken?:string){
     setBusy(true)
     setError('')
     setMessage('')
     try{
       if(mode==='signup'){
         const validDate=validateSignupBirthDate(birthDate??'')
-        const result=await signUpWithPassword(nextEmail,password,validDate)
+        const result=await signUpWithPassword(nextEmail,password,validDate,captchaToken??'')
         setMessage(result.needsEmailConfirmation?'Check your email to confirm your account, then return here to sign in.':'Account created and signed in.')
       }else{
         await signInWithPassword(nextEmail,password)
