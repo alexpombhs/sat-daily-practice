@@ -138,7 +138,7 @@ export default function AccountAuthPanel({email}:Props){
         </AlexSurface>
       </AlexStack>:registrationFull?<AlexStack spacing={2}>
         <AlexText sx={{fontWeight:700}}>The first 100 account places are filled.</AlexText>
-        <AlexText sx={{fontSize:14,color:'text.secondary'}}>Join the waitlist to be notified if registration opens.</AlexText>
+        <AlexText sx={{fontSize:14,color:'text.secondary'}}>Enter your email to request a registration invitation. An invitation does not reserve a place. Your email will be used for waitlist updates; contact support to request removal.</AlexText>
         <AlexTextField label="Date of birth" type="date" value={waitlistBirthDate} onChange={event=>setWaitlistBirthDate(event.target.value)} InputLabelProps={{shrink:true}} />
         <AlexTextField label="Email for waitlist" type="email" value={waitlistEmail} onChange={event=>setWaitlistEmail(event.target.value)} />
         {error&&<AlexText role="alert" sx={{color:'error.main'}}>{error}</AlexText>}
