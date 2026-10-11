@@ -23,7 +23,8 @@ Status: **NOT approved for public launch**. This document is a release checklist
 - [ ] Test 99-to-100 and 100-to-101 account boundaries and simultaneous signup requests.
 - [ ] Test behavior with preexisting Auth accounts, abandoned/unconfirmed registrations and deleted accounts.
 - [ ] Rate-limit waitlist abuse and add a bot challenge at the public entry point.
-- [ ] Implement operator-controlled invite and notification flow (currently manual; do not promise automatic emails).
+- [x] First draft operator-triggered invite email Edge Function committed; requires verified sender, server secrets, deployment and end-to-end testing.
+- [ ] Add reliable reserved-seat invitations, idempotency and automatic scheduling if needed.
 - [ ] Define waiting-list retention, opt-out and deletion process and disclose in privacy notice.
 - [ ] Prevent non-signup Auth creation flows (admin imports/invites) from exhausting capacity unexpectedly.
 - [ ] Review count policy before GA (the database trigger must be explicitly removed/disabled to exceed 100).
@@ -39,7 +40,8 @@ Status: **NOT approved for public launch**. This document is a release checklist
 - [ ] No error leakage, failed deployment, or silent data loss; build and tests green.
 - [ ] Two-account RLS negative tests for attempts, sessions, settings, profiles and question edit permission; check unrestricted canonical question write policy.
 - [ ] Rate limits, database quotas, recovery/backup and error monitoring reviewed.
-- [ ] Provide self-service verified account deletion; deleting practice history alone does not delete Auth account.
+- [x] First draft confirmed-delete UI and authenticated Edge Function committed.
+- [ ] Deploy and verify full deletion of Auth record, SAT rows, sessions and external provider data.
 
 ## Privacy, IP and commercialization release blocking
 - [ ] Counsel/adult operator review whether the service is general-audience, mixed-audience, or child-directed; age screening is not by itself COPPA compliance.
