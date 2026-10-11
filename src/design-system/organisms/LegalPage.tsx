@@ -18,7 +18,7 @@ export default function LegalPage({kind,onBack}:Props){
     <AlexText>Service operator: {operator}. Contact: {support?<a href={`mailto:${support}`}>{support}</a>:'[Support email pending]'}</AlexText>
     {kind==='privacy'?<>
      <AlexText component="h2" sx={{fontSize:20,fontWeight:700}}>Who can use the service?</AlexText>
-     <AlexText>SAT Daily Practice is for students ages 13 and older. The date of birth is checked for signup eligibility before collecting an account email or password. We do not retain the full birthdate in the account metadata after signup.</AlexText>
+     <AlexText>SAT Daily Practice is for students ages 13 and older. We ask you to confirm you are 13 or older before signup. We do not request or store your date of birth.</AlexText>
      <AlexText component="h2" sx={{fontSize:20,fontWeight:700}}>Information we use</AlexText>
      <AlexText>We use account email, an optional display name, practice answers and sessions, study preferences and security events to operate the service and sync eligible accounts across devices. We do not require a school, grade, biography, or parent contact.</AlexText>
      <AlexText component="h2" sx={{fontSize:20,fontWeight:700}}>Service providers</AlexText>
