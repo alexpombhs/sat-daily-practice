@@ -1,0 +1,33 @@
+insert into public.sat_question_difficulty(question_id,difficulty,concepts,reasoning_steps,integration_level,confidence,rubric_version)
+select v.* from (values
+('practice-test-5:math2-1','easy','["percent of whole","arithmetic multiplication"]'::jsonb,1,'low',0.99,'content-rubric-v1'),
+('practice-test-5:math2-2','easy','["graphical function lookup","temperature and pressure units"]'::jsonb,1,'low',0.73,'content-rubric-v1'),
+('practice-test-5:math2-3','easy','["evaluate linear function","integer arithmetic"]'::jsonb,1,'low',0.99,'content-rubric-v1'),
+('practice-test-5:math2-4','medium','["greatest common factor","polynomial factoring","exponent rules"]'::jsonb,3,'medium',0.97,'content-rubric-v1'),
+('practice-test-5:math2-5','easy','["rate and fixed charge","linear model translation"]'::jsonb,2,'low',0.98,'content-rubric-v1'),
+('practice-test-5:math2-6','easy','["one-step equations","evaluate expression"]'::jsonb,2,'low',0.99,'content-rubric-v1'),
+('practice-test-5:math2-7','medium','["difference of squares","zero product property","factorized equations"]'::jsonb,3,'medium',0.97,'content-rubric-v1'),
+('practice-test-5:math2-8','easy','["slope-intercept form","y intercept"]'::jsonb,1,'low',0.98,'content-rubric-v1'),
+('practice-test-5:math2-9','medium','["graph intercept","physical interpretation","quadratic height function"]'::jsonb,2,'medium',0.73,'content-rubric-v1'),
+('practice-test-5:math2-10','easy','["function notation","units in context","kinetic-energy expression"]'::jsonb,2,'low',0.98,'content-rubric-v1'),
+('practice-test-5:math2-11','medium','["scatterplot residuals","prediction versus observation","count points above trend line"]'::jsonb,3,'medium',0.7,'content-rubric-v1'),
+('practice-test-5:math2-12','medium','["mutually exclusive probabilities","complement rule","count estimation"]'::jsonb,3,'medium',0.98,'content-rubric-v1'),
+('practice-test-5:math2-13','medium','["linear expressions","distribution and combination","identify slope"]'::jsonb,3,'medium',0.98,'content-rubric-v1'),
+('practice-test-5:math2-14','medium','["cube geometry","surface area","missing face"]'::jsonb,3,'medium',0.97,'content-rubric-v1'),
+('practice-test-5:math2-15','medium','["mean comparisons","effect of adding smaller value","table interpretation"]'::jsonb,3,'medium',0.96,'content-rubric-v1'),
+('practice-test-5:math2-16','easy','["triangle angle sum","feasible angle"]'::jsonb,2,'low',0.98,'content-rubric-v1'),
+('practice-test-5:math2-17','easy','["polynomial subtraction","distributive negatives","like terms"]'::jsonb,2,'low',0.98,'content-rubric-v1'),
+('practice-test-5:math2-18','medium','["radical equation","squaring and isolating","scaled expression"]'::jsonb,3,'medium',0.97,'content-rubric-v1'),
+('practice-test-5:math2-19','advanced','["two-variable strict inequalities","systematic evaluation of multiple ordered pairs","boundary cases"]'::jsonb,4,'high',0.93,'content-rubric-v1'),
+('practice-test-5:math2-20','medium','["linear systems elimination","multiply target expression"]'::jsonb,3,'medium',0.97,'content-rubric-v1'),
+('practice-test-5:math2-21','advanced','["rectangle inscribed in circle","Pythagorean theorem","radical geometry","area constraints"]'::jsonb,5,'high',0.95,'content-rubric-v1'),
+('practice-test-5:math2-22','medium','["similarity scaling","area factor squared"]'::jsonb,2,'medium',0.98,'content-rubric-v1'),
+('practice-test-5:math2-23','medium','["rational expressions","common denominator","algebraic factoring"]'::jsonb,3,'medium',0.98,'content-rubric-v1'),
+('practice-test-5:math2-24','medium','["quadratic discriminant","number of real roots"]'::jsonb,3,'medium',0.98,'content-rubric-v1'),
+('practice-test-5:math2-25','advanced','["exponential growth","time-unit conversion","interpretation of exponent"]'::jsonb,4,'high',0.94,'content-rubric-v1'),
+('practice-test-5:math2-26','advanced','["circle radius","perpendicular tangent slope","two-point line equation"]'::jsonb,5,'high',0.95,'content-rubric-v1'),
+('practice-test-5:math2-27','advanced','["area scaling","ratios of square areas","electric flux definition","proportional allocation"]'::jsonb,5,'high',0.94,'content-rubric-v1')
+) as v(question_id,difficulty,concepts,reasoning_steps,integration_level,confidence,rubric_version)
+join public.sat_question_bank b on b.id=v.question_id and b.practice_test_id='practice-test-5' and b.module='math2'
+where jsonb_array_length(coalesce(b.question_lines,'[]'::jsonb))>0
+on conflict (question_id) do nothing;
