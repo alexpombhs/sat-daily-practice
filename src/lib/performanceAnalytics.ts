@@ -162,6 +162,11 @@ function buildScoreSections(historyAttempts:Attempt[],questionBank:PracticeQuest
   })
 }
 
+function attemptsForSessions(attempts:Attempt[],sessions:SessionSummary[]):Attempt[]{
+  const ids=new Set(sessions.map(session=>session.id))
+  return attempts.filter(attempt=>ids.has(attempt.sessionId))
+}
+
 function predictionBasis(sections:SectionPerformance[],sessionCount:number,historyAttempts:Attempt[]):ScorePredictionBasis{
   const questionCount=sections.reduce((sum,section)=>sum+section.attempts,0)
   const weightedRate=questionCount
