@@ -22,7 +22,9 @@ Status: **NOT approved for public launch**. This document is a release checklist
 - [x] Frontend provides waitlist signup when capacity is reached.
 - [ ] Test 99-to-100 and 100-to-101 account boundaries and simultaneous signup requests.
 - [ ] Test behavior with preexisting Auth accounts, abandoned/unconfirmed registrations and deleted accounts.
-- [ ] Rate-limit waitlist abuse and add a bot challenge at the public entry point.
+- [x] Cloudflare Turnstile frontend challenge and server-side verification added to waitlist; direct public RPC bypass revoked.
+- [x] Signup challenge token wired to Supabase Auth.
+- [ ] Configure CAPTCHA in Supabase and provider keys; test real production rejection of malicious and direct API requests, set rate limits.
 - [x] First draft operator-triggered invite email Edge Function committed; requires verified sender, server secrets, deployment and end-to-end testing.
 - [ ] Add reliable reserved-seat invitations, idempotency and automatic scheduling if needed.
 - [ ] Define waiting-list retention, opt-out and deletion process and disclose in privacy notice.
@@ -41,7 +43,8 @@ Status: **NOT approved for public launch**. This document is a release checklist
 - [ ] Two-account RLS negative tests for attempts, sessions, settings, profiles and question edit permission; check unrestricted canonical question write policy.
 - [ ] Rate limits, database quotas, recovery/backup and error monitoring reviewed.
 - [x] First draft confirmed-delete UI and authenticated Edge Function committed.
-- [ ] Deploy and verify full deletion of Auth record, SAT rows, sessions and external provider data.
+- [x] Feedback foreign key switched to ON DELETE CASCADE in pending migration.
+- [ ] Deploy and verify full deletion of Auth record, SAT rows, sessions, storage and external provider data.
 
 ## Privacy, IP and commercialization release blocking
 - [ ] Counsel/adult operator review whether the service is general-audience, mixed-audience, or child-directed; age screening is not by itself COPPA compliance.
