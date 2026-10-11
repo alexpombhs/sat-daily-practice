@@ -37,12 +37,14 @@ function scoreFocusShare(gap:number|null){
 }
 
 export function buildPracticePlanRecommendation(settings:Settings,questions:PracticeQuestion[],attempts:Attempt[],performance:PerformanceAnalytics):PracticePlanRecommendation{
-  const bankQuestionCount=questions.length
-  const availablePracticeSetCount=new Set(questions.map(question=>question.practiceTestId).filter(Boolean)).size
+  // Targeted mock practice is supplementary and must not inflate the official SAT study plan.
+  const officialQuestions=questions.filter(question=>question.practiceTestId!=='practice-test-8')
+  const bankQuestionCount=officialQuestions.length
+  const availablePracticeSetCount=new Set(officialQuestions.map(question=>question.practiceTestId).filter(Boolean)).size
   const targetPracticeSets=Math.max(1,Math.round(settings.targetPracticeSets??(availablePracticeSetCount||1)))
   const coverage=Math.max(1,Math.min(100,settings.targetCoveragePercent??100))/100
   const targetQuestions=Math.ceil(bankQuestionCount*coverage)
-  const questionIds=new Set(questions.map(question=>question.id))
+  const questionIds=new Set(officialQuestions.map(question=>question.id))
   const uniqueQuestionsCompleted=new Set(attempts.filter(attempt=>questionIds.has(attempt.questionId)).map(attempt=>attempt.questionId)).size
   const remainingQuestions=Math.max(0,targetQuestions-uniqueQuestionsCompleted)
   const questionsPerSession=Math.max(1,settings.questionsPerSession)
@@ -56,7 +58,7 @@ export function buildPracticePlanRecommendation(settings:Settings,questions:Prac
   const coverageSessionsPerDay=remainingSessions?Math.max(1,Math.ceil(remainingSessions/daysRemaining)):0
   const recommendedSessionsPerDay=Math.max(coverageSessionsPerDay,remainingQuestions===0&&needsScoreWork?1:0)
 
-  const timed=attempts.filter(attempt=>attempt.elapsedMs>0&&attempt.elapsedMs<20*60*1000)
+  const timed=attempts.filter(attempt=>questionIds.has(attempt.questionId)&&attempt.elapsedMs>0&&attempt.elapsedMs<20*60*1000)
   const historyMinutes=timed.length>=5?timed.reduce((sum,attempt)=>sum+attempt.elapsedMs,0)/timed.length/60000:null
   const minutesPerQuestion=historyMinutes??Math.max(.25,settings.fallbackMinutesPerQuestion??2)
   const estimatedSessionMinutes=Math.max(1,Math.ceil(questionsPerSession*minutesPerQuestion))
