@@ -142,7 +142,7 @@ export default function AccountAuthPanel({email}:Props){
         <AlexSurface variant="outlined" sx={{p:2,borderRadius:2}}>
           <AlexStack spacing={1}>
             <AlexText sx={{fontWeight:750}}>90-day Plus access</AlexText>
-            <AlexText sx={{fontSize:13,color:'text.secondary'}}>{plusActive?'Your Plus access is active${plusExpiration?` through ${new Date(plusExpiration).toLocaleDateString()}`:""}.':'Get unlimited sessions, personalized configuration, study planning and progress insights for $10 once. No subscription or automatic renewal.'}</AlexText>
+            <AlexText sx={{fontSize:13,color:'text.secondary'}}>{plusActive?`Your Plus access is active${plusExpiration?` through ${new Date(plusExpiration).toLocaleDateString()}`:""}.`:'Get unlimited sessions, personalized configuration, study planning and progress insights for $10 once. No subscription or automatic renewal.'}</AlexText>
             {!plusActive&&<AlexButton disabled={busy} onClick={()=>{setError('');void openOneTimeCheckout().catch(nextError=>setError(messageFromError(nextError)))}} sx={{alignSelf:'flex-start'}}>Get 90 days for $10</AlexButton>}
           </AlexStack>
         </AlexSurface>
