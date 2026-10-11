@@ -311,12 +311,16 @@ export async function syncSession(s:SessionSummary){
   const userId=await currentUserId()
   if(!userId)return false
   const {data:existing,error:lookupError}=await supabase.from('sat_sessions')
-    .select('id')
+    .select('id,session_settings')
     .eq('id',s.id)
     .eq('user_id',userId)
     .maybeSingle()
   if(lookupError)throw lookupError
   const row=sessionRow(s,userId)
+  // Preserve the original session setup (including failed-only mode) when
+  // finishing a session. The previous update replaced it with goal metadata.
+  const savedSettings=(existing?.session_settings??{}) as Record<string,unknown>
+  row.session_settings={...savedSettings,...(row.session_settings??{})}
   const sessionResult=existing
     ?await supabase.from('sat_sessions').update(row).eq('id',s.id).eq('user_id',userId)
     :await supabase.from('sat_sessions').insert(row)
