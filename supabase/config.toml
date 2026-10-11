@@ -16,3 +16,6 @@ verify_jwt = true
 
 [functions.sat-waitlist-invite]
 verify_jwt = true
+
+[functions.sat-waitlist-unsubscribe]
+verify_jwt = false # Unsubscribe token grants only its own queue-row removal.
