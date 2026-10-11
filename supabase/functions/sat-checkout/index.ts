@@ -2,6 +2,7 @@ import Stripe from 'npm:stripe@17.7.0'
 import {createClient} from 'npm:@supabase/supabase-js@2.57.4'
 Deno.serve(async(req:Request)=>{
  if(req.method!=='POST')return new Response('Method not allowed',{status:405})
+ if(Deno.env.get('LA_CHECKOUT_ENABLED')!=='true'||Deno.env.get('SAT_CONTENT_RIGHTS_APPROVED')!=='true'||Deno.env.get('SAT_LEGAL_APPROVED')!=='true')return new Response('Paid access is not yet available',{status:503})
  const bearer=req.headers.get('Authorization')??''
  if(!bearer.startsWith('Bearer '))return new Response('Sign in required',{status:401})
  const url=Deno.env.get('SUPABASE_URL'),anon=Deno.env.get('SUPABASE_ANON_KEY')
