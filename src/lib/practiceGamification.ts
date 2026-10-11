@@ -44,6 +44,16 @@ export function practiceQuestionPool(settings:Settings,attempts:Attempt[],questi
   return pool
 }
 
+export function countDifficultyQuestions(settings:Settings,questions:PracticeQuestion[]=QUESTION_BANK){
+  const scoped=eligibleQuestions({...settings,difficulty:'all'},questions)
+  return {
+    all:scoped.length,
+    easy:scoped.filter(q=>q.difficulty==='easy').length,
+    medium:scoped.filter(q=>q.difficulty==='medium').length,
+    advanced:scoped.filter(q=>q.difficulty==='advanced').length,
+  }
+}
+
 export function countNewPracticeQuestions(settings:Settings,attempts:Attempt[],questions:PracticeQuestion[]=QUESTION_BANK){
   const attemptedIds=attemptedQuestionIds(attempts)
   return eligibleQuestions(settings,questions).filter(question=>!attemptedIds.has(question.id)).length
