@@ -6,7 +6,7 @@ import StructuredQuestionLines from './StructuredQuestionLines'
 import ReadingQuestionLines from './ReadingQuestionLines'
 import {ensureQuestionText} from '../../lib/pdfStructuredImport'
 import {getQuestionContent,isCurrentQuestionContent,QUESTION_CONTENT_VERSION,type StoredQuestionContent} from '../../lib/questionContentStore'
-import {loadSharedQuestionContent,saveMissingCanonicalQuestionText} from '../../lib/sharedQuestionBank'
+import {loadSharedQuestionContent} from '../../lib/sharedQuestionBank'
 import {verifiedMathContent} from '../../lib/verifiedMathQuestions'
 import {questionVisualSpecs,type QuestionVisualSpec} from '../../lib/questionVisuals'
 import {isPracticeTest5Math1Verified} from '../../lib/practiceTest5Math1Layout'
@@ -99,13 +99,6 @@ export default function QuestionContent({question,bytes,alt,showOriginalLayout=t
                 ?verifiedPracticeTest7Math2Content(question.number)
                 :undefined
             :undefined
-        const persistMissing=(lines:string[])=>{
-          if(!shared?.questionLines.length&&lines.length){
-            void saveMissingCanonicalQuestionText(question.id,lines).catch(error=>{
-              console.warn('Unable to sync parsed question text to Supabase',question.id,error)
-            })
-          }
-        }
         const sharedHasText=Boolean(shared?.questionLines.length)&&!(question.id==='practice-test-6:math2-26'&&shared?.questionLines.some(line=>/no test material on this page/i.test(line)))
         const sharedControlsVisual=Boolean(shared&&shared.contentStatus!=='metadata'&&!(verifiedBundled&&!sharedHasText))
         const sharedVisuals=shared?.visualSpecs??[]
@@ -119,7 +112,6 @@ export default function QuestionContent({question,bytes,alt,showOriginalLayout=t
         }
 
         if(verifiedBundled){
-          persistMissing(verifiedBundled.lines)
           setContent(storedFromShared(question.id,verifiedBundled.lines,shared?.explanationLines??[],resolvedVisuals.length>0||Boolean(verifiedBundled.needsVisual),'text'))
           return
         }
@@ -134,7 +126,6 @@ export default function QuestionContent({question,bytes,alt,showOriginalLayout=t
           const extracted=await ensureQuestionText(question,sourceBytes)
           if(cancelled)return
           if(extracted&&isCurrentQuestionContent(extracted)&&extracted.questionLines.length){
-            persistMissing(extracted.questionLines)
             setContent({...extracted,questionMode:'text',needsVisual:resolvedVisuals.length>0||extracted.needsVisual})
             return
           }
@@ -157,7 +148,6 @@ export default function QuestionContent({question,bytes,alt,showOriginalLayout=t
             return
           }
           if(verified){
-            persistMissing(verified.lines)
             setContent(storedFromShared(question.id,verified.lines,[],resolvedVisuals.length>0||Boolean(verified.needsVisual)))
             return
           }
@@ -165,7 +155,6 @@ export default function QuestionContent({question,bytes,alt,showOriginalLayout=t
 
         const verified=question.practiceTestId==='practice-test-4'&&question.subject==='math'?verifiedMathContent(question.id):undefined
         if(verified){
-          persistMissing(verified.lines)
           setContent(storedFromShared(question.id,verified.lines,shared?.explanationLines??[],resolvedVisuals.length>0||Boolean(verified.needsVisual)))
           return
         }
@@ -180,14 +169,14 @@ export default function QuestionContent({question,bytes,alt,showOriginalLayout=t
         if(question.subject==='english'&&sourceBytes){
           const extracted=await ensureQuestionText(question,sourceBytes)
           if(cancelled)return
-          if(extracted&&isCurrentQuestionContent(extracted)){persistMissing(extracted.questionLines);setContent({...extracted,needsVisual:resolvedVisuals.length>0||extracted.needsVisual})}
+          if(extracted&&isCurrentQuestionContent(extracted))setContent({...extracted,needsVisual:resolvedVisuals.length>0||extracted.needsVisual})
           else setError('Question text is not available in this browser yet.')
           return
         }
 
         const local=sourceBytes?await ensureQuestionText(question,sourceBytes):await getQuestionContent(question.id)
         if(cancelled)return
-        if(local&&isCurrentQuestionContent(local)){persistMissing(local.questionLines);setContent({...local,needsVisual:resolvedVisuals.length>0||local.needsVisual})}
+        if(local&&isCurrentQuestionContent(local))setContent({...local,needsVisual:resolvedVisuals.length>0||local.needsVisual})
         else setError('Question text is not available in this browser yet.')
       }catch(reason){
         if(!cancelled)setError(reason instanceof Error?reason.message:'Unable to read this question as text.')
