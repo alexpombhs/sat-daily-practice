@@ -1,5 +1,5 @@
 import {describe,expect,it} from 'vitest'
-import {buildPerformanceAnalytics,estimateSectionPracticeScore,SCORE_SESSION_WINDOW} from './performanceAnalytics'
+import {buildPerformanceAnalytics,estimateSectionPracticeScore,SCORE_SESSION_WINDOW,SCORE_RECENT_DISTINCT_QUESTIONS} from './performanceAnalytics'
 import {QUESTION_BANK} from './questionBank'
 import type {Attempt,PracticeQuestion,SessionSummary} from '../types'
 
@@ -17,13 +17,22 @@ const session=(id:string,attempts:Attempt[]):SessionSummary=>({
 })
 const analytics=(attempts:Attempt[],sessions:SessionSummary[])=>buildPerformanceAnalytics(attempts,sessions,QUESTION_BANK.length,QUESTION_BANK)
 
-describe('full-bank score prediction',()=>{
-  it('predicts over every canonical question, not just attempted ones',()=>{
+describe('recent 60-question score prediction',()=>{
+  it('projects from recent distinct questions rather than the full question bank',()=>{
     const rows=sample.map((q,i)=>makeAttempt(q,'s1',i,i%2===0))
     const result=analytics(rows,[session('s1',rows)])
-    expect(result.scorePredictionBasis?.questionCount).toBe(QUESTION_BANK.length)
-    expect(result.scorePredictionBasis?.sections.reduce((n,s)=>n+s.questions,0)).toBe(QUESTION_BANK.length)
+    expect(result.scorePredictionBasis?.questionCount).toBe(6)
+    expect(result.scorePredictionBasis?.sections.reduce((n,s)=>n+s.questions,0)).toBe(6)
     expect(result.questionsSeen).toBe(6)
+  })
+
+  it('caps the sample at 33 Reading & Writing and 27 Math distinct questions',()=>{
+    expect(SCORE_RECENT_DISTINCT_QUESTIONS).toBe(60)
+    const candidates=[...QUESTION_BANK.filter(q=>q.subject==='english').slice(0,45),...QUESTION_BANK.filter(q=>q.subject==='math').slice(0,40)]
+    const rows=candidates.map((q,i)=>({...makeAttempt(q,'s1',i,i%3!==0),createdAt:`2026-09-01T12:${String(Math.floor(i/60)).padStart(2,'0')}:${String(i%60).padStart(2,'0')}.000Z`}))
+    const basis=analytics(rows,[session('s1',rows)]).scorePredictionBasis!
+    expect(basis.questionCount).toBe(60)
+    expect(basis.sections.map(section=>section.questions)).toEqual([33,27])
   })
 
   it('credits correct retries of previously failed questions without lowering the estimate',()=>{
@@ -36,7 +45,7 @@ describe('full-bank score prediction',()=>{
     const trend=result.scoreTrend.map(p=>p.score)
     expect(trend[1]).toBeGreaterThanOrEqual(trend[0])
     expect(trend[2]).toBeGreaterThanOrEqual(trend[1])
-    expect(result.scorePredictionBasis?.questionCount).toBe(QUESTION_BANK.length)
+    expect(result.scorePredictionBasis?.questionCount).toBe(6)
   })
 
   it('does not drop earlier failures just because more than ten sessions passed',()=>{
@@ -52,7 +61,7 @@ describe('full-bank score prediction',()=>{
     const last={...session('s2',retries),id:'last',startedAt:'2026-09-20T12:00:00.000Z',endedAt:'2026-09-20T12:01:00.000Z'}
     const relabeled=retries.map(a=>({...a,sessionId:'last',createdAt:'2026-09-20T12:00:00.000Z'}))
     const result=analytics([...failures,...relabeled],[first,...middle,{...last,attempts:relabeled}])
-    expect(result.scorePredictionBasis?.questionCount).toBe(QUESTION_BANK.length)
+    expect(result.scorePredictionBasis?.questionCount).toBe(6)
     expect(result.latestScoreEstimate).not.toBeNull()
     expect(result.scoreTrend.at(-1)!.score).toBeGreaterThanOrEqual(result.scoreTrend[0].score)
   })
