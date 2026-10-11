@@ -58,6 +58,7 @@ export default function App(){
   const[sidebarCollapsed,setSidebarCollapsed]=useState(false)
   const[authUser,setAuthUser]=useState<AuthUser|null>(null)
   const[authReady,setAuthReady]=useState(false)
+  const[plusActive,setPlusActive]=useState(false)
   const[settingsCloudReady,setSettingsCloudReady]=useState(false)
   const[questionBank,setQuestionBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
   const[resumableSession,setResumableSession]=useState<ActivePracticeSession|null>(null)
@@ -104,6 +105,16 @@ export default function App(){
     })
     return()=>{cancelled=true;unsubscribe()}
   },[])
+  useEffect(()=>{
+    if(!authUser){setPlusActive(false);return}
+    let cancelled=false
+    void hasPlusAccess().then(active=>{if(!cancelled)setPlusActive(active)}).catch(error=>{
+      console.warn('Access status unavailable',error)
+      if(!cancelled)setPlusActive(false)
+    })
+    return()=>{cancelled=true}
+  },[authUser?.id])
+
   useEffect(()=>{
     if(!authUser){
       setAttempts([])
@@ -553,6 +564,19 @@ export default function App(){
     </main>)
   }
 
+  if(authUser&&!plusActive&&(['study','stats','settings','vocabulary'] as View[]).includes(view))
+    return withSidebar('practice-tests',<main className="shell">
+      <section className="card">
+        <p className="eyebrow">SAT Daily Practice</p>
+        <h1>Free daily practice</h1>
+        <p>Enjoy two random 10-question sessions every day. Upgrade to Plus for unlimited sessions, personalized practice, a study plan and performance history.</p>
+        <div className="hero-actions">
+          <AlexButton onClick={()=>void beginPractice('both','all')}>Start free practice</AlexButton>
+          <AlexButton tone="secondary" onClick={()=>navigateTo('account')}>Explore 90-day Plus access</AlexButton>
+        </div>
+      </section>
+    </main>)
+
   if(view==='stats')return withSidebar('performance',<main className="shell"><PerformanceDashboard
     summary={rangePerformance}
     hasHistory={performanceAttempts.length>0}
@@ -772,7 +796,7 @@ export default function App(){
 
   return withSidebar('practice-tests',<PracticeTestsDashboard
     tests={practiceTestSummaries}
-    sessionSummary={`${settings.questionsPerSession} questions · ${settings.mode==='both'?'Reading & Writing + Math':settings.mode==='english'?'Reading & Writing':'Math'} · ${practiceSummary}`}
+    sessionSummary={`${plusActive?settings.questionsPerSession:10} questions · ${settings.mode==='both'?'Reading & Writing + Math':settings.mode==='english'?'Reading & Writing':'Math'} · ${practiceSummary}`}
     activeSession={resumableSession?{
       questionCount:resumableSession.questionCount,
       answeredCount:resumableSession.attempts.length,
