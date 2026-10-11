@@ -145,27 +145,27 @@
     "question_number": 5,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Nadia had wanted to leave the family bakery, yet she paused outside its door, smiling at the warm light while checking the train schedule again. The passage mainly conveys Nadia's",
+    "stem": "For years, Mara had planned to sell her grandparents' workshop, its tools unused and its roof leaking. Yet when the buyer arrived, she carefully brushed sawdust from the old workbench and asked whether the room might remain open for community classes. Which choice best describes Mara's response?",
     "options": [
       {
         "label": "A",
-        "text": "certainty that the bakery will close"
+        "text": "She is reconsidering a practical decision because of the workshop's personal and communal significance."
       },
       {
         "label": "B",
-        "text": "indifference toward her departure"
+        "text": "She has decided that repairs would cost less than the sale price."
       },
       {
         "label": "C",
-        "text": "anger with her relatives"
+        "text": "She believes the buyer has deliberately underestimated the building's value."
       },
       {
         "label": "D",
-        "text": "conflicting attachment and desire for change"
+        "text": "She resents the community for failing to maintain the workshop."
       }
     ],
-    "correct_answer": "D",
-    "explanation": "Her smile signals attachment while the schedule signals anticipation of leaving.",
+    "correct_answer": "A",
+    "explanation": "Mara's plans to sell contrast with her care for the workbench and proposal for classes, suggesting attachment complicates her decision.",
     "difficulty": "medium",
     "concepts": [
       "literary main purpose",
@@ -357,27 +357,27 @@
     "question_number": 11,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "A writer says memories are 'seeds stored beneath winter soil.' The comparison suggests memories",
+    "stem": "In a fictional poem, the speaker calls a promise 'a compass whose needle trembles when the clouds descend.' In context, the image most likely suggests that the promise",
     "options": [
       {
         "label": "A",
-        "text": "have no connection to time"
+        "text": "offers direction even when circumstances make its guidance uncertain."
       },
       {
         "label": "B",
-        "text": "can persist quietly and later grow vivid"
+        "text": "guarantees that every decision will be straightforward."
       },
       {
         "label": "C",
-        "text": "disappear immediately when forgotten"
+        "text": "depends entirely on being spoken aloud."
       },
       {
         "label": "D",
-        "text": "are always visible to others"
+        "text": "has become irrelevant once conditions change."
       }
     ],
-    "correct_answer": "B",
-    "explanation": "Dormant seeds evoke memories that remain latent but may reemerge.",
+    "correct_answer": "A",
+    "explanation": "A compass guides, yet a trembling needle suggests uncertain orientation; the promise provides imperfect guidance under pressure.",
     "difficulty": "medium",
     "concepts": [
       "figurative analogy",
@@ -392,27 +392,27 @@
     "question_number": 12,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "When Tom's younger cousin struggled with a puzzle, Tom offered a hint but allowed the cousin to finish it independently. The central idea is that Tom",
+    "stem": "When her brother proposed repainting their family's faded storefront, Imani objected to changing its hand-lettered sign. Later she offered to restore the lettering herself while he repaired the awning. Which central idea does the passage convey?",
     "options": [
       {
         "label": "A",
-        "text": "supports others without taking over"
+        "text": "The siblings discover a way to balance preservation and improvement."
       },
       {
         "label": "B",
-        "text": "prefers solving puzzles alone"
+        "text": "Imani rejects every change to the storefront."
       },
       {
         "label": "C",
-        "text": "refuses to assist family"
+        "text": "Her brother abandons all plans for repairs."
       },
       {
         "label": "D",
-        "text": "dislikes difficult games"
+        "text": "The siblings disagree about who owns the building."
       }
     ],
     "correct_answer": "A",
-    "explanation": "His limited hint encourages the cousin's independence.",
+    "explanation": "Imani protects a meaningful feature while accepting a repair, illustrating compromise between preservation and renewal.",
     "difficulty": "easy",
     "concepts": [
       "literary main idea",
@@ -638,27 +638,27 @@
     "question_number": 19,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "At the science fair, the two ___ presentations explained different approaches to water filtration.",
+    "stem": "At the regional competition, the ___ prototypes were evaluated separately, although both groups had collaborated on the testing procedure.",
     "options": [
       {
         "label": "A",
-        "text": "teams's"
-      },
-      {
-        "label": "B",
         "text": "teams'"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "team's"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "teams"
+      },
+      {
+        "label": "D",
+        "text": "teams's"
       }
     ],
-    "correct_answer": "B",
-    "explanation": "The presentations belong to two teams, requiring the plural possessive teams'.",
+    "correct_answer": "A",
+    "explanation": "Two groups each own a prototype; the plural possessive teams' is required.",
     "difficulty": "medium",
     "concepts": [
       "plural possessive nouns",
@@ -1016,11 +1016,11 @@
     "question_number": 30,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The soil dried during the heat wave. ___, the seedlings required more frequent watering.",
+    "stem": "Most of the riverbank's trees were removed during construction. ___, the newly exposed soil eroded rapidly during the first major storm.",
     "options": [
       {
         "label": "A",
-        "text": "Meanwhile"
+        "text": "Consequently"
       },
       {
         "label": "B",
@@ -1028,15 +1028,15 @@
       },
       {
         "label": "C",
-        "text": "Consequently"
+        "text": "For example"
       },
       {
         "label": "D",
         "text": "Conversely"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "Consequently expresses a result of the drying.",
+    "correct_answer": "A",
+    "explanation": "Tree removal reduces root stabilization, making erosion a logical result rather than a contrast or example.",
     "difficulty": "medium",
     "concepts": [
       "causal reasoning",
@@ -1050,27 +1050,27 @@
     "question_number": 31,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Notes: Paper maps require printed updates; digital maps can display new closures immediately. Which sentence highlights a difference?",
+    "stem": "A student takes these notes: A mechanical clock measures intervals with a regulated oscillator. An atomic clock uses a characteristic frequency of atoms as its reference. Mechanical clocks require adjustments for physical wear; atomic clocks maintain highly stable frequencies. The student wants to compare the underlying methods. Which choice most effectively does so?",
     "options": [
       {
         "label": "A",
-        "text": "Every map has a title."
+        "text": "Whereas a mechanical clock regulates a moving oscillator, an atomic clock references a characteristic atomic frequency."
       },
       {
         "label": "B",
-        "text": "Unlike printed maps, digital maps can reflect newly reported closures without reprinting."
+        "text": "Both mechanical and atomic clocks allow people to coordinate activities."
       },
       {
         "label": "C",
-        "text": "Both kinds of maps help visitors find routes."
+        "text": "Atomic clocks are useful in navigation and many scientific fields."
       },
       {
         "label": "D",
-        "text": "Maps often use familiar symbols."
+        "text": "Mechanical clocks were widely used before atomic clocks were developed."
       }
     ],
-    "correct_answer": "B",
-    "explanation": "The sentence explicitly contrasts update methods.",
+    "correct_answer": "A",
+    "explanation": "The response contrasts their timekeeping principles, rather than uses or history.",
     "difficulty": "medium",
     "concepts": [
       "rhetorical synthesis",
@@ -1085,27 +1085,27 @@
     "question_number": 32,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Notes: Sculptor Lina Chen assembles discarded glass into hanging forms; her work Lantern Current casts moving shadows. Which introduction is best for an unfamiliar audience?",
+    "stem": "A student has these notes: Visual artist Amara Bell works with translucent fabric. Her installation Borrowed Light suspends layered fabric above a gallery floor. Shifting daylight changes the patterns below. The audience has not encountered Bell's work. Which introduction best serves that audience?",
     "options": [
       {
         "label": "A",
-        "text": "In Lantern Current, sculptor Lina Chen uses recycled glass to create hanging forms and shifting shadows."
+        "text": "In Borrowed Light, artist Amara Bell hangs translucent fabric in layers to create floor patterns that change with daylight."
       },
       {
         "label": "B",
-        "text": "The artist's newest work is impressive."
+        "text": "Bell's installation changed the appearance of its gallery across the day."
       },
       {
         "label": "C",
-        "text": "Chen's piece differs from her earlier ones."
+        "text": "Translucent fabrics have long been used for various artistic effects."
       },
       {
         "label": "D",
-        "text": "It was displayed at a recent event."
+        "text": "Borrowed Light is among several artworks incorporating natural light."
       }
     ],
     "correct_answer": "A",
-    "explanation": "The sentence identifies the artist and work and explains the artwork to newcomers.",
+    "explanation": "This introduces the artist, title, medium, and distinctive effect rather than assuming familiarity.",
     "difficulty": "medium",
     "concepts": [
       "rhetorical synthesis",
@@ -1291,27 +1291,27 @@
     "question_number": 5,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "References to the sea are not ___ in these poems; they appear in nearly every stanza.",
+    "stem": "A scholar argues that references to migration are far from ___ in a poet's early work: even poems ostensibly about landscapes contain recurring images of journeys and displaced homes.",
     "options": [
       {
         "label": "A",
-        "text": "elaborate"
+        "text": "incidental"
       },
       {
         "label": "B",
-        "text": "literal"
+        "text": "persistent"
       },
       {
         "label": "C",
-        "text": "familiar"
+        "text": "pervasive"
       },
       {
         "label": "D",
-        "text": "rare"
+        "text": "deliberate"
       }
     ],
-    "correct_answer": "D",
-    "explanation": "Not rare is consistent with near-constant appearance.",
+    "correct_answer": "A",
+    "explanation": "Far from incidental means central or recurring, as the many concealed references demonstrate.",
     "difficulty": "advanced",
     "concepts": [
       "negation and academic vocabulary",
@@ -1393,27 +1393,27 @@
     "question_number": 8,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The report did not ___ the disputed claim; instead, it noted that key archival records were missing.",
+    "stem": "Early accounts of the expedition were often treated as ___, but newly identified correspondence contradicts several of their dates and descriptions. Historians now approach those narratives with greater caution.",
     "options": [
       {
         "label": "A",
-        "text": "substantiate"
+        "text": "authoritative"
       },
       {
         "label": "B",
-        "text": "question"
+        "text": "tentative"
       },
       {
         "label": "C",
-        "text": "repeat"
+        "text": "inconsequential"
       },
       {
         "label": "D",
-        "text": "mention"
+        "text": "derivative"
       }
     ],
     "correct_answer": "A",
-    "explanation": "Substantiate means provide evidence establishing a claim.",
+    "explanation": "New contradictions undermine accounts formerly treated as reliable or authoritative.",
     "difficulty": "advanced",
     "concepts": [
       "nuanced vocabulary",
@@ -1531,27 +1531,27 @@
     "question_number": 12,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "A character is described as 'quick to laugh at mistakes' but also 'the first to apologize for her own.' Which quotation best supports a claim of playful yet responsible behavior?",
+    "stem": "A critic calls a fictional mayor 'generous in public but calculating in private.' Which quotation best supports this characterization?",
     "options": [
       {
         "label": "A",
-        "text": "She joked about the spilled paint and then stayed to clean it."
+        "text": "'She financed the public fountain, then privately asked which neighborhoods would remember her name on election day.'"
       },
       {
         "label": "B",
-        "text": "She stayed silent throughout the meeting."
+        "text": "'She opened the meeting by thanking the workers who had installed the fountain.'"
       },
       {
         "label": "C",
-        "text": "She refused to revisit the incident."
+        "text": "'She disliked speeches and usually delegated ceremonies to colleagues.'"
       },
       {
         "label": "D",
-        "text": "She left before anyone noticed the spill."
+        "text": "'She complained that the fountain's pipes were difficult to repair.'"
       }
     ],
     "correct_answer": "A",
-    "explanation": "Humor paired with cleaning up demonstrates both traits.",
+    "explanation": "Her donation appears generous, while her concern about electoral recognition reveals strategic self-interest.",
     "difficulty": "medium",
     "concepts": [
       "literary quotation selection",
@@ -1738,27 +1738,27 @@
     "question_number": 18,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "To estimate a tutoring program's effect, researchers randomly assigned eligible students to either tutoring or existing study hall. Why was this design useful?",
+    "stem": "To evaluate a new reading program, a district compared students who volunteered for it with students who did not. Participants gained six points more on average. Which additional finding would most weaken the conclusion that the program caused the entire difference?",
     "options": [
       {
         "label": "A",
-        "text": "It removes the need to measure outcomes."
+        "text": "Before the program, volunteers already scored substantially higher and reported more weekly reading."
       },
       {
         "label": "B",
-        "text": "It proves tutoring cannot affect results."
+        "text": "The program met in the same buildings where students normally attended classes."
       },
       {
         "label": "C",
-        "text": "Random assignment helps make the groups comparable before the program."
+        "text": "Both groups completed the same end-of-term assessment."
       },
       {
         "label": "D",
-        "text": "It guarantees every student improves."
+        "text": "The volunteers came from several grade levels."
       }
     ],
-    "correct_answer": "C",
-    "explanation": "Random assignment reduces systematic preexisting group differences.",
+    "correct_answer": "A",
+    "explanation": "Preexisting reading habits and performance make volunteer groups noncomparable, leaving a selection effect as a competing explanation.",
     "difficulty": "advanced",
     "concepts": [
       "controlled experiment",
@@ -2115,27 +2115,27 @@
     "question_number": 29,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Notes: A steel truss can span long distances with less material than a solid steel beam of similar capacity. Which sentence emphasizes its comparative advantage?",
+    "stem": "A student notes that a box girder distributes load through a closed cross section, while an open I-beam is easier to inspect along its exposed surfaces. The student wants to emphasize one practical advantage of the box girder for resisting twisting. Which choice best accomplishes this?",
     "options": [
       {
         "label": "A",
-        "text": "Steel is widely used in construction."
+        "text": "Because its cross section is closed, a box girder can offer greater torsional stiffness than a comparably sized open beam."
       },
       {
         "label": "B",
-        "text": "A bridge must carry its own weight."
+        "text": "Engineers use both box girders and I-beams in structural projects."
       },
       {
         "label": "C",
-        "text": "Trusses have recognizable triangular shapes."
+        "text": "The surfaces of an I-beam are often accessible for inspection."
       },
       {
         "label": "D",
-        "text": "A truss can achieve a long span while using less steel than a comparable solid beam."
+        "text": "The choice of any beam depends on project constraints."
       }
     ],
-    "correct_answer": "D",
-    "explanation": "The claim directly compares material efficiency.",
+    "correct_answer": "A",
+    "explanation": "The response links the closed section directly to the specified resistance to twisting.",
     "difficulty": "medium",
     "concepts": [
       "rhetorical synthesis",
@@ -2149,27 +2149,27 @@
     "question_number": 30,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Notes: Researchers define network effects as a service becoming more valuable when more people use it. The audience already knows social media apps. Which sentence introduces the concept best?",
+    "stem": "Notes: In a messaging network, value to users sometimes depends on how many other users participate. At small scale, an additional user can make the network worthwhile to someone who previously knew no one on it. At larger scale, some additions may have little effect on users who already have many contacts. The student wants to qualify a claim that every additional user brings an equal benefit. Which sentence best accomplishes this?",
     "options": [
       {
         "label": "A",
-        "text": "Researchers have studied many industries."
+        "text": "Although adding users can increase a network's value, the benefit of each addition may depend on how many useful connections already exist."
       },
       {
         "label": "B",
-        "text": "Some people do not use social networks."
+        "text": "The value of any network increases by exactly the same amount whenever one user joins."
       },
       {
         "label": "C",
-        "text": "Just as a social platform becomes more useful when friends join, some services gain value as their user base grows."
+        "text": "Messaging networks are one example of systems with connected participants."
       },
       {
         "label": "D",
-        "text": "A service is something users access."
+        "text": "Researchers can count how many people use a communication service."
       }
     ],
-    "correct_answer": "C",
-    "explanation": "The familiar analogy illuminates the abstract effect.",
+    "correct_answer": "A",
+    "explanation": "The notes indicate that marginal benefit varies with existing contacts; the response avoids asserting an equal effect.",
     "difficulty": "advanced",
     "concepts": [
       "rhetorical synthesis",
@@ -2254,27 +2254,27 @@
     "question_number": 33,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Notes: Butterflies draw liquid nectar through a tube-like proboscis; hummingbirds use elongated tongues to collect nectar. Which sentence highlights a similarity?",
+    "stem": "A student has notes: A hummingbird's tongue rapidly traps nectar in thin grooves. A moth uses a long proboscis to draw nectar from flowers. Both can feed from flowers whose nectar is difficult for many insects to reach. The student wants to highlight a functional similarity without claiming the mechanisms are identical. Which choice does so?",
     "options": [
       {
         "label": "A",
-        "text": "Butterflies and hummingbirds are the same kind of animal."
+        "text": "Both animals possess specialized feeding structures that help them reach floral nectar, although those structures operate differently."
       },
       {
         "label": "B",
-        "text": "Both depend only on seeds."
+        "text": "Hummingbirds and moths collect nectar using anatomically identical tongues."
       },
       {
         "label": "C",
-        "text": "Both have identical beaks."
+        "text": "Only moths can obtain nectar from flowers with deep floral tubes."
       },
       {
         "label": "D",
-        "text": "Both animals use specialized mouthparts to obtain nectar."
+        "text": "The two animals use entirely unrelated food sources."
       }
     ],
-    "correct_answer": "D",
-    "explanation": "Both descriptions involve adapted structures used to consume nectar.",
+    "correct_answer": "A",
+    "explanation": "Both have specialized structures for nectar access, but the notes describe different mechanisms.",
     "difficulty": "medium",
     "concepts": [
       "rhetorical synthesis",
