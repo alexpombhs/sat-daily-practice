@@ -8,7 +8,7 @@ import AuthCredentialsForm from '../molecules/AuthCredentialsForm'
 import TurnstileChallenge from '../molecules/TurnstileChallenge'
 import UserProfileForm from '../molecules/UserProfileForm'
 import {pathForView} from '../../lib/appRoutes'
-import {deleteCurrentAccount,hasPlusAccess,openOneTimeCheckout,plusExpiresAt,redeemPrepaidAccessCode,EMPTY_USER_PROFILE,isRegistrationFull,joinLaunchWaitlist,isSupabaseConfigured,loadUserProfile,saveUserProfile,signInWithPassword,signOut,signUpWithPassword,type UserProfile} from '../../lib/supabase'
+import {deleteCurrentAccount,hasPlusAccess,openOneTimeCheckout,plusExpiresAt,redeemPrepaidAccessCode,EMPTY_USER_PROFILE,getRegistrationStatus,joinLaunchWaitlist,isSupabaseConfigured,loadUserProfile,saveUserProfile,signInWithPassword,signOut,signUpWithPassword,type UserProfile} from '../../lib/supabase'
 
 type Props={
   email:string|null
@@ -22,7 +22,7 @@ export default function AccountAuthPanel({email}:Props){
   const[message,setMessage]=useState('')
   const[pendingConfirmationEmail,setPendingConfirmationEmail]=useState('')
   const[error,setError]=useState('')
-  const[registrationFull,setRegistrationFull]=useState(false)
+  const[registrationStatus,setRegistrationStatus]=useState<'open'|'closed'|'full'>('open')
   const[waitlistEmail,setWaitlistEmail]=useState('')
   
   const[waitlistAgeApproved,setWaitlistAgeApproved]=useState(false)
@@ -35,7 +35,7 @@ export default function AccountAuthPanel({email}:Props){
   const checkoutOpen=import.meta.env.VITE_CHECKOUT_AVAILABLE==='true'
   const[profile,setProfile]=useState<UserProfile>(EMPTY_USER_PROFILE)
 
-  useEffect(()=>{if(!email)void isRegistrationFull().then(setRegistrationFull).catch(()=>{ /* Signup server remains authoritative */ })},[email])
+  useEffect(()=>{if(!email)void getRegistrationStatus().then(setRegistrationStatus).catch(()=>{ /* Signup server remains authoritative */ })},[email])
 
   useEffect(()=>{
     if(!email){setPlusActive(false);setPlusExpiration(null);return}
@@ -192,8 +192,8 @@ export default function AccountAuthPanel({email}:Props){
             <AlexButton tone="secondary" onClick={()=>{setPendingConfirmationEmail('');setMode('signup');setError('');setMessage('')}}>Use a different email</AlexButton>
           </AlexStack>
         </AlexStack>
-      </AlexSurface>:registrationFull?<AlexStack spacing={2}>
-        <AlexText sx={{fontWeight:700}}>The first 100 account places are filled.</AlexText>
+      </AlexSurface>:registrationStatus!=='open'?<AlexStack spacing={2}>
+        <AlexText sx={{fontWeight:700}}>{registrationStatus==='closed'?'Registration is not open yet.':'The first 100 account places are filled.'}</AlexText>
         <AlexText sx={{fontSize:14,fontWeight:700}}>You must be 13 or older to join the waitlist.</AlexText>
         <AlexText sx={{fontSize:14,color:'text.secondary'}}>Enter your email to request a registration invitation. An invitation reserves an available place for 24 hours. You can unsubscribe from the email invitation.</AlexText>
         {!waitlistAgeApproved?<AlexButton disabled={busy} onClick={()=>{setWaitlistAgeApproved(true);setError('')}}>I confirm I am 13 or older</AlexButton>:<AlexButton tone="secondary" onClick={()=>{setWaitlistAgeApproved(false);setWaitlistEmail('');setCaptchaToken('')}}>Change age confirmation</AlexButton>}
@@ -202,7 +202,7 @@ export default function AccountAuthPanel({email}:Props){
         {error&&<AlexText role="alert" sx={{color:'error.main'}}>{error}</AlexText>}
         {message&&<AlexText role="status" sx={{color:'success.main'}}>{message}</AlexText>}
         {waitlistAgeApproved&&<AlexButton disabled={busy||!waitlistEmail.includes('@')||(Boolean(import.meta.env.VITE_TURNSTILE_SITE_KEY)&&!captchaToken)} onClick={()=>void joinWaitlist()}>Join waitlist</AlexButton>}
-        <AlexButton tone="secondary" onClick={()=>setRegistrationFull(false)}>I already have an account — sign in</AlexButton>
+        <AlexButton tone="secondary" onClick={()=>{setMode('signin');setRegistrationStatus('open');setError('');setMessage('')}}>I already have an account — sign in</AlexButton>
       </AlexStack>:<AuthCredentialsForm
         mode={mode}
         busy={busy}
