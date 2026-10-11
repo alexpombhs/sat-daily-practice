@@ -32,7 +32,7 @@ import {loadSharedQuestionBank,mergeQuestionBanks} from './lib/sharedQuestionBan
 import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
 import {pathForView,viewFromPathname,type AppRouteView} from './lib/appRoutes'
 import {DEFAULT_SETTINGS} from './lib/storage'
-import {abandonActiveSession,createActiveSession,discardFreeSessionHistory,freeSessionsRemaining,hasPlusAccess,getCurrentAuthUser,loadActiveSession,loadCloudHistory,loadUserSettings,saveActiveSessionProgress,saveUserSettings,subscribeToAuth,syncActiveAttempt,syncSession,type AuthUser} from './lib/supabase'
+import {abandonActiveSession,createActiveSession,discardFreeSessionHistory,freeSessionsRemaining,hasPlusAccess,isContentAdmin,getCurrentAuthUser,loadActiveSession,loadCloudHistory,loadUserSettings,saveActiveSessionProgress,saveUserSettings,subscribeToAuth,syncActiveAttempt,syncSession,type AuthUser} from './lib/supabase'
 import type {ActivePracticeSession,Attempt,PracticeQuestion,SessionSummary,Settings,SubjectMode} from './types'
 
 const uid=()=>crypto.randomUUID()
@@ -59,6 +59,7 @@ export default function App(){
   const[authUser,setAuthUser]=useState<AuthUser|null>(null)
   const[authReady,setAuthReady]=useState(false)
   const[plusActive,setPlusActive]=useState(false)
+  const[contentAdmin,setContentAdmin]=useState(false)
   const[settingsCloudReady,setSettingsCloudReady]=useState(false)
   const[questionBank,setQuestionBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
   const[resumableSession,setResumableSession]=useState<ActivePracticeSession|null>(null)
@@ -110,6 +111,15 @@ export default function App(){
     })
     return()=>{cancelled=true;unsubscribe()}
   },[])
+  useEffect(()=>{
+    if(!authUser){setContentAdmin(false);return}
+    let cancelled=false
+    void isContentAdmin().then(allowed=>{if(!cancelled)setContentAdmin(allowed)}).catch(()=>{
+      if(!cancelled)setContentAdmin(false)
+    })
+    return()=>{cancelled=true}
+  },[authUser?.id])
+
   useEffect(()=>{
     if(!authUser){setPlusActive(false);return}
     let cancelled=false
@@ -466,6 +476,7 @@ export default function App(){
   function withSidebar(active:SidebarKey,content:ReactNode,background='#fff'){
     return <AppSidebarLayout
       active={active}
+      showContentAdmin={contentAdmin}
       collapsed={sidebarCollapsed}
       onToggleCollapsed={()=>setSidebarCollapsed(value=>!value)}
       onDashboard={()=>navigateTo('study')}
@@ -579,6 +590,14 @@ export default function App(){
           <AlexButton onClick={()=>void beginPractice('both','all')}>Start free practice</AlexButton>
           <AlexButton tone="secondary" onClick={()=>navigateTo('account')}>Explore 90-day Plus access</AlexButton>
         </div>
+      </section>
+    </main>)
+
+  if(!contentAdmin&&(view==='question-bank'||view==='parsing-issues'))
+    return withSidebar('practice-tests',<main className="shell">
+      <section className="card"><h1>Content administration</h1>
+      <p>This section is reserved for authorized content editors.</p>
+      <AlexButton onClick={()=>navigateTo('home')}>Practice tests</AlexButton>
       </section>
     </main>)
 
