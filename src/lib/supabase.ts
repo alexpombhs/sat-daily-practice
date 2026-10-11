@@ -74,6 +74,20 @@ export async function signInWithPassword(email:string,password:string){
   return toAuthUser(data.user)
 }
 
+export async function hasPlusAccess():Promise<boolean>{
+  const {data,error}=await supabase.rpc('sat_my_plus_access')
+  if(error)throw error
+  return data===true
+}
+
+export async function openOneTimeCheckout():Promise<void>{
+  const {data,error}=await supabase.functions.invoke('sat-checkout',{body:{}})
+  if(error||typeof data?.url!=='string')throw new Error('Checkout is temporarily unavailable.')
+  const checkout=new URL(data.url)
+  if(checkout.protocol!=='https:'||!checkout.hostname.endsWith('.stripe.com'))throw new Error('Invalid checkout link.')
+  window.location.assign(checkout.toString())
+}
+
 export async function deleteCurrentAccount():Promise<void>{
   const {data,error:sessionError}=await supabase.auth.getSession()
   if(sessionError)throw sessionError
