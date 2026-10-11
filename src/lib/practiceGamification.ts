@@ -33,7 +33,7 @@ function eligibleQuestions(settings:Settings,questions:PracticeQuestion[]){
   const includeAll=settings.difficultyLevels===undefined&&(settings.difficulty??'all')==='all'
   return questions.filter(question=>
     (settings.mode==='both'||question.subject===settings.mode)&&
-    ((settings.practiceTest??'all')==='all'||question.practiceTestId===settings.practiceTest)&&
+    ((settings.practiceTest??'all')==='all'?question.practiceTestId!=='practice-test-8':question.practiceTestId===settings.practiceTest)&&
     (includeAll||(question.difficulty!==undefined&&levels.includes(question.difficulty)))
   )
 }

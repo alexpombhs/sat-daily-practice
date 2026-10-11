@@ -17,11 +17,21 @@ type Props={
 
 export default function QuestionSourceReview({question,questionsPdf,answersPdf=null,showExplanation=false,revision=0}:Props){
   const label=`${moduleLabel(question.module)} · Q${question.number}`
+  const isMock=question.practiceTestId==='practice-test-8'
   const questionSource=usePracticeTestPdfState(question,'questions',questionsPdf)
   const answerSource=usePracticeTestPdfState(question,'answers',answersPdf,showExplanation)
   const resolvedQuestionsPdf=questionSource.source
   const resolvedAnswersPdf=answerSource.source
   const hasQuestionSource=Boolean(resolvedQuestionsPdf?.byteLength)
+  if(isMock)return <AlexBox sx={{display:'grid',gap:2}}>
+    <AlexSurface className="question-source-review-pane" sx={{border:'1px solid #E6E2DB',borderRadius:2.5,overflow:'hidden',minWidth:0}}>
+      <AlexBox sx={{px:2,py:1.25,borderBottom:'1px solid #E6E2DB',bgcolor:'#F7F6F2'}}>
+        <AlexText sx={{fontSize:12,fontWeight:800,color:'#475467'}}>Original targeted mock question · No source PDF</AlexText>
+      </AlexBox>
+      <QuestionContent key={`question-${question.id}-${revision}`} question={question} bytes={null} alt={`${label} original mock question`} showOriginalLayout={false}/>
+    </AlexSurface>
+    {showExplanation&&<AlexSurface sx={{p:2,border:'1px solid #E6E2DB',borderRadius:2.5}}><AlexText sx={{fontSize:14}}>See the explanation in the session review.</AlexText></AlexSurface>}
+  </AlexBox>
 
   return <AlexBox sx={{display:'grid',gap:2}}>
     <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'1fr',xl:'1fr 1fr'},gap:2}}>

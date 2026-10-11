@@ -5,6 +5,7 @@ import AlexDropdown from '../atoms/AlexDropdown'
 import AlexNumberField from '../atoms/AlexNumberField'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexSwitch from '../atoms/AlexSwitch'
+import AlexTabs from '../atoms/AlexTabs'
 import AlexCheckbox from '../atoms/AlexCheckbox'
 import AlexText from '../atoms/AlexText'
 import PracticeGoalSettings from '../molecules/PracticeGoalSettings'
@@ -51,10 +52,25 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
     </AlexBox>
 
     <PracticeSettingField
-      label="Practice test"
-      helperText="Choose one test or mix all available questions."
-      control={<AlexDropdown id="practice-test" label="Question source" value={practiceTest} options={practiceTests} onChange={value=>onChange({...settings,practiceTest:value})}/>}
+      label="Question source"
+      helperText={practiceTest==='practice-test-8'
+        ?'AI-generated problems targeting previously missed concepts. Separate from official SAT practice.'
+        :'Official College Board practice questions. All tests includes only official questions.'}
+      control={<AlexTabs
+        value={practiceTest==='practice-test-8'?'mock':'original'}
+        options={[{value:'original',label:'Original'},{value:'mock',label:'Targeted Mock'}]}
+        onChange={source=>onChange({...settings,practiceTest:source==='mock'?'practice-test-8':'all'})}
+        aria-label="Question source"
+      />}
     />
+
+    {practiceTest!=='practice-test-8'&&<PracticeSettingField
+      label="Practice test"
+      helperText="Choose an official practice test or all official questions."
+      control={<AlexDropdown id="practice-test" label="Practice test" value={practiceTest}
+        options={practiceTests.filter(option=>option.value!=='practice-test-8')}
+        onChange={value=>onChange({...settings,practiceTest:value})}/>}
+    />}
 
     <PracticeSettingField
       label="Subject"

@@ -3,6 +3,7 @@ import {Search} from 'lucide-react'
 import AlexBox from '../atoms/AlexBox'
 import AlexButtonBase from '../atoms/AlexButtonBase'
 import AlexDropdown from '../atoms/AlexDropdown'
+import AlexTabs from '../atoms/AlexTabs'
 import AlexTextField from '../atoms/AlexTextField'
 import AlexText from '../atoms/AlexText'
 import ParsingIssueReporter from '../molecules/ParsingIssueReporter'
@@ -19,6 +20,7 @@ function questionLabel(question:PracticeQuestion){return `${moduleLabel(question
 
 export default function QuestionBankReview({questionsPdf}:Props){
   const[practiceTestFilter,setPracticeTestFilter]=useState<PracticeTestFilter>('all')
+  const[questionSource,setQuestionSource]=useState<'original'|'mock'>('original')
   const[moduleFilter,setModuleFilter]=useState<ModuleFilter>('all')
   const[search,setSearch]=useState('')
   const[bank,setBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
@@ -37,18 +39,20 @@ export default function QuestionBankReview({questionsPdf}:Props){
   const questions=useMemo(()=>{
     const needle=search.trim().toLowerCase()
     return bank.filter(question=>{
-      if(practiceTestFilter!=='all'&&question.practiceTestId!==practiceTestFilter)return false
+      if(questionSource==='mock'&&question.practiceTestId!=='practice-test-8')return false
+      if(questionSource==='original'&&question.practiceTestId==='practice-test-8')return false
+      if(questionSource==='original'&&practiceTestFilter!=='all'&&question.practiceTestId!==practiceTestFilter)return false
       if(moduleFilter!=='all'&&question.module!==moduleFilter)return false
       if(!needle)return true
       return question.id.toLowerCase().includes(needle)||questionLabel(question).toLowerCase().includes(needle)||String(question.number)===needle
     })
-  },[bank,practiceTestFilter,moduleFilter,search])
+  },[bank,practiceTestFilter,questionSource,moduleFilter,search])
 
   const groupedPracticeTests=useMemo(()=>groupQuestionsByPracticeTest(questions),[questions])
   useEffect(()=>{
     if(questions.length&&!questions.some(question=>question.id===selectedId))setSelectedId(questions[0].id)
   },[questions,selectedId])
-  const practiceTestOptions=[{value:'all' as const,label:'All practice tests'},...availablePracticeTests(bank).map(value=>({value,label:practiceTestLabel(value)}))]
+  const practiceTestOptions=[{value:'all' as const,label:'All practice tests'},...availablePracticeTests(bank).filter(value=>value!=='practice-test-8').map(value=>({value,label:practiceTestLabel(value)}))]
   const selected=questions.find(question=>question.id===selectedId)??questions[0]
   const questionOptions=questions.map(question=>({value:question.id,label:`${practiceTestLabel(question.practiceTestId)} · ${moduleLabel(question.module)} · Q${question.number}`}))
 
@@ -56,12 +60,14 @@ export default function QuestionBankReview({questionsPdf}:Props){
     <header className="question-bank-heading">
       <div className="question-bank-heading-copy">
         <p className="eyebrow">Question Bank</p>
-        <h1>Review source questions</h1>
+        <h1>Review questions</h1>
       </div>
       <div className="question-bank-filters">
-        <div className="question-bank-filter-practice-test">
+        <AlexTabs value={questionSource} options={[{value:'original',label:'Original'},{value:'mock',label:'Targeted Mock'}]}
+          onChange={setQuestionSource} aria-label="Question source"/>
+        {questionSource==='original'&&<div className="question-bank-filter-practice-test">
           <AlexDropdown id="question-bank-practice-test" label="Practice test" value={practiceTestFilter} options={practiceTestOptions} onChange={setPracticeTestFilter}/>
-        </div>
+        </div>}
         <div className="question-bank-filter-module">
           <AlexDropdown id="question-bank-module" label="Module" value={moduleFilter} options={[
             {value:'all',label:'All modules'},

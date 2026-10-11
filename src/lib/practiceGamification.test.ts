@@ -1,5 +1,5 @@
 import {describe,expect,it} from 'vitest'
-import {QUESTION_BANK} from './questionBank'
+import {QUESTION_BANK,questionsForPractice} from './questionBank'
 import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,practiceQuestionPool,summarizePerformance,summarizeSession} from './practiceGamification'
 import type {Attempt,SessionSummary,Settings} from '../types'
 
@@ -17,6 +17,28 @@ describe('choosePracticeQuestions',()=>{
     expect(chosen.every(question=>question.subject==='math')).toBe(true)
   })
 
+
+  it('includes official questions only when all sources are selected',()=>{
+    const all=questionsForPractice('both','all')
+    expect(all).toHaveLength(480)
+    expect(all.some(question=>question.practiceTestId==='practice-test-8')).toBe(false)
+    expect(questionsForPractice('both','practice-test-8')).toHaveLength(80)
+  })
+
+  it('exposes 80 targeted mock questions as a distinct source',()=>{
+    const mock=QUESTION_BANK.filter(question=>question.practiceTestId==='practice-test-8')
+    expect(mock).toHaveLength(80)
+    expect(mock.filter(question=>question.subject==='english')).toHaveLength(40)
+    expect(mock.filter(question=>question.subject==='math')).toHaveLength(40)
+    expect(practiceQuestionPool({...settings,mode:'both',practiceTest:'practice-test-8',questionsPerSession:24},[])).toHaveLength(80)
+  })
+
+  it('keeps original mock questions separate from ordinary all-tests practice',()=>{
+    const original=QUESTION_BANK.find(q=>q.subject==='math')!
+    const mock={...original,id:'practice-test-8:math1-1',practiceTestId:'practice-test-8' as const,number:1}
+    expect(practiceQuestionPool({...settings,practiceTest:'all'},[],[original,mock])).toEqual([original])
+    expect(practiceQuestionPool({...settings,practiceTest:'practice-test-8'},[],[original,mock])).toEqual([mock])
+  })
 
   it('filters the pool to the selected practice test',()=>{
     const chosen=choosePracticeQuestions({...settings,practiceTest:'practice-test-4'},[],()=>0)

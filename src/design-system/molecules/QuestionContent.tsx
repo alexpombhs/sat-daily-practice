@@ -5,6 +5,7 @@ import SourceViewer from './SourceViewer'
 import StructuredQuestionLines from './StructuredQuestionLines'
 import ReadingQuestionLines from './ReadingQuestionLines'
 import {ensureQuestionText} from '../../lib/pdfStructuredImport'
+import {targetedMockContent} from '../../lib/targetedMockQuestions'
 import {getQuestionContent,isCurrentQuestionContent,QUESTION_CONTENT_VERSION,type StoredQuestionContent} from '../../lib/questionContentStore'
 import {loadSharedQuestionContent} from '../../lib/sharedQuestionBank'
 import {verifiedMathContent} from '../../lib/verifiedMathQuestions'
@@ -78,6 +79,11 @@ export default function QuestionContent({question,bytes,alt,showOriginalLayout=t
 
     void (async()=>{
       try{
+        const mock=targetedMockContent(question.id)
+        if(mock){
+          setContent(storedFromShared(question.id,mock.questionLines,mock.explanationLines,false,'text'))
+          return
+        }
         const shared=await loadSharedQuestionContent(question.id,question.practiceTestId).catch(()=>null)
         if(cancelled)return
 

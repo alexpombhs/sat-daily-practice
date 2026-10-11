@@ -1,3 +1,4 @@
+import {TARGETED_MOCK_QUESTIONS} from './targetedMockQuestions'
 import type { ModuleKey,PracticeQuestion,PracticeTestFilter,PracticeTestId,SourceCrop,Subject,SubjectMode } from '../types'
 import {PRACTICE_TEST_5_ACCEPTED,PRACTICE_TEST_5_ANSWER_PAGES,PRACTICE_TEST_5_ANSWERS,PRACTICE_TEST_5_PAGES} from './practiceTest5Data'
 import {PRACTICE_TEST_6_ACCEPTED,PRACTICE_TEST_6_ANSWER_PAGES,PRACTICE_TEST_6_ANSWERS,PRACTICE_TEST_6_CROPS,PRACTICE_TEST_6_PAGES} from './practiceTest6Data'
@@ -69,6 +70,7 @@ export const QUESTION_BANK=[
   ...makeModule('rw2','english',33,'practice-test-7',PRACTICE_TEST_7_PAGES,PRACTICE_TEST_7_ANSWER_PAGES,PRACTICE_TEST_7_ANSWERS,PRACTICE_TEST_7_ACCEPTED,{sourceCrops:PRACTICE_TEST_7_CROPS,contentStatus:'verified',questionMode:'text'}),
   ...makeModule('math1','math',27,'practice-test-7',PRACTICE_TEST_7_PAGES,PRACTICE_TEST_7_ANSWER_PAGES,PRACTICE_TEST_7_ANSWERS,PRACTICE_TEST_7_ACCEPTED,{sourceCrops:PRACTICE_TEST_7_CROPS,contentStatus:'verified',questionMode:'text'}),
   ...makeModule('math2','math',27,'practice-test-7',PRACTICE_TEST_7_PAGES,PRACTICE_TEST_7_ANSWER_PAGES,PRACTICE_TEST_7_ANSWERS,PRACTICE_TEST_7_ACCEPTED,{sourceCrops:PRACTICE_TEST_7_CROPS,contentStatus:'verified',questionMode:'text'}),
+  ...TARGETED_MOCK_QUESTIONS,
 ]
 
 function practiceTestNumber(id:PracticeTestId){return Number(id.replace('practice-test-',''))}
@@ -78,9 +80,9 @@ export function availablePracticeTests(questions:PracticeQuestion[]=QUESTION_BAN
   return ids.sort((a,b)=>practiceTestNumber(a)-practiceTestNumber(b))
 }
 
-export function practiceTestLabel(id:PracticeTestId){return `Practice Test ${practiceTestNumber(id)}`}
+export function practiceTestLabel(id:PracticeTestId){return id==='practice-test-8'?'Targeted Mock Practice':`Practice Test ${practiceTestNumber(id)}`}
 export function questionsForMode(mode:SubjectMode){return mode==='both'?QUESTION_BANK:QUESTION_BANK.filter(q=>q.subject===mode)}
 export function questionsForPractice(mode:SubjectMode,practiceTest:PracticeTestFilter='all'){
-  return questionsForMode(mode).filter(question=>practiceTest==='all'||question.practiceTestId===practiceTest)
+  return questionsForMode(mode).filter(question=>practiceTest==='all'?question.practiceTestId!=='practice-test-8':question.practiceTestId===practiceTest)
 }
 export function moduleLabel(module:ModuleKey){return module==='rw1'?'Reading & Writing · Module 1':module==='rw2'?'Reading & Writing · Module 2':module==='math1'?'Math · Module 1':'Math · Module 2'}

@@ -1,4 +1,4 @@
-import {useEffect,useState,type ReactNode} from 'react'
+import {useEffect,useRef,useState,type ReactNode} from 'react'
 import {CalendarDays,Clock3,ListChecks,PenLine,Target} from 'lucide-react'
 import AlexBox from './design-system/atoms/AlexBox'
 import AlexButton from './design-system/atoms/AlexButton'
@@ -59,6 +59,7 @@ export default function App(){
   const[authUser,setAuthUser]=useState<AuthUser|null>(null)
   const[authReady,setAuthReady]=useState(false)
   const[settingsCloudReady,setSettingsCloudReady]=useState(false)
+  const settingsLastLoaded=useRef<string|null>(null)
   const[questionBank,setQuestionBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
   const[resumableSession,setResumableSession]=useState<ActivePracticeSession|null>(null)
   const[reviewMode,setReviewMode]=useState(false)
@@ -129,6 +130,7 @@ export default function App(){
   useEffect(()=>{
     if(!authReady)return
     if(!authUser){
+      settingsLastLoaded.current=null
       setSettings({...DEFAULT_SETTINGS})
       setSettingsCloudReady(false)
       return
@@ -140,6 +142,14 @@ export default function App(){
         const cloudSettings=await loadUserSettings()
         if(cancelled)return
         const nextSettings={...DEFAULT_SETTINGS,...(cloudSettings??{})}
+        // Repair the 24-question value previously written by the mock-source selector.
+        // Mark the repair so a deliberate later selection of 24 is respected.
+        if(nextSettings.questionsPerSession===24&&!nextSettings.sessionSize24BugRepaired){
+          nextSettings.questionsPerSession=10
+          nextSettings.sessionSize24BugRepaired=true
+          await saveUserSettings(nextSettings)
+        }
+        settingsLastLoaded.current=JSON.stringify(nextSettings)
         setSettings(nextSettings)
         if(!cloudSettings)await saveUserSettings(nextSettings)
       }catch(error){
@@ -152,9 +162,37 @@ export default function App(){
   },[authReady,authUser?.id])
   useEffect(()=>{
     if(authUser&&settingsCloudReady){
+      const snapshot=JSON.stringify(settings)
+      if(snapshot===settingsLastLoaded.current)return
+      settingsLastLoaded.current=snapshot
       void saveUserSettings(settings).catch(error=>console.warn('Supabase settings save failed',error))
     }
   },[settings,authUser?.id,settingsCloudReady])
+  // Each browser has independent React state. Reload canonical settings when returning
+  // to the tab so localhost and deployed clients reflect the same account values.
+  useEffect(()=>{
+    if(!authUser||!settingsCloudReady)return
+    let cancelled=false
+    const refresh=()=>{
+      if(document.visibilityState!=='visible')return
+      void loadUserSettings().then(remote=>{
+        if(cancelled||!remote)return
+        const latest={...DEFAULT_SETTINGS,...remote}
+        if(latest.questionsPerSession===24&&!latest.sessionSize24BugRepaired){
+          latest.questionsPerSession=10
+          latest.sessionSize24BugRepaired=true
+          void saveUserSettings(latest).catch(error=>console.warn('Supabase session size repair failed',error))
+        }
+        const fingerprint=JSON.stringify(latest)
+        if(fingerprint===settingsLastLoaded.current)return
+        settingsLastLoaded.current=fingerprint
+        setSettings(latest)
+      }).catch(error=>console.warn('Supabase settings refresh failed',error))
+    }
+    window.addEventListener('focus',refresh)
+    document.addEventListener('visibilitychange',refresh)
+    return()=>{cancelled=true;window.removeEventListener('focus',refresh);document.removeEventListener('visibilitychange',refresh)}
+  },[authUser?.id,settingsCloudReady])
   useEffect(()=>{
     setReviewContentTab('question')
   },[i,reviewMode])
@@ -174,7 +212,8 @@ export default function App(){
 
   const current=qs[i]
   const currentRec=current?currentAttempts.find(attempt=>attempt.questionId===current.id):undefined
-  const performance=summarizePerformance(attempts,sessions,questionBank.length,questionBank)
+  const officialQuestionCount=questionBank.filter(question=>question.practiceTestId!=='practice-test-8').length
+  const performance=summarizePerformance(attempts,sessions,officialQuestionCount,questionBank)
   const performanceRangeBounds=(()=>{
     const now=new Date()
     const endOfToday=new Date(now)
@@ -200,7 +239,7 @@ export default function App(){
   })
   const performanceSessionIds=new Set(performanceSessions.map(session=>session.id))
   const performanceAttempts=attempts.filter(attempt=>performanceSessionIds.has(attempt.sessionId))
-  const rangePerformanceBase=summarizePerformance(performanceAttempts,performanceSessions,questionBank.length,questionBank)
+  const rangePerformanceBase=summarizePerformance(performanceAttempts,performanceSessions,officialQuestionCount,questionBank)
   const rangeScoreTrend=performance.scoreTrend.filter(point=>{
     const time=new Date(point.startedAt).getTime()
     if(!Number.isFinite(time))return false
