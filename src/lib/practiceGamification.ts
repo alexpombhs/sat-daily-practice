@@ -17,16 +17,10 @@ function attemptedQuestionIds(attempts:Attempt[]){
 
 function failedRecoveryTarget(settings:Settings){return Math.max(1,Math.min(5,settings.failedRecoveryCorrectAnswers??2))}
 
-// Provisional bands inferred from position within each SAT module.
-// Canonical difficulty metadata, when available, always overrides the estimate.
-export function questionDifficulty(question:PracticeQuestion):QuestionDifficulty{
-  if(question.difficulty)return question.difficulty
-  const total=question.subject==='english'?33:27
-  const fraction=question.number/total
-  if(fraction<=.25)return 'easy'
-  if(fraction<=.55)return 'medium'
-  if(fraction<=.8)return 'hard'
-  return 'advanced'
+// Only content-reviewed ratings stored in the canonical database are eligible.
+// Unreviewed questions remain available when all difficulties are selected.
+export function questionDifficulty(question:PracticeQuestion):QuestionDifficulty|undefined{
+  return question.difficulty
 }
 
 function eligibleQuestions(settings:Settings,questions:PracticeQuestion[]){
