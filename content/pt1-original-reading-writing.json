@@ -9,23 +9,30 @@
     "options": [
       {
         "label": "A",
-        "text": "reduce"
-      },
-      {
-        "label": "B",
         "text": "measure"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "repeat"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "predict"
+      },
+      {
+        "label": "D",
+        "text": "reduce"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Reduce means make less, consistent with the purpose of the panels."
+    "correct_answer": "D",
+    "explanation": "Reduce means make less, consistent with the purpose of the panels.",
+    "difficulty": "easy",
+    "concepts": [
+      "words in context",
+      "precise verb selection",
+      "context clues"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-02",
@@ -37,23 +44,30 @@
     "options": [
       {
         "label": "A",
-        "text": "mirror"
-      },
-      {
-        "label": "B",
-        "text": "prevent"
-      },
-      {
-        "label": "C",
         "text": "conceal"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "interrupt"
+      },
+      {
+        "label": "C",
+        "text": "mirror"
+      },
+      {
+        "label": "D",
+        "text": "prevent"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Mirror means reflect or correspond to a pattern; the rings track environmental conditions."
+    "correct_answer": "C",
+    "explanation": "Mirror means reflect or correspond to a pattern; the rings track environmental conditions.",
+    "difficulty": "medium",
+    "concepts": [
+      "words in context",
+      "scientific causal explanation",
+      "meaning of reflect"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-03",
@@ -65,23 +79,30 @@
     "options": [
       {
         "label": "A",
-        "text": "level"
+        "text": "remote"
       },
       {
         "label": "B",
-        "text": "distant"
+        "text": "level"
       },
       {
         "label": "C",
-        "text": "crowded"
+        "text": "distant"
       },
       {
         "label": "D",
-        "text": "remote"
+        "text": "crowded"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The contrast with steep slopes indicates a seemingly flat trail."
+    "correct_answer": "B",
+    "explanation": "The contrast with steep slopes indicates a seemingly flat trail.",
+    "difficulty": "easy",
+    "concepts": [
+      "words in context",
+      "contrast cue",
+      "vocabulary precision"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-04",
@@ -109,7 +130,14 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "The concession that members supported part of the proposal rules out complete rejection."
+    "explanation": "The concession that members supported part of the proposal rules out complete rejection.",
+    "difficulty": "medium",
+    "concepts": [
+      "words in context",
+      "negation",
+      "contrast and concession"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-05",
@@ -121,23 +149,30 @@
     "options": [
       {
         "label": "A",
-        "text": "conflicting attachment and desire for change"
-      },
-      {
-        "label": "B",
         "text": "certainty that the bakery will close"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "indifference toward her departure"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "anger with her relatives"
+      },
+      {
+        "label": "D",
+        "text": "conflicting attachment and desire for change"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Her smile signals attachment while the schedule signals anticipation of leaving."
+    "correct_answer": "D",
+    "explanation": "Her smile signals attachment while the schedule signals anticipation of leaving.",
+    "difficulty": "medium",
+    "concepts": [
+      "literary main purpose",
+      "character's mixed feelings",
+      "synthesis of details"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-06",
@@ -149,23 +184,30 @@
     "options": [
       {
         "label": "A",
-        "text": "visual description to questioning appearances"
-      },
-      {
-        "label": "B",
-        "text": "a personal memory to historical evidence"
-      },
-      {
-        "label": "C",
         "text": "scientific explanation to a command"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "a conflict to an explicit resolution"
+      },
+      {
+        "label": "C",
+        "text": "visual description to questioning appearances"
+      },
+      {
+        "label": "D",
+        "text": "a personal memory to historical evidence"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The shift changes from describing a surface to questioning what it hides."
+    "correct_answer": "C",
+    "explanation": "The shift changes from describing a surface to questioning what it hides.",
+    "difficulty": "medium",
+    "concepts": [
+      "poetry structure",
+      "figurative imagery",
+      "shift from description to questioning"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-07",
@@ -177,23 +219,31 @@
     "options": [
       {
         "label": "A",
-        "text": "To challenge the idea that the library excludes residents"
+        "text": "To recommend ending workshops"
       },
       {
         "label": "B",
-        "text": "To claim all buildings need stronger locks"
+        "text": "To challenge the idea that the library excludes residents"
       },
       {
         "label": "C",
-        "text": "To describe the architecture literally"
+        "text": "To claim all buildings need stronger locks"
       },
       {
         "label": "D",
-        "text": "To recommend ending workshops"
+        "text": "To describe the architecture literally"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The speaker introduces a metaphor of exclusion to rebut it with counterexamples."
+    "correct_answer": "B",
+    "explanation": "The speaker introduces a metaphor of exclusion to rebut it with counterexamples.",
+    "difficulty": "advanced",
+    "concepts": [
+      "poetry structure",
+      "rhetorical rebuttal",
+      "institution as metaphor",
+      "speaker's purpose"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-08",
@@ -221,7 +271,14 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "The swallow is a specific instance of seasonal relocation."
+    "explanation": "The swallow is a specific instance of seasonal relocation.",
+    "difficulty": "medium",
+    "concepts": [
+      "sentence function",
+      "generalization and example",
+      "scientific passage organization"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-09",
@@ -233,23 +290,31 @@
     "options": [
       {
         "label": "A",
-        "text": "challenges the sequence asserted in Text 1"
-      },
-      {
-        "label": "B",
         "text": "accepts the sequence without qualification"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "claims farming never developed"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "focuses only on modern fishing"
+      },
+      {
+        "label": "D",
+        "text": "challenges the sequence asserted in Text 1"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The second account offers a potentially earlier route to settlement."
+    "correct_answer": "D",
+    "explanation": "The second account offers a potentially earlier route to settlement.",
+    "difficulty": "advanced",
+    "concepts": [
+      "paired passage comparison",
+      "challenging established models",
+      "social structure chronology",
+      "author-position inference"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-10",
@@ -261,23 +326,30 @@
     "options": [
       {
         "label": "A",
-        "text": "conscientious and helpful"
-      },
-      {
-        "label": "B",
-        "text": "secretive and impatient"
-      },
-      {
-        "label": "C",
         "text": "careless about property"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "unwilling to cooperate"
+      },
+      {
+        "label": "C",
+        "text": "conscientious and helpful"
+      },
+      {
+        "label": "D",
+        "text": "secretive and impatient"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Her repeated considerate actions support helpfulness."
+    "correct_answer": "C",
+    "explanation": "Her repeated considerate actions support helpfulness.",
+    "difficulty": "easy",
+    "concepts": [
+      "literary main idea",
+      "explicit characterization",
+      "supporting details"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-11",
@@ -289,23 +361,30 @@
     "options": [
       {
         "label": "A",
-        "text": "can persist quietly and later grow vivid"
+        "text": "have no connection to time"
       },
       {
         "label": "B",
-        "text": "disappear immediately when forgotten"
+        "text": "can persist quietly and later grow vivid"
       },
       {
         "label": "C",
-        "text": "are always visible to others"
+        "text": "disappear immediately when forgotten"
       },
       {
         "label": "D",
-        "text": "have no connection to time"
+        "text": "are always visible to others"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Dormant seeds evoke memories that remain latent but may reemerge."
+    "correct_answer": "B",
+    "explanation": "Dormant seeds evoke memories that remain latent but may reemerge.",
+    "difficulty": "medium",
+    "concepts": [
+      "figurative analogy",
+      "poetic diction",
+      "mapping source and target ideas"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-12",
@@ -333,7 +412,14 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "His limited hint encourages the cousin's independence."
+    "explanation": "His limited hint encourages the cousin's independence.",
+    "difficulty": "easy",
+    "concepts": [
+      "literary main idea",
+      "character relationships",
+      "distinguishing broad and specific claims"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-13",
@@ -345,23 +431,30 @@
     "options": [
       {
         "label": "A",
-        "text": "Hill had the most recorded bicycles."
-      },
-      {
-        "label": "B",
         "text": "Creek had more than North."
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "North had twice Creek's total."
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "All three paths had equal totals."
+      },
+      {
+        "label": "D",
+        "text": "Hill had the most recorded bicycles."
       }
     ],
-    "correct_answer": "A",
-    "explanation": "58 is greater than 46 and 31."
+    "correct_answer": "D",
+    "explanation": "58 is greater than 46 and 31.",
+    "difficulty": "medium",
+    "concepts": [
+      "graph interpretation",
+      "categorical comparisons",
+      "evidence selection"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-14",
@@ -373,23 +466,31 @@
     "options": [
       {
         "label": "A",
-        "text": "A increased while B decreased."
-      },
-      {
-        "label": "B",
-        "text": "Both increased by the same amount."
-      },
-      {
-        "label": "C",
         "text": "Both remained unchanged."
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "B increased more rapidly than A."
+      },
+      {
+        "label": "C",
+        "text": "A increased while B decreased."
+      },
+      {
+        "label": "D",
+        "text": "Both increased by the same amount."
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The populations changed in opposite directions."
+    "correct_answer": "C",
+    "explanation": "The populations changed in opposite directions.",
+    "difficulty": "advanced",
+    "concepts": [
+      "scientific hypothesis",
+      "supporting evidence",
+      "longitudinal trends",
+      "divergence across populations"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-15",
@@ -401,23 +502,30 @@
     "options": [
       {
         "label": "A",
-        "text": "X lost less heat than Y at both temperatures."
+        "text": "Y lost exactly twice as much as X at both temperatures."
       },
       {
         "label": "B",
-        "text": "X lost more heat at 20°C than Y did."
+        "text": "X lost less heat than Y at both temperatures."
       },
       {
         "label": "C",
-        "text": "Temperature did not affect either panel."
+        "text": "X lost more heat at 20°C than Y did."
       },
       {
         "label": "D",
-        "text": "Y lost exactly twice as much as X at both temperatures."
+        "text": "Temperature did not affect either panel."
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Each matched-temperature comparison shows a smaller loss for X."
+    "correct_answer": "B",
+    "explanation": "Each matched-temperature comparison shows a smaller loss for X.",
+    "difficulty": "advanced",
+    "concepts": [
+      "two-way scientific table",
+      "matched comparison",
+      "ablation rates"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-16",
@@ -445,7 +553,14 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "Joint planning is direct evidence for shared creation."
+    "explanation": "Joint planning is direct evidence for shared creation.",
+    "difficulty": "medium",
+    "concepts": [
+      "command of evidence",
+      "matching quotation to claim",
+      "collaboration versus individual control"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-17",
@@ -457,23 +572,30 @@
     "options": [
       {
         "label": "A",
-        "text": "challenges the claim of equal benefit"
-      },
-      {
-        "label": "B",
         "text": "proves the additive is poisonous"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "shows both species grew equally"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "rules out any benefit to A"
+      },
+      {
+        "label": "D",
+        "text": "challenges the claim of equal benefit"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The two species respond differently under the treatment."
+    "correct_answer": "D",
+    "explanation": "The two species respond differently under the treatment.",
+    "difficulty": "advanced",
+    "concepts": [
+      "controlled experiment",
+      "host versus nonhost plants",
+      "unexpected evidence"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-18",
@@ -485,23 +607,30 @@
     "options": [
       {
         "label": "A",
-        "text": "The sites may have exchanged ideas through a network not yet fully documented."
-      },
-      {
-        "label": "B",
-        "text": "The two settlements certainly had identical governments."
-      },
-      {
-        "label": "C",
         "text": "Every society used these same marks."
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "The marks prove the objects were made in one workshop."
+      },
+      {
+        "label": "C",
+        "text": "The sites may have exchanged ideas through a network not yet fully documented."
+      },
+      {
+        "label": "D",
+        "text": "The two settlements certainly had identical governments."
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Shared symbolism is consistent with cultural contact but does not establish a precise mechanism."
+    "correct_answer": "C",
+    "explanation": "Shared symbolism is consistent with cultural contact but does not establish a precise mechanism.",
+    "difficulty": "advanced",
+    "concepts": [
+      "archaeological evidence",
+      "contextual inference",
+      "cultural symbolism"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-19",
@@ -513,23 +642,30 @@
     "options": [
       {
         "label": "A",
-        "text": "teams'"
+        "text": "teams's"
       },
       {
         "label": "B",
-        "text": "team's"
+        "text": "teams'"
       },
       {
         "label": "C",
-        "text": "teams"
+        "text": "team's"
       },
       {
         "label": "D",
-        "text": "teams's"
+        "text": "teams"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The presentations belong to two teams, requiring the plural possessive teams'."
+    "correct_answer": "B",
+    "explanation": "The presentations belong to two teams, requiring the plural possessive teams'.",
+    "difficulty": "medium",
+    "concepts": [
+      "plural possessive nouns",
+      "apostrophe forms",
+      "subject quantity"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-20",
@@ -557,7 +693,13 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "Each Monday describes a habitual action, so the present-tense singular verb checks fits."
+    "explanation": "Each Monday describes a habitual action, so the present-tense singular verb checks fits.",
+    "difficulty": "easy",
+    "concepts": [
+      "present tense",
+      "habitual action"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-21",
@@ -565,27 +707,33 @@
     "question_number": 21,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The bridge was closed overnight ___ workers inspected its supporting cables the next morning.",
+    "stem": "The bridge was closed overnight ___ the inspection team returned the following morning.",
     "options": [
       {
         "label": "A",
-        "text": "."
+        "text": ","
       },
       {
         "label": "B",
-        "text": " ,"
-      },
-      {
-        "label": "C",
         "text": "and"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "because"
+      },
+      {
+        "label": "D",
+        "text": ";"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "A period correctly separates two complete sentences; the alternatives lack appropriate joining punctuation in this construction."
+    "correct_answer": "D",
+    "explanation": "A semicolon joins the two complete independent clauses; a comma alone creates a comma splice.",
+    "difficulty": "medium",
+    "concepts": [
+      "sentence boundaries",
+      "period versus comma splice"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-22",
@@ -597,23 +745,29 @@
     "options": [
       {
         "label": "A",
-        "text": "helps"
-      },
-      {
-        "label": "B",
-        "text": "help"
-      },
-      {
-        "label": "C",
         "text": "have helped"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "are helping"
+      },
+      {
+        "label": "C",
+        "text": "helps"
+      },
+      {
+        "label": "D",
+        "text": "help"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The singular head noun sequence takes helps."
+    "correct_answer": "C",
+    "explanation": "The singular head noun sequence takes helps.",
+    "difficulty": "easy",
+    "concepts": [
+      "subject verb agreement",
+      "singular grammatical subject"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-23",
@@ -625,23 +779,29 @@
     "options": [
       {
         "label": "A",
-        "text": ";"
+        "text": "and"
       },
       {
         "label": "B",
-        "text": " ,"
+        "text": ";"
       },
       {
         "label": "C",
-        "text": " :"
+        "text": " ,"
       },
       {
         "label": "D",
-        "text": "and"
+        "text": " :"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "A semicolon joins the two independent clauses."
+    "correct_answer": "B",
+    "explanation": "A semicolon joins the two independent clauses.",
+    "difficulty": "medium",
+    "concepts": [
+      "semicolon joining independent clauses",
+      "temporal adverb"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-24",
@@ -669,7 +829,14 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "The introductory modifier must describe the person walking."
+    "explanation": "The introductory modifier must describe the person walking.",
+    "difficulty": "advanced",
+    "concepts": [
+      "dangling modifiers",
+      "modification target",
+      "complex noun phrase"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-25",
@@ -681,23 +848,30 @@
     "options": [
       {
         "label": "A",
-        "text": "Oslo, Norway"
-      },
-      {
-        "label": "B",
         "text": "Oslo; Norway"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "Oslo: Norway"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "Oslo Norway"
+      },
+      {
+        "label": "D",
+        "text": "Oslo, Norway"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Semicolons separate complex list items that contain internal commas."
+    "correct_answer": "D",
+    "explanation": "Semicolons separate complex list items that contain internal commas.",
+    "difficulty": "advanced",
+    "concepts": [
+      "complex series punctuation",
+      "supplementary phrase",
+      "semicolon versus comma"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-26",
@@ -709,23 +883,30 @@
     "options": [
       {
         "label": "A",
-        "text": ";"
-      },
-      {
-        "label": "B",
-        "text": " ,"
-      },
-      {
-        "label": "C",
         "text": " :"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "and"
+      },
+      {
+        "label": "C",
+        "text": ";"
+      },
+      {
+        "label": "D",
+        "text": " ,"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "A semicolon before however separates independent clauses; a comma after however is also needed in the completed sentence."
+    "correct_answer": "C",
+    "explanation": "A semicolon before however separates independent clauses; a comma after however is also needed in the completed sentence.",
+    "difficulty": "advanced",
+    "concepts": [
+      "conjunctive adverb punctuation",
+      "two independent clauses",
+      "contrast"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-27",
@@ -737,23 +918,29 @@
     "options": [
       {
         "label": "A",
-        "text": "finally"
+        "text": "instead"
       },
       {
         "label": "B",
-        "text": "however"
+        "text": "finally"
       },
       {
         "label": "C",
-        "text": "otherwise"
+        "text": "however"
       },
       {
         "label": "D",
-        "text": "instead"
+        "text": "otherwise"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Finally fits the last step of a sequence."
+    "correct_answer": "B",
+    "explanation": "Finally fits the last step of a sequence.",
+    "difficulty": "easy",
+    "concepts": [
+      "final temporal transition",
+      "event sequence"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-28",
@@ -781,7 +968,13 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "However signals that new evidence contradicts an earlier belief."
+    "explanation": "However signals that new evidence contradicts an earlier belief.",
+    "difficulty": "easy",
+    "concepts": [
+      "contrast transition",
+      "refuting prior assumption"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-29",
@@ -793,23 +986,29 @@
     "options": [
       {
         "label": "A",
-        "text": "Additionally"
-      },
-      {
-        "label": "B",
         "text": "Instead"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "Nevertheless"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "Earlier"
+      },
+      {
+        "label": "D",
+        "text": "Additionally"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Additionally introduces a second related feature."
+    "correct_answer": "D",
+    "explanation": "Additionally introduces a second related feature.",
+    "difficulty": "easy",
+    "concepts": [
+      "additive transition",
+      "supporting details"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-30",
@@ -821,23 +1020,29 @@
     "options": [
       {
         "label": "A",
-        "text": "Consequently"
-      },
-      {
-        "label": "B",
-        "text": "Conversely"
-      },
-      {
-        "label": "C",
         "text": "Meanwhile"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "Nevertheless"
+      },
+      {
+        "label": "C",
+        "text": "Consequently"
+      },
+      {
+        "label": "D",
+        "text": "Conversely"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Consequently expresses a result of the drying."
+    "correct_answer": "C",
+    "explanation": "Consequently expresses a result of the drying.",
+    "difficulty": "medium",
+    "concepts": [
+      "causal reasoning",
+      "logical consequence transition"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-31",
@@ -849,23 +1054,30 @@
     "options": [
       {
         "label": "A",
-        "text": "Unlike printed maps, digital maps can reflect newly reported closures without reprinting."
+        "text": "Every map has a title."
       },
       {
         "label": "B",
-        "text": "Both kinds of maps help visitors find routes."
+        "text": "Unlike printed maps, digital maps can reflect newly reported closures without reprinting."
       },
       {
         "label": "C",
-        "text": "Maps often use familiar symbols."
+        "text": "Both kinds of maps help visitors find routes."
       },
       {
         "label": "D",
-        "text": "Every map has a title."
+        "text": "Maps often use familiar symbols."
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The sentence explicitly contrasts update methods."
+    "correct_answer": "B",
+    "explanation": "The sentence explicitly contrasts update methods.",
+    "difficulty": "medium",
+    "concepts": [
+      "rhetorical synthesis",
+      "explicit differences",
+      "process comparison"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-32",
@@ -893,7 +1105,14 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "The sentence identifies the artist and work and explains the artwork to newcomers."
+    "explanation": "The sentence identifies the artist and work and explains the artwork to newcomers.",
+    "difficulty": "medium",
+    "concepts": [
+      "rhetorical synthesis",
+      "audience background",
+      "artist and work description"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw1-33",
@@ -905,23 +1124,30 @@
     "options": [
       {
         "label": "A",
-        "text": "A volunteer planting project found 75% shrub survival, with higher survival in watered plots."
-      },
-      {
-        "label": "B",
         "text": "The volunteers worked on a summer project."
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "Some shrubs require more water than others."
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "Native shrubs can be planted in many places."
+      },
+      {
+        "label": "D",
+        "text": "A volunteer planting project found 75% shrub survival, with higher survival in watered plots."
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The sentence summarizes the documented outcome and key comparison."
+    "correct_answer": "D",
+    "explanation": "The sentence summarizes the documented outcome and key comparison.",
+    "difficulty": "medium",
+    "concepts": [
+      "rhetorical synthesis",
+      "audience awareness",
+      "introducing research results"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-01",
@@ -933,23 +1159,29 @@
     "options": [
       {
         "label": "A",
-        "text": "expand"
-      },
-      {
-        "label": "B",
         "text": "stagnate"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "vanish"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "contract"
+      },
+      {
+        "label": "D",
+        "text": "expand"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Expand is consistent with more locations and growing demand."
+    "correct_answer": "D",
+    "explanation": "Expand is consistent with more locations and growing demand.",
+    "difficulty": "easy",
+    "concepts": [
+      "context clues",
+      "market-growth prediction"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-02",
@@ -961,23 +1193,29 @@
     "options": [
       {
         "label": "A",
-        "text": "methodical"
-      },
-      {
-        "label": "B",
-        "text": "reckless"
-      },
-      {
-        "label": "C",
         "text": "ceremonial"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "vague"
+      },
+      {
+        "label": "C",
+        "text": "methodical"
+      },
+      {
+        "label": "D",
+        "text": "reckless"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Testing sequentially is a methodical troubleshooting strategy."
+    "correct_answer": "C",
+    "explanation": "Testing sequentially is a methodical troubleshooting strategy.",
+    "difficulty": "easy",
+    "concepts": [
+      "context clues",
+      "problem-solving vocabulary"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-03",
@@ -989,23 +1227,29 @@
     "options": [
       {
         "label": "A",
-        "text": "detect"
+        "text": "dismiss"
       },
       {
         "label": "B",
-        "text": "invent"
+        "text": "detect"
       },
       {
         "label": "C",
-        "text": "erase"
+        "text": "invent"
       },
       {
         "label": "D",
-        "text": "dismiss"
+        "text": "erase"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Detect means observe or discover a feature."
+    "correct_answer": "B",
+    "explanation": "Detect means observe or discover a feature.",
+    "difficulty": "medium",
+    "concepts": [
+      "precise verb",
+      "scientific observation vocabulary"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-04",
@@ -1033,7 +1277,13 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "Greater allowable rotation indicates greater flexibility."
+    "explanation": "Greater allowable rotation indicates greater flexibility.",
+    "difficulty": "medium",
+    "concepts": [
+      "comparative vocabulary",
+      "evolutionary anatomical evidence"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-05",
@@ -1045,23 +1295,29 @@
     "options": [
       {
         "label": "A",
-        "text": "rare"
-      },
-      {
-        "label": "B",
         "text": "elaborate"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "literal"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "familiar"
+      },
+      {
+        "label": "D",
+        "text": "rare"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Not rare is consistent with near-constant appearance."
+    "correct_answer": "D",
+    "explanation": "Not rare is consistent with near-constant appearance.",
+    "difficulty": "advanced",
+    "concepts": [
+      "negation and academic vocabulary",
+      "frequency of literary motifs"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-06",
@@ -1073,23 +1329,29 @@
     "options": [
       {
         "label": "A",
-        "text": "transforms"
-      },
-      {
-        "label": "B",
-        "text": "conceals"
-      },
-      {
-        "label": "C",
         "text": "resists"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "divides"
+      },
+      {
+        "label": "C",
+        "text": "transforms"
+      },
+      {
+        "label": "D",
+        "text": "conceals"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Transforms indicates a change into a new material state."
+    "correct_answer": "C",
+    "explanation": "Transforms indicates a change into a new material state.",
+    "difficulty": "easy",
+    "concepts": [
+      "context clues",
+      "scientific-artistic process"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-07",
@@ -1101,23 +1363,29 @@
     "options": [
       {
         "label": "A",
-        "text": "advocate"
+        "text": "dismiss"
       },
       {
         "label": "B",
-        "text": "oppose"
+        "text": "advocate"
       },
       {
         "label": "C",
-        "text": "forget"
+        "text": "oppose"
       },
       {
         "label": "D",
-        "text": "dismiss"
+        "text": "forget"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Advocating means supporting a proposed measure."
+    "correct_answer": "B",
+    "explanation": "Advocating means supporting a proposed measure.",
+    "difficulty": "medium",
+    "concepts": [
+      "academic phrase in context",
+      "advocacy and support"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-08",
@@ -1145,7 +1413,14 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "Substantiate means provide evidence establishing a claim."
+    "explanation": "Substantiate means provide evidence establishing a claim.",
+    "difficulty": "advanced",
+    "concepts": [
+      "nuanced vocabulary",
+      "legitimacy and evidence",
+      "historical reasoning"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-09",
@@ -1157,23 +1432,29 @@
     "options": [
       {
         "label": "A",
-        "text": "illustrate a specific adaptation"
-      },
-      {
-        "label": "B",
         "text": "disprove urban animal movement"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "change the topic to trains"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "define railway construction"
+      },
+      {
+        "label": "D",
+        "text": "illustrate a specific adaptation"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The foxes give a concrete example of the preceding general point."
+    "correct_answer": "D",
+    "explanation": "The foxes give a concrete example of the preceding general point.",
+    "difficulty": "easy",
+    "concepts": [
+      "sentence function",
+      "example of behavior"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-10",
@@ -1185,23 +1466,29 @@
     "options": [
       {
         "label": "A",
-        "text": "Landing frequency on each color"
-      },
-      {
-        "label": "B",
-        "text": "How bees perceive colors internally"
-      },
-      {
-        "label": "C",
         "text": "The lifetime of each bee"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "The chemical content of nectar"
+      },
+      {
+        "label": "C",
+        "text": "Landing frequency on each color"
+      },
+      {
+        "label": "D",
+        "text": "How bees perceive colors internally"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The recorded behavior is landings by color."
+    "correct_answer": "C",
+    "explanation": "The recorded behavior is landings by color.",
+    "difficulty": "easy",
+    "concepts": [
+      "explicit research methods",
+      "observed response indicators"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-11",
@@ -1213,23 +1500,30 @@
     "options": [
       {
         "label": "A",
-        "text": "contradicts the absolute prediction"
+        "text": "shows no difference between groups"
       },
       {
         "label": "B",
-        "text": "proves silence prevents learning"
+        "text": "contradicts the absolute prediction"
       },
       {
         "label": "C",
-        "text": "establishes that all noise helps everyone"
+        "text": "proves silence prevents learning"
       },
       {
         "label": "D",
-        "text": "shows no difference between groups"
+        "text": "establishes that all noise helps everyone"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Better recall with moderate noise is counterevidence to an always-claim."
+    "correct_answer": "B",
+    "explanation": "Better recall with moderate noise is counterevidence to an always-claim.",
+    "difficulty": "advanced",
+    "concepts": [
+      "testing a scientific hypothesis",
+      "control groups",
+      "counterevidence"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-12",
@@ -1257,7 +1551,13 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "Humor paired with cleaning up demonstrates both traits."
+    "explanation": "Humor paired with cleaning up demonstrates both traits.",
+    "difficulty": "medium",
+    "concepts": [
+      "literary quotation selection",
+      "contrasting characterization"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-13",
@@ -1269,23 +1569,29 @@
     "options": [
       {
         "label": "A",
-        "text": "North's increases accelerated while South's slowed."
-      },
-      {
-        "label": "B",
         "text": "Both showed steady increases in the rate."
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "South's rate was always larger."
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "North's increases declined each year."
+      },
+      {
+        "label": "D",
+        "text": "North's increases accelerated while South's slowed."
       }
     ],
-    "correct_answer": "A",
-    "explanation": "North's sequence rises and South's falls."
+    "correct_answer": "D",
+    "explanation": "North's sequence rises and South's falls.",
+    "difficulty": "advanced",
+    "concepts": [
+      "multi-series graph interpretation",
+      "contrasting policy uncertainty measures"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-14",
@@ -1297,23 +1603,29 @@
     "options": [
       {
         "label": "A",
-        "text": "A possible confounding factor in the evidence"
-      },
-      {
-        "label": "B",
-        "text": "That shading cannot occur"
-      },
-      {
-        "label": "C",
         "text": "That all trees have identical effects"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "That temperature cannot be measured"
+      },
+      {
+        "label": "C",
+        "text": "A possible confounding factor in the evidence"
+      },
+      {
+        "label": "D",
+        "text": "That shading cannot occur"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Different planting patterns complicate a simple inference."
+    "correct_answer": "C",
+    "explanation": "Different planting patterns complicate a simple inference.",
+    "difficulty": "advanced",
+    "concepts": [
+      "experimental evidence",
+      "comparing multiple perspectives with debates"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-15",
@@ -1325,23 +1637,30 @@
     "options": [
       {
         "label": "A",
-        "text": "regret about an avoided opportunity"
+        "text": "disgust at maps"
       },
       {
         "label": "B",
-        "text": "confidence in a finished journey"
+        "text": "regret about an avoided opportunity"
       },
       {
         "label": "C",
-        "text": "indifference to travel"
+        "text": "confidence in a finished journey"
       },
       {
         "label": "D",
-        "text": "disgust at maps"
+        "text": "indifference to travel"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The road represents an opportunity and fear prevented taking it."
+    "correct_answer": "B",
+    "explanation": "The road represents an opportunity and fear prevented taking it.",
+    "difficulty": "advanced",
+    "concepts": [
+      "Shakespearean metaphor",
+      "literary regret",
+      "textual evidence"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-16",
@@ -1369,7 +1688,14 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "The given comparison allows overlap in concerns alongside a difference in conventions."
+    "explanation": "The given comparison allows overlap in concerns alongside a difference in conventions.",
+    "difficulty": "advanced",
+    "concepts": [
+      "logical conclusion",
+      "audience prior knowledge",
+      "literary genre comparison"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-17",
@@ -1381,23 +1707,30 @@
     "options": [
       {
         "label": "A",
-        "text": "some movement between islands predates the recorded route"
-      },
-      {
-        "label": "B",
         "text": "all island inhabitants arrived in one voyage"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "the later route never existed"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "genetic evidence provides an exact sailing date"
+      },
+      {
+        "label": "D",
+        "text": "some movement between islands predates the recorded route"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Genetics and chronology support early contact without specifying exact journeys."
+    "correct_answer": "D",
+    "explanation": "Genetics and chronology support early contact without specifying exact journeys.",
+    "difficulty": "advanced",
+    "concepts": [
+      "genetic evidence",
+      "migration chronology",
+      "inference"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-18",
@@ -1409,23 +1742,30 @@
     "options": [
       {
         "label": "A",
-        "text": "Random assignment helps make the groups comparable before the program."
-      },
-      {
-        "label": "B",
-        "text": "It guarantees every student improves."
-      },
-      {
-        "label": "C",
         "text": "It removes the need to measure outcomes."
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "It proves tutoring cannot affect results."
+      },
+      {
+        "label": "C",
+        "text": "Random assignment helps make the groups comparable before the program."
+      },
+      {
+        "label": "D",
+        "text": "It guarantees every student improves."
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Random assignment reduces systematic preexisting group differences."
+    "correct_answer": "C",
+    "explanation": "Random assignment reduces systematic preexisting group differences.",
+    "difficulty": "advanced",
+    "concepts": [
+      "controlled experiment",
+      "treatment effects",
+      "selection of comparable groups"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-19",
@@ -1437,23 +1777,29 @@
     "options": [
       {
         "label": "A",
-        "text": "committees'"
+        "text": "committees's"
       },
       {
         "label": "B",
-        "text": "committee's"
+        "text": "committees'"
       },
       {
         "label": "C",
-        "text": "committees"
+        "text": "committee's"
       },
       {
         "label": "D",
-        "text": "committees's"
+        "text": "committees"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Two committees jointly require the plural possessive committees'."
+    "correct_answer": "B",
+    "explanation": "Two committees jointly require the plural possessive committees'.",
+    "difficulty": "medium",
+    "concepts": [
+      "plural nouns",
+      "possessive apostrophes"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-20",
@@ -1481,7 +1827,13 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "Attribute a result to a cause is the correct prepositional construction."
+    "explanation": "Attribute a result to a cause is the correct prepositional construction.",
+    "difficulty": "easy",
+    "concepts": [
+      "prepositions and complements",
+      "punctuation"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-21",
@@ -1493,23 +1845,29 @@
     "options": [
       {
         "label": "A",
-        "text": "were"
-      },
-      {
-        "label": "B",
         "text": " , were"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "; were"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": ": were"
+      },
+      {
+        "label": "D",
+        "text": "were"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The restrictive who-clause is not set off with punctuation."
+    "correct_answer": "D",
+    "explanation": "The restrictive who-clause is not set off with punctuation.",
+    "difficulty": "medium",
+    "concepts": [
+      "restrictive relative clauses",
+      "essential modifier punctuation"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-22",
@@ -1521,23 +1879,30 @@
     "options": [
       {
         "label": "A",
-        "text": "which"
-      },
-      {
-        "label": "B",
-        "text": "and which"
-      },
-      {
-        "label": "C",
         "text": "; which"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "that,"
+      },
+      {
+        "label": "C",
+        "text": "which"
+      },
+      {
+        "label": "D",
+        "text": "and which"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Which introduces an additional clause here without corrupting the sentence structure."
+    "correct_answer": "C",
+    "explanation": "Which introduces an additional clause here without corrupting the sentence structure.",
+    "difficulty": "advanced",
+    "concepts": [
+      "parenthetical notation",
+      "appositive punctuation",
+      "isotope notation"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-23",
@@ -1549,23 +1914,29 @@
     "options": [
       {
         "label": "A",
-        "text": ";"
+        "text": "and"
       },
       {
         "label": "B",
-        "text": " ,"
+        "text": ";"
       },
       {
         "label": "C",
-        "text": " : and"
+        "text": " ,"
       },
       {
         "label": "D",
-        "text": "and"
+        "text": " : and"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Two independent clauses can be joined by a semicolon."
+    "correct_answer": "B",
+    "explanation": "Two independent clauses can be joined by a semicolon.",
+    "difficulty": "medium",
+    "concepts": [
+      "sentence boundary",
+      "independent clause punctuation"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-24",
@@ -1593,7 +1964,13 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "The infinitive to identify expresses purpose."
+    "explanation": "The infinitive to identify expresses purpose.",
+    "difficulty": "medium",
+    "concepts": [
+      "infinitive phrase of purpose",
+      "verb forms"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-25",
@@ -1605,23 +1982,30 @@
     "options": [
       {
         "label": "A",
-        "text": "the engineer"
-      },
-      {
-        "label": "B",
         "text": "the crack"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "the reinforcement"
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "the recommendation"
+      },
+      {
+        "label": "D",
+        "text": "the engineer"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The inspecting subject must be the engineer."
+    "correct_answer": "D",
+    "explanation": "The inspecting subject must be the engineer.",
+    "difficulty": "advanced",
+    "concepts": [
+      "introductory modifiers",
+      "subject alignment",
+      "dangling modifiers"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-26",
@@ -1633,23 +2017,29 @@
     "options": [
       {
         "label": "A",
-        "text": "how to transport the equipment safely"
-      },
-      {
-        "label": "B",
-        "text": "the equipment was available"
-      },
-      {
-        "label": "C",
         "text": "however, everyone agreed"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "and the shipment arrived"
+      },
+      {
+        "label": "C",
+        "text": "how to transport the equipment safely"
+      },
+      {
+        "label": "D",
+        "text": "the equipment was available"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The colon introduces an explanation of the one issue."
+    "correct_answer": "C",
+    "explanation": "The colon introduces an explanation of the one issue.",
+    "difficulty": "advanced",
+    "concepts": [
+      "colon punctuation",
+      "supplementary explanation"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-27",
@@ -1661,23 +2051,29 @@
     "options": [
       {
         "label": "A",
-        "text": "Afterward"
+        "text": "Likewise"
       },
       {
         "label": "B",
-        "text": "Previously"
+        "text": "Afterward"
       },
       {
         "label": "C",
-        "text": "Instead"
+        "text": "Previously"
       },
       {
         "label": "D",
-        "text": "Likewise"
+        "text": "Instead"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Afterward conveys the next chronological step."
+    "correct_answer": "B",
+    "explanation": "Afterward conveys the next chronological step.",
+    "difficulty": "easy",
+    "concepts": [
+      "temporal transitions",
+      "event sequence"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-28",
@@ -1705,7 +2101,13 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "Alternatively offers a different solution."
+    "explanation": "Alternatively offers a different solution.",
+    "difficulty": "easy",
+    "concepts": [
+      "alternatives in argument",
+      "logical transitions"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-29",
@@ -1717,23 +2119,29 @@
     "options": [
       {
         "label": "A",
-        "text": "A truss can achieve a long span while using less steel than a comparable solid beam."
-      },
-      {
-        "label": "B",
         "text": "Steel is widely used in construction."
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "A bridge must carry its own weight."
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "Trusses have recognizable triangular shapes."
+      },
+      {
+        "label": "D",
+        "text": "A truss can achieve a long span while using less steel than a comparable solid beam."
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The claim directly compares material efficiency."
+    "correct_answer": "D",
+    "explanation": "The claim directly compares material efficiency.",
+    "difficulty": "medium",
+    "concepts": [
+      "rhetorical synthesis",
+      "explaining comparative advantage"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-30",
@@ -1745,23 +2153,30 @@
     "options": [
       {
         "label": "A",
-        "text": "Just as a social platform becomes more useful when friends join, some services gain value as their user base grows."
-      },
-      {
-        "label": "B",
-        "text": "A service is something users access."
-      },
-      {
-        "label": "C",
         "text": "Researchers have studied many industries."
       },
       {
-        "label": "D",
+        "label": "B",
         "text": "Some people do not use social networks."
+      },
+      {
+        "label": "C",
+        "text": "Just as a social platform becomes more useful when friends join, some services gain value as their user base grows."
+      },
+      {
+        "label": "D",
+        "text": "A service is something users access."
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The familiar analogy illuminates the abstract effect."
+    "correct_answer": "C",
+    "explanation": "The familiar analogy illuminates the abstract effect.",
+    "difficulty": "advanced",
+    "concepts": [
+      "rhetorical synthesis",
+      "audience familiarity",
+      "abstract influence theory"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-31",
@@ -1773,23 +2188,30 @@
     "options": [
       {
         "label": "A",
-        "text": "Star M's surface temperature is 3,000 K higher than star K's."
+        "text": "Scientists classify stars using several properties."
       },
       {
         "label": "B",
-        "text": "Both stars have measurable temperatures."
+        "text": "Star M's surface temperature is 3,000 K higher than star K's."
       },
       {
         "label": "C",
-        "text": "Stars radiate energy into space."
+        "text": "Both stars have measurable temperatures."
       },
       {
         "label": "D",
-        "text": "Scientists classify stars using several properties."
+        "text": "Stars radiate energy into space."
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The sentence explicitly quantifies the temperature difference."
+    "correct_answer": "B",
+    "explanation": "The sentence explicitly quantifies the temperature difference.",
+    "difficulty": "medium",
+    "concepts": [
+      "rhetorical synthesis",
+      "star temperature comparison",
+      "relative emphasis"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-32",
@@ -1817,7 +2239,14 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "The sentence provides audience, genre and premise."
+    "explanation": "The sentence provides audience, genre and premise.",
+    "difficulty": "easy",
+    "concepts": [
+      "rhetorical synthesis",
+      "audience awareness",
+      "book introduction"
+    ],
+    "practice_test_id": "practice-test-1"
   },
   {
     "id": "pt1-rw2-33",
@@ -1829,22 +2258,29 @@
     "options": [
       {
         "label": "A",
-        "text": "Both animals use specialized mouthparts to obtain nectar."
-      },
-      {
-        "label": "B",
         "text": "Butterflies and hummingbirds are the same kind of animal."
       },
       {
-        "label": "C",
+        "label": "B",
         "text": "Both depend only on seeds."
       },
       {
-        "label": "D",
+        "label": "C",
         "text": "Both have identical beaks."
+      },
+      {
+        "label": "D",
+        "text": "Both animals use specialized mouthparts to obtain nectar."
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Both descriptions involve adapted structures used to consume nectar."
+    "correct_answer": "D",
+    "explanation": "Both descriptions involve adapted structures used to consume nectar.",
+    "difficulty": "medium",
+    "concepts": [
+      "rhetorical synthesis",
+      "finding commonalities",
+      "two methods of feeding"
+    ],
+    "practice_test_id": "practice-test-1"
   }
 ]
