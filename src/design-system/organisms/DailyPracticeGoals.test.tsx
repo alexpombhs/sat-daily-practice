@@ -58,7 +58,7 @@ describe('DailyPracticeGoals weekly streak',()=>{
     expect(screen.getByText('2 items completed · 2 minutes learned')).toBeInTheDocument()
   })
   it('keeps failed-review credit when correct answers clear questions from the failed pool',()=>{
-    const reviewed=attempt('reviewed','q-reviewed','2026-09-29T16:10:00.000Z')
+    const reviewed={...attempt('reviewed','q-reviewed','2026-09-29T16:10:00.000Z'),sessionId:'failed-only-session'}
     const failedOnlySession:SessionSummary={
       id:'failed-only-session',
       startedAt:'2026-09-29T16:00:00.000Z',
@@ -79,7 +79,7 @@ describe('DailyPracticeGoals weekly streak',()=>{
       />,
     )
 
-    expect(screen.getByText('· 1/1')).toBeInTheDocument()
+    expect(screen.getAllByText('· 1/1')).toHaveLength(1)
   })
 
   it('reconstructs credit for legacy sessions whose failed-only setting was erased',()=>{
