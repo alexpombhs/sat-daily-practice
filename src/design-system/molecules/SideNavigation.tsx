@@ -1,4 +1,4 @@
-import {BarChart3,BookOpen,ChevronLeft,ChevronRight,ClipboardList,Compass,Flag,LogIn,Settings,SlidersHorizontal,Sparkles,X} from 'lucide-react'
+import {BarChart3,BookOpen,ChevronLeft,ChevronRight,ClipboardList,Compass,Flag,LogIn,LockKeyhole,Settings,SlidersHorizontal,Sparkles,X} from 'lucide-react'
 import type {ReactNode} from 'react'
 import AlexBox from '../atoms/AlexBox'
 import AlexButtonBase from '../atoms/AlexButtonBase'
@@ -6,7 +6,7 @@ import AlexStack from '../atoms/AlexStack'
 import AlexText from '../atoms/AlexText'
 import AlexTooltip from '../atoms/AlexTooltip'
 
-type Item={key:string;label:string;active?:boolean;onClick:()=>void;icon?:ReactNode}
+type Item={key:string;label:string;active?:boolean;locked?:boolean;onClick:()=>void;icon?:ReactNode}
 type Variant='desktop'|'tablet'|'drawer'
 
 type Props={
@@ -41,6 +41,7 @@ function NavItem({item,collapsed}:{item:Item;collapsed:boolean}){
       onClick={item.onClick}
       aria-label={item.label}
       aria-current={item.active?'page':undefined}
+      title={item.locked?`${item.label} · Early Adopter`:undefined}
       sx={{
         justifyContent:collapsed?'center':'flex-start',
         gap:1.25,
@@ -49,16 +50,17 @@ function NavItem({item,collapsed}:{item:Item;collapsed:boolean}){
         px:collapsed?1:1.5,
         py:1.05,
         borderRadius:1.6,
-        color:'#fff',
+        color:item.locked?'#BCCDE3':'#fff',
         bgcolor:item.active?'#12477F':'transparent',
         '&:hover':{bgcolor:'#12477F'},
       }}
     >
       {item.icon??defaultIcon(item.label)}
-      {!collapsed&&<AlexText component="span" sx={{fontSize:14,fontWeight:650}}>{item.label}</AlexText>}
+      {!collapsed&&<AlexText component="span" sx={{fontSize:14,fontWeight:650,flex:1}}>{item.label}</AlexText>}
+      {item.locked&&<LockKeyhole size={14} aria-label="Early Adopter access" style={{flexShrink:0,opacity:.9}}/>}
     </AlexButtonBase>
   )
-  return collapsed?<AlexTooltip title={item.label} placement="right">{button}</AlexTooltip>:button
+  return collapsed?<AlexTooltip title={item.locked?`${item.label} · Early Adopter`:item.label} placement="right">{button}</AlexTooltip>:button
 }
 
 export default function SideNavigation({brand='SAT',primary,secondary=[],footerLabel='Sign in',footerDetail='',signedIn=false,collapsed=false,variant='desktop',onToggleCollapsed,onFooterClick,onClose}:Props){
