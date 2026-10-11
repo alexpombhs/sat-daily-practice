@@ -110,19 +110,6 @@ export function questionLinesEqual(actual:unknown,expected:string[]){
     &&actual.every((line,index)=>typeof line==='string'&&line===expected[index])
 }
 
-// Persist newly extracted text only when the canonical field is still empty.
-// Never overwrite reviewed edits or change visual metadata.
-export async function saveMissingCanonicalQuestionText(questionId:string,questionLines:string[]){
-  if(!supabase||!questionLines.length||!questionLines.some(line=>line.trim()))return false
-  const {data,error}=await supabase.from('sat_question_bank')
-    .update({question_lines:questionLines,question_mode:'text',updated_at:new Date().toISOString()})
-    .eq('id',questionId)
-    .eq('question_lines',[])
-    .select('id')
-  if(error)throw error
-  return Boolean(data?.length)
-}
-
 export async function saveSharedQuestionRepair(input:{
   questionId:string
   questionLines:string[]
