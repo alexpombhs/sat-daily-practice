@@ -17,7 +17,7 @@ const session=(id:string,attempts:Attempt[]):SessionSummary=>({
 })
 const analytics=(attempts:Attempt[],sessions:SessionSummary[])=>buildPerformanceAnalytics(attempts,sessions,QUESTION_BANK.length,QUESTION_BANK)
 
-describe('recent 60-question score prediction',()=>{
+describe('recent 120-question score prediction',()=>{
   it('projects from recent distinct questions rather than the full question bank',()=>{
     const rows=sample.map((q,i)=>makeAttempt(q,'s1',i,i%2===0))
     const result=analytics(rows,[session('s1',rows)])
@@ -26,13 +26,13 @@ describe('recent 60-question score prediction',()=>{
     expect(result.questionsSeen).toBe(6)
   })
 
-  it('caps the sample at 33 Reading & Writing and 27 Math distinct questions',()=>{
-    expect(SCORE_RECENT_DISTINCT_QUESTIONS).toBe(60)
-    const candidates=[...QUESTION_BANK.filter(q=>q.subject==='english').slice(0,45),...QUESTION_BANK.filter(q=>q.subject==='math').slice(0,40)]
+  it('caps the sample at 66 Reading & Writing and 54 Math distinct questions',()=>{
+    expect(SCORE_RECENT_DISTINCT_QUESTIONS).toBe(120)
+    const candidates=[...QUESTION_BANK.filter(q=>q.subject==='english').slice(0,80),...QUESTION_BANK.filter(q=>q.subject==='math').slice(0,70)]
     const rows=candidates.map((q,i)=>({...makeAttempt(q,'s1',i,i%3!==0),createdAt:`2026-09-01T12:${String(Math.floor(i/60)).padStart(2,'0')}:${String(i%60).padStart(2,'0')}.000Z`}))
     const basis=analytics(rows,[session('s1',rows)]).scorePredictionBasis!
     expect(basis.questionCount).toBe(60)
-    expect(basis.sections.map(section=>section.questions)).toEqual([33,27])
+    expect(basis.sections.map(section=>section.questions)).toEqual([66,54])
   })
 
   it('credits correct retries of previously failed questions without lowering the estimate',()=>{
