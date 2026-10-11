@@ -15,7 +15,7 @@ verify_jwt = false # Public endpoint; requires server-side Turnstile challenge.
 verify_jwt = true
 
 [functions.sat-waitlist-invite]
-verify_jwt = true
+verify_jwt = false # Restricted by LA_OPERATOR_SECRET; GitHub Actions does not send a user JWT.
 
 [functions.sat-waitlist-unsubscribe]
 verify_jwt = false # Unsubscribe token grants only its own queue-row removal.
