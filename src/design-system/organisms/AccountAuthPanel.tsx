@@ -5,6 +5,7 @@ import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
 import AuthCredentialsForm from '../molecules/AuthCredentialsForm'
 import UserProfileForm from '../molecules/UserProfileForm'
+import {validateSignupBirthDate} from '../../lib/signupAge'
 import {EMPTY_USER_PROFILE,isSupabaseConfigured,loadUserProfile,saveUserProfile,signInWithPassword,signOut,signUpWithPassword,type UserProfile} from '../../lib/supabase'
 
 type Props={
@@ -31,13 +32,14 @@ export default function AccountAuthPanel({email}:Props){
     return()=>{cancelled=true}
   },[email])
 
-  async function submit(nextEmail:string,password:string){
+  async function submit(nextEmail:string,password:string,birthDate?:string){
     setBusy(true)
     setError('')
     setMessage('')
     try{
       if(mode==='signup'){
-        const result=await signUpWithPassword(nextEmail,password)
+        const validDate=validateSignupBirthDate(birthDate??'')
+        const result=await signUpWithPassword(nextEmail,password,validDate)
         setMessage(result.needsEmailConfirmation?'Check your email to confirm your account, then return here to sign in.':'Account created and signed in.')
       }else{
         await signInWithPassword(nextEmail,password)
