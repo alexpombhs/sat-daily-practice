@@ -10,6 +10,7 @@ import {dashboardTypography} from '../theme'
 type Props={
   accuracy:number|null
   estimatedScore:number|null
+  scoreBreakdown:{english:{score:number;probability:number;questions:number}|null;math:{score:number;probability:number;questions:number}|null;change:number|null}|null
   nationalMeritChance:number|null
   projectedSelectionIndex:number|null
   estimateConfidence:{label:string;within80:number;sigmaPoints:number}|null
@@ -21,7 +22,7 @@ type Props={
 }
 
 export default function StudyPlanHero({
-  accuracy,estimatedScore,nationalMeritChance,projectedSelectionIndex,estimateConfidence,targetScore,daysRemaining,questionsPerSession,
+  accuracy,estimatedScore,scoreBreakdown,nationalMeritChance,projectedSelectionIndex,estimateConfidence,targetScore,daysRemaining,questionsPerSession,
   onChoosePracticeTest,onStartPractice,
 }:Props){
   return <AlexSurface
@@ -69,7 +70,14 @@ export default function StudyPlanHero({
           <AlexInfoTooltipButton
             label="Score estimate information"
             title={<>
-              <b>National Merit outlook</b><br/>
+              <b>Score calculation</b><br/>
+              {scoreBreakdown?.english&&scoreBreakdown.math?<>
+                Reading &amp; Writing: {scoreBreakdown.english.score} ({scoreBreakdown.english.probability}% estimated correct across {scoreBreakdown.english.questions} recent distinct questions).<br/>
+                Math: {scoreBreakdown.math.score} ({scoreBreakdown.math.probability}% estimated correct across {scoreBreakdown.math.questions} recent distinct questions).<br/>
+                Total: {estimatedScore}. Each question’s probability incorporates its earlier answers, weighted toward more recent attempts.<br/>
+                {scoreBreakdown.change!==null&&<>Change since previous completed session: {scoreBreakdown.change>0?'+':''}{scoreBreakdown.change} points.<br/></>}
+              </>:<>Complete questions in both sections to see a breakdown.<br/></>}
+              <br/><b>National Merit outlook</b><br/>
               {nationalMeritChance!==null
                 ?`${nationalMeritChance}% estimated qualifying outlook${projectedSelectionIndex!==null?` · projected Selection Index ~${projectedSelectionIndex}`:''}.`
                 :'The National Merit outlook is still calibrating.'}
