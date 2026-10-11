@@ -7,3 +7,12 @@ major_version = 17
 enabled = true
 site_url = "http://127.0.0.1:5173"
 additional_redirect_urls = ["http://localhost:5173"]
+
+[functions.sat-waitlist-register]
+verify_jwt = false # Public endpoint; requires server-side Turnstile challenge.
+
+[functions.sat-delete-account]
+verify_jwt = true
+
+[functions.sat-waitlist-invite]
+verify_jwt = true
