@@ -27,6 +27,7 @@ import {getPdf} from './lib/pdfStore'
 import {availablePracticeTests,moduleLabel,practiceTestLabel,QUESTION_BANK} from './lib/questionBank'
 import {buildPracticePlanRecommendation} from './lib/practicePlan'
 import {buildNationalMeritOutlook} from './lib/nationalMeritOutlook'
+import {estimateSectionPracticeScore} from './lib/performanceAnalytics'
 import {loadSharedQuestionBank,mergeQuestionBanks} from './lib/sharedQuestionBank'
 import {choosePracticeQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
 import {pathForView,viewFromPathname,type AppRouteView} from './lib/appRoutes'
@@ -592,6 +593,11 @@ export default function App(){
       <StudyPlanHero
         accuracy={attempts.length?performance.accuracy:null}
         estimatedScore={performance.latestScoreEstimate}
+        scoreBreakdown={performance.scorePredictionBasis?{
+          english:(()=>{const section=performance.scorePredictionBasis?.sections.find(item=>item.subject==='english');return section?{score:estimateSectionPracticeScore(section.successRate),probability:section.successRate,questions:section.questions}:null})(),
+          math:(()=>{const section=performance.scorePredictionBasis?.sections.find(item=>item.subject==='math');return section?{score:estimateSectionPracticeScore(section.successRate),probability:section.successRate,questions:section.questions}:null})(),
+          change:performance.scoreTrend.length>1?performance.scoreTrend[performance.scoreTrend.length-1].delta:null,
+        }:null}
         nationalMeritChance={nationalMeritOutlook?.qualifyingChance??null}
         projectedSelectionIndex={nationalMeritOutlook?.projectedSelectionIndex??null}
         estimateConfidence={performance.scoreEstimateConfidence}
