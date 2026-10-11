@@ -59,8 +59,7 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
       control={<AlexTabs
         value={practiceTest==='practice-test-8'?'mock':'original'}
         options={[{value:'original',label:'Original'},{value:'mock',label:'Targeted Mock'}]}
-        onChange={source=>onChange({...settings,practiceTest:source==='mock'?'practice-test-8':'all',
-          ...(source==='mock'?{questionsPerSession:24,mode:'both' as const,failedOnly:false,failedEverOnly:false,difficultyLevels:undefined,difficulty:'all' as const}:{})})}
+        onChange={source=>onChange({...settings,practiceTest:source==='mock'?'practice-test-8':'all'})}
         aria-label="Question source"
       />}
     />
