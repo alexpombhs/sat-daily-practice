@@ -821,6 +821,19 @@ export default function App(){
     </AlexBox>
   </main>,'#F7F6F2')
 
+  if(authUser&&!plusActive&&view==='home')return withSidebar('practice-tests',<main className="shell">
+    <section className="card results">
+      <p className="eyebrow">Daily free practice</p>
+      <h1>10 questions. Two free sessions a day.</h1>
+      <p>Start a random SAT practice session and get feedback on your answers. No setup required.</p>
+      <div className="hero-actions">
+        <AlexButton onClick={()=>void beginPractice('both','all')}>Start 10-question session</AlexButton>
+        {resumableSession&&<AlexButton tone="secondary" onClick={resumeActiveSession}>Resume current session</AlexButton>}
+        <AlexButton tone="quiet" onClick={()=>navigateTo('account')}>Explore Plus access</AlexButton>
+      </div>
+    </section>
+  </main>)
+
   return withSidebar('practice-tests',<PracticeTestsDashboard
     tests={practiceTestSummaries}
     sessionSummary={`${plusActive?settings.questionsPerSession:10} questions · ${settings.mode==='both'?'Reading & Writing + Math':settings.mode==='english'?'Reading & Writing':'Math'} · ${practiceSummary}`}
