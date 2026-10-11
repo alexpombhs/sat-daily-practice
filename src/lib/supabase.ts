@@ -86,6 +86,12 @@ export async function freeSessionsRemaining():Promise<number>{
  return typeof data==='number'?data:0
 }
 
+export async function plusExpiresAt():Promise<string|null>{
+ const {data,error}=await supabase.rpc('sat_my_plus_access_expires_at')
+ if(error)throw error
+ return typeof data==='string'?data:null
+}
+
 export async function openOneTimeCheckout():Promise<void>{
   const {data,error}=await supabase.functions.invoke('sat-checkout',{body:{}})
   if(error||typeof data?.url!=='string')throw new Error('Checkout is temporarily unavailable.')
