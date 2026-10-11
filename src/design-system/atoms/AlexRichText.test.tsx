@@ -43,3 +43,11 @@ describe('AlexRichText inline math and currency',()=>{
     expect(container.querySelector('.katex')).toBeFalsy()
   })
 })
+
+describe('PT1 decimal LaTeX regression',()=>{
+  it('renders numeric powers and fractional exponents rather than partial currency',()=>{
+    const {container}=render(<AlexRichText text={'A) $0.95^{12}$ C) $0.95^{\\frac{1}{12}}$'}/>)
+    expect(container.querySelectorAll('.rich-math.inline .katex')).toHaveLength(2)
+    expect(container.textContent).not.toContain('$0.95')
+  })
+})
