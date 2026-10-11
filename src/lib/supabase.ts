@@ -186,7 +186,7 @@ function sessionRow(s:SessionSummary,userId:string){
     ended_at:s.endedAt,
     mode:s.mode,
     question_count:s.questionCount,
-    session_settings:s.dailyQuestionGoal?{dailyQuestionGoal:s.dailyQuestionGoal}:null,
+    session_settings:s.settings||s.dailyQuestionGoal?{...(s.settings??{}),...(s.dailyQuestionGoal?{dailyQuestionGoal:s.dailyQuestionGoal}:{})}:null,
     status:'completed',
     last_activity_at:s.endedAt,
     updated_at:new Date().toISOString(),
@@ -365,6 +365,7 @@ export async function loadCloudHistory():Promise<{attempts:Attempt[];sessions:Se
     questionCount:row.question_count,
     attempts:bySession.get(row.id)??[],
     dailyQuestionGoal:typeof row.session_settings?.dailyQuestionGoal==='number'?row.session_settings.dailyQuestionGoal:undefined,
+    settings:row.session_settings?row.session_settings as Settings:undefined,
   }))
   return {attempts,sessions}
 }
