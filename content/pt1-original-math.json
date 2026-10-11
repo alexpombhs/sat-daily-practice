@@ -660,27 +660,27 @@
     "question_number": 23,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "A monic quadratic x²+bx+60 factors over integers as (x+m)(x+n), where m and n are positive integers and m<n. If b=17, what is n-m?",
+    "stem": "A monic quadratic x²+bx+72 factors as (x+m)(x+n), where m and n are positive integers and m<n. If b=18, what is n-m?",
     "options": [
       {
         "label": "A",
-        "text": "1"
+        "text": "2"
       },
       {
         "label": "B",
-        "text": "7"
+        "text": "4"
       },
       {
         "label": "C",
-        "text": "11"
+        "text": "6"
       },
       {
         "label": "D",
-        "text": "13"
+        "text": "8"
       }
     ],
-    "correct_answer": "B",
-    "explanation": "m+n=17 and mn=60; the pair is 5 and 12, so the difference is 7.",
+    "correct_answer": "C",
+    "explanation": "The positive integer factors of 72 that sum to 18 are 6 and 12, giving 12-6=6.",
     "difficulty": "advanced",
     "concepts": [
       "factoring quadratics",
@@ -854,27 +854,27 @@
     "question_number": 2,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "A cable measures 2.5 kilometers. How many meters long is it?",
+    "stem": "A research sensor logs 2.4 million readings in 8 hours at a constant rate. How many readings does it log per minute?",
     "options": [
       {
         "label": "A",
-        "text": "2,500"
+        "text": "3,000"
       },
       {
         "label": "B",
-        "text": "25,000"
+        "text": "5,000"
       },
       {
         "label": "C",
-        "text": "25"
+        "text": "6,000"
       },
       {
         "label": "D",
-        "text": "250"
+        "text": "30,000"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "One kilometer is 1,000 meters, giving 2.5×1,000=2,500.",
+    "correct_answer": "B",
+    "explanation": "Eight hours equals 480 minutes, so 2,400,000/480=5,000.",
     "difficulty": "easy",
     "concepts": [
       "unit conversions",
@@ -1090,27 +1090,27 @@
     "question_number": 10,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "A poll estimates 62% support with a margin of error of 4 percentage points. Which is the reported interval?",
+    "stem": "A poll estimates 54% support with margin of error ±3 percentage points. Which value falls inside the reported interval?",
     "options": [
       {
         "label": "A",
-        "text": "62%-70%"
+        "text": "49%"
       },
       {
         "label": "B",
-        "text": "60%-64%"
+        "text": "50%"
       },
       {
         "label": "C",
-        "text": "54%-58%"
+        "text": "56%"
       },
       {
         "label": "D",
-        "text": "58%-66%"
+        "text": "59%"
       }
     ],
-    "correct_answer": "D",
-    "explanation": "62±4 gives 58 through 66 percent.",
+    "correct_answer": "C",
+    "explanation": "The reported interval is 51% to 57%; 56% is inside it.",
     "difficulty": "medium",
     "concepts": [
       "sampling and estimation",
@@ -1228,27 +1228,27 @@
     "question_number": 15,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "A theater sold adult and child tickets in the ratio 3:2. If there were 25 more adult tickets, how many child tickets were sold?",
+    "stem": "An exhibit sold adult and student tickets in the ratio 5:3. There were 84 more adult than student tickets. How many tickets were sold altogether?",
     "options": [
       {
         "label": "A",
-        "text": "75"
+        "text": "252"
       },
       {
         "label": "B",
-        "text": "25"
+        "text": "294"
       },
       {
         "label": "C",
-        "text": "40"
+        "text": "336"
       },
       {
         "label": "D",
-        "text": "50"
+        "text": "420"
       }
     ],
-    "correct_answer": "D",
-    "explanation": "One ratio part equals 25; children account for 2 parts, or 50 tickets.",
+    "correct_answer": "C",
+    "explanation": "Two ratio parts equal 84, so one part is 42 and eight parts total 336.",
     "difficulty": "medium",
     "concepts": [
       "linear word problems",
@@ -1368,27 +1368,27 @@
     "question_number": 19,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "The depth of water in a tank, in centimeters, is modeled by d(t)=2(t-3)²+7 for 0≤t≤6 hours. What is the minimum depth during this interval?",
+    "stem": "For 0≤t≤10, the temperature in a chamber is modeled by T(t)=0.5(t-6)²+18. What is the minimum temperature and when is it reached?",
     "options": [
       {
         "label": "A",
-        "text": "3"
+        "text": "18 at t=6"
       },
       {
         "label": "B",
-        "text": "7"
+        "text": "18 at t=0"
       },
       {
         "label": "C",
-        "text": "9"
+        "text": "36 at t=6"
       },
       {
         "label": "D",
-        "text": "25"
+        "text": "18 at t=10"
       }
     ],
-    "correct_answer": "B",
-    "explanation": "The coefficient of the squared term is positive, so the vertex at t=3 yields the minimum depth of 7 cm.",
+    "correct_answer": "A",
+    "explanation": "The parabola opens upward and its vertex t=6 lies in the allowed domain, giving minimum 18.",
     "difficulty": "medium",
     "concepts": [
       "vertex form",
@@ -1577,7 +1577,7 @@
     "question_number": 26,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "Two identical cubes with edge length x are joined along one entire face. Their combined exterior surface area is 250 square units. What is x?",
+    "stem": "Two identical rectangular prisms measure x by 2x by 3x and are joined along a face measuring x by 2x. Their combined exterior surface area is 360 square units. What is x?",
     "options": [
       {
         "label": "A",
@@ -1596,8 +1596,8 @@
         "text": "6"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "The combined solid is x by x by 2x, with exterior surface area 2(x²+2x²+2x²)=10x². Setting 10x²=250 gives x=5.",
+    "correct_answer": "A",
+    "explanation": "The joined solid has dimensions x by 2x by 6x, so exterior area is 2(2x²+6x²+12x²)=40x². Thus 40x²=360 and x=3.",
     "difficulty": "advanced",
     "concepts": [
       "surface area of rectangular prisms",
