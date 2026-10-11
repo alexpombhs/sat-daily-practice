@@ -9,6 +9,7 @@ import ParsingIssueReporter from './design-system/molecules/ParsingIssueReporter
 import DashboardCard from './design-system/molecules/DashboardCard'
 import QuestionContent from './design-system/molecules/QuestionContent'
 import AccountAuthPanel from './design-system/organisms/AccountAuthPanel'
+import LegalPage from './design-system/organisms/LegalPage'
 import AppSidebarLayout from './design-system/organisms/AppSidebarLayout'
 import ParsingIssuesDashboard from './design-system/organisms/ParsingIssuesDashboard'
 import PerformanceDashboard,{type PerformanceTimeRange} from './design-system/organisms/PerformanceDashboard'
@@ -600,6 +601,8 @@ export default function App(){
       <AlexButton onClick={()=>navigateTo('home')}>Practice tests</AlexButton>
       </section>
     </main>)
+
+  if(view==='privacy'||view==='terms')return <LegalPage kind={view} onBack={()=>navigateTo('account')}/>
 
   if(view==='stats')return withSidebar('performance',<main className="shell"><PerformanceDashboard
     summary={rangePerformance}
