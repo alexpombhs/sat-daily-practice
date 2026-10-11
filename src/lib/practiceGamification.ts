@@ -23,11 +23,18 @@ export function questionDifficulty(question:PracticeQuestion):QuestionDifficulty
   return question.difficulty
 }
 
+export function selectedDifficultyLevels(settings:Settings):QuestionDifficulty[]{
+  if(settings.difficultyLevels!==undefined)return settings.difficultyLevels
+  return settings.difficulty&&settings.difficulty!=='all'?[settings.difficulty]:['easy','medium','advanced']
+}
+
 function eligibleQuestions(settings:Settings,questions:PracticeQuestion[]){
+  const levels=selectedDifficultyLevels(settings)
+  const includeAll=settings.difficultyLevels===undefined&&(settings.difficulty??'all')==='all'
   return questions.filter(question=>
     (settings.mode==='both'||question.subject===settings.mode)&&
     ((settings.practiceTest??'all')==='all'||question.practiceTestId===settings.practiceTest)&&
-    ((settings.difficulty??'all')==='all'||questionDifficulty(question)===settings.difficulty)
+    (includeAll||(question.difficulty!==undefined&&levels.includes(question.difficulty)))
   )
 }
 
@@ -45,7 +52,7 @@ export function practiceQuestionPool(settings:Settings,attempts:Attempt[],questi
 }
 
 export function countDifficultyQuestions(settings:Settings,questions:PracticeQuestion[]=QUESTION_BANK){
-  const scoped=eligibleQuestions({...settings,difficulty:'all'},questions)
+  const scoped=eligibleQuestions({...settings,difficulty:'all',difficultyLevels:undefined},questions)
   return {
     all:scoped.length,
     easy:scoped.filter(q=>q.difficulty==='easy').length,
