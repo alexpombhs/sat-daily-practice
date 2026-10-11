@@ -15,6 +15,8 @@ Deno.serve(async(req:Request)=>{
  const origin=new URL(site)
  if(origin.protocol!=='https:')return new Response('Invalid site configuration',{status:503})
  const stripe=new Stripe(stripeKey)
+ const verifiedPrice=await stripe.prices.retrieve(price)
+ if(!verifiedPrice.active||verifiedPrice.currency!=='usd'||verifiedPrice.unit_amount!==1000||verifiedPrice.recurring)return new Response('One-time pricing is not configured correctly',{status:503})
  const session=await stripe.checkout.sessions.create({
   mode:'payment',customer_email:user.email,client_reference_id:user.id,
   line_items:[{price,quantity:1}],
