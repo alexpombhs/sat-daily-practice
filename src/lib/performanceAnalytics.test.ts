@@ -40,15 +40,15 @@ describe('performance analytics',()=>{
     expect(analytics.recommendation?.subject).toBe('math')
   })
 
-  it('predicts from equal-weight per-question success rates rather than binary mastery',()=>{
+  it('predicts from recency-weighted per-question success rates rather than binary mastery',()=>{
     const analytics=buildPerformanceAnalytics(attempts,sessions,98)
     expect(analytics.sessionMetrics.map(session=>session.accuracy)).toEqual([50,100])
-    expect(analytics.scoreTrend.map(point=>point.score)).toEqual([1000,1300])
+    expect(analytics.scoreTrend.map(point=>point.score)).toEqual([1000,1380])
     expect(analytics.scoreTrend.every(point=>point.calibrating)).toBe(true)
     expect(analytics.scorePredictionBasis).toMatchObject({
       sessionCount:2,
       questionCount:6,
-      averageQuestionSuccessRate:75,
+      averageQuestionSuccessRate:81,
     })
   })
 
@@ -69,10 +69,10 @@ describe('performance analytics',()=>{
     ]
     const analytics=buildPerformanceAnalytics(repeat,repeatSessions,98)
     expect(analytics.scorePredictionBasis?.sections).toEqual([
-      {subject:'english',label:'Reading & Writing',questions:3,successRate:83},
-      {subject:'math',label:'Math',questions:3,successRate:83},
+      {subject:'english',label:'Reading & Writing',questions:3,successRate:88},
+      {subject:'math',label:'Math',questions:3,successRate:88},
     ])
-    expect(analytics.latestScoreEstimate).toBe(1400)
+    expect(analytics.latestScoreEstimate).toBe(1460)
   })
 
   it('compares the latest predicted score with the most recent prediction at least seven days earlier',()=>{
@@ -81,8 +81,8 @@ describe('performance analytics',()=>{
       {...sessions[1],startedAt:'2026-09-09T12:00:00.000Z',endedAt:'2026-09-09T12:05:00.000Z'},
     ]
     const analytics=buildPerformanceAnalytics(attempts,weeklySessions,98)
-    expect(analytics.scoreTrend.map(point=>point.score)).toEqual([1000,1300])
-    expect(analytics.weeklyScoreChange).toBe(300)
+    expect(analytics.scoreTrend.map(point=>point.score)).toEqual([1000,1380])
+    expect(analytics.weeklyScoreChange).toBe(380)
   })
 
   it('does not invent a seven-day score change without old enough prediction history',()=>{
@@ -109,15 +109,32 @@ describe('performance analytics',()=>{
       return {id,startedAt:`2026-08-${day}T12:00:00.000Z`,endedAt:`2026-08-${day}T12:05:00.000Z`,mode:'both',questionCount:6,attempts:rows}
     })
     const analytics=buildPerformanceAnalytics(all,windowSessions,98)
-    expect(analytics.latestScoreEstimate).toBe(1600)
+    expect(analytics.latestScoreEstimate).toBe(1160)
     expect(analytics.scoreTrend.find(point=>point.sessionNumber===9)?.calibrating).toBe(true)
     expect(analytics.scoreTrend.find(point=>point.sessionNumber===10)?.calibrating).toBe(false)
     expect(analytics.scoreTrend.find(point=>point.sessionNumber===11)?.calibrating).toBe(false)
     expect(analytics.scorePredictionBasis).toMatchObject({
       sessionCount:10,
       questionCount:6,
-      averageQuestionSuccessRate:100,
+      averageQuestionSuccessRate:63,
     })
+  })
+
+  it('raises the predicted score after a second successful review of formerly failed questions',()=>{
+    const old=[
+      ...['e1','e2','e3'].map((id,index)=>makeAttempt(`fail-e-${index}`,'s1',id,'english','rw1',index+1,false,1000,`2026-09-01T12:00:0${index}.000Z`)),
+      ...['m1','m2','m3'].map((id,index)=>makeAttempt(`fail-m-${index}`,'s1',id,'math','math1',index+1,false,1000,`2026-09-01T12:00:1${index}.000Z`)),
+    ]
+    const first=old.map((a,index)=>({...a,id:`first-${index}`,sessionId:'s2',correct:true,createdAt:`2026-09-02T12:00:${String(index).padStart(2,'0')}.000Z`}))
+    const second=old.map((a,index)=>({...a,id:`second-${index}`,sessionId:'s3',correct:true,createdAt:`2026-09-03T12:00:${String(index).padStart(2,'0')}.000Z`}))
+    const all=[...old,...first,...second]
+    const reviewSessions:SessionSummary[]=['s1','s2','s3'].map((id,index)=>({
+      id,startedAt:`2026-09-0${index+1}T12:00:00.000Z`,endedAt:`2026-09-0${index+1}T12:05:00.000Z`,
+      mode:'both',questionCount:6,attempts:all.filter(a=>a.sessionId===id),
+    }))
+    const predictions=buildPerformanceAnalytics(all,reviewSessions,6).scoreTrend.map(p=>p.score)
+    expect(predictions[1]).toBeGreaterThan(predictions[0])
+    expect(predictions[2]).toBeGreaterThan(predictions[1])
   })
 
   it('derives an interpretable probability band for score estimate confidence',()=>{
