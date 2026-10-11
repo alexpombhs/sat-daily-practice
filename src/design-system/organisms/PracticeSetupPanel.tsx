@@ -45,7 +45,7 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
     ?`${recommendation.estimatedDailyMinutes} min/day`
     :'On track'
 
-  return <AlexSurface sx={{width:'100%',maxWidth:860,p:{xs:1.6,sm:2.25,md:3.5},borderRadius:3,border:'1px solid #E4E7EC'}}>
+  return <AlexSurface sx={{width:'100%',maxWidth:1100,p:{xs:1.6,sm:2.25,md:3.5},borderRadius:3,border:'1px solid #E4E7EC'}}>
     <AlexBox sx={{display:'grid',gap:.5,mb:2}}>
       <AlexText component="h2" sx={{fontFamily:'Georgia, "Times New Roman", serif',fontSize:{xs:22,sm:24},fontWeight:500,color:'#08275B'}}>Practice setup</AlexText>
       <AlexText sx={{fontSize:14,color:'#667085',lineHeight:1.5}}>Choose what to practice and how long each session should be.</AlexText>
@@ -72,7 +72,7 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
     <PracticeSettingField
       label="Question difficulty"
       helperText={`${filteredDifficultyCount} question${filteredDifficultyCount===1?'':'s'} match the current practice test, subject, and difficulty filters.`}
-      control={<AlexBox sx={{display:'flex',flexWrap:'wrap',gap:{xs:0,sm:1},alignItems:'center'}}>
+      control={<AlexBox sx={{display:'flex',flexWrap:{xs:'wrap',md:'nowrap'},gap:{xs:0,sm:.5},alignItems:'center',justifyContent:'space-between'}}>
         <FormControlLabel control={<Checkbox size="small" checked={difficultyAll} onChange={()=>onChange({...settings,difficulty:'all',difficultyLevels:undefined})}/>} label="All"/>
         {(['easy','medium','advanced'] as QuestionDifficulty[]).map(level=>
           <FormControlLabel key={level} control={<Checkbox size="small" checked={!difficultyAll&&difficultyLevels.includes(level)} onChange={(_,checked)=>setDifficultyLevel(level,checked)}/>} label={level[0].toUpperCase()+level.slice(1)}/>
