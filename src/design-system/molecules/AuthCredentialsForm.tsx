@@ -44,7 +44,7 @@ export default function AuthCredentialsForm({mode,busy=false,message,error,onSub
     />
     {mode==='signup'&&<>
       <AlexTextField label="Date of birth" type="date" value={birthDate} onChange={event=>setBirthDate(event.target.value)} required InputLabelProps={{shrink:true}} inputProps={{max:new Date().toISOString().slice(0,10)}} helperText="Used to check signup eligibility. You must enter your real date of birth." />
-      <AlexText sx={{fontSize:12,color:'text.secondary'}}>By creating an account, you acknowledge our Privacy Notice and Terms of Use. Age information is processed for eligibility screening.</AlexText>
+      <AlexText sx={{fontSize:12,color:'text.secondary'}}>Your date of birth is used for eligibility screening. Review the privacy information before public launch.</AlexText>
     </>}
     {error&&<AlexText role="alert" sx={{fontSize:13,color:'error.main'}}>{error}</AlexText>}
     {message&&<AlexText role="status" sx={{fontSize:13,color:'success.main'}}>{message}</AlexText>}
