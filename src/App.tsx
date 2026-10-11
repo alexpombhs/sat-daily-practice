@@ -142,6 +142,13 @@ export default function App(){
         const cloudSettings=await loadUserSettings()
         if(cancelled)return
         const nextSettings={...DEFAULT_SETTINGS,...(cloudSettings??{})}
+        // Repair the 24-question value previously written by the mock-source selector.
+        // Mark the repair so a deliberate later selection of 24 is respected.
+        if(nextSettings.questionsPerSession===24&&!nextSettings.sessionSize24BugRepaired){
+          nextSettings.questionsPerSession=10
+          nextSettings.sessionSize24BugRepaired=true
+          await saveUserSettings(nextSettings)
+        }
         settingsLastLoaded.current=JSON.stringify(nextSettings)
         setSettings(nextSettings)
         if(!cloudSettings)await saveUserSettings(nextSettings)
@@ -171,6 +178,11 @@ export default function App(){
       void loadUserSettings().then(remote=>{
         if(cancelled||!remote)return
         const latest={...DEFAULT_SETTINGS,...remote}
+        if(latest.questionsPerSession===24&&!latest.sessionSize24BugRepaired){
+          latest.questionsPerSession=10
+          latest.sessionSize24BugRepaired=true
+          void saveUserSettings(latest).catch(error=>console.warn('Supabase session size repair failed',error))
+        }
         const fingerprint=JSON.stringify(latest)
         if(fingerprint===settingsLastLoaded.current)return
         settingsLastLoaded.current=fingerprint
