@@ -24,6 +24,17 @@ describe('practice plan recommendations',()=>{
     expect(larger.remainingSessions).toBeGreaterThan(small.remainingSessions)
   })
 
+  it('does not inflate official daily goals or recommended session size with targeted mock questions',()=>{
+    const official=QUESTION_BANK.filter(question=>question.practiceTestId!=='practice-test-8')
+    const withMock=buildPracticePlanRecommendation(baseSettings,QUESTION_BANK,[],performance(1490))
+    const withoutMock=buildPracticePlanRecommendation(baseSettings,official,[],performance(1490))
+    expect(withMock.bankQuestionCount).toBe(480)
+    expect(withMock.availablePracticeSetCount).toBe(4)
+    expect(withMock.questionsPerSession).toBe(10)
+    expect(withMock.estimatedDailyMinutes).toBe(withoutMock.estimatedDailyMinutes)
+    expect(withMock.remainingQuestions).toBe(withoutMock.remainingQuestions)
+  })
+
   it('compares the configured target score with the practice estimate',()=>{
     const plan=buildPracticePlanRecommendation(baseSettings,QUESTION_BANK,[],performance(1200,'math'))
     expect(plan.targetScore).toBe(1400)
