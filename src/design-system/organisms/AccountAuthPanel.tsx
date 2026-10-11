@@ -165,7 +165,7 @@ export default function AccountAuthPanel({email}:Props){
             <AlexText sx={{fontSize:13,color:'text.secondary'}}>{plusActive?`Your Plus access is active${plusExpiration?` through ${new Date(plusExpiration).toLocaleDateString()}`:""}.`:'Get unlimited sessions, personalized configuration, study planning and progress insights for $10 once. No subscription or automatic renewal.'}</AlexText>
             <AlexText sx={{fontSize:13,color:'text.secondary'}}>Already received an early adopter activation code? Enter it below to activate 90 days of Plus access. Each code can be used once.</AlexText>
             <AlexTextField label="Activation code" value={activationCode} onChange={event=>setActivationCode(event.target.value.toUpperCase())} placeholder="SAT-XXXXXX-XXXXXX-XXXXXX"/>
-            <AlexButton disabled={busy||!/^SAT-[A-Z0-9]{6}-[A-Z0-9]{6}-[A-Z0-9]{6}$/.test(activationCode.trim())} onClick={()=>void activateCode()} sx={{alignSelf:'flex-start'}}>Activate my 90-day pass</AlexButton>
+            <AlexButton disabled={busy||!/^SAT-(?:[A-Z0-9]{6}-[A-Z0-9]{6}-[A-Z0-9]{6}|TEST-[A-Z0-9-]{12,60})$/.test(activationCode.trim())} onClick={()=>void activateCode()} sx={{alignSelf:'flex-start'}}>Activate my 90-day pass</AlexButton>
             {!plusActive&&<AlexButton disabled={busy||!checkoutOpen} onClick={()=>{setError('');void openOneTimeCheckout().catch(nextError=>setError(messageFromError(nextError)))}} sx={{alignSelf:'flex-start'}}>{checkoutOpen?'Get 90 days for $10':'Early adopter passes coming soon'}</AlexButton>}
           </AlexStack>
         </AlexSurface>
