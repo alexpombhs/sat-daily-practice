@@ -122,10 +122,10 @@ function estimateOverallScore(sections:SectionPerformance[],observedAttempts:Att
   return estimateSectionPracticeScore(english.successRate)+estimateSectionPracticeScore(math.successRate)
 }
 
-// Latest 120 distinct questions form the evidence sample: 66 Reading &
-// Writing and 54 Math (matching each complete practice form).
+// Use the most recent 60 distinct questions from each subject (120 total).
+// Historical retries of each selected question still inform its probability.
 export const SCORE_RECENT_DISTINCT_QUESTIONS=120
-const SUBJECT_SAMPLE_SIZE:Record<Subject,number>={english:66,math:54}
+const SUBJECT_SAMPLE_SIZE:Record<Subject,number>={english:60,math:60}
 const OLDER_ATTEMPT_WEIGHT=.6
 const PRIOR_STRENGTH=.1
 
