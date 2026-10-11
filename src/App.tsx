@@ -21,6 +21,7 @@ import StudyPlanCalendar from './design-system/organisms/StudyPlanCalendar'
 import StudyPlanHero from './design-system/organisms/StudyPlanHero'
 import QuestionBankReview from './design-system/organisms/QuestionBankReview'
 import VocabularyPractice from './design-system/organisms/VocabularyPractice'
+import UpgradePage from './design-system/organisms/UpgradePage'
 import {dashboardTypography} from './design-system/theme'
 import {answerLabel,matchesAnswer} from './lib/answerCompare'
 import {getPdf} from './lib/pdfStore'
@@ -38,7 +39,7 @@ import type {ActivePracticeSession,Attempt,PracticeQuestion,SessionSummary,Setti
 const uid=()=>crypto.randomUUID()
 
 type View=AppRouteView
-type SidebarKey='dashboard'|'practice-tests'|'practice-setup'|'vocabulary'|'question-bank'|'parsing-issues'|'performance'|'resources'
+type SidebarKey='dashboard'|'practice-tests'|'practice-setup'|'vocabulary'|'question-bank'|'parsing-issues'|'performance'|'resources'|'upgrade'
 
 export default function App(){
   const[settings,setSettings]=useState<Settings>(()=>({...DEFAULT_SETTINGS}))
@@ -443,6 +444,7 @@ export default function App(){
       onParsingIssues={()=>navigateTo('parsing-issues')}
       onPerformance={()=>navigateTo('stats')}
       onResources={()=>navigateTo('sources')}
+      onUpgrade={()=>navigateTo('upgrade')}
       onSettings={()=>navigateTo('account')}
       contentBackground={background}
     >{content}</AppSidebarLayout>
@@ -561,6 +563,8 @@ export default function App(){
   if(view==='question-bank')return withSidebar('question-bank',<QuestionBankReview questionsPdf={qpdf}/>,'#F7F6F2')
 
   if(view==='parsing-issues')return withSidebar('parsing-issues',<ParsingIssuesDashboard questionsPdf={qpdf} answersPdf={apdf}/>,'#F7F6F2')
+
+  if(view==='upgrade')return withSidebar('upgrade',<UpgradePage onPractice={()=>navigateTo('home')} onAccount={()=>navigateTo('account')} signedIn={Boolean(authUser)}/>,'#F7F6F2')
 
   if(view==='account')return withSidebar('practice-tests',<main className="shell">
     <div className="page-heading"><div><p className="eyebrow">Account</p><h1>Account & sync</h1></div></div>
