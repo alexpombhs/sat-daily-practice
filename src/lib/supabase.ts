@@ -1,4 +1,5 @@
 import {createClient,type User} from '@supabase/supabase-js'
+import {localTestExpiry,redeemLocalTestCode} from './localTestAccess'
 import type {ActivePracticeSession,Attempt,SessionSummary,Settings} from '../types'
 import type {VocabularyAttempt} from './vocabulary'
 
@@ -8,7 +9,11 @@ const DEFAULT_SUPABASE_PUBLISHABLE_KEY='sb_publishable_TiLvsCcbJ6zdAvDcPuEZ6g_A0
 const url=(import.meta.env.VITE_SUPABASE_URL as string|undefined)||DEFAULT_SUPABASE_URL
 const publishableKey=((import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY??import.meta.env.VITE_SUPABASE_ANON_KEY) as string|undefined)||DEFAULT_SUPABASE_PUBLISHABLE_KEY
 
-export const supabase=createClient(url,publishableKey)
+const authStorageScope=typeof window==='undefined'?'server':window.location.origin.replace(/[^a-zA-Z0-9]/g,'_')
+const authStorageKey='sat-auth-'+new URL(url).hostname+'-'+authStorageScope
+export const supabase=createClient(url,publishableKey,{
+ auth:{storageKey:authStorageKey,persistSession:true,autoRefreshToken:true,detectSessionInUrl:true},
+})
 export const isSupabaseConfigured=true
 
 export type AuthUser={id:string;email:string|null}
@@ -41,12 +46,34 @@ export function subscribeToAuth(callback:(user:AuthUser|null)=>void){
   return()=>data.subscription.unsubscribe()
 }
 
-export async function signUpWithPassword(email:string,password:string){
+export type RegistrationStatus='open'|'closed'|'full'
+export async function getRegistrationStatus():Promise<RegistrationStatus>{
+ const {data,error}=await supabase.rpc('sat_registration_status')
+ if(error)throw error
+ if(data==='open'||data==='closed'||data==='full')return data
+ throw new Error('Unexpected registration status.')
+}
+export async function isRegistrationFull():Promise<boolean>{
+ return (await getRegistrationStatus())!=='open'
+}
+
+export async function joinLaunchWaitlist(email:string,ageConfirmed:boolean,captchaToken:string):Promise<void>{
+  if(!ageConfirmed)throw new Error('Please confirm you are 13 or older.')
+  if(import.meta.env.VITE_TURNSTILE_SITE_KEY&&!captchaToken)throw new Error('Complete the security check.')
+  const {data,error}=await supabase.functions.invoke('sat-waitlist-register',{
+    body:{email:email.trim().toLowerCase(),ageConfirmed,captchaToken},
+  })
+  if(error||!data||data.message!=='Please check your email for a waitlist confirmation link.')throw new Error(data?.message??'Unable to join waitlist.')
+}
+
+export async function signUpWithPassword(email:string,password:string,ageConfirmed:boolean,captchaToken:string){
+  if(import.meta.env.VITE_TURNSTILE_SITE_KEY&&!captchaToken)throw new Error('Complete the security check.')
   if(!supabase)throw new Error('Supabase is not configured.')
+  if(!ageConfirmed)throw new Error('Please confirm you are 13 or older before creating an account.')
   const {data,error}=await supabase.auth.signUp({
     email:email.trim(),
     password,
-    options:{emailRedirectTo:window.location.origin},
+    options:{emailRedirectTo:window.location.origin,...(captchaToken?{captchaToken}:{}),data:{sat_age_13_confirmed:true}},
   })
   if(error)throw error
   return {user:toAuthUser(data.user),needsEmailConfirmation:!data.session}
@@ -57,6 +84,86 @@ export async function signInWithPassword(email:string,password:string){
   const {data,error}=await supabase.auth.signInWithPassword({email:email.trim(),password})
   if(error)throw error
   return toAuthUser(data.user)
+}
+
+export async function isContentAdmin():Promise<boolean>{
+ const {data,error}=await supabase.rpc('sat_is_content_admin')
+ if(error)throw error
+ return data===true
+}
+
+export async function redeemPrepaidAccessCode(code:string):Promise<string>{
+ const normalized=code.trim().toUpperCase()
+ if(!/^SAT-(?:[A-Z0-9]{6}-[A-Z0-9]{6}-[A-Z0-9]{6}|TEST-[A-Z0-9-]{12,60})$/.test(normalized))
+  throw new Error('Enter the activation code in the format SAT-XXXXXX-XXXXXX-XXXXXX.')
+ if(normalized.startsWith('SAT-TEST-')&&import.meta.env.DEV){
+  const id=await currentUserId()
+  if(!id)throw new Error('Sign in before activating local test access.')
+  return redeemLocalTestCode(id,normalized)
+ }
+ if(normalized.startsWith('SAT-TEST-')){
+  const {data,error}=await supabase.functions.invoke('sat-master-test-activate',{body:{code:normalized}})
+  if(error||typeof data?.expiresAt!=='string')throw new Error(data?.message??'Test activation is not available for this account.')
+  return data.expiresAt
+ }
+ const {data,error}=await supabase.rpc('sat_redeem_prepaid_code',{p_code:normalized})
+ if(error)throw error
+ if(typeof data!=='string')throw new Error('Unable to activate access. Please contact support.')
+ return data
+}
+
+function isMissingLaunchRpc(error:{code?:string;message?:string}){
+ return error.code==='PGRST202'||error.code==='42883'
+  ||/could not find the function|does not exist/i.test(error.message??'')
+}
+
+export async function hasPlusAccess():Promise<boolean>{
+ const id=await currentUserId()
+ if(id&&localTestExpiry(id))return true
+  const {data,error}=await supabase.rpc('sat_my_plus_access')
+  if(error){if(import.meta.env.DEV&&isMissingLaunchRpc(error))return true;throw error}
+  return data===true
+}
+
+export async function discardFreeSessionHistory(sessionId:string):Promise<void>{
+ const userId=await currentUserId()
+ if(!userId)return
+ const {error}=await supabase.from('sat_sessions').delete()
+  .eq('id',sessionId).eq('user_id',userId)
+ if(error)throw error
+}
+
+export async function freeSessionsRemaining():Promise<number>{
+ const {data,error}=await supabase.rpc('sat_my_free_sessions_remaining')
+ if(error){if(import.meta.env.DEV&&isMissingLaunchRpc(error))return 2;throw error}
+ return typeof data==='number'?data:0
+}
+
+export async function plusExpiresAt():Promise<string|null>{
+ const id=await currentUserId()
+ if(id){const localExpiry=localTestExpiry(id);if(localExpiry)return localExpiry}
+ const {data,error}=await supabase.rpc('sat_my_plus_access_expires_at')
+ if(error){if(import.meta.env.DEV&&isMissingLaunchRpc(error))return null;throw error}
+ return typeof data==='string'?data:null
+}
+
+export async function openOneTimeCheckout():Promise<void>{
+  const {data,error}=await supabase.functions.invoke('sat-checkout',{body:{}})
+  if(error||typeof data?.url!=='string')throw new Error('Checkout is temporarily unavailable.')
+  const checkout=new URL(data.url)
+  if(checkout.protocol!=='https:'||!checkout.hostname.endsWith('.stripe.com'))throw new Error('Invalid checkout link.')
+  window.location.assign(checkout.toString())
+}
+
+export async function deleteCurrentAccount():Promise<void>{
+  const {data,error:sessionError}=await supabase.auth.getSession()
+  if(sessionError)throw sessionError
+  if(!data.session)throw new Error('Sign in to delete your account.')
+  const {data:result,error}=await supabase.functions.invoke('sat-delete-account',{
+    body:{confirmation:'DELETE MY ACCOUNT'},
+  })
+  if(error||!result?.ok)throw new Error('Account deletion failed. Please contact support.')
+  await supabase.auth.signOut({scope:'local'})
 }
 
 export async function signOut(){

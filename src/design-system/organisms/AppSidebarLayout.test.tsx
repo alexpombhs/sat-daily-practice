@@ -27,6 +27,7 @@ describe('AppSidebarLayout',()=>{
         {...baseProps}
         onPracticeSetup={onPracticeSetup}
         onQuestionBank={onQuestionBank}
+        showContentAdmin
       >
         <div>Practice setup content</div>
       </AppSidebarLayout>,

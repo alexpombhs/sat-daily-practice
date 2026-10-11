@@ -1,0 +1,25 @@
+name: LA Waitlist Invitations
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+jobs:
+  invite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Send next eligible waitlist invitation
+        env:
+          INVITE_URL: ${{ secrets.LA_INVITE_FUNCTION_URL }}
+          OPERATOR_SECRET: ${{ secrets.LA_OPERATOR_SECRET }}
+        run: |
+          set -euo pipefail
+          if [ -z "$INVITE_URL" ] || [ -z "$OPERATOR_SECRET" ]; then
+            echo "Invitation workflow is disabled until operator secrets are configured."
+            exit 0
+          fi
+          curl --fail-with-body --silent --show-error --retry 2 --retry-delay 3 \
+            -X POST "$INVITE_URL" \
+            -H "x-la-operator-secret: $OPERATOR_SECRET" \
+            -H "content-type: application/json" \
+            --data '{}'

@@ -7,3 +7,33 @@ major_version = 17
 enabled = true
 site_url = "http://127.0.0.1:5173"
 additional_redirect_urls = ["http://localhost:5173"]
+
+[functions.sat-waitlist-register]
+verify_jwt = false # Public endpoint; requires server-side Turnstile challenge.
+
+[functions.sat-delete-account]
+verify_jwt = true
+
+[functions.sat-waitlist-invite]
+verify_jwt = false # Restricted by LA_OPERATOR_SECRET; GitHub Actions does not send a user JWT.
+
+[functions.sat-waitlist-unsubscribe]
+verify_jwt = false # Unsubscribe token grants only its own queue-row removal.
+
+[functions.sat-checkout]
+verify_jwt = true
+
+[functions.sat-stripe-webhook]
+verify_jwt = false # Stripe signature verification inside handler
+
+[functions.sat-waitlist-verify]
+verify_jwt = false # One-time email verification token grants limited action.
+
+[functions.sat-launch-maintenance]
+verify_jwt = false # Restricted by LA_OPERATOR_SECRET for scheduled cleanup.
+
+[functions.sat-issue-prepaid-code]
+verify_jwt = false # Requires LA_OPERATOR_SECRET; restricted operator use only.
+
+[functions.sat-master-test-activate]
+verify_jwt = true # Signed-in user, Edge allowlist, and server-side master code required.

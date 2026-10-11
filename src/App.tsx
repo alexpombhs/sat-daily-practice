@@ -9,6 +9,7 @@ import ParsingIssueReporter from './design-system/molecules/ParsingIssueReporter
 import DashboardCard from './design-system/molecules/DashboardCard'
 import QuestionContent from './design-system/molecules/QuestionContent'
 import AccountAuthPanel from './design-system/organisms/AccountAuthPanel'
+import LegalPage from './design-system/organisms/LegalPage'
 import AppSidebarLayout from './design-system/organisms/AppSidebarLayout'
 import ParsingIssuesDashboard from './design-system/organisms/ParsingIssuesDashboard'
 import PerformanceDashboard,{type PerformanceTimeRange} from './design-system/organisms/PerformanceDashboard'
@@ -21,6 +22,7 @@ import StudyPlanCalendar from './design-system/organisms/StudyPlanCalendar'
 import StudyPlanHero from './design-system/organisms/StudyPlanHero'
 import QuestionBankReview from './design-system/organisms/QuestionBankReview'
 import VocabularyPractice from './design-system/organisms/VocabularyPractice'
+import UpgradePage from './design-system/organisms/UpgradePage'
 import {dashboardTypography} from './design-system/theme'
 import {answerLabel,matchesAnswer} from './lib/answerCompare'
 import {getPdf} from './lib/pdfStore'
@@ -32,13 +34,13 @@ import {loadSharedQuestionBank,mergeQuestionBanks} from './lib/sharedQuestionBan
 import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
 import {pathForView,viewFromPathname,type AppRouteView} from './lib/appRoutes'
 import {DEFAULT_SETTINGS} from './lib/storage'
-import {abandonActiveSession,createActiveSession,getCurrentAuthUser,loadActiveSession,loadCloudHistory,loadUserSettings,saveActiveSessionProgress,saveUserSettings,subscribeToAuth,syncActiveAttempt,syncSession,type AuthUser} from './lib/supabase'
+import {abandonActiveSession,createActiveSession,discardFreeSessionHistory,freeSessionsRemaining,hasPlusAccess,isContentAdmin,getCurrentAuthUser,loadActiveSession,loadCloudHistory,loadUserSettings,saveActiveSessionProgress,saveUserSettings,subscribeToAuth,syncActiveAttempt,syncSession,type AuthUser} from './lib/supabase'
 import type {ActivePracticeSession,Attempt,PracticeQuestion,SessionSummary,Settings,SubjectMode} from './types'
 
 const uid=()=>crypto.randomUUID()
 
 type View=AppRouteView
-type SidebarKey='dashboard'|'practice-tests'|'practice-setup'|'vocabulary'|'question-bank'|'parsing-issues'|'performance'|'resources'
+type SidebarKey='dashboard'|'practice-tests'|'practice-setup'|'vocabulary'|'question-bank'|'parsing-issues'|'performance'|'resources'|'upgrade'
 
 export default function App(){
   const[settings,setSettings]=useState<Settings>(()=>({...DEFAULT_SETTINGS}))
@@ -58,6 +60,8 @@ export default function App(){
   const[sidebarCollapsed,setSidebarCollapsed]=useState(false)
   const[authUser,setAuthUser]=useState<AuthUser|null>(null)
   const[authReady,setAuthReady]=useState(false)
+  const[plusActive,setPlusActive]=useState(false)
+  const[contentAdmin,setContentAdmin]=useState(false)
   const[settingsCloudReady,setSettingsCloudReady]=useState(false)
   const[questionBank,setQuestionBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
   const[resumableSession,setResumableSession]=useState<ActivePracticeSession|null>(null)
@@ -68,6 +72,11 @@ export default function App(){
   const[performanceCustomEnd,setPerformanceCustomEnd]=useState('')
 
   function navigateTo(next:View,{replace=false}:{replace?:boolean}={}){
+    if(view==='results'&&next!=='results'&&!plusActive&&sid){
+      void discardFreeSessionHistory(sid).catch(error=>console.warn('Unable to clear free session history',error))
+      setAttempts(previous=>previous.filter(attempt=>attempt.sessionId!==sid))
+      setSessions(previous=>previous.filter(session=>session.id!==sid))
+    }
     setView(next)
     const path=pathForView(next)
     if(window.location.pathname===path)return
@@ -104,6 +113,31 @@ export default function App(){
     })
     return()=>{cancelled=true;unsubscribe()}
   },[])
+  useEffect(()=>{
+    if(!authUser){setContentAdmin(false);return}
+    let cancelled=false
+    void isContentAdmin().then(allowed=>{if(!cancelled)setContentAdmin(allowed)}).catch(()=>{
+      if(!cancelled)setContentAdmin(false)
+    })
+    return()=>{cancelled=true}
+  },[authUser?.id])
+
+  useEffect(()=>{
+    const refresh=()=>{void hasPlusAccess().then(setPlusActive).catch(error=>console.warn('Access status unavailable',error))}
+    window.addEventListener('sat-access-updated',refresh)
+    return()=>window.removeEventListener('sat-access-updated',refresh)
+  },[])
+
+  useEffect(()=>{
+    if(!authUser){setPlusActive(false);return}
+    let cancelled=false
+    void hasPlusAccess().then(active=>{if(!cancelled)setPlusActive(active)}).catch(error=>{
+      console.warn('Access status unavailable',error)
+      if(!cancelled)setPlusActive(false)
+    })
+    return()=>{cancelled=true}
+  },[authUser?.id])
+
   useEffect(()=>{
     if(!authUser){
       setAttempts([])
@@ -257,8 +291,25 @@ export default function App(){
         return
       }
     }
-    const nextSettings={...settings,mode:nextMode,practiceTest:nextPracticeTest}
-    const nextQuestions=choosePracticeQuestions(nextSettings,attempts,Math.random,questionBank)
+    let entitled=false
+    try{
+      entitled=await hasPlusAccess()
+      if(!entitled&&await freeSessionsRemaining()<=0){
+        window.alert('You have completed your two free sessions for today. More free practice is available tomorrow, or you can get 90-day Plus access.')
+        navigateTo('account')
+        return
+      }
+    }catch(error){
+      console.warn('Unable to check practice allowance',error)
+      window.alert('We could not check your practice allowance. Please try again.')
+      return
+    }
+    const nextSettings=entitled?{...settings,mode:nextMode,practiceTest:nextPracticeTest}:{
+      ...DEFAULT_SETTINGS,mode:'both' as const,questionsPerSession:10,practiceTest:'all' as const,
+      selectionMode:'random' as const,shuffle:true,failedOnly:false,failedEverOnly:false,
+      difficulty:'all' as const
+    }
+    const nextQuestions=choosePracticeQuestions(nextSettings,entitled?attempts:[],Math.random,questionBank)
     if(!nextQuestions.length){
       window.alert('No questions match these practice settings yet. Adjust the practice test, subject, or question-history filter.')
       navigateTo('settings')
@@ -433,6 +484,8 @@ export default function App(){
   function withSidebar(active:SidebarKey,content:ReactNode,background='#fff'){
     return <AppSidebarLayout
       active={active}
+      showContentAdmin={contentAdmin}
+      plusActive={plusActive}
       collapsed={sidebarCollapsed}
       onToggleCollapsed={()=>setSidebarCollapsed(value=>!value)}
       onDashboard={()=>navigateTo('study')}
@@ -443,6 +496,7 @@ export default function App(){
       onParsingIssues={()=>navigateTo('parsing-issues')}
       onPerformance={()=>navigateTo('stats')}
       onResources={()=>navigateTo('sources')}
+      onUpgrade={()=>navigateTo('upgrade')}
       onSettings={()=>navigateTo('account')}
       contentBackground={background}
     >{content}</AppSidebarLayout>
@@ -536,6 +590,29 @@ export default function App(){
     </main>)
   }
 
+  if(authUser&&!plusActive&&(['study','stats','settings','question-bank'] as View[]).includes(view))
+    return withSidebar(view==='study'?'dashboard':view==='stats'?'performance':view==='settings'?'practice-setup':'question-bank',<main className="shell">
+      <section className="card">
+        <p className="eyebrow">Early Adopter</p>
+        <h1>{view==='study'?'Dashboard':view==='stats'?'Performance':view==='settings'?'Practice Setup':'Question Bank'}</h1>
+        <p>Unlock this feature with 90-day Early Adopter access. Free practice and Vocabulary are available now.</p>
+        <div className="hero-actions">
+          <AlexButton onClick={()=>navigateTo('upgrade')}>See Early Adopter benefits</AlexButton>
+          <AlexButton tone="secondary" onClick={()=>navigateTo('home')}>Start free practice</AlexButton>
+        </div>
+      </section>
+    </main>,'#F7F6F2')
+
+  if(view==='parsing-issues'&&!contentAdmin)
+    return withSidebar('practice-tests',<main className="shell">
+      <section className="card"><h1>Content administration</h1>
+      <p>Parsing Issues is available only to the original super accounts.</p>
+      <AlexButton onClick={()=>navigateTo('home')}>Practice tests</AlexButton>
+      </section>
+    </main>)
+
+  if(view==='privacy'||view==='terms')return <LegalPage kind={view} onBack={()=>navigateTo('account')}/>
+
   if(view==='stats')return withSidebar('performance',<main className="shell"><PerformanceDashboard
     summary={rangePerformance}
     hasHistory={performanceAttempts.length>0}
@@ -561,6 +638,8 @@ export default function App(){
   if(view==='question-bank')return withSidebar('question-bank',<QuestionBankReview questionsPdf={qpdf}/>,'#F7F6F2')
 
   if(view==='parsing-issues')return withSidebar('parsing-issues',<ParsingIssuesDashboard questionsPdf={qpdf} answersPdf={apdf}/>,'#F7F6F2')
+
+  if(view==='upgrade')return withSidebar('upgrade',<UpgradePage onPractice={()=>navigateTo('home')} onAccount={()=>navigateTo('account')} signedIn={Boolean(authUser)}/>,'#F7F6F2')
 
   if(view==='account')return withSidebar('practice-tests',<main className="shell">
     <div className="page-heading"><div><p className="eyebrow">Account</p><h1>Account & sync</h1></div></div>
@@ -753,9 +832,22 @@ export default function App(){
     </AlexBox>
   </main>,'#F7F6F2')
 
+  if(authUser&&!plusActive&&view==='home')return withSidebar('practice-tests',<main className="shell">
+    <section className="card results">
+      <p className="eyebrow">Daily free practice</p>
+      <h1>10 questions. Two free sessions a day.</h1>
+      <p>Start a random SAT practice session and get feedback on your answers. No setup required.</p>
+      <div className="hero-actions">
+        <AlexButton onClick={()=>void beginPractice('both','all')}>Start 10-question session</AlexButton>
+        {resumableSession&&<AlexButton tone="secondary" onClick={resumeActiveSession}>Resume current session</AlexButton>}
+        <AlexButton tone="quiet" onClick={()=>navigateTo('account')}>Explore Plus access</AlexButton>
+      </div>
+    </section>
+  </main>)
+
   return withSidebar('practice-tests',<PracticeTestsDashboard
     tests={practiceTestSummaries}
-    sessionSummary={`${settings.questionsPerSession} questions · ${settings.mode==='both'?'Reading & Writing + Math':settings.mode==='english'?'Reading & Writing':'Math'} · ${practiceSummary}`}
+    sessionSummary={`${plusActive?settings.questionsPerSession:10} questions · ${settings.mode==='both'?'Reading & Writing + Math':settings.mode==='english'?'Reading & Writing':'Math'} · ${practiceSummary}`}
     activeSession={resumableSession?{
       questionCount:resumableSession.questionCount,
       answeredCount:resumableSession.attempts.length,
