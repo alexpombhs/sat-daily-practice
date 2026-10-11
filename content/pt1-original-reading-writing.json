@@ -454,7 +454,19 @@
       "categorical comparisons",
       "evidence selection"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "Researchers recorded seedling germination under three light conditions.",
+      "Light condition\tGerminated\tTotal",
+      "Full sunlight\t48\t80",
+      "Partial shade\t63\t90",
+      "Deep shade\t21\t70",
+      "Which conclusion is best supported by the data?",
+      "A) Partial shade had the highest germination percentage, despite not having the largest initial sample.",
+      "B) Full sunlight had the highest germination percentage because its sample was smaller.",
+      "C) Deep shade produced more germinated seedlings than full sunlight.",
+      "D) All three groups had the same proportion germinate."
+    ]
   },
   {
     "id": "pt1-rw1-14",
@@ -525,7 +537,19 @@
       "matched comparison",
       "ablation rates"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "A laboratory compared hourly heat loss from two insulating panels of equal thickness. The data are shown below.",
+      "Outside temperature\tPanel R\tPanel S",
+      "0°C\t22\t31",
+      "10°C\t14\t19",
+      "20°C\t8\t10",
+      "A researcher claims R retains heat better at every tested temperature, but that its advantage is smaller in warmer conditions. Which evidence best supports this claim?",
+      "A) At 0°C, R lost 22 units and S lost 31, while at 20°C, R lost 8 and S lost 10.",
+      "B) At 0°C, both panels lost less heat than they did at 20°C.",
+      "C) At 10°C, R lost more heat than S by five units.",
+      "D) The heat-loss difference was largest at 20°C."
+    ]
   },
   {
     "id": "pt1-rw1-16",
@@ -1591,7 +1615,20 @@
       "multi-series graph interpretation",
       "contrasting policy uncertainty measures"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "A policy report presents two monthly uncertainty measures.",
+      "Month\tEconomic policy\tTrade policy",
+      "January\t70\t120",
+      "February\t85\t100",
+      "March\t95\t80",
+      "April\t110\t65",
+      "Which statement accurately synthesizes the trends?",
+      "A) Economic-policy uncertainty rose while trade-policy uncertainty fell, reversing which measure was higher.",
+      "B) Both uncertainty measures increased, although at different rates.",
+      "C) Trade-policy uncertainty remained above economic-policy uncertainty throughout.",
+      "D) Both measures peaked during the same month."
+    ]
   },
   {
     "id": "pt1-rw2-14",
