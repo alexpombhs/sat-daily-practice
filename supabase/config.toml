@@ -28,3 +28,6 @@ verify_jwt = false # Stripe signature verification inside handler
 
 [functions.sat-waitlist-verify]
 verify_jwt = false # One-time email verification token grants limited action.
+
+[functions.sat-launch-maintenance]
+verify_jwt = false # Restricted by LA_OPERATOR_SECRET for scheduled cleanup.
