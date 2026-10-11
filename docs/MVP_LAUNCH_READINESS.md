@@ -26,7 +26,9 @@ Status: **NOT approved for public launch**. This document is a release checklist
 - [x] Signup challenge token wired to Supabase Auth.
 - [ ] Configure CAPTCHA in Supabase and provider keys; test real production rejection of malicious and direct API requests, set rate limits.
 - [x] First draft operator-triggered invite email Edge Function committed; requires verified sender, server secrets, deployment and end-to-end testing.
-- [ ] Add reliable reserved-seat invitations, idempotency and automatic scheduling if needed.
+- [x] Atomic claim/release flow for operator-triggered invitations; provider idempotency key included.
+- [ ] Implement guaranteed seat reservation and automatic scheduling if needed; invitations currently do not reserve a place.
+- [ ] Confirm email-provider idempotency and invitation retry behavior in staging.
 - [ ] Define waiting-list retention, opt-out and deletion process and disclose in privacy notice.
 - [ ] Prevent non-signup Auth creation flows (admin imports/invites) from exhausting capacity unexpectedly.
 - [ ] Review count policy before GA (the database trigger must be explicitly removed/disabled to exceed 100).
