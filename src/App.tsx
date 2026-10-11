@@ -174,7 +174,8 @@ export default function App(){
 
   const current=qs[i]
   const currentRec=current?currentAttempts.find(attempt=>attempt.questionId===current.id):undefined
-  const performance=summarizePerformance(attempts,sessions,questionBank.length,questionBank)
+  const officialQuestionCount=questionBank.filter(question=>question.practiceTestId!=='practice-test-8').length
+  const performance=summarizePerformance(attempts,sessions,officialQuestionCount,questionBank)
   const performanceRangeBounds=(()=>{
     const now=new Date()
     const endOfToday=new Date(now)
@@ -200,7 +201,7 @@ export default function App(){
   })
   const performanceSessionIds=new Set(performanceSessions.map(session=>session.id))
   const performanceAttempts=attempts.filter(attempt=>performanceSessionIds.has(attempt.sessionId))
-  const rangePerformanceBase=summarizePerformance(performanceAttempts,performanceSessions,questionBank.length,questionBank)
+  const rangePerformanceBase=summarizePerformance(performanceAttempts,performanceSessions,officialQuestionCount,questionBank)
   const rangeScoreTrend=performance.scoreTrend.filter(point=>{
     const time=new Date(point.startedAt).getTime()
     if(!Number.isFinite(time))return false
