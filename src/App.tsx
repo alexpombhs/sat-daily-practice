@@ -603,10 +603,10 @@ export default function App(){
       </section>
     </main>,'#F7F6F2')
 
-  if(!contentAdmin&&(view==='question-bank'||view==='parsing-issues'))
+  if(view==='parsing-issues'&&!contentAdmin)
     return withSidebar('practice-tests',<main className="shell">
       <section className="card"><h1>Content administration</h1>
-      <p>This section is reserved for authorized content editors.</p>
+      <p>Parsing Issues is available only to the original super accounts.</p>
       <AlexButton onClick={()=>navigateTo('home')}>Practice tests</AlexButton>
       </section>
     </main>)
