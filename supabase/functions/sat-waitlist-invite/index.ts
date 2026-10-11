@@ -12,6 +12,9 @@ Deno.serve(async(req:Request)=>{
  let site:URL
  try{site=new URL(website);if(site.protocol!=='https:')throw new Error('invalid')}catch{return new Response('Invalid app URL',{status:503})}
  const db=createClient(url,role,{auth:{persistSession:false}})
+ // Also apply the privacy-retention policy on the scheduled operator cycle.
+ const {error:cleanupError}=await db.rpc('sat_cleanup_launch_data')
+ if(cleanupError)console.error('Scheduled cleanup could not complete')
  // Do not send invites if enrollment is still full.
  const {data:full,error:capacityError}=await db.rpc('sat_registration_is_full')
  if(capacityError)return new Response('Capacity unavailable',{status:503})
