@@ -93,6 +93,14 @@ export default function StudyPlanHero({
           />
         </AlexBox>}
         subtitle={<AlexBox sx={{minWidth:0,pr:{xs:7,sm:8}}}>
+          <AlexBox sx={{display:'flex',flexWrap:'wrap',alignItems:'center',columnGap:{xs:1,sm:1.5},rowGap:.25,mb:.3}}>
+            <AlexText sx={{fontSize:'inherit',fontWeight:800,color:'inherit',whiteSpace:'nowrap'}}>
+              Reading &amp; Writing {estimatedScore!==null&&scoreBreakdown?.english?scoreBreakdown.english.score:'—'}
+            </AlexText>
+            <AlexText sx={{fontSize:'inherit',fontWeight:800,color:'inherit',whiteSpace:'nowrap'}}>
+              Math {estimatedScore!==null&&scoreBreakdown?.math?scoreBreakdown.math.score:'—'}
+            </AlexText>
+          </AlexBox>
           <AlexText sx={{fontSize:'inherit',color:'inherit',minWidth:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
             {nationalMeritChance!==null
               ?`${nationalMeritChance}% National Merit outlook${projectedSelectionIndex!==null?` · SI ~${projectedSelectionIndex}`:''}`
