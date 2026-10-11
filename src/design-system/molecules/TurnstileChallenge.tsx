@@ -37,6 +37,6 @@ export default function TurnstileChallenge({onToken}:Props){
    existing?.removeEventListener('load',mount)
   }
  },[sitekey,onToken])
- if(!sitekey)return <p role="alert">Registration security checks are not configured.</p>
+ if(!sitekey)return null // CAPTCHA is an optional deployment configuration; backend protections remain authoritative.
  return <div ref={host} aria-label="Security verification"/>
 }
