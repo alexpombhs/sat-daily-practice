@@ -3,9 +3,9 @@ import {TARGETED_MOCK_QUESTIONS,targetedMockContent} from './targetedMockQuestio
 import {QUESTION_BANK} from './questionBank'
 
 describe('targeted mock content quality',()=>{
-  it('provides 48 distinct questions with four options, answer keys and explanations',()=>{
-    expect(TARGETED_MOCK_QUESTIONS).toHaveLength(48)
-    expect(new Set(TARGETED_MOCK_QUESTIONS.map(question=>question.id)).size).toBe(48)
+  it('provides 80 distinct questions with four options, answer keys and explanations',()=>{
+    expect(TARGETED_MOCK_QUESTIONS).toHaveLength(80)
+    expect(new Set(TARGETED_MOCK_QUESTIONS.map(question=>question.id)).size).toBe(80)
     for(const question of TARGETED_MOCK_QUESTIONS){
       const content=targetedMockContent(question.id)
       expect(content).toBeDefined()
