@@ -5,27 +5,27 @@
     "question_number": 1,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "A chart records club signups: chess 24, robotics 31, art 19, music 27. Which club had the most signups?",
+    "stem": "A bar chart records library visitors: research 34, printing 19, tutoring 27, study groups 31. How many more visitors attended the two most popular activities combined than the two least popular activities combined?",
     "options": [
       {
         "label": "A",
-        "text": "Robotics"
+        "text": "19"
       },
       {
         "label": "B",
-        "text": "Art"
+        "text": "21"
       },
       {
         "label": "C",
-        "text": "Music"
+        "text": "23"
       },
       {
         "label": "D",
-        "text": "Chess"
+        "text": "25"
       }
     ],
     "correct_answer": "A",
-    "explanation": "Robotics has the greatest count, 31.",
+    "explanation": "(34+31)-(27+19)=19.",
     "difficulty": "easy",
     "concepts": [
       "bar graph reading",
@@ -210,27 +210,27 @@
     "question_number": 8,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "A linear function has values f(0)=5 and f(2)=11. What is f(4)?",
+    "stem": "A linear relationship is represented by x-values 0, 2, 5 and corresponding y-values 7, 13, 22. What is y when x=8?",
     "options": [
       {
         "label": "A",
-        "text": "14"
+        "text": "28"
       },
       {
         "label": "B",
-        "text": "15"
+        "text": "30"
       },
       {
         "label": "C",
-        "text": "17"
+        "text": "31"
       },
       {
         "label": "D",
-        "text": "22"
+        "text": "34"
       }
     ],
     "correct_answer": "C",
-    "explanation": "Slope=(11-5)/2=3; f(4)=5+12=17.",
+    "explanation": "The slope is 3 and the intercept is 7. At x=8, y=3(8)+7=31.",
     "difficulty": "easy",
     "concepts": [
       "linear table interpretation",
@@ -348,27 +348,27 @@
     "question_number": 12,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "A line passes through (0,-2) and (3,7). What is its slope?",
+    "stem": "A line crosses the y-axis at -4 and passes through (6,8). Which equation represents the line?",
     "options": [
       {
         "label": "A",
-        "text": "2"
+        "text": "y=2x-4"
       },
       {
         "label": "B",
-        "text": "3"
+        "text": "y=3x-4"
       },
       {
         "label": "C",
-        "text": "5"
+        "text": "y=2x+4"
       },
       {
         "label": "D",
-        "text": "9"
+        "text": "y=-2x-4"
       }
     ],
-    "correct_answer": "B",
-    "explanation": "Slope=(7-(-2))/(3-0)=9/3=3.",
+    "correct_answer": "A",
+    "explanation": "The slope is (8+4)/6=2 and the intercept is -4.",
     "difficulty": "easy",
     "concepts": [
       "line graphs",
@@ -486,27 +486,27 @@
     "question_number": 17,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "A map is enlarged so every length is multiplied by 3. How does the area change?",
+    "stem": "A rectangular image is enlarged so its width increases by 50% and its height by 20%. By what percent does its area increase?",
     "options": [
       {
         "label": "A",
-        "text": "It becomes 6 times as large."
+        "text": "30%"
       },
       {
         "label": "B",
-        "text": "It becomes 9 times as large."
+        "text": "70%"
       },
       {
         "label": "C",
-        "text": "It remains the same."
+        "text": "80%"
       },
       {
         "label": "D",
-        "text": "It triples."
+        "text": "90%"
       }
     ],
-    "correct_answer": "B",
-    "explanation": "Areas scale by the square of the length factor: 3²=9.",
+    "correct_answer": "C",
+    "explanation": "The area factor is 1.5×1.2=1.8, an 80% increase.",
     "difficulty": "medium",
     "concepts": [
       "ratios",
@@ -731,27 +731,27 @@
     "question_number": 25,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "A 45°-45°-90° triangle has legs of length 5. What is its perimeter?",
+    "stem": "An isosceles right triangle has perimeter 18+9√2. What is the length of each leg?",
     "options": [
       {
         "label": "A",
-        "text": "15"
+        "text": "6"
       },
       {
         "label": "B",
-        "text": "5+10√2"
+        "text": "9"
       },
       {
         "label": "C",
-        "text": "20"
+        "text": "9√2"
       },
       {
         "label": "D",
-        "text": "10+5√2"
+        "text": "18"
       }
     ],
-    "correct_answer": "D",
-    "explanation": "The hypotenuse is 5√2, so total is 10+5√2.",
+    "correct_answer": "B",
+    "explanation": "If each leg is a, the perimeter is a(2+√2)=9(2+√2), so a=9.",
     "difficulty": "medium",
     "concepts": [
       "45-45-90 triangles",
@@ -1507,27 +1507,27 @@
     "question_number": 24,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "For data 2, 5, 9, 12, 17, every value is increased by 6. How does the range change?",
+    "stem": "A data set has median 12 and range 18. After every value increases by 5, what are the new median and range?",
     "options": [
       {
         "label": "A",
-        "text": "It increases by 6."
+        "text": "17 and 18"
       },
       {
         "label": "B",
-        "text": "It doubles."
+        "text": "12 and 23"
       },
       {
         "label": "C",
-        "text": "It decreases by 6."
+        "text": "17 and 23"
       },
       {
         "label": "D",
-        "text": "It stays unchanged."
+        "text": "12 and 18"
       }
     ],
-    "correct_answer": "D",
-    "explanation": "Adding the same constant to minimum and maximum preserves their difference.",
+    "correct_answer": "A",
+    "explanation": "Adding five raises the median to 17 and leaves the range 18 unchanged.",
     "difficulty": "medium",
     "concepts": [
       "medians and ranges",
