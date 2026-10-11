@@ -1,5 +1,5 @@
 import {describe,expect,it} from 'vitest'
-import {QUESTION_BANK} from './questionBank'
+import {QUESTION_BANK,questionsForPractice} from './questionBank'
 import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,practiceQuestionPool,summarizePerformance,summarizeSession} from './practiceGamification'
 import type {Attempt,SessionSummary,Settings} from '../types'
 
@@ -17,6 +17,13 @@ describe('choosePracticeQuestions',()=>{
     expect(chosen.every(question=>question.subject==='math')).toBe(true)
   })
 
+
+  it('includes official questions only when all sources are selected',()=>{
+    const all=questionsForPractice('both','all')
+    expect(all).toHaveLength(480)
+    expect(all.some(question=>question.practiceTestId==='practice-test-8')).toBe(false)
+    expect(questionsForPractice('both','practice-test-8')).toHaveLength(24)
+  })
 
   it('exposes the mock question set as a selectable source with 24 bundled questions',()=>{
     const mock=QUESTION_BANK.filter(question=>question.practiceTestId==='practice-test-8')
