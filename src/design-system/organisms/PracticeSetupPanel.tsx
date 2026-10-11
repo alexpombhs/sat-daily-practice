@@ -63,7 +63,7 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
 
     <PracticeSettingField
       label="Question difficulty"
-      helperText={`${difficultyCounts.all} questions match the selected subject and practice test: ${difficultyCounts.easy} Easy, ${difficultyCounts.medium} Medium, ${difficultyCounts.advanced} Advanced. ${difficultyCounts.all-difficultyCounts.easy-difficultyCounts.medium-difficultyCounts.advanced} are not yet classified and remain available under All.`}
+      helperText={`${difficultyCounts[settings.difficulty??'all']} ${settings.difficulty==='easy'?'easy':settings.difficulty==='medium'?'medium':settings.difficulty==='advanced'?'advanced':''} question${difficultyCounts[settings.difficulty??'all']===1?'':'s'} match the current practice test and subject filters.`}
       control={<AlexTabs
         value={settings.difficulty??'all'}
         variant="scrollable"
