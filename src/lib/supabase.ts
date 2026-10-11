@@ -1,4 +1,5 @@
 import {createClient,type User} from '@supabase/supabase-js'
+import {localTestExpiry,redeemLocalTestCode} from './localTestAccess'
 import type {ActivePracticeSession,Attempt,SessionSummary,Settings} from '../types'
 import type {VocabularyAttempt} from './vocabulary'
 
@@ -90,6 +91,11 @@ export async function redeemPrepaidAccessCode(code:string):Promise<string>{
  const normalized=code.trim().toUpperCase()
  if(!/^SAT-(?:[A-Z0-9]{6}-[A-Z0-9]{6}-[A-Z0-9]{6}|TEST-[A-Z0-9-]{12,60})$/.test(normalized))
   throw new Error('Enter the activation code in the format SAT-XXXXXX-XXXXXX-XXXXXX.')
+ if(normalized.startsWith('SAT-TEST-')&&import.meta.env.DEV){
+  const id=await currentUserId()
+  if(!id)throw new Error('Sign in before activating local test access.')
+  return redeemLocalTestCode(id,normalized)
+ }
  if(normalized.startsWith('SAT-TEST-')){
   const {data,error}=await supabase.functions.invoke('sat-master-test-activate',{body:{code:normalized}})
   if(error||typeof data?.expiresAt!=='string')throw new Error(data?.message??'Test activation is not available for this account.')
@@ -102,6 +108,8 @@ export async function redeemPrepaidAccessCode(code:string):Promise<string>{
 }
 
 export async function hasPlusAccess():Promise<boolean>{
+ const id=await currentUserId()
+ if(id&&localTestExpiry(id))return true
   const {data,error}=await supabase.rpc('sat_my_plus_access')
   if(error)throw error
   return data===true
@@ -122,6 +130,8 @@ export async function freeSessionsRemaining():Promise<number>{
 }
 
 export async function plusExpiresAt():Promise<string|null>{
+ const id=await currentUserId()
+ if(id){const localExpiry=localTestExpiry(id);if(localExpiry)return localExpiry}
  const {data,error}=await supabase.rpc('sat_my_plus_access_expires_at')
  if(error)throw error
  return typeof data==='string'?data:null
