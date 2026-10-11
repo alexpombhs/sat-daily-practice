@@ -107,11 +107,16 @@ export async function redeemPrepaidAccessCode(code:string):Promise<string>{
  return data
 }
 
+function isMissingLaunchRpc(error:{code?:string;message?:string}){
+ return error.code==='PGRST202'||error.code==='42883'
+  ||/could not find the function|does not exist/i.test(error.message??'')
+}
+
 export async function hasPlusAccess():Promise<boolean>{
  const id=await currentUserId()
  if(id&&localTestExpiry(id))return true
   const {data,error}=await supabase.rpc('sat_my_plus_access')
-  if(error)throw error
+  if(error){if(import.meta.env.DEV&&isMissingLaunchRpc(error))return true;throw error}
   return data===true
 }
 
@@ -125,7 +130,7 @@ export async function discardFreeSessionHistory(sessionId:string):Promise<void>{
 
 export async function freeSessionsRemaining():Promise<number>{
  const {data,error}=await supabase.rpc('sat_my_free_sessions_remaining')
- if(error)throw error
+ if(error){if(import.meta.env.DEV&&isMissingLaunchRpc(error))return 2;throw error}
  return typeof data==='number'?data:0
 }
 
@@ -133,7 +138,7 @@ export async function plusExpiresAt():Promise<string|null>{
  const id=await currentUserId()
  if(id){const localExpiry=localTestExpiry(id);if(localExpiry)return localExpiry}
  const {data,error}=await supabase.rpc('sat_my_plus_access_expires_at')
- if(error)throw error
+ if(error){if(import.meta.env.DEV&&isMissingLaunchRpc(error))return null;throw error}
  return typeof data==='string'?data:null
 }
 
