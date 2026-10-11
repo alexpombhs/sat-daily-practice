@@ -74,6 +74,12 @@ export async function signInWithPassword(email:string,password:string){
   return toAuthUser(data.user)
 }
 
+export async function isContentAdmin():Promise<boolean>{
+ const {data,error}=await supabase.rpc('sat_is_content_admin')
+ if(error)throw error
+ return data===true
+}
+
 export async function hasPlusAccess():Promise<boolean>{
   const {data,error}=await supabase.rpc('sat_my_plus_access')
   if(error)throw error
