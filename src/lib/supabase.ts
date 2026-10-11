@@ -71,6 +71,17 @@ export async function signInWithPassword(email:string,password:string){
   return toAuthUser(data.user)
 }
 
+export async function deleteCurrentAccount():Promise<void>{
+  const {data,error:sessionError}=await supabase.auth.getSession()
+  if(sessionError)throw sessionError
+  if(!data.session)throw new Error('Sign in to delete your account.')
+  const {data:result,error}=await supabase.functions.invoke('sat-delete-account',{
+    body:{confirmation:'DELETE MY ACCOUNT'},
+  })
+  if(error||!result?.ok)throw new Error('Account deletion failed. Please contact support.')
+  await supabase.auth.signOut({scope:'local'})
+}
+
 export async function signOut(){
   if(!supabase)return
   const {error}=await supabase.auth.signOut()
