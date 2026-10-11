@@ -9,17 +9,18 @@ type Props={
   busy?:boolean
   message?:string
   error?:string
-  onSubmit:(email:string,password:string)=>Promise<void>
+  onSubmit:(email:string,password:string,birthDate?:string)=>Promise<void>
   onModeChange:(mode:'signin'|'signup')=>void
 }
 
 export default function AuthCredentialsForm({mode,busy=false,message,error,onSubmit,onModeChange}:Props){
   const[email,setEmail]=useState('')
   const[password,setPassword]=useState('')
+  const[birthDate,setBirthDate]=useState('')
 
   async function submit(event:FormEvent){
     event.preventDefault()
-    await onSubmit(email,password)
+    await onSubmit(email,password,mode==='signup'?birthDate:undefined)
   }
 
   return <AlexStack component="form" spacing={2} onSubmit={submit}>
@@ -41,6 +42,10 @@ export default function AuthCredentialsForm({mode,busy=false,message,error,onSub
       inputProps={{minLength:6}}
       helperText={mode==='signup'?'Use at least 6 characters.':undefined}
     />
+    {mode==='signup'&&<>
+      <AlexTextField label="Date of birth" type="date" value={birthDate} onChange={event=>setBirthDate(event.target.value)} required InputLabelProps={{shrink:true}} inputProps={{max:new Date().toISOString().slice(0,10)}} helperText="Used to check signup eligibility. You must enter your real date of birth." />
+      <AlexText sx={{fontSize:12,color:'text.secondary'}}>By creating an account, you acknowledge our Privacy Notice and Terms of Use. Age information is processed for eligibility screening.</AlexText>
+    </>}
     {error&&<AlexText role="alert" sx={{fontSize:13,color:'error.main'}}>{error}</AlexText>}
     {message&&<AlexText role="status" sx={{fontSize:13,color:'success.main'}}>{message}</AlexText>}
     <AlexStack direction="row" spacing={1.25} sx={{flexWrap:'wrap'}}>
