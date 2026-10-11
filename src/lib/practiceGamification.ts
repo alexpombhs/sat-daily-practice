@@ -1,7 +1,7 @@
 import {QUESTION_BANK} from './questionBank'
 import {buildPerformanceAnalytics,type PerformanceAnalytics} from './performanceAnalytics'
 import {failedQuestionIds} from './questionMastery'
-import type {Attempt,PracticeQuestion,SessionSummary,Settings} from '../types'
+import type {Attempt,PracticeQuestion,QuestionDifficulty,SessionSummary,Settings} from '../types'
 
 export type PerformanceSummary=PerformanceAnalytics
 export type SessionMetrics={accuracy:number;averageMs:number;correct:number;total:number}
@@ -17,10 +17,23 @@ function attemptedQuestionIds(attempts:Attempt[]){
 
 function failedRecoveryTarget(settings:Settings){return Math.max(1,Math.min(5,settings.failedRecoveryCorrectAnswers??2))}
 
+// Provisional bands inferred from position within each SAT module.
+// Canonical difficulty metadata, when available, always overrides the estimate.
+export function questionDifficulty(question:PracticeQuestion):QuestionDifficulty{
+  if(question.difficulty)return question.difficulty
+  const total=question.subject==='english'?33:27
+  const fraction=question.number/total
+  if(fraction<=.25)return 'easy'
+  if(fraction<=.55)return 'medium'
+  if(fraction<=.8)return 'hard'
+  return 'advanced'
+}
+
 function eligibleQuestions(settings:Settings,questions:PracticeQuestion[]){
   return questions.filter(question=>
     (settings.mode==='both'||question.subject===settings.mode)&&
-    ((settings.practiceTest??'all')==='all'||question.practiceTestId===settings.practiceTest)
+    ((settings.practiceTest??'all')==='all'||question.practiceTestId===settings.practiceTest)&&
+    ((settings.difficulty??'all')==='all'||questionDifficulty(question)===settings.difficulty)
   )
 }
 
