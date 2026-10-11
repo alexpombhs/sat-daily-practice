@@ -197,7 +197,7 @@ const items=[
       "D) Oak equals birch."
     ],
     "explanationLines": [
-      "340−280=60 N."
+      "Oak supported 340 N and birch 280 N, a difference of 60 N."
     ]
   },
   {
@@ -317,7 +317,7 @@ const items=[
       "D) $\\sqrt{58}$"
     ],
     "explanationLines": [
-      "5√2+2√2=7√2."
+      "Simplifying each radical gives 5√2+2√2, which equals 7√2."
     ]
   },
   {
@@ -377,7 +377,7 @@ const items=[
       "D) 45"
     ],
     "explanationLines": [
-      "5x+5=180, x=35."
+      "Since the angles form a line, 5x+5=180, giving x=35."
     ]
   },
   {
@@ -397,7 +397,7 @@ const items=[
       "D) 9"
     ],
     "explanationLines": [
-      "11=6+b, so b=5."
+      "Substitution into y=3x+b gives 11=6+b, so b=5."
     ]
   },
   {
