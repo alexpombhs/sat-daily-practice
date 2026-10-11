@@ -5,13 +5,14 @@ import AlexDropdown from '../atoms/AlexDropdown'
 import AlexNumberField from '../atoms/AlexNumberField'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexSwitch from '../atoms/AlexSwitch'
-import AlexTabs from '../atoms/AlexTabs'
+import Checkbox from '@mui/material/Checkbox'
+import FormControlLabel from '@mui/material/FormControlLabel'
 import AlexText from '../atoms/AlexText'
 import PracticeGoalSettings from '../molecules/PracticeGoalSettings'
 import PracticeSettingField from '../molecules/PracticeSettingField'
 import StudyPlanRecommendation from './StudyPlanRecommendation'
 import type {PracticePlanRecommendation} from '../../lib/practicePlan'
-import type {PracticeTestFilter,Settings} from '../../types'
+import type {PracticeTestFilter,QuestionDifficulty,Settings} from '../../types'
 
 type PracticeTestOption={value:PracticeTestFilter;label:string}
 
@@ -27,6 +28,13 @@ type Props={
 }
 
 export default function PracticeSetupPanel({settings,practiceTests,difficultyCounts,newQuestionCount,failedQuestionCount,onChange,onStart,recommendation}:Props){
+  const difficultyLevels=settings.difficultyLevels??(settings.difficulty&&settings.difficulty!=='all'?[settings.difficulty]:[])
+  const difficultyAll=difficultyLevels.length===0
+  const filteredDifficultyCount=difficultyAll?difficultyCounts.all:difficultyLevels.reduce((sum,level)=>sum+difficultyCounts[level],0)
+  const setDifficultyLevel=(level:QuestionDifficulty,checked:boolean)=>{
+    const updated=checked?[...new Set([...difficultyLevels,level])]:difficultyLevels.filter(item=>item!==level)
+    onChange({...settings,difficulty:'all',difficultyLevels:updated.length?updated:undefined})
+  }
   const selectionMode=settings.selectionMode??'adaptive'
   const practiceTest=settings.practiceTest??'all'
   const newOnly=settings.failedOnly??false
@@ -63,16 +71,13 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
 
     <PracticeSettingField
       label="Question difficulty"
-      helperText={`${difficultyCounts[settings.difficulty??'all']} ${settings.difficulty==='easy'?'easy':settings.difficulty==='medium'?'medium':settings.difficulty==='advanced'?'advanced':''} question${difficultyCounts[settings.difficulty??'all']===1?'':'s'} match the current practice test and subject filters.`}
-      control={<AlexTabs
-        value={settings.difficulty??'all'}
-        variant="scrollable"
-        scrollButtons={false}
-        options={[{value:'all',label:'All'},{value:'easy',label:'Easy'},{value:'medium',label:'Medium'},{value:'advanced',label:'Advanced'}]}
-        onChange={difficulty=>onChange({...settings,difficulty})}
-        aria-label="SAT question difficulty"
-        sx={{'& .MuiTab-root':{px:{xs:1.1,sm:1.5},fontSize:{xs:12,sm:13}}}}
-      />}
+      helperText={`${filteredDifficultyCount} question${filteredDifficultyCount===1?'':'s'} match the current practice test, subject, and difficulty filters.`}
+      control={<AlexBox sx={{display:'flex',flexWrap:'wrap',gap:{xs:0,sm:1},alignItems:'center'}}>
+        <FormControlLabel control={<Checkbox size="small" checked={difficultyAll} onChange={()=>onChange({...settings,difficulty:'all',difficultyLevels:undefined})}/>} label="All"/>
+        {(['easy','medium','advanced'] as QuestionDifficulty[]).map(level=>
+          <FormControlLabel key={level} control={<Checkbox size="small" checked={!difficultyAll&&difficultyLevels.includes(level)} onChange={(_,checked)=>setDifficultyLevel(level,checked)}/>} label={level[0].toUpperCase()+level.slice(1)}/>
+        )}
+      </AlexBox>}
     />
 
     <PracticeSettingField
