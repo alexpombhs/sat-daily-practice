@@ -13,10 +13,10 @@ Deno.serve(async(req:Request)=>{
  try{site=new URL(website);if(site.protocol!=='https:')throw new Error('invalid')}catch{return new Response('Invalid app URL',{status:503})}
  const db=createClient(url,role,{auth:{persistSession:false}})
  // Do not send invites if enrollment is still full.
- const {count:registered,error:countError}=await db.from('sat_launch_waitlist').select('id',{head:true,count:'exact'})
- if(countError)return new Response('Queue unavailable',{status:503})
+ const {data:full,error:capacityError}=await db.rpc('sat_registration_is_full')
+ if(capacityError)return new Response('Capacity unavailable',{status:503})
+ if(full)return new Response('Registration is full; no invitation sent',{status:409})
  // The waitlist is a communications queue, not a reservation.
- // An operator must first verify Auth capacity before invoking this function.
  const {data:claimed,error:claimError}=await db.rpc('sat_claim_waitlist_invite')
  if(claimError)return new Response('Unable to claim invitation',{status:503})
  const row=claimed?.[0] as {id:number;email:string;claim_token:string}|undefined
