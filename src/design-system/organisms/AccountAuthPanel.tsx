@@ -7,7 +7,6 @@ import AlexTextField from '../atoms/AlexTextField'
 import AuthCredentialsForm from '../molecules/AuthCredentialsForm'
 import TurnstileChallenge from '../molecules/TurnstileChallenge'
 import UserProfileForm from '../molecules/UserProfileForm'
-import {validateSignupBirthDate} from '../../lib/signupAge'
 import {pathForView} from '../../lib/appRoutes'
 import {deleteCurrentAccount,hasPlusAccess,openOneTimeCheckout,plusExpiresAt,redeemPrepaidAccessCode,EMPTY_USER_PROFILE,isRegistrationFull,joinLaunchWaitlist,isSupabaseConfigured,loadUserProfile,saveUserProfile,signInWithPassword,signOut,signUpWithPassword,type UserProfile} from '../../lib/supabase'
 
@@ -24,7 +23,7 @@ export default function AccountAuthPanel({email}:Props){
   const[error,setError]=useState('')
   const[registrationFull,setRegistrationFull]=useState(false)
   const[waitlistEmail,setWaitlistEmail]=useState('')
-  const[waitlistBirthDate,setWaitlistBirthDate]=useState('')
+  
   const[waitlistAgeApproved,setWaitlistAgeApproved]=useState(false)
   const[captchaToken,setCaptchaToken]=useState('')
   const handleCaptchaToken=useCallback((token:string)=>setCaptchaToken(token),[])
@@ -57,14 +56,13 @@ export default function AccountAuthPanel({email}:Props){
     return()=>{cancelled=true}
   },[email])
 
-  async function submit(nextEmail:string,password:string,birthDate?:string,captchaToken?:string){
+  async function submit(nextEmail:string,password:string,ageConfirmed?:boolean,captchaToken?:string){
     setBusy(true)
     setError('')
     setMessage('')
     try{
       if(mode==='signup'){
-        const validDate=validateSignupBirthDate(birthDate??'')
-        const result=await signUpWithPassword(nextEmail,password,validDate,captchaToken??'')
+        const result=await signUpWithPassword(nextEmail,password,ageConfirmed===true,captchaToken??'')
         setMessage(result.needsEmailConfirmation?'Check your email to confirm your account, then return here to sign in.':'Account created and signed in.')
       }else{
         await signInWithPassword(nextEmail,password)
@@ -80,7 +78,7 @@ export default function AccountAuthPanel({email}:Props){
   async function joinWaitlist(){
     setBusy(true);setError('');setMessage('')
     try{
-      await joinLaunchWaitlist(waitlistEmail,validateSignupBirthDate(waitlistBirthDate),captchaToken)
+      await joinLaunchWaitlist(waitlistEmail,true,captchaToken)
       setMessage('Please check your inbox and confirm your email address to join the waitlist.')
     }catch(nextError){setError(messageFromError(nextError))}
     finally{setBusy(false)}
@@ -178,14 +176,13 @@ export default function AccountAuthPanel({email}:Props){
       </AlexStack>:registrationFull?<AlexStack spacing={2}>
         <AlexText sx={{fontWeight:700}}>The first 100 account places are filled.</AlexText>
         <AlexText sx={{fontSize:14,fontWeight:700}}>You must be 13 or older to join the waitlist.</AlexText>
-        <AlexText sx={{fontSize:14,color:'text.secondary'}}>Enter your email to request a registration invitation. An invitation does not reserve a place. Your email will be used for waitlist updates; contact support to request removal.</AlexText>
-        <AlexTextField label="Date of birth" type="date" value={waitlistBirthDate} onChange={event=>{setWaitlistBirthDate(event.target.value);setWaitlistAgeApproved(false);setError('')}} InputLabelProps={{shrink:true}} />
-        {!waitlistAgeApproved?<AlexButton disabled={!waitlistBirthDate} onClick={()=>{try{validateSignupBirthDate(waitlistBirthDate);setError('');setWaitlistAgeApproved(true)}catch(nextError){setError(messageFromError(nextError))}}}>Continue</AlexButton>:<AlexButton tone="secondary" onClick={()=>{setWaitlistAgeApproved(false);setWaitlistEmail('');setCaptchaToken('')}}>Change date of birth</AlexButton>}
+        <AlexText sx={{fontSize:14,color:'text.secondary'}}>Enter your email to request a registration invitation. An invitation reserves an available place for 24 hours. You can unsubscribe from the email invitation.</AlexText>
+        {!waitlistAgeApproved?<AlexButton disabled={busy} onClick={()=>{setWaitlistAgeApproved(true);setError('')}}>I confirm I am 13 or older</AlexButton>:<AlexButton tone="secondary" onClick={()=>{setWaitlistAgeApproved(false);setWaitlistEmail('');setCaptchaToken('')}}>Change age confirmation</AlexButton>}
         {waitlistAgeApproved&&<AlexTextField label="Email for waitlist" type="email" value={waitlistEmail} onChange={event=>setWaitlistEmail(event.target.value)} />}
         {waitlistAgeApproved&&<TurnstileChallenge onToken={handleCaptchaToken}/>}
         {error&&<AlexText role="alert" sx={{color:'error.main'}}>{error}</AlexText>}
         {message&&<AlexText role="status" sx={{color:'success.main'}}>{message}</AlexText>}
-        {waitlistAgeApproved&&<AlexButton disabled={busy||!waitlistEmail.includes('@')||!waitlistBirthDate||!captchaToken} onClick={()=>void joinWaitlist()}>Join waitlist</AlexButton>}
+        {waitlistAgeApproved&&<AlexButton disabled={busy||!waitlistEmail.includes('@')||(Boolean(import.meta.env.VITE_TURNSTILE_SITE_KEY)&&!captchaToken)} onClick={()=>void joinWaitlist()}>Join waitlist</AlexButton>}
         <AlexButton tone="secondary" onClick={()=>setRegistrationFull(false)}>I already have an account — sign in</AlexButton>
       </AlexStack>:<AuthCredentialsForm
         mode={mode}
