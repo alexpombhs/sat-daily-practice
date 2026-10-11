@@ -23,7 +23,7 @@ begin
     return jsonb_build_object('error',jsonb_build_object('http_code',400,'message','Enter a valid date of birth.'));
   end if;
   if dob > cutoff then
-    return jsonb_build_object('error',jsonb_build_object('http_code',403,'message','Registration is unavailable for this date of birth.'));
+    return jsonb_build_object('error',jsonb_build_object('http_code',403,'message','SAT Daily Practice is for students ages 13 and older. You can create an account once you turn 13.'));
   end if;
   return '{}'::jsonb;
 end;
