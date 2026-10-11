@@ -1,0 +1,1850 @@
+[
+  {
+    "id": "pt1-rw1-01",
+    "module": "rw1",
+    "question_number": 1,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "An engineer tried to ___ the noise from a ventilation fan by fitting its housing with acoustic panels.",
+    "options": [
+      {
+        "label": "A",
+        "text": "reduce"
+      },
+      {
+        "label": "B",
+        "text": "measure"
+      },
+      {
+        "label": "C",
+        "text": "repeat"
+      },
+      {
+        "label": "D",
+        "text": "predict"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Reduce means make less, consistent with the purpose of the panels."
+  },
+  {
+    "id": "pt1-rw1-02",
+    "module": "rw1",
+    "question_number": 2,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The tree-ring patterns ___ periods of drought: narrow rings generally formed in years with little rainfall.",
+    "options": [
+      {
+        "label": "A",
+        "text": "mirror"
+      },
+      {
+        "label": "B",
+        "text": "prevent"
+      },
+      {
+        "label": "C",
+        "text": "conceal"
+      },
+      {
+        "label": "D",
+        "text": "interrupt"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Mirror means reflect or correspond to a pattern; the rings track environmental conditions."
+  },
+  {
+    "id": "pt1-rw1-03",
+    "module": "rw1",
+    "question_number": 3,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Although the trail looked ___ from the entrance, several steep slopes emerged farther along.",
+    "options": [
+      {
+        "label": "A",
+        "text": "level"
+      },
+      {
+        "label": "B",
+        "text": "distant"
+      },
+      {
+        "label": "C",
+        "text": "crowded"
+      },
+      {
+        "label": "D",
+        "text": "remote"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The contrast with steep slopes indicates a seemingly flat trail."
+  },
+  {
+    "id": "pt1-rw1-04",
+    "module": "rw1",
+    "question_number": 4,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The proposal was not entirely ___; despite disagreements about cost, every committee member supported its safety goals.",
+    "options": [
+      {
+        "label": "A",
+        "text": "rejected"
+      },
+      {
+        "label": "B",
+        "text": "funded"
+      },
+      {
+        "label": "C",
+        "text": "documented"
+      },
+      {
+        "label": "D",
+        "text": "feasible"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The concession that members supported part of the proposal rules out complete rejection."
+  },
+  {
+    "id": "pt1-rw1-05",
+    "module": "rw1",
+    "question_number": 5,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Nadia had wanted to leave the family bakery, yet she paused outside its door, smiling at the warm light while checking the train schedule again. The passage mainly conveys Nadia's",
+    "options": [
+      {
+        "label": "A",
+        "text": "conflicting attachment and desire for change"
+      },
+      {
+        "label": "B",
+        "text": "certainty that the bakery will close"
+      },
+      {
+        "label": "C",
+        "text": "indifference toward her departure"
+      },
+      {
+        "label": "D",
+        "text": "anger with her relatives"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Her smile signals attachment while the schedule signals anticipation of leaving."
+  },
+  {
+    "id": "pt1-rw1-06",
+    "module": "rw1",
+    "question_number": 6,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The poem opens by comparing a lake to polished glass, then asks why its surface conceals so much life. The shift chiefly moves from",
+    "options": [
+      {
+        "label": "A",
+        "text": "visual description to questioning appearances"
+      },
+      {
+        "label": "B",
+        "text": "a personal memory to historical evidence"
+      },
+      {
+        "label": "C",
+        "text": "scientific explanation to a command"
+      },
+      {
+        "label": "D",
+        "text": "a conflict to an explicit resolution"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The shift changes from describing a surface to questioning what it hides."
+  },
+  {
+    "id": "pt1-rw1-07",
+    "module": "rw1",
+    "question_number": 7,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "A speaker calls the city's library a 'locked gate' but then lists its free workshops and open doors, arguing that the metaphor misleads. Why invoke the gate?",
+    "options": [
+      {
+        "label": "A",
+        "text": "To challenge the idea that the library excludes residents"
+      },
+      {
+        "label": "B",
+        "text": "To claim all buildings need stronger locks"
+      },
+      {
+        "label": "C",
+        "text": "To describe the architecture literally"
+      },
+      {
+        "label": "D",
+        "text": "To recommend ending workshops"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The speaker introduces a metaphor of exclusion to rebut it with counterexamples."
+  },
+  {
+    "id": "pt1-rw1-08",
+    "module": "rw1",
+    "question_number": 8,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Some birds relocate seasonally. For example, swallows travel hundreds of miles when insects become scarce. What is the function of the second sentence?",
+    "options": [
+      {
+        "label": "A",
+        "text": "It illustrates the opening generalization."
+      },
+      {
+        "label": "B",
+        "text": "It disputes the opening sentence."
+      },
+      {
+        "label": "C",
+        "text": "It introduces a competing theory."
+      },
+      {
+        "label": "D",
+        "text": "It explains why all birds remain stationary."
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The swallow is a specific instance of seasonal relocation."
+  },
+  {
+    "id": "pt1-rw1-09",
+    "module": "rw1",
+    "question_number": 9,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Text 1 argues that early villages formed only after farming became widespread. Text 2 cites evidence of permanent settlements supported mainly by fishing before intensive farming. Text 2 primarily",
+    "options": [
+      {
+        "label": "A",
+        "text": "challenges the sequence asserted in Text 1"
+      },
+      {
+        "label": "B",
+        "text": "accepts the sequence without qualification"
+      },
+      {
+        "label": "C",
+        "text": "claims farming never developed"
+      },
+      {
+        "label": "D",
+        "text": "focuses only on modern fishing"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The second account offers a potentially earlier route to settlement."
+  },
+  {
+    "id": "pt1-rw1-10",
+    "module": "rw1",
+    "question_number": 10,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Elena returned every lost item she found and stayed late to help neighbors repair bicycles. These details characterize her as",
+    "options": [
+      {
+        "label": "A",
+        "text": "conscientious and helpful"
+      },
+      {
+        "label": "B",
+        "text": "secretive and impatient"
+      },
+      {
+        "label": "C",
+        "text": "careless about property"
+      },
+      {
+        "label": "D",
+        "text": "unwilling to cooperate"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Her repeated considerate actions support helpfulness."
+  },
+  {
+    "id": "pt1-rw1-11",
+    "module": "rw1",
+    "question_number": 11,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "A writer says memories are 'seeds stored beneath winter soil.' The comparison suggests memories",
+    "options": [
+      {
+        "label": "A",
+        "text": "can persist quietly and later grow vivid"
+      },
+      {
+        "label": "B",
+        "text": "disappear immediately when forgotten"
+      },
+      {
+        "label": "C",
+        "text": "are always visible to others"
+      },
+      {
+        "label": "D",
+        "text": "have no connection to time"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Dormant seeds evoke memories that remain latent but may reemerge."
+  },
+  {
+    "id": "pt1-rw1-12",
+    "module": "rw1",
+    "question_number": 12,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "When Tom's younger cousin struggled with a puzzle, Tom offered a hint but allowed the cousin to finish it independently. The central idea is that Tom",
+    "options": [
+      {
+        "label": "A",
+        "text": "supports others without taking over"
+      },
+      {
+        "label": "B",
+        "text": "prefers solving puzzles alone"
+      },
+      {
+        "label": "C",
+        "text": "refuses to assist family"
+      },
+      {
+        "label": "D",
+        "text": "dislikes difficult games"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "His limited hint encourages the cousin's independence."
+  },
+  {
+    "id": "pt1-rw1-13",
+    "module": "rw1",
+    "question_number": 13,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "A survey records bicycles on three paths: North 46, Creek 31, Hill 58. Which statement is supported?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Hill had the most recorded bicycles."
+      },
+      {
+        "label": "B",
+        "text": "Creek had more than North."
+      },
+      {
+        "label": "C",
+        "text": "North had twice Creek's total."
+      },
+      {
+        "label": "D",
+        "text": "All three paths had equal totals."
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "58 is greater than 46 and 31."
+  },
+  {
+    "id": "pt1-rw1-14",
+    "module": "rw1",
+    "question_number": 14,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "For four years, two populations of insects were observed. Population A rose from 80 to 160; B declined from 150 to 90. Which result supports a claim that their trends diverged?",
+    "options": [
+      {
+        "label": "A",
+        "text": "A increased while B decreased."
+      },
+      {
+        "label": "B",
+        "text": "Both increased by the same amount."
+      },
+      {
+        "label": "C",
+        "text": "Both remained unchanged."
+      },
+      {
+        "label": "D",
+        "text": "B increased more rapidly than A."
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The populations changed in opposite directions."
+  },
+  {
+    "id": "pt1-rw1-15",
+    "module": "rw1",
+    "question_number": 15,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "A materials study compared panels of equal area. At 10°C, panel X lost 12 units of heat and Y lost 21; at 20°C, X lost 18 and Y lost 25. Which conclusion is supported?",
+    "options": [
+      {
+        "label": "A",
+        "text": "X lost less heat than Y at both temperatures."
+      },
+      {
+        "label": "B",
+        "text": "X lost more heat at 20°C than Y did."
+      },
+      {
+        "label": "C",
+        "text": "Temperature did not affect either panel."
+      },
+      {
+        "label": "D",
+        "text": "Y lost exactly twice as much as X at both temperatures."
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Each matched-temperature comparison shows a smaller loss for X."
+  },
+  {
+    "id": "pt1-rw1-16",
+    "module": "rw1",
+    "question_number": 16,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "A historian argues that a mural was designed collectively. Which account best supports the claim?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Several artists planned the layout together and signed the completed work."
+      },
+      {
+        "label": "B",
+        "text": "One artist barred others from the studio."
+      },
+      {
+        "label": "C",
+        "text": "The mural remained unfinished for decades."
+      },
+      {
+        "label": "D",
+        "text": "No records identify where the mural was installed."
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Joint planning is direct evidence for shared creation."
+  },
+  {
+    "id": "pt1-rw1-17",
+    "module": "rw1",
+    "question_number": 17,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "A researcher predicts a mineral additive benefits all seedlings equally. In an experiment, seedlings from species A grew 20% more with the additive, but species B grew no more than untreated B seedlings. The result",
+    "options": [
+      {
+        "label": "A",
+        "text": "challenges the claim of equal benefit"
+      },
+      {
+        "label": "B",
+        "text": "proves the additive is poisonous"
+      },
+      {
+        "label": "C",
+        "text": "shows both species grew equally"
+      },
+      {
+        "label": "D",
+        "text": "rules out any benefit to A"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The two species respond differently under the treatment."
+  },
+  {
+    "id": "pt1-rw1-18",
+    "module": "rw1",
+    "question_number": 18,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Excavators found matching decorative marks on objects from distant sites, but none at settlements between them. What is the most cautious inference?",
+    "options": [
+      {
+        "label": "A",
+        "text": "The sites may have exchanged ideas through a network not yet fully documented."
+      },
+      {
+        "label": "B",
+        "text": "The two settlements certainly had identical governments."
+      },
+      {
+        "label": "C",
+        "text": "Every society used these same marks."
+      },
+      {
+        "label": "D",
+        "text": "The marks prove the objects were made in one workshop."
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Shared symbolism is consistent with cultural contact but does not establish a precise mechanism."
+  },
+  {
+    "id": "pt1-rw1-19",
+    "module": "rw1",
+    "question_number": 19,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "At the science fair, the two ___ presentations explained different approaches to water filtration.",
+    "options": [
+      {
+        "label": "A",
+        "text": "teams'"
+      },
+      {
+        "label": "B",
+        "text": "team's"
+      },
+      {
+        "label": "C",
+        "text": "teams"
+      },
+      {
+        "label": "D",
+        "text": "teams's"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The presentations belong to two teams, requiring the plural possessive teams'."
+  },
+  {
+    "id": "pt1-rw1-20",
+    "module": "rw1",
+    "question_number": 20,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Each Monday, a technician ___ the weather sensors for damage.",
+    "options": [
+      {
+        "label": "A",
+        "text": "checks"
+      },
+      {
+        "label": "B",
+        "text": "checked"
+      },
+      {
+        "label": "C",
+        "text": "checking"
+      },
+      {
+        "label": "D",
+        "text": "have checked"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Each Monday describes a habitual action, so the present-tense singular verb checks fits."
+  },
+  {
+    "id": "pt1-rw1-21",
+    "module": "rw1",
+    "question_number": 21,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The bridge was closed overnight ___ workers inspected its supporting cables the next morning.",
+    "options": [
+      {
+        "label": "A",
+        "text": "."
+      },
+      {
+        "label": "B",
+        "text": " ,"
+      },
+      {
+        "label": "C",
+        "text": "and"
+      },
+      {
+        "label": "D",
+        "text": "because"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "A period correctly separates two complete sentences; the alternatives lack appropriate joining punctuation in this construction."
+  },
+  {
+    "id": "pt1-rw1-22",
+    "module": "rw1",
+    "question_number": 22,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The sequence of color-coded labels ___ the technicians locate every storage bin.",
+    "options": [
+      {
+        "label": "A",
+        "text": "helps"
+      },
+      {
+        "label": "B",
+        "text": "help"
+      },
+      {
+        "label": "C",
+        "text": "have helped"
+      },
+      {
+        "label": "D",
+        "text": "are helping"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The singular head noun sequence takes helps."
+  },
+  {
+    "id": "pt1-rw1-23",
+    "module": "rw1",
+    "question_number": 23,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The sketches were submitted on Friday ___ the judges announced the finalists on Monday.",
+    "options": [
+      {
+        "label": "A",
+        "text": ";"
+      },
+      {
+        "label": "B",
+        "text": " ,"
+      },
+      {
+        "label": "C",
+        "text": " :"
+      },
+      {
+        "label": "D",
+        "text": "and"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "A semicolon joins the two independent clauses."
+  },
+  {
+    "id": "pt1-rw1-24",
+    "module": "rw1",
+    "question_number": 24,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Walking across the courtyard, ___ spotted a loose stone near the fountain.",
+    "options": [
+      {
+        "label": "A",
+        "text": "the groundskeeper"
+      },
+      {
+        "label": "B",
+        "text": "a loose stone"
+      },
+      {
+        "label": "C",
+        "text": "the fountain"
+      },
+      {
+        "label": "D",
+        "text": "the ground"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The introductory modifier must describe the person walking."
+  },
+  {
+    "id": "pt1-rw1-25",
+    "module": "rw1",
+    "question_number": 25,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The workshop included designers from Quito, Ecuador; Dakar, Senegal; and ___ .",
+    "options": [
+      {
+        "label": "A",
+        "text": "Oslo, Norway"
+      },
+      {
+        "label": "B",
+        "text": "Oslo; Norway"
+      },
+      {
+        "label": "C",
+        "text": "Oslo: Norway"
+      },
+      {
+        "label": "D",
+        "text": "Oslo Norway"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Semicolons separate complex list items that contain internal commas."
+  },
+  {
+    "id": "pt1-rw1-26",
+    "module": "rw1",
+    "question_number": 26,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The device was inexpensive ___ however, it required frequent maintenance.",
+    "options": [
+      {
+        "label": "A",
+        "text": ";"
+      },
+      {
+        "label": "B",
+        "text": " ,"
+      },
+      {
+        "label": "C",
+        "text": " :"
+      },
+      {
+        "label": "D",
+        "text": "and"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "A semicolon before however separates independent clauses; a comma after however is also needed in the completed sentence."
+  },
+  {
+    "id": "pt1-rw1-27",
+    "module": "rw1",
+    "question_number": 27,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The instruments were calibrated; ___, the team started collecting measurements.",
+    "options": [
+      {
+        "label": "A",
+        "text": "finally"
+      },
+      {
+        "label": "B",
+        "text": "however"
+      },
+      {
+        "label": "C",
+        "text": "otherwise"
+      },
+      {
+        "label": "D",
+        "text": "instead"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Finally fits the last step of a sequence."
+  },
+  {
+    "id": "pt1-rw1-28",
+    "module": "rw1",
+    "question_number": 28,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The map originally suggested a single entrance. ___, a later inspection revealed three entrances.",
+    "options": [
+      {
+        "label": "A",
+        "text": "However"
+      },
+      {
+        "label": "B",
+        "text": "Furthermore"
+      },
+      {
+        "label": "C",
+        "text": "Similarly"
+      },
+      {
+        "label": "D",
+        "text": "Consequently"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "However signals that new evidence contradicts an earlier belief."
+  },
+  {
+    "id": "pt1-rw1-29",
+    "module": "rw1",
+    "question_number": 29,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The park includes a rain garden. ___, its paths use permeable paving to absorb runoff.",
+    "options": [
+      {
+        "label": "A",
+        "text": "Additionally"
+      },
+      {
+        "label": "B",
+        "text": "Instead"
+      },
+      {
+        "label": "C",
+        "text": "Nevertheless"
+      },
+      {
+        "label": "D",
+        "text": "Earlier"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Additionally introduces a second related feature."
+  },
+  {
+    "id": "pt1-rw1-30",
+    "module": "rw1",
+    "question_number": 30,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The soil dried during the heat wave. ___, the seedlings required more frequent watering.",
+    "options": [
+      {
+        "label": "A",
+        "text": "Consequently"
+      },
+      {
+        "label": "B",
+        "text": "Conversely"
+      },
+      {
+        "label": "C",
+        "text": "Meanwhile"
+      },
+      {
+        "label": "D",
+        "text": "Nevertheless"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Consequently expresses a result of the drying."
+  },
+  {
+    "id": "pt1-rw1-31",
+    "module": "rw1",
+    "question_number": 31,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Notes: Paper maps require printed updates; digital maps can display new closures immediately. Which sentence highlights a difference?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Unlike printed maps, digital maps can reflect newly reported closures without reprinting."
+      },
+      {
+        "label": "B",
+        "text": "Both kinds of maps help visitors find routes."
+      },
+      {
+        "label": "C",
+        "text": "Maps often use familiar symbols."
+      },
+      {
+        "label": "D",
+        "text": "Every map has a title."
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The sentence explicitly contrasts update methods."
+  },
+  {
+    "id": "pt1-rw1-32",
+    "module": "rw1",
+    "question_number": 32,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Notes: Sculptor Lina Chen assembles discarded glass into hanging forms; her work Lantern Current casts moving shadows. Which introduction is best for an unfamiliar audience?",
+    "options": [
+      {
+        "label": "A",
+        "text": "In Lantern Current, sculptor Lina Chen uses recycled glass to create hanging forms and shifting shadows."
+      },
+      {
+        "label": "B",
+        "text": "The artist's newest work is impressive."
+      },
+      {
+        "label": "C",
+        "text": "Chen's piece differs from her earlier ones."
+      },
+      {
+        "label": "D",
+        "text": "It was displayed at a recent event."
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The sentence identifies the artist and work and explains the artwork to newcomers."
+  },
+  {
+    "id": "pt1-rw1-33",
+    "module": "rw1",
+    "question_number": 33,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Notes: Eighty volunteers planted native shrubs; 75% survived a dry summer; watered plots had higher survival than unwatered plots. Which sentence best introduces the results?",
+    "options": [
+      {
+        "label": "A",
+        "text": "A volunteer planting project found 75% shrub survival, with higher survival in watered plots."
+      },
+      {
+        "label": "B",
+        "text": "The volunteers worked on a summer project."
+      },
+      {
+        "label": "C",
+        "text": "Some shrubs require more water than others."
+      },
+      {
+        "label": "D",
+        "text": "Native shrubs can be planted in many places."
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The sentence summarizes the documented outcome and key comparison."
+  },
+  {
+    "id": "pt1-rw2-01",
+    "module": "rw2",
+    "question_number": 1,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Demand for reusable containers has increased as cafes offer deposit returns. Analysts expect the market to ___ as more locations adopt the program.",
+    "options": [
+      {
+        "label": "A",
+        "text": "expand"
+      },
+      {
+        "label": "B",
+        "text": "stagnate"
+      },
+      {
+        "label": "C",
+        "text": "vanish"
+      },
+      {
+        "label": "D",
+        "text": "contract"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Expand is consistent with more locations and growing demand."
+  },
+  {
+    "id": "pt1-rw2-02",
+    "module": "rw2",
+    "question_number": 2,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "When the prototype failed, Priya took a ___ approach, testing one component at a time instead of replacing the entire device.",
+    "options": [
+      {
+        "label": "A",
+        "text": "methodical"
+      },
+      {
+        "label": "B",
+        "text": "reckless"
+      },
+      {
+        "label": "C",
+        "text": "ceremonial"
+      },
+      {
+        "label": "D",
+        "text": "vague"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Testing sequentially is a methodical troubleshooting strategy."
+  },
+  {
+    "id": "pt1-rw2-03",
+    "module": "rw2",
+    "question_number": 3,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Using high-resolution microscopes, scientists can ___ tiny cracks that ordinary cameras cannot reveal.",
+    "options": [
+      {
+        "label": "A",
+        "text": "detect"
+      },
+      {
+        "label": "B",
+        "text": "invent"
+      },
+      {
+        "label": "C",
+        "text": "erase"
+      },
+      {
+        "label": "D",
+        "text": "dismiss"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Detect means observe or discover a feature."
+  },
+  {
+    "id": "pt1-rw2-04",
+    "module": "rw2",
+    "question_number": 4,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Compared with the ancestral bone, the newer fossil has a more ___ joint that allows rotation through a wider angle.",
+    "options": [
+      {
+        "label": "A",
+        "text": "flexible"
+      },
+      {
+        "label": "B",
+        "text": "massive"
+      },
+      {
+        "label": "C",
+        "text": "fragile"
+      },
+      {
+        "label": "D",
+        "text": "identical"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Greater allowable rotation indicates greater flexibility."
+  },
+  {
+    "id": "pt1-rw2-05",
+    "module": "rw2",
+    "question_number": 5,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "References to the sea are not ___ in these poems; they appear in nearly every stanza.",
+    "options": [
+      {
+        "label": "A",
+        "text": "rare"
+      },
+      {
+        "label": "B",
+        "text": "elaborate"
+      },
+      {
+        "label": "C",
+        "text": "literal"
+      },
+      {
+        "label": "D",
+        "text": "familiar"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Not rare is consistent with near-constant appearance."
+  },
+  {
+    "id": "pt1-rw2-06",
+    "module": "rw2",
+    "question_number": 6,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "A ceramic artist mixes pigments with clay before firing; heat then ___ the mixture into a durable finish.",
+    "options": [
+      {
+        "label": "A",
+        "text": "transforms"
+      },
+      {
+        "label": "B",
+        "text": "conceals"
+      },
+      {
+        "label": "C",
+        "text": "resists"
+      },
+      {
+        "label": "D",
+        "text": "divides"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Transforms indicates a change into a new material state."
+  },
+  {
+    "id": "pt1-rw2-07",
+    "module": "rw2",
+    "question_number": 7,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The researchers ___ installing additional sensors because the existing network left large gaps in coverage.",
+    "options": [
+      {
+        "label": "A",
+        "text": "advocate"
+      },
+      {
+        "label": "B",
+        "text": "oppose"
+      },
+      {
+        "label": "C",
+        "text": "forget"
+      },
+      {
+        "label": "D",
+        "text": "dismiss"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Advocating means supporting a proposed measure."
+  },
+  {
+    "id": "pt1-rw2-08",
+    "module": "rw2",
+    "question_number": 8,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The report did not ___ the disputed claim; instead, it noted that key archival records were missing.",
+    "options": [
+      {
+        "label": "A",
+        "text": "substantiate"
+      },
+      {
+        "label": "B",
+        "text": "question"
+      },
+      {
+        "label": "C",
+        "text": "repeat"
+      },
+      {
+        "label": "D",
+        "text": "mention"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Substantiate means provide evidence establishing a claim."
+  },
+  {
+    "id": "pt1-rw2-09",
+    "module": "rw2",
+    "question_number": 9,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "After discussing how urban animals adapt, the author describes foxes using railway embankments as nighttime paths. This detail serves to",
+    "options": [
+      {
+        "label": "A",
+        "text": "illustrate a specific adaptation"
+      },
+      {
+        "label": "B",
+        "text": "disprove urban animal movement"
+      },
+      {
+        "label": "C",
+        "text": "change the topic to trains"
+      },
+      {
+        "label": "D",
+        "text": "define railway construction"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The foxes give a concrete example of the preceding general point."
+  },
+  {
+    "id": "pt1-rw2-10",
+    "module": "rw2",
+    "question_number": 10,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Observers recorded how often bees landed on blue and yellow paper flowers. What did researchers directly measure?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Landing frequency on each color"
+      },
+      {
+        "label": "B",
+        "text": "How bees perceive colors internally"
+      },
+      {
+        "label": "C",
+        "text": "The lifetime of each bee"
+      },
+      {
+        "label": "D",
+        "text": "The chemical content of nectar"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The recorded behavior is landings by color."
+  },
+  {
+    "id": "pt1-rw2-11",
+    "module": "rw2",
+    "question_number": 11,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "A researcher claims quieter classrooms always improve recall. Two equal groups studied the same material; the group with moderate background noise recalled more. This finding",
+    "options": [
+      {
+        "label": "A",
+        "text": "contradicts the absolute prediction"
+      },
+      {
+        "label": "B",
+        "text": "proves silence prevents learning"
+      },
+      {
+        "label": "C",
+        "text": "establishes that all noise helps everyone"
+      },
+      {
+        "label": "D",
+        "text": "shows no difference between groups"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Better recall with moderate noise is counterevidence to an always-claim."
+  },
+  {
+    "id": "pt1-rw2-12",
+    "module": "rw2",
+    "question_number": 12,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "A character is described as 'quick to laugh at mistakes' but also 'the first to apologize for her own.' Which quotation best supports a claim of playful yet responsible behavior?",
+    "options": [
+      {
+        "label": "A",
+        "text": "She joked about the spilled paint and then stayed to clean it."
+      },
+      {
+        "label": "B",
+        "text": "She stayed silent throughout the meeting."
+      },
+      {
+        "label": "C",
+        "text": "She refused to revisit the incident."
+      },
+      {
+        "label": "D",
+        "text": "She left before anyone noticed the spill."
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Humor paired with cleaning up demonstrates both traits."
+  },
+  {
+    "id": "pt1-rw2-13",
+    "module": "rw2",
+    "question_number": 13,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Two regions tracked energy prices: in North, prices rose 3%, 6%, and 9% over three years; in South, 8%, 4%, and 1%. Which comparison is accurate?",
+    "options": [
+      {
+        "label": "A",
+        "text": "North's increases accelerated while South's slowed."
+      },
+      {
+        "label": "B",
+        "text": "Both showed steady increases in the rate."
+      },
+      {
+        "label": "C",
+        "text": "South's rate was always larger."
+      },
+      {
+        "label": "D",
+        "text": "North's increases declined each year."
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "North's sequence rises and South's falls."
+  },
+  {
+    "id": "pt1-rw2-14",
+    "module": "rw2",
+    "question_number": 14,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "A debate asked whether street trees lower summer temperatures. One researcher cited shaded sidewalk measurements; another noted that tree type and spacing varied. What does the second researcher emphasize?",
+    "options": [
+      {
+        "label": "A",
+        "text": "A possible confounding factor in the evidence"
+      },
+      {
+        "label": "B",
+        "text": "That shading cannot occur"
+      },
+      {
+        "label": "C",
+        "text": "That all trees have identical effects"
+      },
+      {
+        "label": "D",
+        "text": "That temperature cannot be measured"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Different planting patterns complicate a simple inference."
+  },
+  {
+    "id": "pt1-rw2-15",
+    "module": "rw2",
+    "question_number": 15,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "A character says, 'I could have taken the road that opened before me, but fear held the map.' This image most directly expresses",
+    "options": [
+      {
+        "label": "A",
+        "text": "regret about an avoided opportunity"
+      },
+      {
+        "label": "B",
+        "text": "confidence in a finished journey"
+      },
+      {
+        "label": "C",
+        "text": "indifference to travel"
+      },
+      {
+        "label": "D",
+        "text": "disgust at maps"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The road represents an opportunity and fear prevented taking it."
+  },
+  {
+    "id": "pt1-rw2-16",
+    "module": "rw2",
+    "question_number": 16,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "An essay compares folktales and science fiction, noting that both examine choices but only one commonly invents future technologies. Which conclusion follows?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Genres can share themes while differing in typical settings."
+      },
+      {
+        "label": "B",
+        "text": "The genres never share themes."
+      },
+      {
+        "label": "C",
+        "text": "All folktales concern spacecraft."
+      },
+      {
+        "label": "D",
+        "text": "Science fiction cannot depict ethical decisions."
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The given comparison allows overlap in concerns alongside a difference in conventions."
+  },
+  {
+    "id": "pt1-rw2-17",
+    "module": "rw2",
+    "question_number": 17,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Genetic similarities among populations on two islands, paired with dated settlement remains, suggest contact occurred before a later documented trade route. The evidence most reasonably indicates",
+    "options": [
+      {
+        "label": "A",
+        "text": "some movement between islands predates the recorded route"
+      },
+      {
+        "label": "B",
+        "text": "all island inhabitants arrived in one voyage"
+      },
+      {
+        "label": "C",
+        "text": "the later route never existed"
+      },
+      {
+        "label": "D",
+        "text": "genetic evidence provides an exact sailing date"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Genetics and chronology support early contact without specifying exact journeys."
+  },
+  {
+    "id": "pt1-rw2-18",
+    "module": "rw2",
+    "question_number": 18,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "To estimate a tutoring program's effect, researchers randomly assigned eligible students to either tutoring or existing study hall. Why was this design useful?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Random assignment helps make the groups comparable before the program."
+      },
+      {
+        "label": "B",
+        "text": "It guarantees every student improves."
+      },
+      {
+        "label": "C",
+        "text": "It removes the need to measure outcomes."
+      },
+      {
+        "label": "D",
+        "text": "It proves tutoring cannot affect results."
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Random assignment reduces systematic preexisting group differences."
+  },
+  {
+    "id": "pt1-rw2-19",
+    "module": "rw2",
+    "question_number": 19,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The two ___ decisions were presented to the school board separately.",
+    "options": [
+      {
+        "label": "A",
+        "text": "committees'"
+      },
+      {
+        "label": "B",
+        "text": "committee's"
+      },
+      {
+        "label": "C",
+        "text": "committees"
+      },
+      {
+        "label": "D",
+        "text": "committees's"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Two committees jointly require the plural possessive committees'."
+  },
+  {
+    "id": "pt1-rw2-20",
+    "module": "rw2",
+    "question_number": 20,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The team attributed the discrepancy ___ a sensor that had not been recalibrated.",
+    "options": [
+      {
+        "label": "A",
+        "text": "to"
+      },
+      {
+        "label": "B",
+        "text": "for"
+      },
+      {
+        "label": "C",
+        "text": "with"
+      },
+      {
+        "label": "D",
+        "text": "at"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Attribute a result to a cause is the correct prepositional construction."
+  },
+  {
+    "id": "pt1-rw2-21",
+    "module": "rw2",
+    "question_number": 21,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The volunteers who arrived early ___ assigned to prepare the tables.",
+    "options": [
+      {
+        "label": "A",
+        "text": "were"
+      },
+      {
+        "label": "B",
+        "text": " , were"
+      },
+      {
+        "label": "C",
+        "text": "; were"
+      },
+      {
+        "label": "D",
+        "text": ": were"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The restrictive who-clause is not set off with punctuation."
+  },
+  {
+    "id": "pt1-rw2-22",
+    "module": "rw2",
+    "question_number": 22,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The element carbon has a stable isotope, carbon-13, ___ scientists use in certain tracing studies.",
+    "options": [
+      {
+        "label": "A",
+        "text": "which"
+      },
+      {
+        "label": "B",
+        "text": "and which"
+      },
+      {
+        "label": "C",
+        "text": "; which"
+      },
+      {
+        "label": "D",
+        "text": "that,"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Which introduces an additional clause here without corrupting the sentence structure."
+  },
+  {
+    "id": "pt1-rw2-23",
+    "module": "rw2",
+    "question_number": 23,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The first system had a single backup battery ___ the revised system used two independent batteries.",
+    "options": [
+      {
+        "label": "A",
+        "text": ";"
+      },
+      {
+        "label": "B",
+        "text": " ,"
+      },
+      {
+        "label": "C",
+        "text": " : and"
+      },
+      {
+        "label": "D",
+        "text": "and"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Two independent clauses can be joined by a semicolon."
+  },
+  {
+    "id": "pt1-rw2-24",
+    "module": "rw2",
+    "question_number": 24,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The group added soil sensors ___ identify which planters needed water.",
+    "options": [
+      {
+        "label": "A",
+        "text": "to"
+      },
+      {
+        "label": "B",
+        "text": "for"
+      },
+      {
+        "label": "C",
+        "text": "and"
+      },
+      {
+        "label": "D",
+        "text": "by"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The infinitive to identify expresses purpose."
+  },
+  {
+    "id": "pt1-rw2-25",
+    "module": "rw2",
+    "question_number": 25,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "After inspecting the cracked beam, ___ recommended reinforcing the support.",
+    "options": [
+      {
+        "label": "A",
+        "text": "the engineer"
+      },
+      {
+        "label": "B",
+        "text": "the crack"
+      },
+      {
+        "label": "C",
+        "text": "the reinforcement"
+      },
+      {
+        "label": "D",
+        "text": "the recommendation"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The inspecting subject must be the engineer."
+  },
+  {
+    "id": "pt1-rw2-26",
+    "module": "rw2",
+    "question_number": 26,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "One issue remained unresolved: ___ .",
+    "options": [
+      {
+        "label": "A",
+        "text": "how to transport the equipment safely"
+      },
+      {
+        "label": "B",
+        "text": "the equipment was available"
+      },
+      {
+        "label": "C",
+        "text": "however, everyone agreed"
+      },
+      {
+        "label": "D",
+        "text": "and the shipment arrived"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The colon introduces an explanation of the one issue."
+  },
+  {
+    "id": "pt1-rw2-27",
+    "module": "rw2",
+    "question_number": 27,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The manuscript was reviewed in March. ___, the publisher prepared it for printing in April.",
+    "options": [
+      {
+        "label": "A",
+        "text": "Afterward"
+      },
+      {
+        "label": "B",
+        "text": "Previously"
+      },
+      {
+        "label": "C",
+        "text": "Instead"
+      },
+      {
+        "label": "D",
+        "text": "Likewise"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Afterward conveys the next chronological step."
+  },
+  {
+    "id": "pt1-rw2-28",
+    "module": "rw2",
+    "question_number": 28,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "The town could widen the road. ___, it could reduce speeds through better intersections.",
+    "options": [
+      {
+        "label": "A",
+        "text": "Alternatively"
+      },
+      {
+        "label": "B",
+        "text": "Moreover"
+      },
+      {
+        "label": "C",
+        "text": "For example"
+      },
+      {
+        "label": "D",
+        "text": "Therefore"
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Alternatively offers a different solution."
+  },
+  {
+    "id": "pt1-rw2-29",
+    "module": "rw2",
+    "question_number": 29,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Notes: A steel truss can span long distances with less material than a solid steel beam of similar capacity. Which sentence emphasizes its comparative advantage?",
+    "options": [
+      {
+        "label": "A",
+        "text": "A truss can achieve a long span while using less steel than a comparable solid beam."
+      },
+      {
+        "label": "B",
+        "text": "Steel is widely used in construction."
+      },
+      {
+        "label": "C",
+        "text": "A bridge must carry its own weight."
+      },
+      {
+        "label": "D",
+        "text": "Trusses have recognizable triangular shapes."
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The claim directly compares material efficiency."
+  },
+  {
+    "id": "pt1-rw2-30",
+    "module": "rw2",
+    "question_number": 30,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Notes: Researchers define network effects as a service becoming more valuable when more people use it. The audience already knows social media apps. Which sentence introduces the concept best?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Just as a social platform becomes more useful when friends join, some services gain value as their user base grows."
+      },
+      {
+        "label": "B",
+        "text": "A service is something users access."
+      },
+      {
+        "label": "C",
+        "text": "Researchers have studied many industries."
+      },
+      {
+        "label": "D",
+        "text": "Some people do not use social networks."
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The familiar analogy illuminates the abstract effect."
+  },
+  {
+    "id": "pt1-rw2-31",
+    "module": "rw2",
+    "question_number": 31,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Notes: Star K has a surface temperature of 5,000 K; star M has 8,000 K. Which sentence emphasizes the comparison?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Star M's surface temperature is 3,000 K higher than star K's."
+      },
+      {
+        "label": "B",
+        "text": "Both stars have measurable temperatures."
+      },
+      {
+        "label": "C",
+        "text": "Stars radiate energy into space."
+      },
+      {
+        "label": "D",
+        "text": "Scientists classify stars using several properties."
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The sentence explicitly quantifies the temperature difference."
+  },
+  {
+    "id": "pt1-rw2-32",
+    "module": "rw2",
+    "question_number": 32,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Notes: The book Night Path is a mystery for middle-school readers; it follows a young cartographer decoding old trail markers. Which introduction is best?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Night Path is a middle-grade mystery about a young cartographer solving clues hidden in trail markers."
+      },
+      {
+        "label": "B",
+        "text": "This book has many chapters."
+      },
+      {
+        "label": "C",
+        "text": "It includes a fictional character."
+      },
+      {
+        "label": "D",
+        "text": "Readers may have different opinions about books."
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "The sentence provides audience, genre and premise."
+  },
+  {
+    "id": "pt1-rw2-33",
+    "module": "rw2",
+    "question_number": 33,
+    "subject": "english",
+    "response_type": "multiple-choice",
+    "stem": "Notes: Butterflies draw liquid nectar through a tube-like proboscis; hummingbirds use elongated tongues to collect nectar. Which sentence highlights a similarity?",
+    "options": [
+      {
+        "label": "A",
+        "text": "Both animals use specialized mouthparts to obtain nectar."
+      },
+      {
+        "label": "B",
+        "text": "Butterflies and hummingbirds are the same kind of animal."
+      },
+      {
+        "label": "C",
+        "text": "Both depend only on seeds."
+      },
+      {
+        "label": "D",
+        "text": "Both have identical beaks."
+      }
+    ],
+    "correct_answer": "A",
+    "explanation": "Both descriptions involve adapted structures used to consume nectar."
+  }
+]
