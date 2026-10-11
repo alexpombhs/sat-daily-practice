@@ -5,9 +5,9 @@
 This checklist records code and configuration contracts. Quality assurance is deliberately tracked separately in `docs/QA_LA_GA_TEST_PLAN.md`.
 
 ### Signup and launch admission
-- [x] Display the age 13+ requirement and validate date of birth before asking for email or password.
+- [x] Display an explicit 13+ confirmation before asking for email or password. No date of birth is requested.
 - [x] Supabase Before User Created age hook rejects invalid/under-13 registrations from any signup client.
-- [x] Strip full birthdate from persisted Supabase Auth metadata after registration.
+- [x] Store only the 13+ confirmation flag; no birthdate is requested, and the previous DOB cleanup migration remains available for older records.
 - [x] Operator-controlled closed, LA, GA launch mode (closed by default).
 - [x] LA counts 100 confirmed accounts plus expiring 24-hour pending-signup and invitation reservations; no permanent seat consumption for abandoned confirmations.
 - [x] GA mode removes the LA user-cap restriction.
