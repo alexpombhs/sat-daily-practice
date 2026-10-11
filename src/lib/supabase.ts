@@ -47,10 +47,12 @@ export async function isRegistrationFull():Promise<boolean>{
   return data===true
 }
 
-export async function joinLaunchWaitlist(email:string,birthDate:string):Promise<void>{
-  const normalized=email.trim().toLowerCase()
-  const {error}=await supabase.rpc('sat_join_waitlist',{email_input:normalized,birth_date_input:birthDate})
-  if(error)throw error
+export async function joinLaunchWaitlist(email:string,birthDate:string,captchaToken:string):Promise<void>{
+  if(!captchaToken)throw new Error('Complete the security check.')
+  const {data,error}=await supabase.functions.invoke('sat-waitlist-register',{
+    body:{email:email.trim().toLowerCase(),birthDate,captchaToken},
+  })
+  if(error||!data||data.message!=='Waitlist request received.')throw new Error(data?.message??'Unable to join waitlist.')
 }
 
 export async function signUpWithPassword(email:string,password:string,birthDate:string){
