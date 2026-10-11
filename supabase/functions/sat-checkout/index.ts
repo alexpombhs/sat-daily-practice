@@ -15,8 +15,9 @@ Deno.serve(async(req:Request)=>{
  if(!bearer.startsWith('Bearer '))return errorResponse('Sign in required',401)
  const url=Deno.env.get('SUPABASE_URL'),anon=Deno.env.get('SUPABASE_ANON_KEY')
  const stripeKey=Deno.env.get('STRIPE_SECRET_KEY'),price=Deno.env.get('STRIPE_LA_PRICE_ID')
+ const serviceKey=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
  const site=Deno.env.get('LA_APP_URL')
- if(!url||!anon||!stripeKey||!price||!site)return errorResponse('Checkout not configured',503)
+ if(!url||!anon||!serviceKey||!stripeKey||!price||!site)return errorResponse('Checkout not configured',503)
  const visitor=createClient(url,anon,{auth:{persistSession:false}})
  const {data:{user},error}=await visitor.auth.getUser(bearer.slice(7))
  if(error||!user||!user.email)return errorResponse('Authentication required',401)
@@ -24,6 +25,9 @@ Deno.serve(async(req:Request)=>{
  try{origin=new URL(site);if(origin.protocol!=='https:')throw Error('Invalid URL')}
  catch{return errorResponse('Invalid site configuration',503)}
  try{
+  const admin=createClient(url,serviceKey,{auth:{persistSession:false}})
+  const {data:contentCleared,error:clearanceError}=await admin.rpc('sat_commercial_content_is_cleared')
+  if(clearanceError||contentCleared!==true)return errorResponse('Paid content is not yet cleared for sale',503)
   const stripe=new Stripe(stripeKey)
   const verifiedPrice=await stripe.prices.retrieve(price)
   if(!verifiedPrice.active||verifiedPrice.currency!=='usd'
