@@ -31,7 +31,7 @@ describe('recent 120-question score prediction',()=>{
     const candidates=[...QUESTION_BANK.filter(q=>q.subject==='english').slice(0,80),...QUESTION_BANK.filter(q=>q.subject==='math').slice(0,70)]
     const rows=candidates.map((q,i)=>({...makeAttempt(q,'s1',i,i%3!==0),createdAt:`2026-09-01T12:${String(Math.floor(i/60)).padStart(2,'0')}:${String(i%60).padStart(2,'0')}.000Z`}))
     const basis=analytics(rows,[session('s1',rows)]).scorePredictionBasis!
-    expect(basis.questionCount).toBe(60)
+    expect(basis.questionCount).toBe(120)
     expect(basis.sections.map(section=>section.questions)).toEqual([60,60])
   })
 
