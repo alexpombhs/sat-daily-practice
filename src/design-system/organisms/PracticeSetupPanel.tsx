@@ -72,9 +72,9 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
       label="Question difficulty"
       helperText={`${filteredDifficultyCount} question${filteredDifficultyCount===1?'':'s'} match the current practice test, subject, and difficulty filters.`}
       control={<AlexBox sx={{display:'flex',flexWrap:{xs:'wrap',md:'nowrap'},gap:{xs:0,sm:.5},alignItems:'center',justifyContent:'space-between'}}>
-        <FormControlLabel control={<Checkbox size="small" checked={difficultyAll} onChange={(_,checked)=>onChange({...settings,difficulty:'all',difficultyLevels:checked?['easy','medium','advanced']:[]})}/>} label="All"/>
+        <AlexCheckbox label="All" checked={difficultyAll} onChange={checked=>onChange({...settings,difficulty:'all',difficultyLevels:checked?['easy','medium','advanced']:[]})}/>
         {(['easy','medium','advanced'] as QuestionDifficulty[]).map(level=>
-          <FormControlLabel key={level} control={<Checkbox size="small" checked={difficultyLevels.includes(level)} onChange={(_,checked)=>setDifficultyLevel(level,checked)}/>} label={level[0].toUpperCase()+level.slice(1)}/>
+          <AlexCheckbox key={level} checked={difficultyLevels.includes(level)} onChange={checked=>setDifficultyLevel(level,checked)} label={level[0].toUpperCase()+level.slice(1)}/>
         )}
       </AlexBox>}
     />
