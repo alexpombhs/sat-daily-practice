@@ -1,6 +1,7 @@
 // Bundled preview of the original mock questions. The Supabase migrations are the canonical shared copy.
 import type {PracticeQuestion} from '../types'
 import {ADDITIONAL_TARGETED_MOCK_QUESTIONS,additionalTargetedMockContent} from './additionalTargetedMockQuestions'
+import {MASTERY_MOCK_QUESTIONS,masteryMockContent} from './masteryMockQuestions'
 export type MockQuestionContent={questionLines:string[];explanationLines:string[]}
 const items=[
   {
@@ -442,8 +443,10 @@ const INITIAL_MOCK_QUESTIONS:PracticeQuestion[]=items.map(item=>({
   acceptedAnswers:[item.correctAnswer],responseType:'multiple-choice',
   contentStatus:'verified',questionMode:'text',difficulty:item.difficulty,
 }))
-export const TARGETED_MOCK_QUESTIONS:PracticeQuestion[]=[...INITIAL_MOCK_QUESTIONS,...ADDITIONAL_TARGETED_MOCK_QUESTIONS]
+export const TARGETED_MOCK_QUESTIONS:PracticeQuestion[]=[...INITIAL_MOCK_QUESTIONS,...ADDITIONAL_TARGETED_MOCK_QUESTIONS,...MASTERY_MOCK_QUESTIONS]
 export function targetedMockContent(id:string):MockQuestionContent|undefined{
+  const mastery=masteryMockContent(id)
+  if(mastery)return mastery
   const additional=additionalTargetedMockContent(id)
   if(additional)return additional
   const item=items.find(question=>question.id===id)
