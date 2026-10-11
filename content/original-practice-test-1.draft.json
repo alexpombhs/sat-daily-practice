@@ -1,0 +1,461 @@
+{
+  "status": "draft-incomplete",
+  "practice_test_id": "practice-test-1",
+  "source": "Independently authored from generic SAT skill objectives; does not reproduce official questions.",
+  "target_counts": {
+    "rw1": 33,
+    "rw2": 33,
+    "math1": 27,
+    "math2": 27
+  },
+  "questions": [
+    {
+      "id": "pt1-original-001",
+      "module": "rw1",
+      "subject": "english",
+      "difficulty": "easy",
+      "concept": "words in context",
+      "stem": "A small town's garden had been neglected for years. After residents began volunteering each weekend, the once-barren beds became ______ with flowers and herbs.",
+      "options": [
+        {
+          "label": "A",
+          "text": "crowded"
+        },
+        {
+          "label": "B",
+          "text": "abundant"
+        },
+        {
+          "label": "C",
+          "text": "remote"
+        },
+        {
+          "label": "D",
+          "text": "fragile"
+        }
+      ],
+      "correct_answer": "B",
+      "explanation": "Abundant means plentiful, matching the growth of flowers and herbs."
+    },
+    {
+      "id": "pt1-original-002",
+      "module": "rw1",
+      "subject": "english",
+      "difficulty": "easy",
+      "concept": "subject-verb agreement",
+      "stem": "The collection of astronomy photographs, including images of distant galaxies, ______ on the library's second floor.",
+      "options": [
+        {
+          "label": "A",
+          "text": "are displayed"
+        },
+        {
+          "label": "B",
+          "text": "is displayed"
+        },
+        {
+          "label": "C",
+          "text": "were displaying"
+        },
+        {
+          "label": "D",
+          "text": "have displayed"
+        }
+      ],
+      "correct_answer": "B",
+      "explanation": "The singular subject collection requires the singular verb is."
+    },
+    {
+      "id": "pt1-original-003",
+      "module": "rw1",
+      "subject": "english",
+      "difficulty": "medium",
+      "concept": "command of evidence",
+      "stem": "A student claims that extended library hours help students who have responsibilities after school. Which finding would most directly support the claim?",
+      "options": [
+        {
+          "label": "A",
+          "text": "The library purchased more chairs last year."
+        },
+        {
+          "label": "B",
+          "text": "Most books were borrowed during lunchtime."
+        },
+        {
+          "label": "C",
+          "text": "Students with after-school jobs used the library most often after 7 p.m."
+        },
+        {
+          "label": "D",
+          "text": "The library building opened several decades ago."
+        }
+      ],
+      "correct_answer": "C",
+      "explanation": "Late use by students with after-school jobs directly connects extended hours to the claimed benefit."
+    },
+    {
+      "id": "pt1-original-004",
+      "module": "rw1",
+      "subject": "english",
+      "difficulty": "advanced",
+      "concept": "scientific hypothesis and evidence",
+      "stem": "Researchers predict that shade reduces evaporation from shallow ponds. Identical containers received equal amounts of water and were placed outdoors for five days. Which result most strongly supports the prediction?",
+      "options": [
+        {
+          "label": "A",
+          "text": "Shaded and unshaded containers lost the same amount of water."
+        },
+        {
+          "label": "B",
+          "text": "Unshaded containers lost 18% of their water, while shaded containers lost 7%."
+        },
+        {
+          "label": "C",
+          "text": "Shaded containers began with more water than unshaded containers."
+        },
+        {
+          "label": "D",
+          "text": "Every container lost more water on the first day than on later days."
+        }
+      ],
+      "correct_answer": "B",
+      "explanation": "With equal starting volumes, less loss in shade supports the hypothesis that shade reduces evaporation."
+    },
+    {
+      "id": "pt1-original-005",
+      "module": "rw2",
+      "subject": "english",
+      "difficulty": "easy",
+      "concept": "temporal transitions",
+      "stem": "Mira drafted a map of the school garden. ______, she measured the paths and adjusted the map to match their actual widths.",
+      "options": [
+        {
+          "label": "A",
+          "text": "Previously"
+        },
+        {
+          "label": "B",
+          "text": "Next"
+        },
+        {
+          "label": "C",
+          "text": "Nevertheless"
+        },
+        {
+          "label": "D",
+          "text": "Similarly"
+        }
+      ],
+      "correct_answer": "B",
+      "explanation": "Next establishes that measuring followed the first draft."
+    },
+    {
+      "id": "pt1-original-006",
+      "module": "rw2",
+      "subject": "english",
+      "difficulty": "medium",
+      "concept": "sentence boundaries",
+      "stem": "The observatory's original lens was installed in 1912 ______ it remained in use until a newer lens replaced it decades later.",
+      "options": [
+        {
+          "label": "A",
+          "text": " , and"
+        },
+        {
+          "label": "B",
+          "text": " ,"
+        },
+        {
+          "label": "C",
+          "text": " ; and"
+        },
+        {
+          "label": "D",
+          "text": " : and"
+        }
+      ],
+      "correct_answer": "A",
+      "explanation": "A comma followed by the coordinating conjunction and correctly joins the two independent clauses."
+    },
+    {
+      "id": "pt1-original-007",
+      "module": "rw2",
+      "subject": "english",
+      "difficulty": "medium",
+      "concept": "rhetorical synthesis",
+      "stem": "A student has these notes: (1) A rain garden collects runoff from roofs and pavement. (2) Its soil allows some water to soak into the ground. (3) Native plants can grow in the garden. The student wants to explain how a rain garden reduces runoff. Which sentence best achieves this goal?",
+      "options": [
+        {
+          "label": "A",
+          "text": "Rain gardens often include plants native to the region."
+        },
+        {
+          "label": "B",
+          "text": "By collecting water from hard surfaces and allowing some of it to soak into the soil, a rain garden can reduce runoff."
+        },
+        {
+          "label": "C",
+          "text": "Some rain gardens are located near school buildings."
+        },
+        {
+          "label": "D",
+          "text": "The flowers in a rain garden may attract insects."
+        }
+      ],
+      "correct_answer": "B",
+      "explanation": "Only the second sentence explains the mechanism connecting collection, infiltration, and less runoff."
+    },
+    {
+      "id": "pt1-original-008",
+      "module": "rw2",
+      "subject": "english",
+      "difficulty": "advanced",
+      "concept": "logical conclusion",
+      "stem": "Two teams tested a new insulation material. Team A measured lower heat loss in a small laboratory box. Team B tested a full-sized building and found little change, noting gaps around several windows. Which conclusion is best supported?",
+      "options": [
+        {
+          "label": "A",
+          "text": "The material can never reduce heat loss in any building."
+        },
+        {
+          "label": "B",
+          "text": "The laboratory data must have been fabricated."
+        },
+        {
+          "label": "C",
+          "text": "Performance in a full building may depend on installation details not captured by a small-box test."
+        },
+        {
+          "label": "D",
+          "text": "Window gaps have no influence on building heat loss."
+        }
+      ],
+      "correct_answer": "C",
+      "explanation": "The differing contexts and observed window gaps justify a limited conclusion about installation conditions."
+    },
+    {
+      "id": "pt1-original-009",
+      "module": "math1",
+      "subject": "math",
+      "difficulty": "easy",
+      "concept": "linear equations",
+      "stem": "Solve for x: 5x + 9 = 44.",
+      "options": [
+        {
+          "label": "A",
+          "text": "5"
+        },
+        {
+          "label": "B",
+          "text": "7"
+        },
+        {
+          "label": "C",
+          "text": "8"
+        },
+        {
+          "label": "D",
+          "text": "11"
+        }
+      ],
+      "correct_answer": "B",
+      "explanation": "Subtract 9 from both sides to get 5x=35, then divide by 5 to obtain x=7."
+    },
+    {
+      "id": "pt1-original-010",
+      "module": "math1",
+      "subject": "math",
+      "difficulty": "medium",
+      "concept": "percent and proportional reasoning",
+      "stem": "A museum increases the price of a ticket from $16 to $20. What is the percentage increase relative to the original price?",
+      "options": [
+        {
+          "label": "A",
+          "text": "20%"
+        },
+        {
+          "label": "B",
+          "text": "25%"
+        },
+        {
+          "label": "C",
+          "text": "30%"
+        },
+        {
+          "label": "D",
+          "text": "40%"
+        }
+      ],
+      "correct_answer": "B",
+      "explanation": "The increase is $4. Dividing by the original $16 gives 0.25, or 25%."
+    },
+    {
+      "id": "pt1-original-011",
+      "module": "math1",
+      "subject": "math",
+      "difficulty": "medium",
+      "concept": "systems of linear equations",
+      "stem": "If 2x + y = 17 and x - y = 4, what is x?",
+      "options": [
+        {
+          "label": "A",
+          "text": "5"
+        },
+        {
+          "label": "B",
+          "text": "6"
+        },
+        {
+          "label": "C",
+          "text": "7"
+        },
+        {
+          "label": "D",
+          "text": "9"
+        }
+      ],
+      "correct_answer": "C",
+      "explanation": "Adding the equations gives 3x=21, so x=7."
+    },
+    {
+      "id": "pt1-original-012",
+      "module": "math1",
+      "subject": "math",
+      "difficulty": "advanced",
+      "concept": "quadratic discriminant",
+      "stem": "For which value of k does x² - 10x + k = 0 have exactly one real solution?",
+      "options": [
+        {
+          "label": "A",
+          "text": "20"
+        },
+        {
+          "label": "B",
+          "text": "24"
+        },
+        {
+          "label": "C",
+          "text": "25"
+        },
+        {
+          "label": "D",
+          "text": "30"
+        }
+      ],
+      "correct_answer": "C",
+      "explanation": "A quadratic has one real solution when its discriminant is zero: 100-4k=0, hence k=25."
+    },
+    {
+      "id": "pt1-original-013",
+      "module": "math2",
+      "subject": "math",
+      "difficulty": "easy",
+      "concept": "geometry and area",
+      "stem": "A rectangle has a length of 13 cm and a width of 6 cm. What is its area in square centimeters?",
+      "options": [
+        {
+          "label": "A",
+          "text": "19"
+        },
+        {
+          "label": "B",
+          "text": "38"
+        },
+        {
+          "label": "C",
+          "text": "78"
+        },
+        {
+          "label": "D",
+          "text": "156"
+        }
+      ],
+      "correct_answer": "C",
+      "explanation": "Area equals length times width: 13×6=78 square centimeters."
+    },
+    {
+      "id": "pt1-original-014",
+      "module": "math2",
+      "subject": "math",
+      "difficulty": "medium",
+      "concept": "functions",
+      "stem": "For f(x)=3x²-2, what is f(-4)?",
+      "options": [
+        {
+          "label": "A",
+          "text": "34"
+        },
+        {
+          "label": "B",
+          "text": "40"
+        },
+        {
+          "label": "C",
+          "text": "46"
+        },
+        {
+          "label": "D",
+          "text": "50"
+        }
+      ],
+      "correct_answer": "C",
+      "explanation": "Substitute -4: 3(16)-2=46."
+    },
+    {
+      "id": "pt1-original-015",
+      "module": "math2",
+      "subject": "math",
+      "difficulty": "medium",
+      "concept": "exponential growth",
+      "stem": "A population of 400 bacteria doubles every hour. How many bacteria are present after 3 hours?",
+      "options": [
+        {
+          "label": "A",
+          "text": "1,200"
+        },
+        {
+          "label": "B",
+          "text": "1,600"
+        },
+        {
+          "label": "C",
+          "text": "2,400"
+        },
+        {
+          "label": "D",
+          "text": "3,200"
+        }
+      ],
+      "correct_answer": "D",
+      "explanation": "Three doublings give 400×2³=3,200."
+    },
+    {
+      "id": "pt1-original-016",
+      "module": "math2",
+      "subject": "math",
+      "difficulty": "advanced",
+      "concept": "circle equations",
+      "stem": "The equation (x-2)²+(y+3)²=49 describes a circle. What is the distance between its center and the origin?",
+      "options": [
+        {
+          "label": "A",
+          "text": "√5"
+        },
+        {
+          "label": "B",
+          "text": "√13"
+        },
+        {
+          "label": "C",
+          "text": "7"
+        },
+        {
+          "label": "D",
+          "text": "√49"
+        }
+      ],
+      "correct_answer": "B",
+      "explanation": "The center is (2,-3). Its distance from (0,0) is √(2²+(-3)²)=√13."
+    }
+  ]
+}
