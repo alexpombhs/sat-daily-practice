@@ -18,6 +18,7 @@ type PracticeTestOption={value:PracticeTestFilter;label:string}
 type Props={
   settings:Settings
   practiceTests:PracticeTestOption[]
+  difficultyCounts:{all:number;easy:number;medium:number;advanced:number}
   newQuestionCount:number
   failedQuestionCount:number
   onChange:(settings:Settings)=>void
@@ -25,7 +26,7 @@ type Props={
   recommendation:PracticePlanRecommendation
 }
 
-export default function PracticeSetupPanel({settings,practiceTests,newQuestionCount,failedQuestionCount,onChange,onStart,recommendation}:Props){
+export default function PracticeSetupPanel({settings,practiceTests,difficultyCounts,newQuestionCount,failedQuestionCount,onChange,onStart,recommendation}:Props){
   const selectionMode=settings.selectionMode??'adaptive'
   const practiceTest=settings.practiceTest??'all'
   const newOnly=settings.failedOnly??false
@@ -62,12 +63,12 @@ export default function PracticeSetupPanel({settings,practiceTests,newQuestionCo
 
     <PracticeSettingField
       label="Question difficulty"
-      helperText="Difficulty is based on content-reviewed questions. Unclassified questions are available under All."
+      helperText={`Based on content-reviewed questions. ${difficultyCounts.all-difficultyCounts.easy-difficultyCounts.medium-difficultyCounts.advanced} unclassified question(s) remain available under All.`}
       control={<AlexTabs
         value={settings.difficulty??'all'}
         variant="scrollable"
         scrollButtons={false}
-        options={[{value:'all',label:'All'},{value:'easy',label:'Easy'},{value:'medium',label:'Medium'},{value:'advanced',label:'Advanced'}]}
+        options={[{value:'all',label:`All (${difficultyCounts.all})`},{value:'easy',label:`Easy (${difficultyCounts.easy})`},{value:'medium',label:`Medium (${difficultyCounts.medium})`},{value:'advanced',label:`Advanced (${difficultyCounts.advanced})`}]}
         onChange={difficulty=>onChange({...settings,difficulty})}
         aria-label="SAT question difficulty"
         sx={{'& .MuiTab-root':{px:{xs:1.1,sm:1.5},fontSize:{xs:12,sm:13}}}}
