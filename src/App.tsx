@@ -401,7 +401,7 @@ export default function App(){
   }
 
   async function finish(){
-    const session:SessionSummary={id:sid,startedAt:started,endedAt:new Date().toISOString(),mode:settings.mode,questionCount:qs.length,attempts:currentAttempts,dailyQuestionGoal:practiceRecommendation.questionsPerSession*practiceRecommendation.recommendedSessionsPerDay}
+    const session:SessionSummary={id:sid,startedAt:started,endedAt:new Date().toISOString(),mode:settings.mode,questionCount:qs.length,attempts:currentAttempts,dailyQuestionGoal:practiceRecommendation.questionsPerSession*practiceRecommendation.recommendedSessionsPerDay,settings:{...settings}}
     try{
       await syncSession(session)
       setSessions(previous=>[...previous,session])
