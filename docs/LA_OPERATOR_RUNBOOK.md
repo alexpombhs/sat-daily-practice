@@ -90,3 +90,19 @@ The code issuance tool is intentionally not exposed to regular users or browsers
 ## Session separation across environments
 Localhost and the published GitHub Pages URL are different browser origins. Supabase Auth already stores sessions per browser origin; the app additionally assigns an explicit origin-scoped storage key. **Both still connect to the same production Supabase project** unless you set a different `VITE_SUPABASE_URL` and publishable key for local development. Account credentials, profiles and practice history belong to the same backend account when you sign in as the same person on both; sign in using two different existing accounts to maintain independent progress. A separate Supabase staging project is recommended for development data isolation.
 
+
+## Secure master test code (Supabase, not environment variables)
+Migration `20261011207000_secure_master_code_storage.sql` creates three RLS-protected tables: `sat_master_test_code_config` (bcrypt hash only), `sat_master_test_allowed_users` (approved Auth user IDs), and `sat_master_test_attempts` (five attempts per user per hour). Only `service_role` can use the verification RPC; the Edge Function verifies the user's bearer token and passes the Auth user ID to `sat_redeem_master_test_code`. The code itself is **never committed to GitHub, returned from a read query, or saved in plaintext**.
+
+To provision a test code, the operator generates a **long, random** `SAT-TEST-...` value privately, records it in an approved password manager, and, using a privileged Supabase SQL session, runs:
+
+```sql
+insert into public.sat_master_test_code_config(singleton,code_hash,enabled)
+values(true,extensions.crypt(upper('<PRIVATE_MASTER_CODE>'),extensions.gen_salt('bf',12)),true)
+on conflict(singleton) do update set code_hash=excluded.code_hash,enabled=true,updated_at=now();
+
+insert into public.sat_master_test_allowed_users(user_id)
+values('<AUTHORIZED_AUTH_USER_UUID>') on conflict do nothing;
+```
+
+Do not paste an actual reusable master credential into chat, source control, build logs, or support tickets. Disable all master activation by setting `enabled=false`. Rotate by replacing the bcrypt hash and revoking allowlist entries. Redemption grants or refreshes only a 90-day **test** pass and never creates a payment record. This functionality is not usable until the migrations and Edge Function have been deployed and the operator has provisioned a code and allowed account.
