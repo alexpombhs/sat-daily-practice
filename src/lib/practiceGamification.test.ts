@@ -33,6 +33,16 @@ describe('choosePracticeQuestions',()=>{
     expect(practiceQuestionPool({...settings,difficulty:'all'},[],[advanced,unclassified])).toHaveLength(2)
   })
 
+  it('combines selected difficulty levels and respects test and subject filters',()=>{
+    const questions=QUESTION_BANK.filter(q=>q.practiceTestId==='practice-test-4'&&q.subject==='math').slice(0,4)
+      .map((q,i)=>({...q,difficulty:(['easy','medium','advanced',undefined] as const)[i]}))
+    const multiple={...settings,practiceTest:'practice-test-4' as const,difficulty:'all' as const,difficultyLevels:['medium','advanced'] as const}
+    expect(practiceQuestionPool({...multiple,difficultyLevels:[...multiple.difficultyLevels]},[],questions).map(q=>q.id)).toEqual(questions.slice(1,3).map(q=>q.id))
+    expect(practiceQuestionPool({...multiple,difficultyLevels:undefined},[],questions)).toHaveLength(4)
+    expect(practiceQuestionPool({...multiple,difficultyLevels:['easy','advanced']},[],questions).map(q=>q.id)).toEqual([questions[0].id,questions[2].id])
+    expect(practiceQuestionPool({...multiple,mode:'english',difficultyLevels:['medium','advanced']},[],questions)).toHaveLength(0)
+  })
+
   it('counts each content-reviewed difficulty by subject and test, independent of active difficulty',()=>{
     const math=QUESTION_BANK.filter(q=>q.practiceTestId==='practice-test-4'&&q.subject==='math').slice(0,4)
     const classified=math.map((q,i)=>({...q,difficulty:(i===0?'easy':i===1?'medium':i===2?'advanced':undefined) as 'easy'|'medium'|'advanced'|undefined}))
