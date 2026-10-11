@@ -7,7 +7,7 @@ import AlexTextField from '../atoms/AlexTextField'
 import AuthCredentialsForm from '../molecules/AuthCredentialsForm'
 import UserProfileForm from '../molecules/UserProfileForm'
 import {validateSignupBirthDate} from '../../lib/signupAge'
-import {EMPTY_USER_PROFILE,isRegistrationFull,joinLaunchWaitlist,isSupabaseConfigured,loadUserProfile,saveUserProfile,signInWithPassword,signOut,signUpWithPassword,type UserProfile} from '../../lib/supabase'
+import {deleteCurrentAccount,EMPTY_USER_PROFILE,isRegistrationFull,joinLaunchWaitlist,isSupabaseConfigured,loadUserProfile,saveUserProfile,signInWithPassword,signOut,signUpWithPassword,type UserProfile} from '../../lib/supabase'
 
 type Props={
   email:string|null
@@ -23,6 +23,7 @@ export default function AccountAuthPanel({email}:Props){
   const[registrationFull,setRegistrationFull]=useState(false)
   const[waitlistEmail,setWaitlistEmail]=useState('')
   const[waitlistBirthDate,setWaitlistBirthDate]=useState('')
+  const[deleteText,setDeleteText]=useState('')
   const[profile,setProfile]=useState<UserProfile>(EMPTY_USER_PROFILE)
 
   useEffect(()=>{if(!email)void isRegistrationFull().then(setRegistrationFull).catch(()=>{ /* Signup server remains authoritative */ })},[email])
@@ -83,6 +84,18 @@ export default function AccountAuthPanel({email}:Props){
     }
   }
 
+  async function deleteAccount(){
+    if(deleteText!=='DELETE MY ACCOUNT')return
+    setBusy(true);setError('');setMessage('')
+    try{
+      await deleteCurrentAccount()
+      setProfile(EMPTY_USER_PROFILE)
+      setDeleteText('')
+      setMessage('Account deleted.')
+    }catch(nextError){setError(messageFromError(nextError))}
+    finally{setBusy(false)}
+  }
+
   async function logout(){
     setBusy(true)
     setError('')
@@ -115,6 +128,14 @@ export default function AccountAuthPanel({email}:Props){
         {error&&<AlexText role="alert" sx={{fontSize:13,color:'error.main'}}>{error}</AlexText>}
         {message&&<AlexText role="status" sx={{fontSize:13,color:'success.main'}}>{message}</AlexText>}
         <AlexButton tone="secondary" disabled={busy} onClick={logout} sx={{alignSelf:'flex-start'}}>Sign out</AlexButton>
+        <AlexSurface variant="outlined" sx={{p:2,borderRadius:2,borderColor:'error.light'}}>
+          <AlexStack spacing={1.25}>
+            <AlexText sx={{fontWeight:750}}>Delete account</AlexText>
+            <AlexText sx={{fontSize:13,color:'text.secondary'}}>Permanently deletes your account and linked practice records. This cannot be undone. Type DELETE MY ACCOUNT to confirm.</AlexText>
+            <AlexTextField label="Confirmation" value={deleteText} onChange={event=>setDeleteText(event.target.value)}/>
+            <AlexButton disabled={busy||deleteText!=='DELETE MY ACCOUNT'} onClick={()=>void deleteAccount()} sx={{alignSelf:'flex-start'}}>Permanently delete my account</AlexButton>
+          </AlexStack>
+        </AlexSurface>
       </AlexStack>:registrationFull?<AlexStack spacing={2}>
         <AlexText sx={{fontWeight:700}}>The first 100 account places are filled.</AlexText>
         <AlexText sx={{fontSize:14,color:'text.secondary'}}>Join the waitlist to be notified if registration opens.</AlexText>
