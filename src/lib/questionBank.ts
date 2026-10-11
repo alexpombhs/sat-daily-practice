@@ -1,3 +1,4 @@
+import {TARGETED_MOCK_QUESTIONS} from './targetedMockQuestions'
 import type { ModuleKey,PracticeQuestion,PracticeTestFilter,PracticeTestId,SourceCrop,Subject,SubjectMode } from '../types'
 import {PRACTICE_TEST_5_ACCEPTED,PRACTICE_TEST_5_ANSWER_PAGES,PRACTICE_TEST_5_ANSWERS,PRACTICE_TEST_5_PAGES} from './practiceTest5Data'
 import {PRACTICE_TEST_6_ACCEPTED,PRACTICE_TEST_6_ANSWER_PAGES,PRACTICE_TEST_6_ANSWERS,PRACTICE_TEST_6_CROPS,PRACTICE_TEST_6_PAGES} from './practiceTest6Data'
@@ -61,6 +62,7 @@ function makePracticeTest(
 }
 
 export const QUESTION_BANK=[
+  ...TARGETED_MOCK_QUESTIONS,
   ...makePracticeTest('practice-test-4',pages,answerPages,answers,acceptedStudentAnswers),
   ...makePracticeTest('practice-test-5',PRACTICE_TEST_5_PAGES,PRACTICE_TEST_5_ANSWER_PAGES,PRACTICE_TEST_5_ANSWERS,PRACTICE_TEST_5_ACCEPTED),
   ...makePracticeTest('practice-test-6',PRACTICE_TEST_6_PAGES,PRACTICE_TEST_6_ANSWER_PAGES,PRACTICE_TEST_6_ANSWERS,PRACTICE_TEST_6_ACCEPTED,{sourceCrops:PRACTICE_TEST_6_CROPS,contentStatus:'verified',questionMode:'image-fallback'})
