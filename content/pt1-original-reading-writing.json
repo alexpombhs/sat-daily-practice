@@ -180,27 +180,27 @@
     "question_number": 6,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The poem opens by comparing a lake to polished glass, then asks why its surface conceals so much life. The shift chiefly moves from",
+    "stem": "In an original poem, a speaker describes the harbor at dawn: 'The windows of the water hold the morning's gold / While ropes sleep in the silence of the pier.' The speaker then asks, 'But whose forgotten journeys drift beneath that shine?' What is the main effect of this shift?",
     "options": [
       {
         "label": "A",
-        "text": "scientific explanation to a command"
+        "text": "It turns serene imagery into an inquiry about histories concealed by the scene."
       },
       {
         "label": "B",
-        "text": "a conflict to an explicit resolution"
+        "text": "It confirms that the harbor is now entirely abandoned."
       },
       {
         "label": "C",
-        "text": "visual description to questioning appearances"
+        "text": "It changes an account of trade into a prediction about weather."
       },
       {
         "label": "D",
-        "text": "a personal memory to historical evidence"
+        "text": "It establishes that the speaker has personally traveled by sea."
       }
     ],
-    "correct_answer": "C",
-    "explanation": "The shift changes from describing a surface to questioning what it hides.",
+    "correct_answer": "A",
+    "explanation": "The first lines emphasize the harbor's luminous stillness; the question redirects attention to the unobserved human experiences associated with it.",
     "difficulty": "medium",
     "concepts": [
       "poetry structure",
@@ -215,27 +215,27 @@
     "question_number": 7,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "A speaker calls the city's library a 'locked gate' but then lists its free workshops and open doors, arguing that the metaphor misleads. Why invoke the gate?",
+    "stem": "In an original poem about a public archive, the speaker recalls being told that the institution is 'a wall built from other people's names.' The next lines describe freely accessible records and neighbors helping one another trace family histories. Why does the speaker introduce the image of a wall?",
     "options": [
       {
         "label": "A",
-        "text": "To recommend ending workshops"
+        "text": "To concede that archives are inevitably inaccessible"
       },
       {
         "label": "B",
-        "text": "To challenge the idea that the library excludes residents"
+        "text": "To establish an interpretation that the later details challenge"
       },
       {
         "label": "C",
-        "text": "To claim all buildings need stronger locks"
+        "text": "To suggest that the building was constructed as a memorial"
       },
       {
         "label": "D",
-        "text": "To describe the architecture literally"
+        "text": "To compare the archive's architecture with nearby homes"
       }
     ],
     "correct_answer": "B",
-    "explanation": "The speaker introduces a metaphor of exclusion to rebut it with counterexamples.",
+    "explanation": "The wall suggests exclusion, but the subsequent details offer counterevidence; the image sets up the speaker's rebuttal.",
     "difficulty": "advanced",
     "concepts": [
       "poetry structure",
@@ -251,27 +251,27 @@
     "question_number": 8,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Some birds relocate seasonally. For example, swallows travel hundreds of miles when insects become scarce. What is the function of the second sentence?",
+    "stem": "Many coastal plants tolerate saline soils, but species differ in how they do so. Some secrete excess salt through glands on their leaves. For instance, certain mangroves expel salt crystals that can be seen on the leaf surface. What role does the last sentence play?",
     "options": [
       {
         "label": "A",
-        "text": "It illustrates the opening generalization."
+        "text": "It gives an example of the mechanism introduced immediately before it."
       },
       {
         "label": "B",
-        "text": "It disputes the opening sentence."
+        "text": "It introduces evidence that coastal plants cannot survive salty soil."
       },
       {
         "label": "C",
-        "text": "It introduces a competing theory."
+        "text": "It contrasts two explanations of how roots absorb minerals."
       },
       {
         "label": "D",
-        "text": "It explains why all birds remain stationary."
+        "text": "It summarizes the historical spread of mangrove forests."
       }
     ],
     "correct_answer": "A",
-    "explanation": "The swallow is a specific instance of seasonal relocation.",
+    "explanation": "The crystals on mangrove leaves concretely illustrate salt secretion, a mechanism identified in the preceding sentence.",
     "difficulty": "medium",
     "concepts": [
       "sentence function",
@@ -286,27 +286,27 @@
     "question_number": 9,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Text 1 argues that early villages formed only after farming became widespread. Text 2 cites evidence of permanent settlements supported mainly by fishing before intensive farming. Text 2 primarily",
+    "stem": "Text 1: 'The concentration of permanent settlements near early grain stores suggests that reliable harvests were the decisive condition for village life. Seasonal gathering sites, however busy, could not produce stable communities.' Text 2: 'At several river deltas, homes were rebuilt repeatedly long before cultivated cereals became common. Rich fisheries seem to have supported long-term residence without dependable harvests.' How would the author of Text 2 most likely respond to Text 1?",
     "options": [
       {
         "label": "A",
-        "text": "accepts the sequence without qualification"
+        "text": "By agreeing that seasonal sites and villages were indistinguishable"
       },
       {
         "label": "B",
-        "text": "claims farming never developed"
+        "text": "By arguing that dependable food resources need not be agricultural"
       },
       {
         "label": "C",
-        "text": "focuses only on modern fishing"
+        "text": "By denying that grain stores have any archaeological value"
       },
       {
         "label": "D",
-        "text": "challenges the sequence asserted in Text 1"
+        "text": "By maintaining that river-delta settlements depended primarily on grain"
       }
     ],
-    "correct_answer": "D",
-    "explanation": "The second account offers a potentially earlier route to settlement.",
+    "correct_answer": "B",
+    "explanation": "Text 2 challenges the necessity of grain harvests by describing repeated settlement supported by fisheries, while not denying that crops sometimes supported villages.",
     "difficulty": "advanced",
     "concepts": [
       "paired passage comparison",
@@ -427,27 +427,27 @@
     "question_number": 13,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "A survey records bicycles on three paths: North 46, Creek 31, Hill 58. Which statement is supported?",
+    "stem": "Researchers recorded how many seedlings germinated under three light conditions. The table gives the results: full sunlight—48 of 80; partial shade—63 of 90; deep shade—21 of 70. Which conclusion is best supported by the data?",
     "options": [
       {
         "label": "A",
-        "text": "Creek had more than North."
+        "text": "Partial shade had the highest germination percentage, despite not having the largest initial sample."
       },
       {
         "label": "B",
-        "text": "North had twice Creek's total."
+        "text": "Full sunlight had the highest germination percentage because its sample was smaller."
       },
       {
         "label": "C",
-        "text": "All three paths had equal totals."
+        "text": "Deep shade produced more germinated seedlings than full sunlight."
       },
       {
         "label": "D",
-        "text": "Hill had the most recorded bicycles."
+        "text": "All three groups had the same proportion germinate."
       }
     ],
-    "correct_answer": "D",
-    "explanation": "58 is greater than 46 and 31.",
+    "correct_answer": "A",
+    "explanation": "The rates are 60%, 70%, and 30%, respectively. Comparing proportions rather than raw totals shows partial shade highest.",
     "difficulty": "medium",
     "concepts": [
       "graph interpretation",
@@ -462,27 +462,27 @@
     "question_number": 14,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "For four years, two populations of insects were observed. Population A rose from 80 to 160; B declined from 150 to 90. Which result supports a claim that their trends diverged?",
+    "stem": "To study adaptation to warmer weather, scientists monitored two populations of the same insect for five summers. The percentage active before sunrise was, in years 1 through 5, 12, 19, 31, 42, 51 in population A and 13, 15, 14, 16, 15 in population B. Which finding most clearly supports the hypothesis that only A underwent a sustained shift toward earlier activity?",
     "options": [
       {
         "label": "A",
-        "text": "Both remained unchanged."
+        "text": "In the first year, the populations had similar percentages of early activity."
       },
       {
         "label": "B",
-        "text": "B increased more rapidly than A."
+        "text": "Population A increased across every measured interval while B fluctuated in a narrow range."
       },
       {
         "label": "C",
-        "text": "A increased while B decreased."
+        "text": "Population B ended with a slightly larger value than it began with."
       },
       {
         "label": "D",
-        "text": "Both increased by the same amount."
+        "text": "Both populations were monitored for the same number of years."
       }
     ],
-    "correct_answer": "C",
-    "explanation": "The populations changed in opposite directions.",
+    "correct_answer": "B",
+    "explanation": "Repeated increases in A versus nearly flat B over several years support divergence; a single endpoint would be less informative.",
     "difficulty": "advanced",
     "concepts": [
       "scientific hypothesis",
@@ -498,27 +498,27 @@
     "question_number": 15,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "A materials study compared panels of equal area. At 10°C, panel X lost 12 units of heat and Y lost 21; at 20°C, X lost 18 and Y lost 25. Which conclusion is supported?",
+    "stem": "A laboratory tested heat loss from two insulating panels of equal thickness. Results (heat units lost per hour): at an outside temperature of 0°C, panel R lost 22 and panel S lost 31; at 10°C, R lost 14 and S lost 19; at 20°C, R lost 8 and S lost 10. A researcher claims R retains heat better at every tested temperature, but that its advantage is smaller in warmer conditions. Which evidence best supports this claim?",
     "options": [
       {
         "label": "A",
-        "text": "Y lost exactly twice as much as X at both temperatures."
+        "text": "At 0°C, R lost 22 units and S lost 31, while at 20°C, R lost 8 and S lost 10."
       },
       {
         "label": "B",
-        "text": "X lost less heat than Y at both temperatures."
+        "text": "At 0°C, both panels lost less heat than they did at 20°C."
       },
       {
         "label": "C",
-        "text": "X lost more heat at 20°C than Y did."
+        "text": "At 10°C, R lost more heat than S by five units."
       },
       {
         "label": "D",
-        "text": "Temperature did not affect either panel."
+        "text": "The heat-loss difference was largest at 20°C."
       }
     ],
-    "correct_answer": "B",
-    "explanation": "Each matched-temperature comparison shows a smaller loss for X.",
+    "correct_answer": "A",
+    "explanation": "R loses less heat throughout; the gap falls from nine units at 0°C to two at 20°C, matching both parts of the claim.",
     "difficulty": "advanced",
     "concepts": [
       "two-way scientific table",
@@ -533,27 +533,27 @@
     "question_number": 16,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "A historian argues that a mural was designed collectively. Which account best supports the claim?",
+    "stem": "A museum curator proposes that a new exhibition's arrangement was jointly determined by its designers rather than dictated by the director. Which observation most directly supports that claim?",
     "options": [
       {
         "label": "A",
-        "text": "Several artists planned the layout together and signed the completed work."
+        "text": "The director approved the exhibition's budget several months early."
       },
       {
         "label": "B",
-        "text": "One artist barred others from the studio."
+        "text": "Meeting records show that designers proposed competing layouts and collectively voted on the final arrangement."
       },
       {
         "label": "C",
-        "text": "The mural remained unfinished for decades."
+        "text": "The exhibition opened to the public after two construction delays."
       },
       {
         "label": "D",
-        "text": "No records identify where the mural was installed."
+        "text": "A reviewer praised the director's introductory speech."
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Joint planning is direct evidence for shared creation.",
+    "correct_answer": "B",
+    "explanation": "A recorded group decision about the layout supports collective control, rather than mere participation.",
     "difficulty": "medium",
     "concepts": [
       "command of evidence",
@@ -568,27 +568,27 @@
     "question_number": 17,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "A researcher predicts a mineral additive benefits all seedlings equally. In an experiment, seedlings from species A grew 20% more with the additive, but species B grew no more than untreated B seedlings. The result",
+    "stem": "Researchers hypothesized that a soil microbe increases growth only in plants that form a particular root partnership. After inoculation, the partner-forming plants grew 18% more than controls, but plants thought incapable of the partnership grew 12% more. Which conclusion best follows?",
     "options": [
       {
         "label": "A",
-        "text": "proves the additive is poisonous"
+        "text": "The microbe's effects may extend beyond the proposed root partnership."
       },
       {
         "label": "B",
-        "text": "shows both species grew equally"
+        "text": "The control groups must have been measured incorrectly."
       },
       {
         "label": "C",
-        "text": "rules out any benefit to A"
+        "text": "Growth in the partner-forming plants cannot be attributed to the microbe."
       },
       {
         "label": "D",
-        "text": "challenges the claim of equal benefit"
+        "text": "All plant species will respond identically to inoculation."
       }
     ],
-    "correct_answer": "D",
-    "explanation": "The two species respond differently under the treatment.",
+    "correct_answer": "A",
+    "explanation": "Growth in the presumed nonpartner group contradicts the hypothesis's 'only' restriction, though the mechanism remains uncertain.",
     "difficulty": "advanced",
     "concepts": [
       "controlled experiment",
@@ -603,27 +603,27 @@
     "question_number": 18,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Excavators found matching decorative marks on objects from distant sites, but none at settlements between them. What is the most cautious inference?",
+    "stem": "Archaeologists recovered identical abstract motifs on pottery at two coastal sites separated by mountains. Clay analysis shows that the vessels were made locally at each site. Which interpretation is most consistent with these findings?",
     "options": [
       {
         "label": "A",
-        "text": "Every society used these same marks."
+        "text": "A single workshop manufactured every vessel and shipped them to both settlements."
       },
       {
         "label": "B",
-        "text": "The marks prove the objects were made in one workshop."
+        "text": "Similar decorative ideas may have circulated even though the objects were made separately."
       },
       {
         "label": "C",
-        "text": "The sites may have exchanged ideas through a network not yet fully documented."
+        "text": "The communities necessarily spoke the same language."
       },
       {
         "label": "D",
-        "text": "The two settlements certainly had identical governments."
+        "text": "The motif was created independently at both sites, ruling out any contact."
       }
     ],
-    "correct_answer": "C",
-    "explanation": "Shared symbolism is consistent with cultural contact but does not establish a precise mechanism.",
+    "correct_answer": "B",
+    "explanation": "Local manufacture rules out a shared production site while identical motifs leave cultural transmission as a plausible explanation.",
     "difficulty": "advanced",
     "concepts": [
       "archaeological evidence",
@@ -775,27 +775,27 @@
     "question_number": 23,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The sketches were submitted on Friday ___ the judges announced the finalists on Monday.",
+    "stem": "The archive digitized thousands of photographs in 2022 ___ afterward, volunteers began identifying the people pictured.",
     "options": [
       {
         "label": "A",
-        "text": "and"
-      },
-      {
-        "label": "B",
         "text": ";"
       },
       {
-        "label": "C",
+        "label": "B",
         "text": " ,"
+      },
+      {
+        "label": "C",
+        "text": "and"
       },
       {
         "label": "D",
         "text": " :"
       }
     ],
-    "correct_answer": "B",
-    "explanation": "A semicolon joins the two independent clauses.",
+    "correct_answer": "A",
+    "explanation": "A semicolon appropriately joins two independent clauses; afterward is a temporal adverb within the second clause.",
     "difficulty": "medium",
     "concepts": [
       "semicolon joining independent clauses",
@@ -809,27 +809,27 @@
     "question_number": 24,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Walking across the courtyard, ___ spotted a loose stone near the fountain.",
+    "stem": "After examining the unusually intricate pattern of cracks in the ceramic vessel, ___ concluded that it had been repaired repeatedly.",
     "options": [
       {
         "label": "A",
-        "text": "the groundskeeper"
+        "text": "the conservation specialist at the museum"
       },
       {
         "label": "B",
-        "text": "a loose stone"
+        "text": "the vessel displayed in the museum"
       },
       {
         "label": "C",
-        "text": "the fountain"
+        "text": "the repaired fragments of the vessel"
       },
       {
         "label": "D",
-        "text": "the ground"
+        "text": "a series of microscopic images"
       }
     ],
     "correct_answer": "A",
-    "explanation": "The introductory modifier must describe the person walking.",
+    "explanation": "The introductory phrase describes the person who examined the cracks; the long noun phrase must identify that examiner.",
     "difficulty": "advanced",
     "concepts": [
       "dangling modifiers",
@@ -844,27 +844,27 @@
     "question_number": 25,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The workshop included designers from Quito, Ecuador; Dakar, Senegal; and ___ .",
+    "stem": "The researchers sampled soil from three places: Albany, New York; Santa Fe, New Mexico; and ___ before comparing mineral composition.",
     "options": [
       {
         "label": "A",
-        "text": "Oslo; Norway"
+        "text": "Boise, Idaho,"
       },
       {
         "label": "B",
-        "text": "Oslo: Norway"
+        "text": "Boise; Idaho,"
       },
       {
         "label": "C",
-        "text": "Oslo Norway"
+        "text": "Boise, Idaho;"
       },
       {
         "label": "D",
-        "text": "Oslo, Norway"
+        "text": "Boise Idaho,"
       }
     ],
-    "correct_answer": "D",
-    "explanation": "Semicolons separate complex list items that contain internal commas.",
+    "correct_answer": "A",
+    "explanation": "A comma separates city and state inside each location and a final comma after Idaho closes the introductory three-item list before the main clause.",
     "difficulty": "advanced",
     "concepts": [
       "complex series punctuation",
@@ -879,27 +879,27 @@
     "question_number": 26,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The device was inexpensive ___ however, it required frequent maintenance.",
+    "stem": "The solar panels generated enough power for daytime use ___ however, the facility relied on batteries after sunset.",
     "options": [
       {
         "label": "A",
-        "text": " :"
-      },
-      {
-        "label": "B",
-        "text": "and"
-      },
-      {
-        "label": "C",
         "text": ";"
       },
       {
-        "label": "D",
+        "label": "B",
         "text": " ,"
+      },
+      {
+        "label": "C",
+        "text": "and"
+      },
+      {
+        "label": "D",
+        "text": " :"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "A semicolon before however separates independent clauses; a comma after however is also needed in the completed sentence.",
+    "correct_answer": "A",
+    "explanation": "The independent clauses require a semicolon before the conjunctive adverb however; the supplied comma after however closes that adverb.",
     "difficulty": "advanced",
     "concepts": [
       "conjunctive adverb punctuation",
@@ -1496,27 +1496,27 @@
     "question_number": 11,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "A researcher claims quieter classrooms always improve recall. Two equal groups studied the same material; the group with moderate background noise recalled more. This finding",
+    "stem": "A botanist predicts that additional nitrogen always increases leaf mass, regardless of soil type. In identical pots, extra nitrogen raised average mass on sandy soil but reduced it on clay-rich soil compared with untreated controls. What is the strongest conclusion?",
     "options": [
       {
         "label": "A",
-        "text": "shows no difference between groups"
+        "text": "The hypothesis is not supported across both tested soils."
       },
       {
         "label": "B",
-        "text": "contradicts the absolute prediction"
+        "text": "Nitrogen never affects leaf mass in sandy soil."
       },
       {
         "label": "C",
-        "text": "proves silence prevents learning"
+        "text": "Soil type cannot influence nutrient response."
       },
       {
         "label": "D",
-        "text": "establishes that all noise helps everyone"
+        "text": "The clay-rich controls must have received nitrogen."
       }
     ],
-    "correct_answer": "B",
-    "explanation": "Better recall with moderate noise is counterevidence to an always-claim.",
+    "correct_answer": "A",
+    "explanation": "The negative response in one controlled soil condition contradicts an unconditional positive-effect prediction.",
     "difficulty": "advanced",
     "concepts": [
       "testing a scientific hypothesis",
@@ -1565,27 +1565,27 @@
     "question_number": 13,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Two regions tracked energy prices: in North, prices rose 3%, 6%, and 9% over three years; in South, 8%, 4%, and 1%. Which comparison is accurate?",
+    "stem": "A policy report tracks two types of uncertainty between January and April. Economic-policy uncertainty scores: 70, 85, 95, 110. Trade-policy uncertainty scores: 120, 100, 80, 65. Which statement accurately synthesizes the trends?",
     "options": [
       {
         "label": "A",
-        "text": "Both showed steady increases in the rate."
+        "text": "Economic-policy uncertainty rose while trade-policy uncertainty fell, reversing which measure was higher."
       },
       {
         "label": "B",
-        "text": "South's rate was always larger."
+        "text": "Both uncertainty measures increased, although at different rates."
       },
       {
         "label": "C",
-        "text": "North's increases declined each year."
+        "text": "Trade-policy uncertainty remained above economic-policy uncertainty throughout."
       },
       {
         "label": "D",
-        "text": "North's increases accelerated while South's slowed."
+        "text": "Both measures peaked during the same month."
       }
     ],
-    "correct_answer": "D",
-    "explanation": "North's sequence rises and South's falls.",
+    "correct_answer": "A",
+    "explanation": "The economic sequence increases and the trade sequence decreases; the rankings reverse between February and March.",
     "difficulty": "advanced",
     "concepts": [
       "multi-series graph interpretation",
@@ -1599,27 +1599,27 @@
     "question_number": 14,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "A debate asked whether street trees lower summer temperatures. One researcher cited shaded sidewalk measurements; another noted that tree type and spacing varied. What does the second researcher emphasize?",
+    "stem": "Two researchers debate whether wetlands reduce flood peaks. Researcher A cites lower downstream peaks in watersheds with wetlands. Researcher B notes that those watersheds also tend to contain fewer paved surfaces. Which study design would best address B's concern?",
     "options": [
       {
         "label": "A",
-        "text": "That all trees have identical effects"
+        "text": "Compare watersheds with similar pavement coverage but different wetland areas."
       },
       {
         "label": "B",
-        "text": "That temperature cannot be measured"
+        "text": "Observe one wetland during a single dry week."
       },
       {
         "label": "C",
-        "text": "A possible confounding factor in the evidence"
+        "text": "Measure pavement coverage only in wetland-rich watersheds."
       },
       {
         "label": "D",
-        "text": "That shading cannot occur"
+        "text": "Survey residents about which landscapes they prefer."
       }
     ],
-    "correct_answer": "C",
-    "explanation": "Different planting patterns complicate a simple inference.",
+    "correct_answer": "A",
+    "explanation": "Matching pavement coverage helps isolate the role of wetlands from the competing explanation.",
     "difficulty": "advanced",
     "concepts": [
       "experimental evidence",
@@ -1668,27 +1668,27 @@
     "question_number": 16,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "An essay compares folktales and science fiction, noting that both examine choices but only one commonly invents future technologies. Which conclusion follows?",
+    "stem": "A critic claims that historical fiction and biography cannot be compared because one can invent dialogue whereas the other is bound by documentary evidence. Another critic argues that both genres organize selected details to shape readers' understanding. Which conclusion is most justified?",
     "options": [
       {
         "label": "A",
-        "text": "Genres can share themes while differing in typical settings."
+        "text": "Narrative choices can be compared even when evidence requirements differ."
       },
       {
         "label": "B",
-        "text": "The genres never share themes."
+        "text": "The two genres have identical standards of factual accuracy."
       },
       {
         "label": "C",
-        "text": "All folktales concern spacecraft."
+        "text": "Invented dialogue is the defining feature of biography."
       },
       {
         "label": "D",
-        "text": "Science fiction cannot depict ethical decisions."
+        "text": "Selecting details eliminates all differences between the genres."
       }
     ],
     "correct_answer": "A",
-    "explanation": "The given comparison allows overlap in concerns alongside a difference in conventions.",
+    "explanation": "Both can be studied as narrative constructions while differing in the freedom to invent events or language.",
     "difficulty": "advanced",
     "concepts": [
       "logical conclusion",
@@ -1703,27 +1703,27 @@
     "question_number": 17,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Genetic similarities among populations on two islands, paired with dated settlement remains, suggest contact occurred before a later documented trade route. The evidence most reasonably indicates",
+    "stem": "Genetic markers in two island populations share rare variants. Archaeological dates place occupation of island A several centuries before occupation of island B; the first known trading records are later still. What is the most defensible inference?",
     "options": [
       {
         "label": "A",
-        "text": "all island inhabitants arrived in one voyage"
+        "text": "Contact or shared ancestry involving the islands may predate the written trading records."
       },
       {
         "label": "B",
-        "text": "the later route never existed"
+        "text": "The date of each migration can be calculated precisely from the markers."
       },
       {
         "label": "C",
-        "text": "genetic evidence provides an exact sailing date"
+        "text": "All settlement on island B must have originated in the latest recorded trade voyage."
       },
       {
         "label": "D",
-        "text": "some movement between islands predates the recorded route"
+        "text": "The variants prove that the populations never mixed with others."
       }
     ],
-    "correct_answer": "D",
-    "explanation": "Genetics and chronology support early contact without specifying exact journeys.",
+    "correct_answer": "A",
+    "explanation": "Shared variants and the settlement chronology permit earlier movement or ancestry, but cannot establish precise routes or dates.",
     "difficulty": "advanced",
     "concepts": [
       "genetic evidence",
@@ -1807,7 +1807,7 @@
     "question_number": 20,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The team attributed the discrepancy ___ a sensor that had not been recalibrated.",
+    "stem": "The differences in the two measurements were attributed ___ a change in air pressure, not to an error in the instruments.",
     "options": [
       {
         "label": "A",
@@ -1815,19 +1815,19 @@
       },
       {
         "label": "B",
-        "text": "for"
-      },
-      {
-        "label": "C",
         "text": "with"
       },
       {
+        "label": "C",
+        "text": "from"
+      },
+      {
         "label": "D",
-        "text": "at"
+        "text": "for"
       }
     ],
     "correct_answer": "A",
-    "explanation": "Attribute a result to a cause is the correct prepositional construction.",
+    "explanation": "Attributed to is the conventional verb–preposition construction; the clause distinguishes cause from instrument error.",
     "difficulty": "easy",
     "concepts": [
       "prepositions and complements",
@@ -1875,27 +1875,27 @@
     "question_number": 22,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The element carbon has a stable isotope, carbon-13, ___ scientists use in certain tracing studies.",
+    "stem": "Carbon-14, an unstable isotope of carbon ___ is used to estimate the age of once-living materials.",
     "options": [
       {
         "label": "A",
-        "text": "; which"
+        "text": ","
       },
       {
         "label": "B",
-        "text": "that,"
+        "text": ";"
       },
       {
         "label": "C",
-        "text": "which"
+        "text": ":"
       },
       {
         "label": "D",
-        "text": "and which"
+        "text": ""
       }
     ],
-    "correct_answer": "C",
-    "explanation": "Which introduces an additional clause here without corrupting the sentence structure.",
+    "correct_answer": "A",
+    "explanation": "The phrase 'an unstable isotope of carbon' is a nonessential appositive opened by the first comma; another comma must close it before 'is used'.",
     "difficulty": "advanced",
     "concepts": [
       "parenthetical notation",
@@ -2013,27 +2013,27 @@
     "question_number": 26,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "One issue remained unresolved: ___ .",
+    "stem": "The team faced a challenge that its preliminary simulations had not anticipated ___ the steel joints expanded at different rates when heated.",
     "options": [
       {
         "label": "A",
-        "text": "however, everyone agreed"
+        "text": ":"
       },
       {
         "label": "B",
-        "text": "and the shipment arrived"
+        "text": " ,"
       },
       {
         "label": "C",
-        "text": "how to transport the equipment safely"
+        "text": "and"
       },
       {
         "label": "D",
-        "text": "the equipment was available"
+        "text": " ; because"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "The colon introduces an explanation of the one issue.",
+    "correct_answer": "A",
+    "explanation": "A colon introduces the specific explanation of the complete independent clause: the expansion rates were the unanticipated challenge.",
     "difficulty": "advanced",
     "concepts": [
       "colon punctuation",
