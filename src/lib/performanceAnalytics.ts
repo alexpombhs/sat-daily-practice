@@ -120,13 +120,30 @@ function estimateOverallScore(sections:SectionPerformance[]){
   return estimateSectionPracticeScore(english.successRate)+estimateSectionPracticeScore(math.successRate)
 }
 
-function buildScoreSections(poolAttempts:Attempt[]):SectionPerformance[]{
+// Recent successful retries count more than older failures. Earlier attempts
+// on the same question remain useful even after falling out of the 10-session
+// sampling window; otherwise recovery can look like an instant 100% baseline.
+const OLDER_ATTEMPT_WEIGHT=.6
+
+function buildScoreSections(poolAttempts:Attempt[],historyAttempts:Attempt[]):SectionPerformance[]{
+  const sampledIds=new Set(poolAttempts.map(attempt=>attempt.questionId))
   const grouped=new Map<string,Attempt[]>()
-  poolAttempts.forEach(attempt=>grouped.set(attempt.questionId,[...(grouped.get(attempt.questionId)??[]),attempt]))
+  historyAttempts.forEach(attempt=>{
+    if(sampledIds.has(attempt.questionId))grouped.set(attempt.questionId,[...(grouped.get(attempt.questionId)??[]),attempt])
+  })
 
   return (['english','math'] as Subject[]).map(subject=>{
     const questionGroups=[...grouped.values()].filter(rows=>rows[rows.length-1]?.subject===subject)
-    const questionRates=questionGroups.map(rows=>100*rows.filter(attempt=>attempt.correct).length/rows.length)
+    const questionRates=questionGroups.map(rows=>{
+      const chronological=[...rows].sort((a,b)=>a.createdAt.localeCompare(b.createdAt))
+      let weightedCorrect=0
+      let totalWeight=0
+      chronological.forEach(attempt=>{
+        weightedCorrect=weightedCorrect*OLDER_ATTEMPT_WEIGHT+(attempt.correct?1:0)
+        totalWeight=totalWeight*OLDER_ATTEMPT_WEIGHT+1
+      })
+      return 100*weightedCorrect/totalWeight
+    })
     const equivalentCorrect=questionRates.reduce((sum,rate)=>sum+rate/100,0)
     const subjectAttempts=poolAttempts.filter(attempt=>attempt.subject===subject)
     return {
@@ -215,7 +232,8 @@ function buildSessions(attempts:Attempt[],sessions:SessionSummary[]){
   let latestScorePredictionBasis:ScorePredictionBasis|null=null
   ordered.forEach((session,index)=>{
     const recentAttempts=attemptsForSessionWindow(attempts,ordered,index)
-    const scoreSections=buildScoreSections(recentAttempts)
+    const historicalAttempts=attemptsForSessions(attempts,ordered.slice(0,index+1))
+    const scoreSections=buildScoreSections(recentAttempts,historicalAttempts)
     const score=estimateOverallScore(scoreSections)
     latestScoreEstimate=score
     latestScorePredictionBasis=predictionBasis(scoreSections,Math.min(SCORE_SESSION_WINDOW,index+1))
