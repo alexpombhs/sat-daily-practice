@@ -9,7 +9,7 @@ import TurnstileChallenge from '../molecules/TurnstileChallenge'
 import UserProfileForm from '../molecules/UserProfileForm'
 import {validateSignupBirthDate} from '../../lib/signupAge'
 import {pathForView} from '../../lib/appRoutes'
-import {deleteCurrentAccount,hasPlusAccess,openOneTimeCheckout,plusExpiresAt,EMPTY_USER_PROFILE,isRegistrationFull,joinLaunchWaitlist,isSupabaseConfigured,loadUserProfile,saveUserProfile,signInWithPassword,signOut,signUpWithPassword,type UserProfile} from '../../lib/supabase'
+import {deleteCurrentAccount,hasPlusAccess,openOneTimeCheckout,plusExpiresAt,redeemPrepaidAccessCode,EMPTY_USER_PROFILE,isRegistrationFull,joinLaunchWaitlist,isSupabaseConfigured,loadUserProfile,saveUserProfile,signInWithPassword,signOut,signUpWithPassword,type UserProfile} from '../../lib/supabase'
 
 type Props={
   email:string|null
@@ -31,6 +31,7 @@ export default function AccountAuthPanel({email}:Props){
   const[deleteText,setDeleteText]=useState('')
   const[plusActive,setPlusActive]=useState(false)
   const[plusExpiration,setPlusExpiration]=useState<string|null>(null)
+  const[activationCode,setActivationCode]=useState('')
   const checkoutOpen=import.meta.env.VITE_CHECKOUT_AVAILABLE==='true'
   const[profile,setProfile]=useState<UserProfile>(EMPTY_USER_PROFILE)
 
@@ -101,6 +102,17 @@ export default function AccountAuthPanel({email}:Props){
     }
   }
 
+  async function activateCode(){
+    setBusy(true);setError('');setMessage('')
+    try{
+      const expiration=await redeemPrepaidAccessCode(activationCode)
+      setPlusActive(true);setPlusExpiration(expiration);setActivationCode('')
+      setMessage('Your 90-day Plus access is activated! Your practice options are now unlocked.')
+      window.dispatchEvent(new Event('sat-access-updated'))
+    }catch(nextError){setError(messageFromError(nextError))}
+    finally{setBusy(false)}
+  }
+
   async function deleteAccount(){
     if(deleteText!=='DELETE MY ACCOUNT')return
     setBusy(true);setError('');setMessage('')
@@ -145,6 +157,9 @@ export default function AccountAuthPanel({email}:Props){
           <AlexStack spacing={1}>
             <AlexText sx={{fontWeight:750}}>90-day Plus access</AlexText>
             <AlexText sx={{fontSize:13,color:'text.secondary'}}>{plusActive?`Your Plus access is active${plusExpiration?` through ${new Date(plusExpiration).toLocaleDateString()}`:""}.`:'Get unlimited sessions, personalized configuration, study planning and progress insights for $10 once. No subscription or automatic renewal.'}</AlexText>
+            <AlexText sx={{fontSize:13,color:'text.secondary'}}>Already received an early adopter activation code? Enter it below to activate 90 days of Plus access. Each code can be used once.</AlexText>
+            <AlexTextField label="Activation code" value={activationCode} onChange={event=>setActivationCode(event.target.value.toUpperCase())} placeholder="SAT-XXXXXX-XXXXXX-XXXXXX"/>
+            <AlexButton disabled={busy||!/^SAT-[A-Z0-9]{6}-[A-Z0-9]{6}-[A-Z0-9]{6}$/.test(activationCode.trim())} onClick={()=>void activateCode()} sx={{alignSelf:'flex-start'}}>Activate my 90-day pass</AlexButton>
             {!plusActive&&<AlexButton disabled={busy||!checkoutOpen} onClick={()=>{setError('');void openOneTimeCheckout().catch(nextError=>setError(messageFromError(nextError)))}} sx={{alignSelf:'flex-start'}}>{checkoutOpen?'Get 90 days for $10':'Early adopter passes coming soon'}</AlexButton>}
           </AlexStack>
         </AlexSurface>
