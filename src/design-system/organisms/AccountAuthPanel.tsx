@@ -78,7 +78,7 @@ export default function AccountAuthPanel({email}:Props){
     setBusy(true);setError('');setMessage('')
     try{
       await joinLaunchWaitlist(waitlistEmail,validateSignupBirthDate(waitlistBirthDate),captchaToken)
-      setMessage('You are on the waitlist. We will contact you if a place becomes available.')
+      setMessage('Please check your inbox and confirm your email address to join the waitlist.')
     }catch(nextError){setError(messageFromError(nextError))}
     finally{setBusy(false)}
   }
