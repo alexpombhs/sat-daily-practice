@@ -80,6 +80,12 @@ export async function hasPlusAccess():Promise<boolean>{
   return data===true
 }
 
+export async function freeSessionsRemaining():Promise<number>{
+ const {data,error}=await supabase.rpc('sat_my_free_sessions_remaining')
+ if(error)throw error
+ return typeof data==='number'?data:0
+}
+
 export async function openOneTimeCheckout():Promise<void>{
   const {data,error}=await supabase.functions.invoke('sat-checkout',{body:{}})
   if(error||typeof data?.url!=='string')throw new Error('Checkout is temporarily unavailable.')
