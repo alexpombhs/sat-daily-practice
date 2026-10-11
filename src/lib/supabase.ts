@@ -41,6 +41,18 @@ export function subscribeToAuth(callback:(user:AuthUser|null)=>void){
   return()=>data.subscription.unsubscribe()
 }
 
+export async function isRegistrationFull():Promise<boolean>{
+  const {data,error}=await supabase.rpc('sat_registration_is_full')
+  if(error)throw error
+  return data===true
+}
+
+export async function joinLaunchWaitlist(email:string):Promise<void>{
+  const normalized=email.trim().toLowerCase()
+  const {error}=await supabase.rpc('sat_join_waitlist',{email_input:normalized})
+  if(error)throw error
+}
+
 export async function signUpWithPassword(email:string,password:string,birthDate:string){
   if(!supabase)throw new Error('Supabase is not configured.')
   const {data,error}=await supabase.auth.signUp({
