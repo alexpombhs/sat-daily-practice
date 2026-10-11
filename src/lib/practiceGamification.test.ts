@@ -18,6 +18,14 @@ describe('choosePracticeQuestions',()=>{
   })
 
 
+  it('exposes the mock question set as a selectable source with 24 bundled questions',()=>{
+    const mock=QUESTION_BANK.filter(question=>question.practiceTestId==='practice-test-8')
+    expect(mock).toHaveLength(24)
+    expect(mock.filter(question=>question.subject==='english')).toHaveLength(12)
+    expect(mock.filter(question=>question.subject==='math')).toHaveLength(12)
+    expect(practiceQuestionPool({...settings,mode:'both',practiceTest:'practice-test-8',questionsPerSession:24},[])).toHaveLength(24)
+  })
+
   it('keeps original mock questions separate from ordinary all-tests practice',()=>{
     const original=QUESTION_BANK.find(q=>q.subject==='math')!
     const mock={...original,id:'practice-test-8:math1-1',practiceTestId:'practice-test-8' as const,number:1}
