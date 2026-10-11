@@ -23,7 +23,8 @@ The `sat-waitlist-unsubscribe` function accepts a private token embedded in invi
 ## Required operator secrets and launch settings
 **Supabase Edge secrets:** `TURNSTILE_SECRET_KEY`, `RESEND_API_KEY`, `LA_FROM_EMAIL`, `LA_OPERATOR_SECRET`, `LA_APP_URL`, `STRIPE_SECRET_KEY`, `STRIPE_LA_PRICE_ID`, `STRIPE_WEBHOOK_SECRET`.
 **Payment approval flags:** `LA_CHECKOUT_ENABLED`, `SAT_CONTENT_RIGHTS_APPROVED`, `SAT_LEGAL_APPROVED`.
-**Frontend build:** `VITE_TURNSTILE_SITE_KEY`, `VITE_CHECKOUT_AVAILABLE`.
+**Frontend build:** `VITE_TURNSTILE_SITE_KEY`, `VITE_CHECKOUT_AVAILABLE`, `VITE_OPERATOR_NAME`, `VITE_SUPPORT_EMAIL`, `VITE_LEGAL_APPROVED`.
+**Operator monitoring:** `select public.sat_operator_launch_metrics();` from a privileged SQL session yields aggregate-only registration, waitlist, and paid-access indicators.
 **GitHub Actions secrets:** `LA_INVITE_FUNCTION_URL`, `LA_OPERATOR_SECRET`.
 Configure Stripe to deliver `checkout.session.completed` and `charge.refunded` to `sat-stripe-webhook` with the correct signing secret. Do not put Stripe secret keys or operator secrets in the frontend.
 
