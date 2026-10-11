@@ -41,12 +41,12 @@ export function subscribeToAuth(callback:(user:AuthUser|null)=>void){
   return()=>data.subscription.unsubscribe()
 }
 
-export async function signUpWithPassword(email:string,password:string){
+export async function signUpWithPassword(email:string,password:string,birthDate:string){
   if(!supabase)throw new Error('Supabase is not configured.')
   const {data,error}=await supabase.auth.signUp({
     email:email.trim(),
     password,
-    options:{emailRedirectTo:window.location.origin},
+    options:{emailRedirectTo:window.location.origin,data:{sat_signup_birth_date:birthDate}},
   })
   if(error)throw error
   return {user:toAuthUser(data.user),needsEmailConfirmation:!data.session}
