@@ -52,7 +52,7 @@ export async function joinLaunchWaitlist(email:string,birthDate:string,captchaTo
   const {data,error}=await supabase.functions.invoke('sat-waitlist-register',{
     body:{email:email.trim().toLowerCase(),birthDate,captchaToken},
   })
-  if(error||!data||data.message!=='Waitlist request received.')throw new Error(data?.message??'Unable to join waitlist.')
+  if(error||!data||data.message!=='Please check your email for a waitlist confirmation link.')throw new Error(data?.message??'Unable to join waitlist.')
 }
 
 export async function signUpWithPassword(email:string,password:string,birthDate:string,captchaToken:string){
