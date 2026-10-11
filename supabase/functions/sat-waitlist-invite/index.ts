@@ -15,7 +15,7 @@ Deno.serve(async(req:Request)=>{
  // Do not send invites if enrollment is still full.
  const {data:full,error:capacityError}=await db.rpc('sat_registration_is_full')
  if(capacityError)return new Response('Capacity unavailable',{status:503})
- if(full)return new Response('Registration is full; no invitation sent',{status:409})
+ if(full)return new Response(JSON.stringify({sent:0,reason:'full-or-closed'}),{status:200,headers:{'Content-Type':'application/json'}})
  // The waitlist is a communications queue, not a reservation.
  const {data:claimed,error:claimError}=await db.rpc('sat_claim_waitlist_invite')
  if(claimError)return new Response('Unable to claim invitation',{status:503})
