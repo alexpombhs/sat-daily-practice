@@ -127,7 +127,7 @@ function estimateOverallScore(sections:SectionPerformance[],observedAttempts:Att
 export const SCORE_RECENT_DISTINCT_QUESTIONS=60
 const SUBJECT_SAMPLE_SIZE:Record<Subject,number>={english:33,math:27}
 const OLDER_ATTEMPT_WEIGHT=.6
-const PRIOR_STRENGTH=1
+const PRIOR_STRENGTH=.1
 
 function recentQuestionSample(historyAttempts:Attempt[],questionBank:PracticeQuestion[]){
   const validIds=new Set(questionBank.map(q=>q.id))
