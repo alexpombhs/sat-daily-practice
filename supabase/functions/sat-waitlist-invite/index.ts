@@ -19,15 +19,17 @@ Deno.serve(async(req:Request)=>{
  // The waitlist is a communications queue, not a reservation.
  const {data:claimed,error:claimError}=await db.rpc('sat_claim_waitlist_invite')
  if(claimError)return new Response('Unable to claim invitation',{status:503})
- const row=claimed?.[0] as {id:number;email:string;claim_token:string}|undefined
+ const row=claimed?.[0] as {id:number;email:string;claim_token:string;unsubscribe_token:string}|undefined
  if(!row)return new Response(JSON.stringify({sent:0}),{headers:{'Content-Type':'application/json'}})
  let sent=false
  try{
+   const unsub=new URL('/functions/v1/sat-waitlist-unsubscribe',url)
+   unsub.searchParams.set('token',row.unsubscribe_token)
    const response=await fetch('https://api.resend.com/emails',{
      method:'POST',headers:{Authorization:`Bearer ${key}`,'Content-Type':'application/json',
        'Idempotency-Key':`sat-la-invite-${row.id}`},
      body:JSON.stringify({from:sender,to:[row.email],subject:'SAT Daily Practice registration update',
-       text:`A registration place may be available. Visit ${site.origin} to sign up. Places are limited and not reserved. You can ignore this email if you're no longer interested.`})
+       text:`A registration place may be available. Visit ${site.origin} to sign up. Places are limited and not reserved. To stop waitlist emails, use this link: \${unsub.toString()}`})
    })
    sent=response.ok
  }catch{sent=false}
