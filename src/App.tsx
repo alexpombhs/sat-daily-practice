@@ -485,6 +485,7 @@ export default function App(){
     return <AppSidebarLayout
       active={active}
       showContentAdmin={contentAdmin}
+      plusActive={plusActive}
       collapsed={sidebarCollapsed}
       onToggleCollapsed={()=>setSidebarCollapsed(value=>!value)}
       onDashboard={()=>navigateTo('study')}
@@ -589,18 +590,18 @@ export default function App(){
     </main>)
   }
 
-  if(authUser&&!plusActive&&(['study','stats','settings','vocabulary'] as View[]).includes(view))
-    return withSidebar('practice-tests',<main className="shell">
+  if(authUser&&!plusActive&&(['study','stats','settings','question-bank'] as View[]).includes(view))
+    return withSidebar(view==='study'?'dashboard':view==='stats'?'performance':view==='settings'?'practice-setup':'question-bank',<main className="shell">
       <section className="card">
-        <p className="eyebrow">SAT Daily Practice</p>
-        <h1>Free daily practice</h1>
-        <p>Enjoy two random 10-question sessions every day. Upgrade to Plus for unlimited sessions, personalized practice, a study plan and performance history.</p>
+        <p className="eyebrow">Early Adopter</p>
+        <h1>{view==='study'?'Dashboard':view==='stats'?'Performance':view==='settings'?'Practice Setup':'Question Bank'}</h1>
+        <p>Unlock this feature with 90-day Early Adopter access. Free practice and Vocabulary are available now.</p>
         <div className="hero-actions">
-          <AlexButton onClick={()=>void beginPractice('both','all')}>Start free practice</AlexButton>
-          <AlexButton tone="secondary" onClick={()=>navigateTo('account')}>Explore 90-day Plus access</AlexButton>
+          <AlexButton onClick={()=>navigateTo('upgrade')}>See Early Adopter benefits</AlexButton>
+          <AlexButton tone="secondary" onClick={()=>navigateTo('home')}>Start free practice</AlexButton>
         </div>
       </section>
-    </main>)
+    </main>,'#F7F6F2')
 
   if(!contentAdmin&&(view==='question-bank'||view==='parsing-issues'))
     return withSidebar('practice-tests',<main className="shell">
