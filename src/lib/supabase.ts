@@ -51,10 +51,11 @@ export async function isRegistrationFull():Promise<boolean>{
   return data===true
 }
 
-export async function joinLaunchWaitlist(email:string,birthDate:string,captchaToken:string):Promise<void>{
-  if(!captchaToken)throw new Error('Complete the security check.')
+export async function joinLaunchWaitlist(email:string,ageConfirmed:boolean,captchaToken:string):Promise<void>{
+  if(!ageConfirmed)throw new Error('Please confirm you are 13 or older.')
+  if(import.meta.env.VITE_TURNSTILE_SITE_KEY&&!captchaToken)throw new Error('Complete the security check.')
   const {data,error}=await supabase.functions.invoke('sat-waitlist-register',{
-    body:{email:email.trim().toLowerCase(),birthDate,captchaToken},
+    body:{email:email.trim().toLowerCase(),ageConfirmed,captchaToken},
   })
   if(error||!data||data.message!=='Please check your email for a waitlist confirmation link.')throw new Error(data?.message??'Unable to join waitlist.')
 }
