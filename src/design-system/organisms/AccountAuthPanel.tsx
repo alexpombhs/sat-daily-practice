@@ -1,10 +1,11 @@
-import {useEffect,useState} from 'react'
+import {useCallback,useEffect,useState} from 'react'
 import AlexButton from '../atoms/AlexButton'
 import AlexStack from '../atoms/AlexStack'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
 import AlexTextField from '../atoms/AlexTextField'
 import AuthCredentialsForm from '../molecules/AuthCredentialsForm'
+import TurnstileChallenge from '../molecules/TurnstileChallenge'
 import UserProfileForm from '../molecules/UserProfileForm'
 import {validateSignupBirthDate} from '../../lib/signupAge'
 import {deleteCurrentAccount,EMPTY_USER_PROFILE,isRegistrationFull,joinLaunchWaitlist,isSupabaseConfigured,loadUserProfile,saveUserProfile,signInWithPassword,signOut,signUpWithPassword,type UserProfile} from '../../lib/supabase'
@@ -23,6 +24,8 @@ export default function AccountAuthPanel({email}:Props){
   const[registrationFull,setRegistrationFull]=useState(false)
   const[waitlistEmail,setWaitlistEmail]=useState('')
   const[waitlistBirthDate,setWaitlistBirthDate]=useState('')
+  const[captchaToken,setCaptchaToken]=useState('')
+  const handleCaptchaToken=useCallback((token:string)=>setCaptchaToken(token),[])
   const[deleteText,setDeleteText]=useState('')
   const[profile,setProfile]=useState<UserProfile>(EMPTY_USER_PROFILE)
 
@@ -62,7 +65,7 @@ export default function AccountAuthPanel({email}:Props){
   async function joinWaitlist(){
     setBusy(true);setError('');setMessage('')
     try{
-      await joinLaunchWaitlist(waitlistEmail,validateSignupBirthDate(waitlistBirthDate))
+      await joinLaunchWaitlist(waitlistEmail,validateSignupBirthDate(waitlistBirthDate),captchaToken)
       setMessage('You are on the waitlist. We will contact you if a place becomes available.')
     }catch(nextError){setError(messageFromError(nextError))}
     finally{setBusy(false)}
@@ -141,9 +144,10 @@ export default function AccountAuthPanel({email}:Props){
         <AlexText sx={{fontSize:14,color:'text.secondary'}}>Enter your email to request a registration invitation. An invitation does not reserve a place. Your email will be used for waitlist updates; contact support to request removal.</AlexText>
         <AlexTextField label="Date of birth" type="date" value={waitlistBirthDate} onChange={event=>setWaitlistBirthDate(event.target.value)} InputLabelProps={{shrink:true}} />
         <AlexTextField label="Email for waitlist" type="email" value={waitlistEmail} onChange={event=>setWaitlistEmail(event.target.value)} />
+        <TurnstileChallenge onToken={handleCaptchaToken}/>
         {error&&<AlexText role="alert" sx={{color:'error.main'}}>{error}</AlexText>}
         {message&&<AlexText role="status" sx={{color:'success.main'}}>{message}</AlexText>}
-        <AlexButton disabled={busy||!waitlistEmail.includes('@')||!waitlistBirthDate} onClick={()=>void joinWaitlist()}>Join waitlist</AlexButton>
+        <AlexButton disabled={busy||!waitlistEmail.includes('@')||!waitlistBirthDate||!captchaToken} onClick={()=>void joinWaitlist()}>Join waitlist</AlexButton>
         <AlexButton tone="secondary" onClick={()=>setRegistrationFull(false)}>I already have an account — sign in</AlexButton>
       </AlexStack>:<AuthCredentialsForm
         mode={mode}
