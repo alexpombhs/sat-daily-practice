@@ -244,27 +244,27 @@
     "question_number": 9,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "Two similar triangles have an angle of 38 degrees. In one triangle, what is the measure of its complementary acute angle if the triangle is right?",
+    "stem": "Two right triangles are similar. In the smaller triangle, one acute angle is (3x+7)°; the corresponding acute angle in the larger triangle is (5x-19)°. What is the measure of the OTHER acute angle in the smaller triangle?",
     "options": [
       {
         "label": "A",
-        "text": "42°"
+        "text": "39°"
       },
       {
         "label": "B",
-        "text": "52°"
+        "text": "44°"
       },
       {
         "label": "C",
-        "text": "62°"
+        "text": "51°"
       },
       {
         "label": "D",
-        "text": "38°"
+        "text": "57°"
       }
     ],
     "correct_answer": "B",
-    "explanation": "Complementary acute angles sum to 90°, so 90-38=52°.",
+    "explanation": "Corresponding angles are equal: 3x+7=5x-19 gives x=13. One acute angle is 46°, and the other is 90-46=44°.",
     "difficulty": "medium",
     "concepts": [
       "similar triangles",
@@ -279,27 +279,27 @@
     "question_number": 10,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "An experiment yields points (0,3),(2,9),(4,15). Which linear equation models the data?",
+    "stem": "A scatterplot of study time x and score y is summarized by points (1,58),(2,63),(3,68),(4,72),(5,79). Which line is the best approximate model for these observations?",
     "options": [
       {
         "label": "A",
-        "text": "y=6x+3"
+        "text": "y=5x+53"
       },
       {
         "label": "B",
-        "text": "y=3x+9"
+        "text": "y=2x+58"
       },
       {
         "label": "C",
-        "text": "y=2x+3"
+        "text": "y=10x+48"
       },
       {
         "label": "D",
-        "text": "y=3x+3"
+        "text": "y=-5x+83"
       }
     ],
-    "correct_answer": "D",
-    "explanation": "Rise of 6 over run of 2 gives slope 3, and intercept is 3.",
+    "correct_answer": "A",
+    "explanation": "The scores rise about 21 points over four hours, approximately five points per hour, with an intercept near 53.",
     "difficulty": "medium",
     "concepts": [
       "scatterplot trend",
@@ -314,27 +314,27 @@
     "question_number": 11,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "A concert charges $8 per ticket plus a fixed $3 online fee. Which expression represents the total for t tickets?",
+    "stem": "A parking garage charges a $5 entry fee and $3 per hour. If the total bill was $26, how many hours was the car parked?",
     "options": [
       {
         "label": "A",
-        "text": "3t-8"
+        "text": "6"
       },
       {
         "label": "B",
-        "text": "8t+3"
+        "text": "7"
       },
       {
         "label": "C",
-        "text": "11t"
+        "text": "8"
       },
       {
         "label": "D",
-        "text": "8+3t"
+        "text": "9"
       }
     ],
     "correct_answer": "B",
-    "explanation": "Each ticket costs 8 dollars, with one fixed 3-dollar fee.",
+    "explanation": "Solve 5+3h=26, giving 3h=21 and h=7.",
     "difficulty": "easy",
     "concepts": [
       "substitution into linear equations",
@@ -521,27 +521,27 @@
     "question_number": 18,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "A square's perimeter is p. Which expression gives its area?",
+    "stem": "A square has perimeter p. A new square is made with a side length 2 greater than the original. Which expression gives the new square's area?",
     "options": [
       {
         "label": "A",
-        "text": "p²/16"
+        "text": "(p/4+2)²"
       },
       {
         "label": "B",
-        "text": "4p²"
+        "text": "(p+2)²/4"
       },
       {
         "label": "C",
-        "text": "p²/4"
+        "text": "p²/16+2"
       },
       {
         "label": "D",
-        "text": "p²/8"
+        "text": "p²/4+4"
       }
     ],
     "correct_answer": "A",
-    "explanation": "Each side is p/4; area=(p/4)²=p²/16.",
+    "explanation": "The original side is p/4; the new side is p/4+2, whose square gives the area.",
     "difficulty": "medium",
     "concepts": [
       "perimeter to side length conversion",
@@ -607,9 +607,9 @@
     "question_number": 21,
     "subject": "math",
     "response_type": "student-produced",
-    "stem": "For positive a, (a^3)^(1/2)×a^(1/2)=a^k. What is k?",
-    "correct_answer": "2",
-    "explanation": "Add exponents: 3/2+1/2=2.",
+    "stem": "For positive a, the expression √(a³)·∛(a²) can be written a^(k/6). What is k?",
+    "correct_answer": "13",
+    "explanation": "The exponents are 3/2 and 2/3, totaling 9/6+4/6=13/6, so k=13.",
     "difficulty": "advanced",
     "concepts": [
       "nth-root exponent laws",
@@ -625,27 +625,27 @@
     "question_number": 22,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "A right triangle has legs 9 and 12. What is its area?",
+    "stem": "A right triangle has a hypotenuse of 13 and one leg of 5. What is its area?",
     "options": [
       {
         "label": "A",
-        "text": "60"
+        "text": "24"
       },
       {
         "label": "B",
-        "text": "108"
+        "text": "30"
       },
       {
         "label": "C",
-        "text": "45"
+        "text": "36"
       },
       {
         "label": "D",
-        "text": "54"
+        "text": "60"
       }
     ],
-    "correct_answer": "D",
-    "explanation": "Area=(1/2)(9)(12)=54.",
+    "correct_answer": "B",
+    "explanation": "The other leg is √(13²-5²)=12, so area=(1/2)(5)(12)=30.",
     "difficulty": "medium",
     "concepts": [
       "Pythagorean theorem",
@@ -660,27 +660,27 @@
     "question_number": 23,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "Which is a factor of x²+11x+24?",
+    "stem": "A monic quadratic x²+bx+60 factors over integers as (x+m)(x+n), where m and n are positive integers and m<n. If b=17, what is n-m?",
     "options": [
       {
         "label": "A",
-        "text": "x+6/5"
+        "text": "1"
       },
       {
         "label": "B",
-        "text": "x+2"
+        "text": "7"
       },
       {
         "label": "C",
-        "text": "x+3"
+        "text": "11"
       },
       {
         "label": "D",
-        "text": "x+5"
+        "text": "13"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "The polynomial factors as (x+3)(x+8).",
+    "correct_answer": "B",
+    "explanation": "m+n=17 and mn=60; the pair is 5 and 12, so the difference is 7.",
     "difficulty": "advanced",
     "concepts": [
       "factoring quadratics",
@@ -766,27 +766,27 @@
     "question_number": 26,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "For f(x)=a(x-2)²+5 with a<0, which statement must be true?",
+    "stem": "Let f(x)=a(x-3)²+8, where a is an integer less than zero. If f(1)>-9, what is the least possible value of f(1)?",
     "options": [
       {
         "label": "A",
-        "text": "Its x-intercept is 2."
+        "text": "-8"
       },
       {
         "label": "B",
-        "text": "Its y-intercept is 5."
+        "text": "-4"
       },
       {
         "label": "C",
-        "text": "Its maximum is 5."
+        "text": "0"
       },
       {
         "label": "D",
-        "text": "Its minimum is 5."
+        "text": "4"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "Because a<0 the parabola opens down; its vertex value 5 is the maximum.",
+    "correct_answer": "A",
+    "explanation": "f(1)=4a+8. The inequality 4a+8>-9 gives a>-17/4. Negative integers a can be -4,-3,-2,-1. The least f(1) occurs at a=-4 and equals -8.",
     "difficulty": "advanced",
     "concepts": [
       "vertex form",
@@ -802,9 +802,9 @@
     "question_number": 27,
     "subject": "math",
     "response_type": "student-produced",
-    "stem": "For f(x)=a·2^x and f(0)=6, what is f(3)?",
-    "correct_answer": "48",
-    "explanation": "f(0)=a=6. Then f(3)=6×8=48.",
+    "stem": "For f(x)=a·b^x with a,b>0, f(0)=12 and f(2)=27. What is f(4)?",
+    "correct_answer": "60.75",
+    "explanation": "The first condition gives a=12. Since 12b²=27, b²=9/4. Therefore f(4)=12(b²)²=12·81/16=60.75.",
     "difficulty": "advanced",
     "concepts": [
       "exponential function intercept",
@@ -1263,27 +1263,27 @@
     "question_number": 16,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "Parallel lines are cut by a transversal. Two corresponding angles measure (4x+8)° and (6x-18)°. What is x?",
+    "stem": "Two parallel lines are crossed by a transversal. One interior angle measures (5x+10)°. The interior angle on the same side of the transversal at the other line is (7x-22)°. What is x?",
     "options": [
       {
         "label": "A",
-        "text": "10"
+        "text": "14"
       },
       {
         "label": "B",
-        "text": "11"
+        "text": "15"
       },
       {
         "label": "C",
-        "text": "13"
+        "text": "16"
       },
       {
         "label": "D",
-        "text": "15"
+        "text": "18"
       }
     ],
     "correct_answer": "C",
-    "explanation": "Corresponding angles are equal: 4x+8=6x-18, so 2x=26 and x=13.",
+    "explanation": "Same-side interior angles are supplementary: (5x+10)+(7x-22)=180; 12x=192, so x=16.",
     "difficulty": "advanced",
     "concepts": [
       "parallel-line angle relationships",
@@ -1333,27 +1333,27 @@
     "question_number": 18,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "The zeros of a quadratic function are -1 and 9. At what x-coordinate is its vertex?",
+    "stem": "A quadratic function has x-intercepts at -3 and 7 and passes through (0,-21). What is the minimum value of the function?",
     "options": [
       {
         "label": "A",
-        "text": "5"
+        "text": "-25"
       },
       {
         "label": "B",
-        "text": "8"
+        "text": "-24"
       },
       {
         "label": "C",
-        "text": "3"
+        "text": "-21"
       },
       {
         "label": "D",
-        "text": "4"
+        "text": "-16"
       }
     ],
-    "correct_answer": "D",
-    "explanation": "The axis of symmetry is the midpoint (-1+9)/2=4.",
+    "correct_answer": "A",
+    "explanation": "Write f(x)=a(x+3)(x-7); f(0)=-21a=-21, so a=1. The vertex is x=2 and f(2)=5(-5)=-25.",
     "difficulty": "medium",
     "concepts": [
       "quadratic vertex",
@@ -1368,27 +1368,27 @@
     "question_number": 19,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "A ball's height is h(t)=-(t-4)²+20 for 0≤t≤8. What is its maximum height?",
+    "stem": "The depth of water in a tank, in centimeters, is modeled by d(t)=2(t-3)²+7 for 0≤t≤6 hours. What is the minimum depth during this interval?",
     "options": [
       {
         "label": "A",
-        "text": "24"
+        "text": "3"
       },
       {
         "label": "B",
-        "text": "4"
+        "text": "7"
       },
       {
         "label": "C",
-        "text": "16"
+        "text": "9"
       },
       {
         "label": "D",
-        "text": "20"
+        "text": "25"
       }
     ],
-    "correct_answer": "D",
-    "explanation": "The vertex occurs at t=4, yielding the maximum height 20.",
+    "correct_answer": "B",
+    "explanation": "The coefficient of the squared term is positive, so the vertex at t=3 yields the minimum depth of 7 cm.",
     "difficulty": "medium",
     "concepts": [
       "vertex form",
@@ -1403,9 +1403,9 @@
     "question_number": 20,
     "subject": "math",
     "response_type": "student-produced",
-    "stem": "In a right triangle, the two legs are 8 and 15. What is the sine of the acute angle opposite the leg of length 8?",
-    "correct_answer": "8/17",
-    "explanation": "Hypotenuse √(8²+15²)=17. Sine is opposite/hypotenuse=8/17.",
+    "stem": "In a right triangle, acute angles A and B are complementary. The side opposite A is 12 and the side adjacent to A is 5. What is cos(B)?",
+    "correct_answer": "12/13",
+    "explanation": "Hypotenuse is 13. Since A+B=90°, cos(B)=sin(A)=12/13.",
     "difficulty": "advanced",
     "concepts": [
       "trigonometric ratios",
@@ -1577,27 +1577,27 @@
     "question_number": 26,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "A solid is made of two identical cubes of side 3 joined along one whole face. What is its exterior surface area?",
+    "stem": "Two identical cubes with edge length x are joined along one entire face. Their combined exterior surface area is 250 square units. What is x?",
     "options": [
       {
         "label": "A",
-        "text": "90"
+        "text": "3"
       },
       {
         "label": "B",
-        "text": "108"
+        "text": "4"
       },
       {
         "label": "C",
-        "text": "54"
+        "text": "5"
       },
       {
         "label": "D",
-        "text": "72"
+        "text": "6"
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Two cubes have 12 faces; two shared faces are internal, leaving 10×9=90.",
+    "correct_answer": "C",
+    "explanation": "The combined solid is x by x by 2x, with exterior surface area 2(x²+2x²+2x²)=10x². Setting 10x²=250 gives x=5.",
     "difficulty": "advanced",
     "concepts": [
       "surface area of rectangular prisms",
