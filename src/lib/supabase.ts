@@ -80,6 +80,14 @@ export async function hasPlusAccess():Promise<boolean>{
   return data===true
 }
 
+export async function discardFreeSessionHistory(sessionId:string):Promise<void>{
+ const userId=await currentUserId()
+ if(!userId)return
+ const {error}=await supabase.from('sat_sessions').delete()
+  .eq('id',sessionId).eq('user_id',userId)
+ if(error)throw error
+}
+
 export async function freeSessionsRemaining():Promise<number>{
  const {data,error}=await supabase.rpc('sat_my_free_sessions_remaining')
  if(error)throw error
