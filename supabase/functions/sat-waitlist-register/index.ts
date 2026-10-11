@@ -13,9 +13,9 @@ Deno.serve(async(req:Request)=>{
  const key=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
  const emailKey=Deno.env.get('RESEND_API_KEY'),sender=Deno.env.get('LA_FROM_EMAIL')
  if(!turnstileSecret||!supabaseUrl||!key||!emailKey||!sender)return result('Waitlist is temporarily unavailable.',503)
- let body:{email?:string;birthDate?:string;captchaToken?:string}
+ let body:{email?:string;ageConfirmed?:boolean;captchaToken?:string}
  try{body=await req.json()}catch{return result('Invalid submission.',400)}
- if(!body.captchaToken||!body.email||!body.birthDate)return result('Complete all fields and the security check.',400)
+ if(!body.captchaToken||!body.email||body.ageConfirmed!==true)return result('Complete all fields and the security check.',400)
  const challenge=new URLSearchParams({secret:turnstileSecret,response:body.captchaToken})
  const remoteIp=req.headers.get('cf-connecting-ip')
  if(remoteIp)challenge.set('remoteip',remoteIp)
@@ -27,7 +27,7 @@ Deno.serve(async(req:Request)=>{
  const email=body.email.trim().toLowerCase()
  const admin=createClient(supabaseUrl,key,{auth:{persistSession:false}})
  const {data:shouldSend,error}=await admin.rpc('sat_join_waitlist',{
-  email_input:email,birth_date_input:body.birthDate
+  email_input:email,age_confirmed:true
  })
  if(error)return result('Unable to join waitlist. Please check the details.',400)
  if(shouldSend===true){
