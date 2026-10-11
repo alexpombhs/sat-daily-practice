@@ -4,7 +4,7 @@ export type ModuleKey = 'rw1' | 'rw2' | 'math1' | 'math2'
 export type PracticeTestId = `practice-test-${number}`
 export type PracticeTestFilter = 'all' | PracticeTestId
 export type PracticeSelectionMode = 'adaptive' | 'random'
-export type QuestionDifficulty = 'easy' | 'medium' | 'hard' | 'advanced'
+export type QuestionDifficulty = 'easy' | 'medium' | 'advanced'
 export type DifficultyFilter = 'all' | QuestionDifficulty
 export type AnswerFeedbackTiming = 'immediate' | 'end'
 export interface VocabularyPreferences { sources:Array<'practice-test-derived'|'sat-open-dataset'|'supplemental'>; difficulty:'all'|'easy'|'medium'|'advanced'; history:'all'|'new'|'failed'; selection:'adaptive'|'random'; direction:'word-to-definition'|'definition-to-word' }
