@@ -18,6 +18,13 @@ describe('choosePracticeQuestions',()=>{
   })
 
 
+  it('keeps original mock questions separate from ordinary all-tests practice',()=>{
+    const original=QUESTION_BANK.find(q=>q.subject==='math')!
+    const mock={...original,id:'practice-test-8:math1-1',practiceTestId:'practice-test-8' as const,number:1}
+    expect(practiceQuestionPool({...settings,practiceTest:'all'},[],[original,mock])).toEqual([original])
+    expect(practiceQuestionPool({...settings,practiceTest:'practice-test-8'},[],[original,mock])).toEqual([mock])
+  })
+
   it('filters the pool to the selected practice test',()=>{
     const chosen=choosePracticeQuestions({...settings,practiceTest:'practice-test-4'},[],()=>0)
     expect(chosen).toHaveLength(3)
