@@ -1472,23 +1472,23 @@
     "question_number": 23,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "A population decreases by 5% every year. Which is the multiplier for each month if the model assumes a constant equivalent monthly rate?",
+    "stem": "A population decreases by $5\\%$ every year. Which expression gives the equivalent monthly multiplier if the monthly rate is constant?",
     "options": [
       {
         "label": "A",
-        "text": "0.95^12"
+        "text": "$0.95^{12}$"
       },
       {
         "label": "B",
-        "text": "0.95/12"
+        "text": "$\\frac{0.95}{12}$"
       },
       {
         "label": "C",
-        "text": "0.95^(1/12)"
+        "text": "$0.95^{\\frac{1}{12}}$"
       },
       {
         "label": "D",
-        "text": "(1-0.05/12)^12"
+        "text": "$\\left(1-\\frac{0.05}{12}\\right)^{12}$"
       }
     ],
     "correct_answer": "C",
