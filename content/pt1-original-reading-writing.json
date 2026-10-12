@@ -110,34 +110,41 @@
     "question_number": 4,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Although the project was praised for its environmental benefits, the final design was not entirely ___: engineers identified several unresolved safety problems.",
+    "stem": "A restoration team initially described the century-old footbridge as structurally sound. Closer examination, however, revealed corrosion concealed beneath several recently painted joints. The team's first assessment was therefore ______ rather than definitive.",
     "options": [
       {
         "label": "A",
-        "text": "flawless"
+        "text": "premature"
       },
       {
         "label": "B",
-        "text": "expensive"
+        "text": "methodical"
       },
       {
         "label": "C",
-        "text": "ambitious"
+        "text": "conclusive"
       },
       {
         "label": "D",
-        "text": "innovative"
+        "text": "irrelevant"
       }
     ],
     "correct_answer": "A",
-    "explanation": "Not entirely flawless fits the concession: the design had genuine strengths but also unresolved safety flaws.",
+    "explanation": "The corrosion discovered during closer inspection shows that the initial assessment was made before sufficient evidence was available; premature is most precise.",
     "difficulty": "medium",
     "concepts": [
       "words in context",
       "negation",
       "contrast and concession"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "A restoration team initially described the century-old footbridge as structurally sound. Closer examination, however, revealed corrosion concealed beneath several recently painted joints. The team's first assessment was therefore ______ rather than definitive.",
+      "A) premature",
+      "B) methodical",
+      "C) conclusive",
+      "D) irrelevant"
+    ]
   },
   {
     "id": "pt1-rw1-05",
@@ -711,7 +718,7 @@
     "question_number": 20,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Each Monday, a technician ___ the weather sensors for damage.",
+    "stem": "Every spring, the observatory's technician ______ the weather sensors, compares their readings with a reference instrument, and documents any adjustments.",
     "options": [
       {
         "label": "A",
@@ -719,7 +726,7 @@
       },
       {
         "label": "B",
-        "text": "checked"
+        "text": "had checked"
       },
       {
         "label": "C",
@@ -731,13 +738,20 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "Each Monday describes a habitual action, so the present-tense singular verb checks fits.",
+    "explanation": "The subject technician is singular and the sentence describes a recurring routine; checks parallels compares and documents.",
     "difficulty": "easy",
     "concepts": [
       "present tense",
       "habitual action"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "Every spring, the observatory's technician ______ the weather sensors, compares their readings with a reference instrument, and documents any adjustments.",
+      "A) checks",
+      "B) had checked",
+      "C) checking",
+      "D) have checked"
+    ]
   },
   {
     "id": "pt1-rw1-21",
@@ -745,33 +759,40 @@
     "question_number": 21,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The bridge was closed overnight ___ the inspection team returned the following morning.",
+    "stem": "Engineers closed the bridge at midnight. ______ The inspection team returned at dawn to conduct the final load test.",
     "options": [
       {
         "label": "A",
-        "text": ";"
+        "text": "Meanwhile,"
       },
       {
         "label": "B",
-        "text": " ,"
+        "text": "Nevertheless,"
       },
       {
         "label": "C",
-        "text": "and"
+        "text": "Previously,"
       },
       {
         "label": "D",
-        "text": "because"
+        "text": "For example,"
       }
     ],
     "correct_answer": "A",
-    "explanation": "The two clauses are independently complete; a semicolon joins them without a coordinating conjunction.",
+    "explanation": "Meanwhile signals that the closure and the preparation for a subsequent inspection belong to the same period; the other transitions imply unsupported opposition, chronology, or exemplification.",
     "difficulty": "medium",
     "concepts": [
       "sentence boundaries",
       "period versus comma splice"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "Engineers closed the bridge at midnight. ______ The inspection team returned at dawn to conduct the final load test.",
+      "A) Meanwhile,",
+      "B) Nevertheless,",
+      "C) Previously,",
+      "D) For example,"
+    ]
   },
   {
     "id": "pt1-rw1-22",
@@ -813,33 +834,40 @@
     "question_number": 23,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The archive digitized thousands of photographs in 2022 ___ afterward, volunteers began identifying the people pictured.",
+    "stem": "In 2022, the archive digitized thousands of photographs ______ volunteers later identified many of the people pictured in the images.",
     "options": [
       {
         "label": "A",
-        "text": ";"
+        "text": "; afterward,"
       },
       {
         "label": "B",
-        "text": " ,"
+        "text": " afterward,"
       },
       {
         "label": "C",
-        "text": "and"
+        "text": "; afterward"
       },
       {
         "label": "D",
-        "text": " :"
+        "text": "and, afterward,"
       }
     ],
     "correct_answer": "A",
-    "explanation": "A semicolon appropriately joins two independent clauses; afterward is a temporal adverb within the second clause.",
+    "explanation": "A semicolon joins two independent clauses, and afterward is followed by a comma as an introductory transition.",
     "difficulty": "medium",
     "concepts": [
       "semicolon joining independent clauses",
       "temporal adverb"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "In 2022, the archive digitized thousands of photographs ______ volunteers later identified many of the people pictured in the images.",
+      "A) ; afterward,",
+      "B)  afterward,",
+      "C) ; afterward",
+      "D) and, afterward,"
+    ]
   },
   {
     "id": "pt1-rw1-24",
@@ -882,34 +910,41 @@
     "question_number": 25,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The researchers sampled soil from three places: Albany, New York; Santa Fe, New Mexico; and ___ before comparing mineral composition.",
+    "stem": "The researchers sampled soil at three locations ______ Albany, New York; Santa Fe, New Mexico; and Boise, Idaho. They then compared the samples' mineral composition.",
     "options": [
       {
         "label": "A",
-        "text": "Boise, Idaho,"
+        "text": ":"
       },
       {
         "label": "B",
-        "text": "Boise; Idaho,"
+        "text": ","
       },
       {
         "label": "C",
-        "text": "Boise, Idaho;"
+        "text": ";"
       },
       {
         "label": "D",
-        "text": "Boise Idaho,"
+        "text": "—,"
       }
     ],
     "correct_answer": "A",
-    "explanation": "A comma separates city and state inside each location and a final comma after Idaho closes the introductory three-item list before the main clause.",
+    "explanation": "A colon introduces the list of three locations after the complete independent clause. Semicolons separate the cities and states within that list.",
     "difficulty": "advanced",
     "concepts": [
       "complex series punctuation",
       "supplementary phrase",
       "semicolon versus comma"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "The researchers sampled soil at three locations ______ Albany, New York; Santa Fe, New Mexico; and Boise, Idaho. They then compared the samples' mineral composition.",
+      "A) :",
+      "B) ,",
+      "C) ;",
+      "D) —,"
+    ]
   },
   {
     "id": "pt1-rw1-26",
@@ -917,7 +952,7 @@
     "question_number": 26,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The solar panels generated enough power for daytime use ___ however, the facility relied on batteries after sunset.",
+    "stem": "The solar panels supplied enough electricity for daytime operation ______ after sunset, however, the facility drew electricity from batteries.",
     "options": [
       {
         "label": "A",
@@ -925,26 +960,33 @@
       },
       {
         "label": "B",
-        "text": " ,"
+        "text": " and"
       },
       {
         "label": "C",
-        "text": "and"
+        "text": ","
       },
       {
         "label": "D",
-        "text": " :"
+        "text": ": because"
       }
     ],
     "correct_answer": "A",
-    "explanation": "The independent clauses require a semicolon before the conjunctive adverb however; the supplied comma after however closes that adverb.",
+    "explanation": "The independent clauses are correctly separated by a semicolon. However is parenthetical in the second clause and is set off with commas.",
     "difficulty": "advanced",
     "concepts": [
       "conjunctive adverb punctuation",
       "two independent clauses",
       "contrast"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "The solar panels supplied enough electricity for daytime operation ______ after sunset, however, the facility drew electricity from batteries.",
+      "A) ;",
+      "B)  and",
+      "C) ,",
+      "D) : because"
+    ]
   },
   {
     "id": "pt1-rw1-27",
@@ -1397,33 +1439,40 @@
     "question_number": 7,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The researchers ___ installing additional sensors because the existing network left large gaps in coverage.",
+    "stem": "A research group proposed placing air-quality sensors along several streets, but the city council questioned whether the devices would collect representative measurements. In response, the researchers presented a map of gaps in the existing network, a strategy meant to ______ their proposal with evidence rather than merely repeat it.",
     "options": [
       {
         "label": "A",
-        "text": "dismiss"
+        "text": "substantiate"
       },
       {
         "label": "B",
-        "text": "advocate"
+        "text": "retract"
       },
       {
         "label": "C",
-        "text": "oppose"
+        "text": "qualify"
       },
       {
         "label": "D",
-        "text": "forget"
+        "text": "circumvent"
       }
     ],
-    "correct_answer": "B",
-    "explanation": "Advocating means supporting a proposed measure.",
+    "correct_answer": "A",
+    "explanation": "Substantiate means support with evidence; the network map directly addresses the council's concern about coverage.",
     "difficulty": "medium",
     "concepts": [
       "academic phrase in context",
       "advocacy and support"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "A research group proposed placing air-quality sensors along several streets, but the city council questioned whether the devices would collect representative measurements. In response, the researchers presented a map of gaps in the existing network, a strategy meant to ______ their proposal with evidence rather than merely repeat it.",
+      "A) substantiate",
+      "B) retract",
+      "C) qualify",
+      "D) circumvent"
+    ]
   },
   {
     "id": "pt1-rw2-08",
@@ -1431,7 +1480,7 @@
     "question_number": 8,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Early accounts of the expedition were often treated as ___, but newly identified correspondence contradicts several of their dates and descriptions. Historians now approach those narratives with greater caution.",
+    "stem": "Until recently, historians relied on a single expedition diary to establish the sequence of events. Its detailed dates and confident tone made it seem ______. Yet newly discovered letters disagree with several entries, leading researchers to reassess the diary's reliability.",
     "options": [
       {
         "label": "A",
@@ -1439,11 +1488,11 @@
       },
       {
         "label": "B",
-        "text": "tentative"
+        "text": "provisional"
       },
       {
         "label": "C",
-        "text": "inconsequential"
+        "text": "tangential"
       },
       {
         "label": "D",
@@ -1451,14 +1500,21 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "New contradictions undermine accounts formerly treated as reliable or authoritative.",
+    "explanation": "The diary previously appeared authoritative—trustworthy or definitive—but contradictory letters cast doubt on that status.",
     "difficulty": "advanced",
     "concepts": [
       "nuanced vocabulary",
       "legitimacy and evidence",
       "historical reasoning"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "Until recently, historians relied on a single expedition diary to establish the sequence of events. Its detailed dates and confident tone made it seem ______. Yet newly discovered letters disagree with several entries, leading researchers to reassess the diary's reliability.",
+      "A) authoritative",
+      "B) provisional",
+      "C) tangential",
+      "D) derivative"
+    ]
   },
   {
     "id": "pt1-rw2-09",
@@ -1507,33 +1563,40 @@
     "question_number": 10,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Observers recorded how often bees landed on blue and yellow paper flowers. What did researchers directly measure?",
+    "stem": "To investigate whether flower color influenced pollinator visits, biologists placed 40 blue and 40 yellow artificial flowers in a field. Each flower offered the same quantity of sugar solution. Over four hours, the team counted bee landings on the two colors. Which measurement directly addresses the study's main question?",
     "options": [
       {
         "label": "A",
-        "text": "The lifetime of each bee"
+        "text": "The average number of landings per flower of each color"
       },
       {
         "label": "B",
-        "text": "The chemical content of nectar"
+        "text": "The number of bees surviving for four hours"
       },
       {
         "label": "C",
-        "text": "Landing frequency on each color"
+        "text": "The chemical composition of nectar in native flowers"
       },
       {
         "label": "D",
-        "text": "How bees perceive colors internally"
+        "text": "The total number of naturally occurring yellow flowers nearby"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "The recorded behavior is landings by color.",
+    "correct_answer": "A",
+    "explanation": "Comparing landings per flower between otherwise identical blue and yellow flowers measures the response to color while accounting for equal sample sizes.",
     "difficulty": "easy",
     "concepts": [
       "explicit research methods",
       "observed response indicators"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "To investigate whether flower color influenced pollinator visits, biologists placed 40 blue and 40 yellow artificial flowers in a field. Each flower offered the same quantity of sugar solution. Over four hours, the team counted bee landings on the two colors. Which measurement directly addresses the study's main question?",
+      "A) The average number of landings per flower of each color",
+      "B) The number of bees surviving for four hours",
+      "C) The chemical composition of nectar in native flowers",
+      "D) The total number of naturally occurring yellow flowers nearby"
+    ]
   },
   {
     "id": "pt1-rw2-11",
@@ -1691,27 +1754,27 @@
     "question_number": 15,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "A character says, '<u>I could have taken the road that opened before me, but fear held the map.</u>' The underlined metaphor most directly expresses",
+    "stem": "In an original fictional monologue, a retired navigator recalls an invitation to command an expedition: 'The harbor opened like a gate, yet I let another hand turn the key.' Years later, the navigator is proud of a secure life on land but continues to study charts of the route not taken. What does the underlined phrase <u>I let another hand turn the key</u> most strongly suggest in context?",
     "options": [
       {
         "label": "A",
-        "text": "disgust at maps"
+        "text": "The navigator allowed someone else to accept an opportunity that remained personally significant."
       },
       {
         "label": "B",
-        "text": "regret about an avoided opportunity"
+        "text": "The navigator suspects the expedition's charts contained deliberate errors."
       },
       {
         "label": "C",
-        "text": "confidence in a finished journey"
+        "text": "The navigator was physically unable to leave the harbor."
       },
       {
         "label": "D",
-        "text": "indifference to travel"
+        "text": "The navigator believes a life at sea would certainly have ended disastrously."
       }
     ],
-    "correct_answer": "B",
-    "explanation": "The road represents an opportunity and fear prevented taking it.",
+    "correct_answer": "A",
+    "explanation": "The gate represents the opportunity to lead the expedition. Letting another hand turn the key conveys yielding that opportunity, while the later attention to charts implies lingering personal significance.",
     "difficulty": "advanced",
     "concepts": [
       "Shakespearean metaphor",
@@ -1720,11 +1783,11 @@
     ],
     "practice_test_id": "practice-test-1",
     "display_lines": [
-      "A character says, '<u>I could have taken the road that opened before me, but fear held the map.</u>' The underlined metaphor most directly expresses",
-      "A) disgust at maps",
-      "B) regret about an avoided opportunity",
-      "C) confidence in a finished journey",
-      "D) indifference to travel"
+      "In an original fictional monologue, a retired navigator recalls an invitation to command an expedition: 'The harbor opened like a gate, yet I let another hand turn the key.' Years later, the navigator is proud of a secure life on land but continues to study charts of the route not taken. What does the underlined phrase <u>I let another hand turn the key</u> most strongly suggest in context?",
+      "A) The navigator allowed someone else to accept an opportunity that remained personally significant.",
+      "B) The navigator suspects the expedition's charts contained deliberate errors.",
+      "C) The navigator was physically unable to leave the harbor.",
+      "D) The navigator believes a life at sea would certainly have ended disastrously."
     ]
   },
   {
@@ -1872,7 +1935,7 @@
     "question_number": 20,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The differences in the two measurements were attributed ___ a change in air pressure, not to an error in the instruments.",
+    "stem": "The discrepancies between two measurements were attributed ______ fluctuations in air pressure rather than to errors in the instruments.",
     "options": [
       {
         "label": "A",
@@ -1892,13 +1955,20 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "Attributed to is the conventional verb–preposition construction; the clause distinguishes cause from instrument error.",
+    "explanation": "The conventional construction is attributed to, identifying the proposed cause.",
     "difficulty": "easy",
     "concepts": [
       "prepositions and complements",
       "punctuation"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "The discrepancies between two measurements were attributed ______ fluctuations in air pressure rather than to errors in the instruments.",
+      "A) to",
+      "B) with",
+      "C) from",
+      "D) for"
+    ]
   },
   {
     "id": "pt1-rw2-21",
@@ -1975,7 +2045,7 @@
     "question_number": 23,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The engineers replaced the worn hinges ___ the door then opened without scraping the frame.",
+    "stem": "The engineers replaced the worn hinges ______ as a result, the heavy door opened without scraping the frame.",
     "options": [
       {
         "label": "A",
@@ -1983,25 +2053,32 @@
       },
       {
         "label": "B",
-        "text": " ,"
+        "text": " and"
       },
       {
         "label": "C",
-        "text": "and"
+        "text": " however,"
       },
       {
         "label": "D",
-        "text": "because"
+        "text": " because"
       }
     ],
     "correct_answer": "A",
-    "explanation": "A semicolon correctly joins the two related independent clauses.",
+    "explanation": "A semicolon separates the two independent clauses, and the transition as a result is set off by a comma.",
     "difficulty": "medium",
     "concepts": [
       "sentence boundary",
       "independent clause punctuation"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "The engineers replaced the worn hinges ______ as a result, the heavy door opened without scraping the frame.",
+      "A) ;",
+      "B)  and",
+      "C)  however,",
+      "D)  because"
+    ]
   },
   {
     "id": "pt1-rw2-24",
