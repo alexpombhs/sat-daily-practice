@@ -24,11 +24,11 @@ import VocabularyPractice from './design-system/organisms/VocabularyPractice'
 import {dashboardTypography} from './design-system/theme'
 import {answerLabel,matchesAnswer} from './lib/answerCompare'
 import {getPdf} from './lib/pdfStore'
-import {availablePracticeTests,moduleLabel,practiceTestLabel,QUESTION_BANK} from './lib/questionBank'
+import {availablePracticeTests,moduleLabel,practiceTestLabel} from './lib/questionBank'
 import {buildPracticePlanRecommendation} from './lib/practicePlan'
 import {buildNationalMeritOutlook} from './lib/nationalMeritOutlook'
 import {estimateSectionPracticeScore} from './lib/performanceAnalytics'
-import {loadSharedQuestionBank,mergeQuestionBanks} from './lib/sharedQuestionBank'
+import {loadSharedQuestionBank} from './lib/sharedQuestionBank'
 import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
 import {pathForView,viewFromPathname,type AppRouteView} from './lib/appRoutes'
 import {DEFAULT_SETTINGS} from './lib/storage'
@@ -59,7 +59,7 @@ export default function App(){
   const[authUser,setAuthUser]=useState<AuthUser|null>(null)
   const[authReady,setAuthReady]=useState(false)
   const[settingsCloudReady,setSettingsCloudReady]=useState(false)
-  const[questionBank,setQuestionBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
+  const[questionBank,setQuestionBank]=useState<PracticeQuestion[]>([])
   const[resumableSession,setResumableSession]=useState<ActivePracticeSession|null>(null)
   const[reviewMode,setReviewMode]=useState(false)
   const[reviewContentTab,setReviewContentTab]=useState<'question'|'explanation'>('question')
@@ -85,7 +85,7 @@ export default function App(){
   },[])
 
   useEffect(()=>{
-    void loadSharedQuestionBank().then(shared=>setQuestionBank(mergeQuestionBanks(QUESTION_BANK,shared))).catch(error=>console.warn('Shared question bank load failed; using bundled metadata.',error))
+    void loadSharedQuestionBank().then(shared=>setQuestionBank(shared??[])).catch(error=>console.error('Canonical question bank unavailable; refusing bundled fallback.',error))
     Promise.all([getPdf('questions'),getPdf('answers')]).then(([questionsPdf,answersPdf])=>{
       setQpdf(questionsPdf)
       setApdf(answersPdf)
