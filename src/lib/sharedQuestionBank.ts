@@ -5,6 +5,7 @@ import type {ModuleKey,PracticeQuestion,SourceCrop,Subject} from '../types'
 export type SharedQuestionContent={
   questionId:string
   practiceTestId:string
+  updatedAt:string
   questionLines:string[]
   explanationLines:string[]
   needsVisual:boolean
@@ -84,7 +85,7 @@ export async function loadSharedQuestionContent(questionId:string,expectedPracti
   if(!supabase)return null
   const {data,error}=await supabase
     .from('sat_question_bank')
-    .select('id,practice_test_id,question_lines,explanation_lines,needs_visual,content_status,visual_specs,visual_crop,visual_after_line,source_crop,question_mode')
+    .select('id,practice_test_id,updated_at,question_lines,explanation_lines,needs_visual,content_status,visual_specs,visual_crop,visual_after_line,source_crop,question_mode')
     .eq('id',questionId)
     .maybeSingle()
   if(error)throw error
@@ -95,6 +96,7 @@ export async function loadSharedQuestionContent(questionId:string,expectedPracti
   return {
     questionId:data.id,
     practiceTestId:data.practice_test_id,
+    updatedAt:data.updated_at,
     questionLines:Array.isArray(data.question_lines)?data.question_lines as string[]:[],
     explanationLines:Array.isArray(data.explanation_lines)?data.explanation_lines as string[]:[],
     needsVisual:Boolean(data.needs_visual),
@@ -115,6 +117,7 @@ export function questionLinesEqual(actual:unknown,expected:string[]){
 export async function saveSharedQuestionRepair(input:{
   questionId:string
   questionLines:string[]
+  expectedUpdatedAt:string
   visualSpec?:QuestionVisualSpec|null
   visualSpecs?:QuestionVisualSpec[]
 }){
@@ -140,11 +143,11 @@ export async function saveSharedQuestionRepair(input:{
     visual_after_line:visuals[0]?.afterLine??null,
     content_status:'verified',
     updated_at:new Date().toISOString(),
-  }).eq('id',input.questionId)
+  }).eq('id',input.questionId).eq('updated_at',input.expectedUpdatedAt)
     .select('id,question_lines,question_mode,visual_specs,updated_at')
     .maybeSingle()
   if(error)throw new Error(`Supabase save failed: ${error.message}${error.code?` (code ${error.code})`:''}`)
-  if(!data)throw new Error('Supabase returned no updated row. Reload, sign in again, and make sure shared Question Bank editing is enabled.')
+  if(!data)throw new Error('This question changed on another device, or the save was not permitted. Reload the canonical question before saving again; newer edits were preserved.')
   if(data.id!==input.questionId||data.question_mode!=='text'||!questionLinesEqual(data.question_lines,input.questionLines)){
     throw new Error('Supabase did not persist the exact edited question text in text mode. Reload the question before trying again.')
   }
