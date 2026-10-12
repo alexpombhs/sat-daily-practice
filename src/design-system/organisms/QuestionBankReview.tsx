@@ -43,7 +43,8 @@ export default function QuestionBankReview({questionsPdf}:Props){
     setBackfillRunning(true)
     setBackfillResult('Loading canonical text and source PDF…')
     try{
-      const source=validQuestionsPdf??await getPracticeTestPdf('practice-test-4','questions')
+      // Resolve PT4 explicitly; the current viewer may be showing a different PDF.
+      const source=await getPracticeTestPdf('practice-test-4','questions')
       if(!source)throw new Error('PT4 source PDF is unavailable. Nothing was changed.')
       const pt4=bank.filter(q=>q.practiceTestId==='practice-test-4'&&q.subject==='english')
       let saved=0,already=0
