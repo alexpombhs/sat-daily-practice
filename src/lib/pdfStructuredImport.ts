@@ -7,8 +7,6 @@ import {getQuestionContent,isCurrentQuestionContent,QUESTION_CONTENT_VERSION,sav
 import {READING_PARAGRAPH_BREAK} from './readingQuestionFormat'
 import {expandNormalizedCrop,questionVisualSpecs,type NormalizedCrop} from './questionVisuals'
 import {readingTableSpec} from './readingTables'
-import {isPracticeTest5Math1Verified,normalizePracticeTest5Math1Lines,PRACTICE_TEST_5_MATH1_IMAGE_FALLBACK} from './practiceTest5Math1Layout'
-import {verifiedPracticeTest5Math1Content} from './verifiedPracticeTest5Math1'
 import type {PracticeQuestion} from '../types'
 
 
@@ -150,7 +148,7 @@ export async function extractQuestionLines(question:PracticeQuestion,questionPdf
   )
   const textItems=withoutKnownVisualText(question,crop,selected)
   const cleaned=cleanQuestionLines(question.subject==='english'?groupReadingQuestionItems(question,crop,textItems):groupLines(textItems),question.number)
-  return isPracticeTest5Math1Verified(question.id)?normalizePracticeTest5Math1Lines(question.number,cleaned):cleaned
+  return cleaned
 }
 
 export async function extractExplanationLines(question:PracticeQuestion,answerPdf:ArrayBuffer){
@@ -169,37 +167,6 @@ export async function extractExplanationLines(question:PracticeQuestion,answerPd
 
 export async function ensureQuestionText(question:PracticeQuestion,questionPdf:ArrayBuffer){
   const existing=await getQuestionContent(question.id)
-  if(question.practiceTestId==='practice-test-5'&&question.module==='math1'){
-    const verified=verifiedPracticeTest5Math1Content(question.number)
-    if(verified){
-      const record:StoredQuestionContent={
-        questionId:question.id,
-        questionLines:verified.lines,
-        explanationLines:[],
-        questionMode:verified.imageFallback?'image-fallback':'text',
-        explanationMode:'image-fallback',
-        needsVisual:Boolean(verified.needsVisual),
-        importedAt:new Date().toISOString(),
-        contentVersion:QUESTION_CONTENT_VERSION,
-      }
-      await saveQuestionContent(record)
-      return record
-    }
-  }
-  if(question.practiceTestId==='practice-test-5'&&question.module==='math1'&&PRACTICE_TEST_5_MATH1_IMAGE_FALLBACK.has(question.number)){
-    const record:StoredQuestionContent={
-      questionId:question.id,
-      questionLines:[],
-      explanationLines:existing?.explanationLines??[],
-      questionMode:'image-fallback',
-      explanationMode:existing?.explanationMode??'image-fallback',
-      needsVisual:false,
-      importedAt:new Date().toISOString(),
-      contentVersion:QUESTION_CONTENT_VERSION,
-    }
-    await saveQuestionContent(record)
-    return record
-  }
   if(isCurrentQuestionContent(existing)&&existing?.questionLines.length)return existing
   const questionLines=await extractQuestionLines(question,questionPdf)
   const record:StoredQuestionContent={
@@ -208,7 +175,7 @@ export async function ensureQuestionText(question:PracticeQuestion,questionPdf:A
     explanationLines:existing?.explanationLines??[],
     questionMode:questionLines.length?'text':'image-fallback',
     explanationMode:existing?.explanationMode??'text',
-    needsVisual:questionVisualSpecs(question.id).length>0||hasVisualReference(questionLines),
+    needsVisual:hasVisualReference(questionLines),
     importedAt:new Date().toISOString(),
     contentVersion:QUESTION_CONTENT_VERSION,
   }
@@ -236,15 +203,10 @@ export async function ensureExplanationText(question:PracticeQuestion,answerPdf:
 
 export async function importPracticeMaterials(questionPdf:ArrayBuffer,answerPdf:ArrayBuffer,onProgress?:(done:number,total:number)=>void,practiceTestId='practice-test-4'){
   let done=0
-  const canonicalQuestions=await loadSharedQuestionBank()\n  if(!canonicalQuestions)throw new Error('Canonical question bank unavailable; cannot import local question metadata.')\n  const questions=canonicalQuestions.filter(question=>question.practiceTestId===practiceTestId)
+  const canonicalQuestions=await loadSharedQuestionBank()
+  if(!canonicalQuestions)throw new Error('Canonical question bank unavailable; cannot import local question metadata.')\n  const questions=canonicalQuestions.filter(question=>question.practiceTestId===practiceTestId)
   const total=questions.length
   for(const question of questions){
-    if(question.practiceTestId==='practice-test-5'&&question.module==='math1'){
-      await ensureQuestionText(question,questionPdf)
-      done++
-      onProgress?.(done,total)
-      continue
-    }
     let existing=await getQuestionContent(question.id)
     try{
       const questionLines=existing?.questionLines.length?existing.questionLines:await extractQuestionLines(question,questionPdf)
