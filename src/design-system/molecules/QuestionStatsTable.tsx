@@ -7,7 +7,7 @@ import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
 import QuestionReviewDrawer from './QuestionReviewDrawer'
 import {formatDuration} from '../../lib/practiceGamification'
-import {practiceTestLabel,QUESTION_BANK} from '../../lib/questionBank'
+import {practiceTestLabel} from '../../lib/questionBank'
 import {loadSharedQuestionBank} from '../../lib/sharedQuestionBank'
 import type {QuestionPerformance} from '../../lib/performanceAnalytics'
 import type {PracticeQuestion,PracticeTestFilter,PracticeTestId} from '../../types'
@@ -17,7 +17,7 @@ type Props={questions:QuestionPerformance[];questionsPdf?:ArrayBuffer|null;answe
 export default function QuestionStatsTable({questions,questionsPdf=null,answersPdf=null}:Props){
   const[selectedId,setSelectedId]=useState<string|null>(null)
   const[practiceTestFilter,setPracticeTestFilter]=useState<PracticeTestFilter>('all')
-  const[bank,setBank]=useState<PracticeQuestion[]>(QUESTION_BANK)
+  const[bank,setBank]=useState<PracticeQuestion[]>([])
 
   useEffect(()=>{
     let cancelled=false
@@ -31,7 +31,7 @@ export default function QuestionStatsTable({questions,questionsPdf=null,answersP
   },[questions])
   const filteredQuestions=useMemo(()=>questions.filter(question=>practiceTestFilter==='all'||question.practiceTestId===practiceTestFilter),[questions,practiceTestFilter])
   const selectedPerformance=filteredQuestions.find(question=>question.questionId===selectedId)??null
-  const selectedQuestion=useMemo(()=>bank.find(question=>question.id===selectedId)??QUESTION_BANK.find(question=>question.id===selectedId)??null,[bank,selectedId])
+  const selectedQuestion=useMemo(()=>bank.find(question=>question.id===selectedId)??null,[bank,selectedId])
   const options=[{value:'all' as const,label:'All practice tests'},...practiceTests.map(value=>({value,label:practiceTestLabel(value)}))]
 
   useEffect(()=>{
