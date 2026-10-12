@@ -204,7 +204,8 @@ export async function ensureExplanationText(question:PracticeQuestion,answerPdf:
 export async function importPracticeMaterials(questionPdf:ArrayBuffer,answerPdf:ArrayBuffer,onProgress?:(done:number,total:number)=>void,practiceTestId='practice-test-4'){
   let done=0
   const canonicalQuestions=await loadSharedQuestionBank()
-  if(!canonicalQuestions)throw new Error('Canonical question bank unavailable; cannot import local question metadata.')\n  const questions=canonicalQuestions.filter(question=>question.practiceTestId===practiceTestId)
+  if(!canonicalQuestions)throw new Error('Canonical question bank unavailable; cannot import local question metadata.')
+  const questions=canonicalQuestions.filter(question=>question.practiceTestId===practiceTestId)
   const total=questions.length
   for(const question of questions){
     let existing=await getQuestionContent(question.id)
