@@ -1,7 +1,7 @@
 import {GlobalWorkerOptions,getDocument,type PDFDocumentProxy} from 'pdfjs-dist'
 
 GlobalWorkerOptions.workerSrc=new URL('pdfjs-dist/build/pdf.worker.min.mjs',import.meta.url).toString()
-import {QUESTION_BANK} from './questionBank'
+import {loadSharedQuestionBank} from './sharedQuestionBank'
 import {questionCropForParts} from './questionCrops'
 import {getQuestionContent,isCurrentQuestionContent,QUESTION_CONTENT_VERSION,saveQuestionContent,type StoredQuestionContent} from './questionContentStore'
 import {READING_PARAGRAPH_BREAK} from './readingQuestionFormat'
@@ -236,7 +236,7 @@ export async function ensureExplanationText(question:PracticeQuestion,answerPdf:
 
 export async function importPracticeMaterials(questionPdf:ArrayBuffer,answerPdf:ArrayBuffer,onProgress?:(done:number,total:number)=>void,practiceTestId='practice-test-4'){
   let done=0
-  const questions=QUESTION_BANK.filter(question=>(question.practiceTestId??'practice-test-4')===practiceTestId)
+  const canonicalQuestions=await loadSharedQuestionBank()\n  if(!canonicalQuestions)throw new Error('Canonical question bank unavailable; cannot import local question metadata.')\n  const questions=canonicalQuestions.filter(question=>question.practiceTestId===practiceTestId)
   const total=questions.length
   for(const question of questions){
     if(question.practiceTestId==='practice-test-5'&&question.module==='math1'){
