@@ -1,9 +1,0 @@
-{
-  "status": "superseded",
-  "practice_test_id": "practice-test-1",
-  "note": "This initial 16-question sketch has been superseded by the 120 independently authored questions in pt1-original-reading-writing.json and pt1-original-math.json. Do not import this file.",
-  "files": [
-    "content/pt1-original-reading-writing.json",
-    "content/pt1-original-math.json"
-  ]
-}
