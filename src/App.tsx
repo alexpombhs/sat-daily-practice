@@ -85,12 +85,24 @@ export default function App(){
   },[])
 
   useEffect(()=>{
-    void loadSharedQuestionBank().then(shared=>setQuestionBank(shared??[])).catch(error=>console.error('Canonical question bank unavailable; refusing bundled fallback.',error))
-    Promise.all([getPdf('questions'),getPdf('answers')]).then(([questionsPdf,answersPdf])=>{
-      setQpdf(questionsPdf)
-      setApdf(answersPdf)
+    // Question content and PDF caches are accessible only after authentication.
+    if(!authReady||!authUser){
+      setQuestionBank([])
+      setQpdf(null)
+      setApdf(null)
+      return
+    }
+    let cancelled=false
+    void loadSharedQuestionBank().then(shared=>{
+      if(!cancelled)setQuestionBank(shared??[])
+    }).catch(error=>{
+      if(!cancelled){setQuestionBank([]);console.error('Canonical question bank unavailable.',error)}
     })
-  },[])
+    void Promise.all([getPdf('questions'),getPdf('answers')]).then(([questionsPdf,answersPdf])=>{
+      if(!cancelled){setQpdf(questionsPdf);setApdf(answersPdf)}
+    }).catch(error=>console.warn('Optional source documents unavailable.',error))
+    return()=>{cancelled=true}
+  },[authReady,authUser?.id])
   useEffect(()=>{
     let cancelled=false
     void getCurrentAuthUser()
