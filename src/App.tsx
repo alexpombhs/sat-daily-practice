@@ -121,6 +121,13 @@ export default function App(){
       setAttempts([])
       setSessions([])
       setResumableSession(null)
+      // Never retain a previous user's session or downloaded content in React state.
+      setQs([])
+      setSid('')
+      setCurrentAttempts([])
+      setSelected('')
+      setSubmitted(false)
+      setReviewMode(false)
       return
     }
     let cancelled=false
