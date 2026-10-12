@@ -73,34 +73,41 @@
     "question_number": 3,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "If (x-3)²=49 and x>3, what is x?",
+    "stem": "The height $h$, in meters, of a launched model rocket is approximated by $h=49-(t-3)^2$ for $0\\le t\\le 10$, where $t$ is time in seconds. At what later time does the rocket reach a height of 40 meters?",
     "options": [
       {
         "label": "A",
-        "text": "52"
+        "text": "$t=0$"
       },
       {
         "label": "B",
-        "text": "4"
+        "text": "$t=3$"
       },
       {
         "label": "C",
-        "text": "7"
+        "text": "$t=6$"
       },
       {
         "label": "D",
-        "text": "10"
+        "text": "$t=9$"
       }
     ],
-    "correct_answer": "D",
-    "explanation": "The positive root gives x-3=7, so x=10.",
+    "correct_answer": "C",
+    "explanation": "Set $40=49-(t-3)^2$, so $(t-3)^2=9$ and $t=0$ or $t=6$. The later time is $6$ seconds.",
     "difficulty": "easy",
     "concepts": [
       "square equations",
       "square roots",
       "isolating a variable"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "The height $h$, in meters, of a launched model rocket is approximated by $h=49-(t-3)^2$ for $0\\le t\\le 10$, where $t$ is time in seconds. At what later time does the rocket reach a height of 40 meters?",
+      "A) $t=0$",
+      "B) $t=3$",
+      "C) $t=6$",
+      "D) $t=9$"
+    ]
   },
   {
     "id": "pt1-math1-04",
@@ -328,33 +335,40 @@
     "question_number": 11,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "A parking garage charges a $5 entry fee and $3 per hour. If the total bill was $26, how many hours was the car parked?",
+    "stem": "A garage charges an entry fee and a constant hourly rate. A 3-hour stay costs $14$, and a 7-hour stay costs $26$. How many dollars is the entry fee?",
     "options": [
       {
         "label": "A",
-        "text": "6"
+        "text": "$3$"
       },
       {
         "label": "B",
-        "text": "7"
+        "text": "$5$"
       },
       {
         "label": "C",
-        "text": "8"
+        "text": "$6$"
       },
       {
         "label": "D",
-        "text": "9"
+        "text": "$8$"
       }
     ],
     "correct_answer": "B",
-    "explanation": "Solve 5+3h=26, giving 3h=21 and h=7.",
+    "explanation": "The hourly rate is $(26-14)/(7-3)=3$. The entry fee is $14-3(3)=5$.",
     "difficulty": "easy",
     "concepts": [
       "substitution into linear equations",
       "context constraints"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "A garage charges an entry fee and a constant hourly rate. A 3-hour stay costs $14$, and a 7-hour stay costs $26$. How many dollars is the entry fee?",
+      "A) $3$",
+      "B) $5$",
+      "C) $6$",
+      "D) $8$"
+    ]
   },
   {
     "id": "pt1-math1-12",
@@ -362,34 +376,41 @@
     "question_number": 12,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "A line crosses the y-axis at -4 and passes through (6,8). Which equation represents the line?",
+    "stem": "A line passes through $(-2,-8)$ and $(4,4)$. Which equation represents the line?",
     "options": [
       {
         "label": "A",
-        "text": "y=2x-4"
+        "text": "$y=2x-4$"
       },
       {
         "label": "B",
-        "text": "y=3x-4"
+        "text": "$y=3x-2$"
       },
       {
         "label": "C",
-        "text": "y=2x+4"
+        "text": "$y=-2x-4$"
       },
       {
         "label": "D",
-        "text": "y=-2x-4"
+        "text": "$y=2x+4$"
       }
     ],
     "correct_answer": "A",
-    "explanation": "The slope is (8+4)/6=2 and the intercept is -4.",
+    "explanation": "The slope is $(4-(-8))/(4-(-2))=2$. Substituting $(4,4)$ gives $4=8+b$, so $b=-4$.",
     "difficulty": "easy",
     "concepts": [
       "line graphs",
       "slope",
       "y intercept"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "A line passes through $(-2,-8)$ and $(4,4)$. Which equation represents the line?",
+      "A) $y=2x-4$",
+      "B) $y=3x-2$",
+      "C) $y=-2x-4$",
+      "D) $y=2x+4$"
+    ]
   },
   {
     "id": "pt1-math1-13",
@@ -1036,33 +1057,40 @@
     "question_number": 8,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "For g(x)=x²-2x+3, what is g(4)?",
+    "stem": "The function $g(x)=x^2-2x+3$ is defined for all real $x$. What is $g(a+2)-g(a)$?",
     "options": [
       {
         "label": "A",
-        "text": "7"
+        "text": "$4a$"
       },
       {
         "label": "B",
-        "text": "9"
+        "text": "$4a+4$"
       },
       {
         "label": "C",
-        "text": "11"
+        "text": "$2a+4$"
       },
       {
         "label": "D",
-        "text": "15"
+        "text": "$4$"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "g(4)=16-8+3=11.",
+    "correct_answer": "A",
+    "explanation": "Expand $g(a+2)=(a+2)^2-2(a+2)+3=a^2+2a+3$. Subtract $g(a)=a^2-2a+3$ to obtain $4a$.",
     "difficulty": "easy",
     "concepts": [
       "quadratic evaluation",
       "function tables"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "The function $g(x)=x^2-2x+3$ is defined for all real $x$. What is $g(a+2)-g(a)$?",
+      "A) $4a$",
+      "B) $4a+4$",
+      "C) $2a+4$",
+      "D) $4$"
+    ]
   },
   {
     "id": "pt1-math2-09",
@@ -1174,34 +1202,41 @@
     "question_number": 12,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "If x²-9x+20=0, what is its larger root?",
+    "stem": "The quadratic equation $x^2-9x+c=0$ has two integer roots that differ by $1$. What is $c$?",
     "options": [
       {
         "label": "A",
-        "text": "2"
+        "text": "$14$"
       },
       {
         "label": "B",
-        "text": "4"
+        "text": "$18$"
       },
       {
         "label": "C",
-        "text": "5"
+        "text": "$20$"
       },
       {
         "label": "D",
-        "text": "10"
+        "text": "$24$"
       }
     ],
     "correct_answer": "C",
-    "explanation": "Factoring gives (x-4)(x-5)=0, so the larger root is 5.",
+    "explanation": "The roots sum to $9$ and differ by $1$, so they are $4$ and $5$. Their product is $c=20$.",
     "difficulty": "medium",
     "concepts": [
       "quadratic equations",
       "factoring",
       "positive root selection"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "The quadratic equation $x^2-9x+c=0$ has two integer roots that differ by $1$. What is $c$?",
+      "A) $14$",
+      "B) $18$",
+      "C) $20$",
+      "D) $24$"
+    ]
   },
   {
     "id": "pt1-math2-13",
@@ -1531,34 +1566,41 @@
     "question_number": 24,
     "subject": "math",
     "response_type": "multiple-choice",
-    "stem": "A data set has median 12 and range 18. After every value increases by 5, what are the new median and range?",
+    "stem": "A data set has a median of 12 and an interquartile range of 18. Each value is transformed by $y=2x+5$. What are the median and interquartile range of the transformed data?",
     "options": [
       {
         "label": "A",
-        "text": "17 and 18"
+        "text": "$29$ and $36$"
       },
       {
         "label": "B",
-        "text": "12 and 23"
+        "text": "$17$ and $23$"
       },
       {
         "label": "C",
-        "text": "17 and 23"
+        "text": "$29$ and $18$"
       },
       {
         "label": "D",
-        "text": "12 and 18"
+        "text": "$24$ and $41$"
       }
     ],
     "correct_answer": "A",
-    "explanation": "Adding five raises the median to 17 and leaves the range 18 unchanged.",
+    "explanation": "The median becomes $2(12)+5=29$. A positive scaling by $2$ doubles the interquartile range to $36$; adding $5$ does not change spread.",
     "difficulty": "medium",
     "concepts": [
       "medians and ranges",
       "translation of a data set",
       "invariance of spread"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "A data set has a median of 12 and an interquartile range of 18. Each value is transformed by $y=2x+5$. What are the median and interquartile range of the transformed data?",
+      "A) $29$ and $36$",
+      "B) $17$ and $23$",
+      "C) $29$ and $18$",
+      "D) $24$ and $41$"
+    ]
   },
   {
     "id": "pt1-math2-25",
@@ -1637,15 +1679,19 @@
     "question_number": 27,
     "subject": "math",
     "response_type": "student-produced",
-    "stem": "A price rose by 25% to $150. What was the original price?",
-    "correct_answer": "120",
-    "explanation": "If original is p, then 1.25p=150, so p=120.",
+    "stem": "After a price was increased by 20%, a retailer offered a 10% discount on the increased price. The final price was $162$. What was the original price?",
+    "correct_answer": "150",
+    "explanation": "Let $p$ be the original price. Then $(1.20)(0.90)p=162$, so $p=162/1.08=150$.",
     "difficulty": "medium",
     "concepts": [
       "percent increase",
       "relative change",
       "reverse proportional reasoning"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "options": [],
+    "display_lines": [
+      "After a price was increased by 20%, a retailer offered a 10% discount on the increased price. The final price was $162$. What was the original price?"
+    ]
   }
 ]
