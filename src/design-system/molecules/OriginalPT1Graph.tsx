@@ -1,15 +1,14 @@
-import type {PracticeQuestion} from '../../types'
-
-type Graphic={title:string;labels:string[];values:number[];kind:'bar'|'line'|'scatter';xLabel?:string;yLabel?:string}
-const visuals:Record<string,Graphic>={
-  'pt1-math1-01':{title:'Library visitors by activity',kind:'bar',labels:['Research','Printing','Tutoring','Study'],values:[34,19,27,31],yLabel:'Visitors'},
-  'pt1-math1-10':{title:'Study time and assessment score',kind:'scatter',labels:['1','2','3','4','5'],values:[58,63,68,72,79],xLabel:'Hours',yLabel:'Score'},
-  'pt1-math2-01':{title:'Daily library visits',kind:'line',labels:['Mon','Tue','Wed','Thu'],values:[30,45,38,52],yLabel:'Visits'},
+export type CanonicalGraphic={
+  title:string
+  labels:string[]
+  values:number[]
+  kind:'bar'|'line'|'scatter'
+  xLabel?:string
+  yLabel?:string
 }
-export function hasOriginalPT1Graph(id:string){return Boolean(visuals[id])}
-export default function OriginalPT1Graph({question}:{question:PracticeQuestion}){
-  const graph=visuals[question.id]
-  if(!graph)return null
+export default function OriginalPT1Graph({graph}:{graph:CanonicalGraphic|null|undefined}){
+  if(!graph||!['bar','line','scatter'].includes(graph.kind)||!graph.values?.length||graph.labels.length!==graph.values.length)return null
+  if(graph.values.some(value=>!Number.isFinite(value)))return null
   const left=60,top=38,width=460,height=210
   const max=graph.kind==='scatter'?90:Math.ceil(Math.max(...graph.values)/10)*10
   const min=graph.kind==='scatter'?50:0
