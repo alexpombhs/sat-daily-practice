@@ -22,7 +22,7 @@ describe('practice selection on canonical metadata',()=>{
   it('filters by canonical difficulty rather than embedded per-question metadata',()=>{
     const classified=questions.slice(0,3).map((q,i)=>({...q,difficulty:(['easy','medium','advanced'] as const)[i]}))
     expect(practiceQuestionPool({...settings,difficultyLevels:['advanced']},[],classified).map(q=>q.id)).toEqual([classified[2].id])
-    expect(countDifficultyQuestions({...settings,difficultyLevels:['easy','medium']},classified)).toBe(2)
+    expect(countDifficultyQuestions({...settings,difficultyLevels:['easy','medium']},classified)).toMatchObject({easy:1,medium:1})
   })
   it('tracks seen and failed questions using cloud attempt metadata',()=>{
     const pool=questions.slice(0,4)
