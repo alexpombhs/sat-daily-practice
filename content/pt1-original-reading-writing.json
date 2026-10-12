@@ -763,7 +763,7 @@
     "options": [
       {
         "label": "A",
-        "text": "Meanwhile,"
+        "text": "Several hours later,"
       },
       {
         "label": "B",
@@ -779,7 +779,7 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "Meanwhile signals that the closure and the preparation for a subsequent inspection belong to the same period; the other transitions imply unsupported opposition, chronology, or exemplification.",
+    "explanation": "Several hours later establishes the correct chronology between the midnight closure and the inspection at dawn; the other transitions imply opposition, an earlier event, or an example.",
     "difficulty": "medium",
     "concepts": [
       "sentence boundaries",
@@ -788,7 +788,7 @@
     "practice_test_id": "practice-test-1",
     "display_lines": [
       "Engineers closed the bridge at midnight. ______ The inspection team returned at dawn to conduct the final load test.",
-      "A) Meanwhile,",
+      "A) Several hours later,",
       "B) Nevertheless,",
       "C) Previously,",
       "D) For example,"
