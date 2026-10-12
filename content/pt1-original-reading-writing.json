@@ -5,27 +5,27 @@
     "question_number": 1,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "An engineer tried to ___ the noise from a ventilation fan by fitting its housing with acoustic panels.",
+    "stem": "In developing a quieter ventilation system for a public library, engineer Talia Rios tested several configurations of fan housing. The first prototypes improved airflow but caused vibrations to travel through the surrounding metal. Rios then lined the housing with layered acoustic panels intended to ______ the noise without limiting the system's efficiency.",
     "options": [
       {
         "label": "A",
-        "text": "measure"
+        "text": "document"
       },
       {
         "label": "B",
-        "text": "repeat"
+        "text": "amplify"
       },
       {
         "label": "C",
-        "text": "predict"
+        "text": "mitigate"
       },
       {
         "label": "D",
-        "text": "reduce"
+        "text": "imitate"
       }
     ],
-    "correct_answer": "D",
-    "explanation": "Reduce means make less, consistent with the purpose of the panels.",
+    "correct_answer": "C",
+    "explanation": "Mitigate means reduce the severity of something. The acoustic panels aim to lessen vibration-related noise while preserving airflow.",
     "difficulty": "easy",
     "concepts": [
       "words in context",
@@ -40,27 +40,27 @@
     "question_number": 2,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "The tree-ring patterns ___ periods of drought: narrow rings generally formed in years with little rainfall.",
+    "stem": "Scientists examining a grove of old pines compared the width of the trees' annual growth rings with precipitation records from a nearby weather station. Although temperature also influenced growth, years with severe drought generally corresponded to unusually narrow rings. The researchers concluded that the rings ______ the area's environmental conditions, even if they could not isolate any single cause.",
     "options": [
       {
         "label": "A",
-        "text": "conceal"
+        "text": "reflected"
       },
       {
         "label": "B",
-        "text": "interrupt"
+        "text": "overcame"
       },
       {
         "label": "C",
-        "text": "mirror"
+        "text": "obscured"
       },
       {
         "label": "D",
-        "text": "prevent"
+        "text": "reversed"
       }
     ],
-    "correct_answer": "C",
-    "explanation": "Mirror means reflect or correspond to a pattern; the rings track environmental conditions.",
+    "correct_answer": "A",
+    "explanation": "Reflected means corresponded to or registered a condition; the correspondence between ring width and precipitation supports that meaning, while other influences prevent a stronger causal claim.",
     "difficulty": "medium",
     "concepts": [
       "words in context",
@@ -75,11 +75,11 @@
     "question_number": 3,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Although the trail looked ___ from the entrance, several steep slopes emerged farther along.",
+    "stem": "Early visitors described the trail as gentle because its opening stretch follows the broad floor of a valley. That impression is misleading: beyond the first bend, the path climbs a rocky ridge and descends sharply toward a stream. The trail is therefore considerably less ______ than it initially appears.",
     "options": [
       {
         "label": "A",
-        "text": "remote"
+        "text": "accessible"
       },
       {
         "label": "B",
@@ -87,15 +87,15 @@
       },
       {
         "label": "C",
-        "text": "distant"
+        "text": "popular"
       },
       {
         "label": "D",
-        "text": "crowded"
+        "text": "remote"
       }
     ],
     "correct_answer": "B",
-    "explanation": "The contrast with steep slopes indicates a seemingly flat trail.",
+    "explanation": "The contrast between the flat valley segment and subsequent steep grades supports level, meaning relatively flat, rather than the other qualities.",
     "difficulty": "easy",
     "concepts": [
       "words in context",
@@ -329,27 +329,27 @@
     "question_number": 10,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Elena returned every lost item she found and stayed late to help neighbors repair bicycles. These details characterize her as",
+    "stem": "Elena worked at the repair center every Saturday, sorting donated bicycle parts into labeled boxes even when no one was supervising. When a younger volunteer accidentally misplaced a set of tools, Elena helped retrace the day's work rather than blaming him. After closing, she stayed to return borrowed equipment to its owners. Which choice best describes Elena as presented in the passage?",
     "options": [
       {
         "label": "A",
-        "text": "careless about property"
+        "text": "She is conscientious and patient with others."
       },
       {
         "label": "B",
-        "text": "unwilling to cooperate"
+        "text": "She cares more about tools than people."
       },
       {
         "label": "C",
-        "text": "conscientious and helpful"
+        "text": "She takes unnecessary risks to complete tasks."
       },
       {
         "label": "D",
-        "text": "secretive and impatient"
+        "text": "She values public recognition above useful work."
       }
     ],
-    "correct_answer": "C",
-    "explanation": "Her repeated considerate actions support helpfulness.",
+    "correct_answer": "A",
+    "explanation": "Elena's careful organization, patient response to a mistake, and responsible return of property together establish conscientiousness and consideration.",
     "difficulty": "easy",
     "concepts": [
       "literary main idea",
@@ -571,27 +571,27 @@
     "question_number": 16,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "A museum curator proposes that a new exhibition's arrangement was jointly determined by its designers rather than dictated by the director. Which observation most directly supports that claim?",
+    "stem": "A museum director proposed arranging a new exhibition chronologically, beginning with the oldest objects. The exhibition designers instead suggested grouping objects by the trade routes along which they circulated. A historian claims that the eventual arrangement resulted from negotiation among the designers rather than a directive from the director. Which additional evidence would most directly support the historian's claim?",
     "options": [
       {
         "label": "A",
-        "text": "The director approved the exhibition's budget several months early."
+        "text": "A brochure states that the director attended the exhibition's opening ceremony."
       },
       {
         "label": "B",
-        "text": "Meeting records show that designers proposed competing layouts and collectively voted on the final arrangement."
+        "text": "Meeting minutes record multiple competing layouts and a final arrangement agreed upon after designers exchanged revisions."
       },
       {
         "label": "C",
-        "text": "The exhibition opened to the public after two construction delays."
+        "text": "A visitor survey finds that most guests preferred thematic exhibitions to chronological ones."
       },
       {
         "label": "D",
-        "text": "A reviewer praised the director's introductory speech."
+        "text": "The director previously oversaw exhibitions at several regional museums."
       }
     ],
     "correct_answer": "B",
-    "explanation": "A recorded group decision about the layout supports collective control, rather than mere participation.",
+    "explanation": "Negotiation requires evidence of deliberation and joint revision; the meeting minutes describe those processes directly.",
     "difficulty": "medium",
     "concepts": [
       "command of evidence",
@@ -606,27 +606,27 @@
     "question_number": 17,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Researchers hypothesized that a soil microbe increases growth only in plants that form a particular root partnership. After inoculation, the partner-forming plants grew 18% more than controls, but plants thought incapable of the partnership grew 12% more. Which conclusion best follows?",
+    "stem": "A soil microbe commonly occurs around the roots of certain grasses and may transfer nutrients to its hosts. A botanist proposed that the microbe can stimulate growth only in grasses able to form a specialized root partnership. In a controlled experiment, seedlings of a partnership-forming grass and seedlings of a nonpartner species were grown in otherwise identical conditions, with half in each group inoculated. The inoculated partner grass averaged 18% more mass than its controls; the inoculated nonpartner averaged 12% more than its controls. Which conclusion is best supported?",
     "options": [
       {
         "label": "A",
-        "text": "The microbe's effects may extend beyond the proposed root partnership."
+        "text": "The specialized partnership cannot be responsible for any of the observed growth effects."
       },
       {
         "label": "B",
-        "text": "The control groups must have been measured incorrectly."
+        "text": "The growth response among nonpartners suggests the proposed mechanism is not the only possible explanation."
       },
       {
         "label": "C",
-        "text": "Growth in the partner-forming plants cannot be attributed to the microbe."
+        "text": "The microbe benefits every plant species to the same degree."
       },
       {
         "label": "D",
-        "text": "All plant species will respond identically to inoculation."
+        "text": "Inoculation made environmental differences between the experimental groups impossible."
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Growth in the presumed nonpartner group contradicts the hypothesis's 'only' restriction, though the mechanism remains uncertain.",
+    "correct_answer": "B",
+    "explanation": "The nonpartner response is inconsistent with the prediction that benefits require the specialized partnership, but does not establish the exact alternative mechanism.",
     "difficulty": "advanced",
     "concepts": [
       "controlled experiment",
@@ -1466,27 +1466,27 @@
     "question_number": 9,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "A science writer explains that city animals often repurpose human-built infrastructure as habitats and travel routes. <u>For example, foxes sometimes travel along railway embankments after dark.</u> What is the function of the underlined sentence in the text?",
+    "stem": "Researchers studying fox movement in cities fitted a small number of animals with location trackers. They found that foxes often avoided broad streets during busy hours yet used the grassy margins beside rail lines to move between parks at night. The researchers suggest that built environments can create barriers and corridors simultaneously. What is the function of the observation about rail lines?",
     "options": [
       {
         "label": "A",
-        "text": "disprove urban animal movement"
+        "text": "It disproves the claim that roads influence urban animal movement."
       },
       {
         "label": "B",
-        "text": "change the topic to trains"
+        "text": "It gives a specific example of infrastructure functioning as a movement corridor."
       },
       {
         "label": "C",
-        "text": "define railway construction"
+        "text": "It identifies the primary food source of the tracked foxes."
       },
       {
         "label": "D",
-        "text": "illustrate a specific adaptation"
+        "text": "It establishes that movement patterns are identical in all cities."
       }
     ],
-    "correct_answer": "D",
-    "explanation": "The foxes give a concrete example of the preceding general point.",
+    "correct_answer": "B",
+    "explanation": "The rail-line observation exemplifies a corridor within an otherwise obstructive urban environment, supporting the larger explanation.",
     "difficulty": "easy",
     "concepts": [
       "sentence function",
@@ -1940,7 +1940,7 @@
     "question_number": 22,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Carbon-14, an unstable isotope of carbon ___ is used to estimate the age of once-living materials.",
+    "stem": "A science museum's exhibit explains that ordinary carbon contains several isotopes whose nuclei differ in neutron number. One such isotope, carbon-14, is unstable and gradually decays; for this reason, scientists can use it to estimate the ages of certain once-living materials. The exhibit identifies carbon-14 with an appositive phrase: 'Carbon-14, an unstable isotope of carbon ___ is used in radiocarbon dating.' Which choice completes the sentence according to Standard English conventions?",
     "options": [
       {
         "label": "A",
@@ -1960,7 +1960,7 @@
       }
     ],
     "correct_answer": "A",
-    "explanation": "The phrase 'an unstable isotope of carbon' is a nonessential appositive opened by the first comma; another comma must close it before 'is used'.",
+    "explanation": "An unstable isotope of carbon is a nonessential appositive phrase introduced by a comma; a second comma closes it before the main verb is used.",
     "difficulty": "advanced",
     "concepts": [
       "parenthetical notation",
@@ -2284,27 +2284,27 @@
     "question_number": 32,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Notes: The book Night Path is a mystery for middle-school readers; it follows a young cartographer decoding old trail markers. Which introduction is best?",
+    "stem": "A student has gathered the following notes for a book review. *Night Path* is a mystery novel intended primarily for middle-school readers. Its protagonist, a young cartographer named Lio, discovers that symbols on old trail markers form a coded message. The novel follows Lio's attempts to interpret the marks while deciding whether to trust a classmate who knows the trails. The student wants to introduce the book to readers who have not heard of it. Which choice most effectively uses relevant information from the notes?",
     "options": [
       {
         "label": "A",
-        "text": "Night Path is a middle-grade mystery about a young cartographer solving clues hidden in trail markers."
+        "text": "The book contains a story about symbols, which can be interpreted in different ways."
       },
       {
         "label": "B",
-        "text": "This book has many chapters."
+        "text": "A student cartographer has to make several decisions about where to go."
       },
       {
         "label": "C",
-        "text": "It includes a fictional character."
+        "text": "In the middle-grade mystery *Night Path*, young cartographer Lio deciphers symbols hidden on trail markers while struggling to decide whom to trust."
       },
       {
         "label": "D",
-        "text": "Readers may have different opinions about books."
+        "text": "Many novels appeal to readers by combining suspense with a familiar setting."
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The sentence provides audience, genre and premise.",
+    "correct_answer": "C",
+    "explanation": "The answer introduces the title, intended readership, genre, protagonist, and central conflict without assuming prior familiarity.",
     "difficulty": "easy",
     "concepts": [
       "rhetorical synthesis",
