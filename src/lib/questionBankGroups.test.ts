@@ -1,5 +1,5 @@
 import {describe,expect,it} from 'vitest'
-import {QUESTION_BANK} from './questionBank'
+import {TEST_QUESTION_METADATA as QUESTION_BANK} from '../test/questionMetadataFixture'
 import {groupQuestionsByModule,groupQuestionsByPracticeTest} from './questionBankGroups'
 
 describe('Question Bank grouping',()=>{

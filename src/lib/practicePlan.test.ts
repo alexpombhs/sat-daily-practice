@@ -1,7 +1,7 @@
 import {describe,expect,it} from 'vitest'
 import {buildPracticePlanRecommendation} from './practicePlan'
 import type {PerformanceAnalytics} from './performanceAnalytics'
-import {QUESTION_BANK} from './questionBank'
+import {TEST_QUESTION_METADATA as QUESTION_BANK} from '../test/questionMetadataFixture'
 import type {Attempt,Settings} from '../types'
 
 const baseSettings:Settings={
@@ -49,4 +49,14 @@ describe('practice plan recommendations',()=>{
     expect(plan.estimatedScore).toBeNull()
     expect(plan.scoreGuidance).toContain('Build a baseline in both sections')
   })
+  it('keeps recommendations bite-size when a new 120-question test is added',()=>{
+    const before=buildPracticePlanRecommendation(baseSettings,QUESTION_BANK.slice(0,120),[],performance(1200))
+    const after=buildPracticePlanRecommendation(baseSettings,QUESTION_BANK.slice(0,240),[],performance(1200))
+    expect(after.remainingQuestions).toBeGreaterThan(before.remainingQuestions)
+    expect(before.recommendedSessionsPerDay).toBe(1)
+    expect(after.recommendedSessionsPerDay).toBe(1)
+    expect(after.estimatedDailyMinutes).toBeLessThanOrEqual(20)
+    expect(after.questionsPerSession).toBe(10)
+  })
+
 })

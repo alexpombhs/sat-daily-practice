@@ -1,6 +1,6 @@
 import {describe,expect,it} from 'vitest'
 import {buildPerformanceAnalytics,estimateSectionPracticeScore,SCORE_SESSION_WINDOW,SCORE_RECENT_DISTINCT_QUESTIONS} from './performanceAnalytics'
-import {QUESTION_BANK} from './questionBank'
+import {TEST_QUESTION_METADATA as QUESTION_BANK} from '../test/questionMetadataFixture'
 import type {Attempt,PracticeQuestion,SessionSummary} from '../types'
 
 const sample=[...QUESTION_BANK.filter(q=>q.subject==='english').slice(0,3),...QUESTION_BANK.filter(q=>q.subject==='math').slice(0,3)]

@@ -10,21 +10,12 @@ import AlexTextField from '../atoms/AlexTextField'
 import ReadingQuestionLines from './ReadingQuestionLines'
 import StructuredQuestionLines from './StructuredQuestionLines'
 import VisualCropEditor from './VisualCropEditor'
-import {ensureQuestionText,extractQuestionLines} from '../../lib/pdfStructuredImport'
-import {getQuestionContent} from '../../lib/questionContentStore'
+import {extractQuestionLines} from '../../lib/pdfStructuredImport'
 import {hasUnderlineMarkup,preserveUnderlineMarkup,refersToUnderlinedText,underlineSelection} from '../../lib/questionTextMarkup'
 import {readingTableSpec,stripEmbeddedReadingTableLines} from '../../lib/readingTables'
 import {editorTextToReadingLines,readingLinesToEditorText,READING_LATEX_QUOTE_END,READING_LATEX_QUOTE_START} from '../../lib/readingQuestionFormat'
 import {loadSharedQuestionContent,saveSharedQuestionRepair} from '../../lib/sharedQuestionBank'
-import {verifiedMathContent} from '../../lib/verifiedMathQuestions'
-import {verifiedPracticeTest5Math1Content} from '../../lib/verifiedPracticeTest5Math1'
-import {verifiedPracticeTest6Reading1Content} from '../../lib/verifiedPracticeTest6Reading1'
-import {verifiedPracticeTest6Reading2Content} from '../../lib/verifiedPracticeTest6Reading2'
-import {verifiedPracticeTest6Math1Content} from '../../lib/verifiedPracticeTest6Math1'
-import {verifiedPracticeTest6Math2Content} from '../../lib/verifiedPracticeTest6Math2'
-import {verifiedPracticeTest7Math1Content} from '../../lib/verifiedPracticeTest7Math1'
-import {verifiedPracticeTest7Math2Content} from '../../lib/verifiedPracticeTest7Math2'
-import {questionVisualSpecs,type QuestionVisualSpec} from '../../lib/questionVisuals'
+import type {QuestionVisualSpec} from '../../lib/questionVisuals'
 import usePracticeTestPdf from '../../hooks/usePracticeTestPdf'
 import type {PracticeQuestion} from '../../types'
 
@@ -54,6 +45,7 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
   const resolvedQuestionsPdf=usePracticeTestPdf(question,'questions',questionsPdf)
   const[questionText,setQuestionText]=useState('')
   const[textOrigin,setTextOrigin]=useState<TextOrigin>('empty')
+  const[canonicalUpdatedAt,setCanonicalUpdatedAt]=useState<string|null>(null)
   const questionTextRef=useRef<HTMLInputElement|HTMLTextAreaElement|null>(null)
   const[visualSpecs,setVisualSpecs]=useState<QuestionVisualSpec[]>([])
   const[loading,setLoading]=useState(true)
@@ -66,50 +58,22 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
 
   useEffect(()=>{
     let cancelled=false
-    setLoading(true);setError('');setMessage('')
+    setLoading(true);setError('');setMessage('');setCanonicalUpdatedAt(null)
     void (async()=>{
       try{
-        const shared=await loadSharedQuestionContent(question.id,question.practiceTestId).catch(()=>null)
-        let local=await getQuestionContent(question.id).catch(()=>undefined)
-        const verified=question.practiceTestId==='practice-test-6'&&(question.module==='rw1'||question.module==='rw2'||question.module==='math1'||question.module==='math2')
-          ?question.module==='rw1'
-            ?verifiedPracticeTest6Reading1Content(question.number)
-            :question.module==='rw2'
-              ?verifiedPracticeTest6Reading2Content(question.number)
-              :question.module==='math1'
-                ?verifiedPracticeTest6Math1Content(question.number)
-                :verifiedPracticeTest6Math2Content(question.number)
-          :question.practiceTestId==='practice-test-7'&&(question.module==='math1'||question.module==='math2')
-            ?question.module==='math1'?verifiedPracticeTest7Math1Content(question.number):verifiedPracticeTest7Math2Content(question.number)
-          :question.practiceTestId==='practice-test-5'&&question.module==='math1'
-            ?verifiedPracticeTest5Math1Content(question.number)
-            :question.practiceTestId==='practice-test-4'&&question.subject==='math'?verifiedMathContent(question.id):undefined
-
-        if(!local?.questionLines.length&&resolvedQuestionsPdf&&!verified){
-          local=await ensureQuestionText(question,resolvedQuestionsPdf).catch(()=>local)
-        }
+        const shared=await loadSharedQuestionContent(question.id,question.practiceTestId)
         if(cancelled)return
-
-        const sharedHasText=Boolean(shared?.questionLines.length)&&!(question.id==='practice-test-6:math2-26'&&shared?.questionLines.some(line=>/no test material on this page/i.test(line)))
-        const verifiedHasText=Boolean(verified?.lines?.length)
-        const localHasText=Boolean(local?.questionLines.length)
-        const questionLines=sharedHasText?shared!.questionLines:verifiedHasText?verified!.lines:local?.questionLines??[]
-        const origin:TextOrigin=sharedHasText?'shared':verifiedHasText?'verified':localHasText?'browser':'empty'
-        const bundledVisuals=questionVisualSpecs(question.id)
-        const sharedControlsVisual=Boolean(shared&&shared.contentStatus!=='metadata'&&!(verified&&!sharedHasText))
-        const resolvedVisuals=shared?.visualSpecs?.length
-          ?shared.visualSpecs
-          :sharedControlsVisual&&!shared?.needsVisual?[]:bundledVisuals
-
-        setQuestionText(editorText(question,stripEmbeddedReadingTableLines(question.id,questionLines)))
-        setTextOrigin(origin)
-        setVisualSpecs(resolvedVisuals)
+        if(!shared||!shared.questionLines.length)throw new Error('No canonical question text found in Supabase.')
+        setQuestionText(editorText(question,shared.questionLines))
+        setTextOrigin('shared')
+        setCanonicalUpdatedAt(shared.updatedAt)
+        setVisualSpecs(shared.visualSpecs??[])
       }catch(reason){
-        if(!cancelled)setError(reason instanceof Error?reason.message:'Unable to prepare this question for editing.')
+        if(!cancelled)setError(reason instanceof Error?reason.message:'Unable to load the canonical question.')
       }finally{if(!cancelled)setLoading(false)}
     })()
     return()=>{cancelled=true}
-  },[question,resolvedQuestionsPdf])
+  },[question])
 
   async function reloadFromSource(){
     if(!resolvedQuestionsPdf){
@@ -119,10 +83,9 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
     setExtracting(true);setError('');setMessage('')
     try{
       const rawLines=await extractQuestionLines(question,resolvedQuestionsPdf)
-      const verifiedSource=question.practiceTestId==='practice-test-5'&&question.module==='math1'?verifiedPracticeTest5Math1Content(question.number):undefined
-      const lines=verifiedSource?.lines?.length?verifiedSource.lines:rawLines
+      const lines=rawLines
       if(!lines.length)throw new Error('No quality-reviewed text could be reconstructed from this question’s source.')
-      const extractedText=editorText(question,stripEmbeddedReadingTableLines(question.id,lines))
+      const extractedText=editorText(question,lines)
       const nextText=preserveUnderlineMarkup(questionText,extractedText)
       setQuestionText(nextText)
       setTextOrigin('source')
@@ -192,7 +155,9 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
     }
     setSaving(true);setError('');setMessage('')
     try{
-      await saveSharedQuestionRepair({questionId:question.id,questionLines,visualSpecs})
+      if(!canonicalUpdatedAt)throw new Error('Canonical question version is unavailable. Reload before saving so another device’s edits cannot be overwritten.')
+      const saved=await saveSharedQuestionRepair({questionId:question.id,questionLines,visualSpecs,expectedUpdatedAt:canonicalUpdatedAt})
+      setCanonicalUpdatedAt(saved.updatedAt)
       setTextOrigin('shared')
       setMessage('Fix saved to the shared Question Bank.')
       onSaved?.()
@@ -203,7 +168,7 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
 
   return <AlexSurface sx={{p:{xs:2,md:2.5},border:'1px solid #D8D2FF',borderRadius:3,bgcolor:'#FCFBFF'}}>
     <AlexText component="h2" sx={{fontSize:19,fontWeight:850,color:'#08275B'}}>Fix parsed question</AlexText>
-    <AlexText sx={{fontSize:13,color:'#667085',mt:.4,mb:1.75}}>Edit only the reconstructed question text and source visual. The explanation always stays in its original PDF format.</AlexText>
+    <AlexText sx={{fontSize:13,color:'#667085',mt:.4,mb:1.75}}>Edit the canonical question text and source visuals in Supabase. Saving replaces the canonical fields for this question (with conflict protection), not a separate overlay. The explanation is unchanged.</AlexText>
     {loading?<AlexText sx={{color:'#667085'}}>Preparing editable content…</AlexText>:<AlexBox sx={{display:'grid',gap:1.5}}>
       {readingTableSpec(question.id)&&<AlexSurface sx={{p:1.4,border:'1px solid #B2CCFF',borderRadius:2,bgcolor:'#F5F8FF'}}>
         <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#1849A9'}}>Structured table preserved separately</AlexText>
@@ -214,7 +179,7 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
         <AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
           <AlexBox>
             <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#1849A9'}}>{textOrigin==='shared'?'Shared parsed text':'Not stored as shared parsed text yet'}</AlexText>
-            <AlexText sx={{fontSize:12,color:'#475467',mt:.2}}>{textOrigin==='shared'?'This question has a saved shared repair. You can still re-extract from the original source while the parsing issue is open.':textOrigin==='source'?'Freshly extracted from the source PDF.':textOrigin==='verified'?'Loaded from bundled verified text.':textOrigin==='browser'?'Loaded from this browser’s extracted cache.':'No parsed text is available yet.'} {textOrigin!=='shared'&&'Saving a repair will persist the edited text to the shared Question Bank.'}</AlexText>
+            <AlexText sx={{fontSize:12,color:'#475467',mt:.2}}>{textOrigin==='shared'?'This is the canonical Supabase question. You can re-extract from the source for comparison; changes are saved directly to the canonical record.':textOrigin==='source'?'Freshly extracted from the source PDF.':textOrigin==='verified'?'Loaded from bundled verified text.':textOrigin==='browser'?'Temporarily reconstructed from the source PDF. Save to persist in the canonical question record.':'No parsed text is available yet.'} {textOrigin!=='shared'&&'Saving writes the canonical text to Supabase; no separate repair layer is created.'}</AlexText>
           </AlexBox>
           <AlexButton size="small" tone="secondary" disabled={extracting||!resolvedQuestionsPdf} onClick={reloadFromSource}>{extracting?'Extracting…':'Re-extract from source'}</AlexButton>
         </AlexBox>

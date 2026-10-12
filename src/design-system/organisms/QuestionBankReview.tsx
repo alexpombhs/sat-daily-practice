@@ -7,9 +7,11 @@ import AlexTextField from '../atoms/AlexTextField'
 import AlexText from '../atoms/AlexText'
 import ParsingIssueReporter from '../molecules/ParsingIssueReporter'
 import QuestionSourceReview from '../molecules/QuestionSourceReview'
-import {availablePracticeTests,moduleLabel,practiceTestLabel,QUESTION_BANK} from '../../lib/questionBank'
+import {availablePracticeTests,moduleLabel,practiceTestLabel} from '../../lib/questionBank'
 import {groupQuestionsByPracticeTest} from '../../lib/questionBankGroups'
-import {loadSharedQuestionBank,mergeQuestionBanks} from '../../lib/sharedQuestionBank'
+import {loadSharedQuestionBank,loadSharedQuestionContent,promoteMissingCanonicalQuestion} from '../../lib/sharedQuestionBank'
+import {getPracticeTestPdf} from '../../lib/pdfStore'
+import {extractQuestionLines} from '../../lib/pdfStructuredImport'
 import type {PracticeQuestion,PracticeTestFilter} from '../../types'
 
 type Props={questionsPdf:ArrayBuffer|null}
@@ -21,18 +23,54 @@ export default function QuestionBankReview({questionsPdf}:Props){
   const[practiceTestFilter,setPracticeTestFilter]=useState<PracticeTestFilter>('all')
   const[moduleFilter,setModuleFilter]=useState<ModuleFilter>('all')
   const[search,setSearch]=useState('')
-  const[bank,setBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
+  const[bank,setBank]=useState<PracticeQuestion[]>([])
   const[selectedId,setSelectedId]=useState('')
+  const[backfillRunning,setBackfillRunning]=useState(false)
+  const[backfillResult,setBackfillResult]=useState('')
   const hasQuestionsPdf=Boolean(questionsPdf?.byteLength)
   const validQuestionsPdf=hasQuestionsPdf?questionsPdf:null
 
   useEffect(()=>{
     let cancelled=false
     void loadSharedQuestionBank().then(shared=>{
-      if(!cancelled)setBank(mergeQuestionBanks(QUESTION_BANK,shared))
-    }).catch(error=>console.warn('Shared Question Bank load failed; using bundled metadata.',error))
+      if(!cancelled)setBank(shared??[])
+    }).catch(error=>console.warn('Canonical Question Bank unavailable.',error))
     return()=>{cancelled=true}
   },[])
+
+  async function consolidateMissingPT4(){
+    if(backfillRunning)return
+    setBackfillRunning(true)
+    setBackfillResult('Loading canonical text and source PDF…')
+    try{
+      // Resolve PT4 explicitly; the current viewer may be showing a different PDF.
+      const source=await getPracticeTestPdf('practice-test-4','questions')
+      if(!source)throw new Error('PT4 source PDF is unavailable. Nothing was changed.')
+      const pt4=bank.filter(q=>q.practiceTestId==='practice-test-4'&&q.subject==='english')
+      let saved=0,already=0
+      const review:string[]=[]
+      for(const question of pt4){
+        const existing=await loadSharedQuestionContent(question.id,'practice-test-4')
+        if(existing?.questionLines.length){already++;continue}
+        try{
+          const lines=await extractQuestionLines(question,source)
+          // Never publish partial reading questions as a complete canonical question.
+          const labels=lines.map(line=>line.match(/^\\s*([A-D])[.)]\\s+\\S/i)?.[1]?.toUpperCase()).filter(Boolean)
+          if(labels.join('')!=='ABCD'||lines.join(' ').length<80){
+            review.push(`${question.module} Q${question.number}: extraction needs review`)
+            continue
+          }
+          const status=await promoteMissingCanonicalQuestion({questionId:question.id,practiceTestId:'practice-test-4',questionLines:lines})
+          if(status==='saved')saved++;else already++
+          setBackfillResult(`Saved ${saved} canonical questions; ${review.length} require review…`)
+        }catch(error){
+          review.push(`${question.module} Q${question.number}: ${error instanceof Error?error.message:'save failed'}`)
+        }
+      }
+      setBackfillResult(`Canonical PT4 backfill: ${saved} saved, ${already} already present, ${review.length} require review.${review.length?' '+review.slice(0,5).join('; '):''}`)
+    }catch(error){setBackfillResult(error instanceof Error?error.message:'Unable to consolidate.')}
+    finally{setBackfillRunning(false)}
+  }
 
   const questions=useMemo(()=>{
     const needle=search.trim().toLowerCase()
@@ -109,7 +147,7 @@ export default function QuestionBankReview({questionsPdf}:Props){
       {selected&&<section className="question-bank-viewer">
         <div className="question-bank-viewer-header">
           <div><span>{practiceTestLabel(selected.practiceTestId)} · {selected.subject==='math'?'Math':'Reading & Writing'}</span><AlexBox sx={{display:'flex',alignItems:'center',gap:.75}}><h2>{questionLabel(selected)}</h2><ParsingIssueReporter question={selected} context="question-bank" compact/></AlexBox></div>
-          <AlexText component="span" sx={{fontSize:12,color:'#667085'}}>{hasQuestionsPdf?`PDF page ${selected.sourcePage}`:'Shared bank'}</AlexText>
+          <AlexText component="span" sx={{fontSize:12,color:'#667085'}}>{selected.practiceTestId==='practice-test-1'?'Original PT1 content':hasQuestionsPdf?`PDF page ${selected.sourcePage}`:'Shared bank'}</AlexText>
         </div>
         <QuestionSourceReview question={selected} questionsPdf={validQuestionsPdf}/>
       </section>}

@@ -1,33 +1,24 @@
 import {describe,expect,it} from 'vitest'
 import {answerLabel,matchesAnswer} from './answerCompare'
-import {QUESTION_BANK} from './questionBank'
-
-const question=(id:string)=>QUESTION_BANK.find(item=>item.id===id)!
-
-describe('matchesAnswer',()=>{
-  it('checks multiple-choice responses case-insensitively',()=>{
-    expect(matchesAnswer(question('math1-1'),'b')).toBe(true)
-    expect(matchesAnswer(question('math1-1'),' A ')).toBe(false)
+import type {PracticeQuestion} from '../types'
+const q=(correct:string,acceptedAnswers=[correct]):PracticeQuestion=>({
+  id:'synthetic',practiceTestId:'practice-test-4',subject:'math',module:'math1',number:1,
+  sourcePage:0,answerPage:0,correctAnswer:correct,acceptedAnswers,responseType:'student-produced',
+})
+describe('matchesAnswer without bundled question keys',()=>{
+  it('checks multiple-choice labels case-insensitively',()=>{
+    expect(matchesAnswer(q('B'),'b')).toBe(true)
+    expect(matchesAnswer(q('B'),' A ')).toBe(false)
   })
-
-  it('accepts equivalent fraction and decimal grid-in answers',()=>{
-    expect(matchesAnswer(question('math1-13'),'1/5')).toBe(true)
-    expect(matchesAnswer(question('math1-13'),'0.2')).toBe(true)
-    expect(matchesAnswer(question('math1-13'),'2/10')).toBe(true)
+  it('accepts equivalent fraction and decimal answers',()=>{
+    expect(matchesAnswer(q('1/5'),'0.2')).toBe(true)
+    expect(matchesAnswer(q('1/5'),'2/10')).toBe(true)
   })
-
-  it('accepts every official alternative for questions with multiple answers',()=>{
-    expect(matchesAnswer(question('math2-6'),'15')).toBe(true)
-    expect(matchesAnswer(question('math2-6'),'-5')).toBe(true)
-    expect(matchesAnswer(question('math2-6'),'5')).toBe(false)
-  })
-
-  it('normalizes minus signs and formatting safely',()=>{
-    expect(matchesAnswer(question('math2-6'),'−5')).toBe(true)
-    expect(matchesAnswer(question('math1-20'),' 100 ')).toBe(true)
-  })
-
-  it('shows all accepted answers in review feedback',()=>{
-    expect(answerLabel(question('math2-6'))).toBe('15 or -5')
+  it('accepts and labels alternate numeric answers',()=>{
+    const sample=q('15',['15','-5'])
+    expect(matchesAnswer(sample,'15')).toBe(true)
+    expect(matchesAnswer(sample,'−5')).toBe(true)
+    expect(matchesAnswer(sample,'5')).toBe(false)
+    expect(answerLabel(sample)).toBe('15 or -5')
   })
 })

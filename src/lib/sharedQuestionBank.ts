@@ -2,9 +2,17 @@ import {supabase} from './supabase'
 import type {QuestionVisualSpec} from './questionVisuals'
 import type {ModuleKey,PracticeQuestion,SourceCrop,Subject} from '../types'
 
+// Cached canonical content is only requested after an authenticated user session.
+// Supabase RLS is the server-side authorization boundary; UI checks alone are insufficient.
+async function requireAuthenticatedQuestionAccess(){
+  const {data,error}=await supabase.auth.getUser()
+  if(error||!data.user)throw new Error('Sign in to access SAT practice questions.')
+}
+
 export type SharedQuestionContent={
   questionId:string
   practiceTestId:string
+  updatedAt:string
   questionLines:string[]
   explanationLines:string[]
   needsVisual:boolean
@@ -13,6 +21,7 @@ export type SharedQuestionContent={
   visualSpecs:QuestionVisualSpec[]
   sourceCrop:SourceCrop|null
   questionMode:'text'|'image-fallback'
+  inlineVisuals:Array<{title:string;labels:string[];values:number[];kind:'bar'|'line'|'scatter';xLabel?:string;yLabel?:string}>
 }
 
 function parseOneVisualSpec(crop:unknown,afterLine:unknown):QuestionVisualSpec|null{
@@ -35,7 +44,8 @@ function parseVisualSpecs(crop:unknown,afterLine:unknown):QuestionVisualSpec[]{
   return parsed?[parsed]:[]
 }
 
-function idMatchesPracticeTest(id:string,practiceTestId:string){
+export function idMatchesPracticeTest(id:string,practiceTestId:string){
+  if(practiceTestId==='practice-test-1')return /^pt1-(?:rw[12]|math[12])-\d{2}$/.test(id)
   if(practiceTestId==='practice-test-4')return !id.startsWith('practice-test-')
   return id.startsWith(`${practiceTestId}:`)
 }
@@ -49,6 +59,7 @@ export function mergeQuestionBanks(bundled:PracticeQuestion[],shared:PracticeQue
 
 export async function loadSharedQuestionBank():Promise<PracticeQuestion[]|null>{
   if(!supabase)return null
+  await requireAuthenticatedQuestionAccess()
   const {data,error}=await supabase
     .from('sat_question_bank')
     .select('id,practice_test_id,subject,module,question_number,source_page,answer_page,correct_answer,accepted_answers,response_type,source_crop,content_status,question_mode')
@@ -57,8 +68,9 @@ export async function loadSharedQuestionBank():Promise<PracticeQuestion[]|null>{
   if(error)throw error
   const {data:difficultyRows,error:difficultyError}=await supabase
     .from('sat_question_difficulty').select('question_id,difficulty')
-  if(difficultyError)throw difficultyError
-  const difficulties=new Map((difficultyRows??[]).map(row=>[row.question_id,row.difficulty]))
+  // Public question content remains available when optional difficulty metadata is restricted.
+  if(difficultyError)console.warn('Difficulty metadata unavailable; continuing with shared questions.',difficultyError)
+  const difficulties=new Map((difficultyError?[]:difficultyRows??[]).map(row=>[row.question_id,row.difficulty]))
   const remote=(data??[]).filter(row=>idMatchesPracticeTest(row.id,row.practice_test_id)).map(row=>({
     id:row.id,
     difficulty:difficulties.get(row.id) as PracticeQuestion['difficulty'],
@@ -80,9 +92,10 @@ export async function loadSharedQuestionBank():Promise<PracticeQuestion[]|null>{
 
 export async function loadSharedQuestionContent(questionId:string,expectedPracticeTestId?:string):Promise<SharedQuestionContent|null>{
   if(!supabase)return null
+  await requireAuthenticatedQuestionAccess()
   const {data,error}=await supabase
     .from('sat_question_bank')
-    .select('id,practice_test_id,question_lines,explanation_lines,needs_visual,content_status,visual_specs,visual_crop,visual_after_line,source_crop,question_mode')
+    .select('id,practice_test_id,updated_at,question_lines,explanation_lines,needs_visual,content_status,visual_specs,visual_crop,visual_after_line,source_crop,question_mode,inline_visuals')
     .eq('id',questionId)
     .maybeSingle()
   if(error)throw error
@@ -93,6 +106,7 @@ export async function loadSharedQuestionContent(questionId:string,expectedPracti
   return {
     questionId:data.id,
     practiceTestId:data.practice_test_id,
+    updatedAt:data.updated_at,
     questionLines:Array.isArray(data.question_lines)?data.question_lines as string[]:[],
     explanationLines:Array.isArray(data.explanation_lines)?data.explanation_lines as string[]:[],
     needsVisual:Boolean(data.needs_visual),
@@ -101,6 +115,7 @@ export async function loadSharedQuestionContent(questionId:string,expectedPracti
     visualSpecs,
     sourceCrop:data.source_crop as SourceCrop|null,
     questionMode:data.question_mode as SharedQuestionContent['questionMode'],
+    inlineVisuals:Array.isArray(data.inline_visuals)?data.inline_visuals as SharedQuestionContent['inlineVisuals']:[],
   }
 }
 
@@ -113,6 +128,7 @@ export function questionLinesEqual(actual:unknown,expected:string[]){
 export async function saveSharedQuestionRepair(input:{
   questionId:string
   questionLines:string[]
+  expectedUpdatedAt:string
   visualSpec?:QuestionVisualSpec|null
   visualSpecs?:QuestionVisualSpec[]
 }){
@@ -138,11 +154,11 @@ export async function saveSharedQuestionRepair(input:{
     visual_after_line:visuals[0]?.afterLine??null,
     content_status:'verified',
     updated_at:new Date().toISOString(),
-  }).eq('id',input.questionId)
+  }).eq('id',input.questionId).eq('updated_at',input.expectedUpdatedAt)
     .select('id,question_lines,question_mode,visual_specs,updated_at')
     .maybeSingle()
   if(error)throw new Error(`Supabase save failed: ${error.message}${error.code?` (code ${error.code})`:''}`)
-  if(!data)throw new Error('Supabase returned no updated row. Reload, sign in again, and make sure shared Question Bank editing is enabled.')
+  if(!data)throw new Error('This question changed on another device, or the save was not permitted. Reload the canonical question before saving again; newer edits were preserved.')
   if(data.id!==input.questionId||data.question_mode!=='text'||!questionLinesEqual(data.question_lines,input.questionLines)){
     throw new Error('Supabase did not persist the exact edited question text in text mode. Reload the question before trying again.')
   }
@@ -157,4 +173,49 @@ export async function saveSharedQuestionRepair(input:{
   const savedLines=data.question_lines as string[]
   window.dispatchEvent(new CustomEvent('sat-question-content-updated',{detail:{questionId:input.questionId}}))
   return {questionId:data.id,questionLines:savedLines,updatedAt:data.updated_at as string}
+}
+
+/**
+ * One-time, additive promotion of a currently displayed PDF reconstruction.
+ * Never replaces an existing canonical question, explanation, or visual.
+ * Only an authenticated content admin can write, through existing Supabase RLS.
+ */
+export async function promoteMissingCanonicalQuestion(input:{
+  questionId:string
+  practiceTestId:string
+  questionLines:string[]
+}):Promise<'saved'|'already-present'>{
+  if(!supabase)throw new Error('Supabase is not configured.')
+  if(input.practiceTestId!=='practice-test-4')throw new Error('This backfill supports PT4 only.')
+  const lines=input.questionLines
+  if(!lines.length||lines.join(' ').trim().length<25)throw new Error('Extracted question text is incomplete.')
+  const {data:existing,error:loadError}=await supabase.from('sat_question_bank')
+    .select('id,practice_test_id,question_lines,content_status,updated_at')
+    .eq('id',input.questionId).eq('practice_test_id',input.practiceTestId).maybeSingle()
+  if(loadError)throw loadError
+  if(!existing)throw new Error('Canonical question was not found.')
+  if(Array.isArray(existing.question_lines)&&existing.question_lines.length)return 'already-present'
+  if(existing.content_status!=='metadata')throw new Error('This record has already been reviewed; no automatic replacement is allowed.')
+  const {data:auth,error:authError}=await supabase.auth.getUser()
+  if(authError||!auth.user)throw new Error('Sign in with an authorized content administrator account.')
+  const {data,error}=await supabase.from('sat_question_bank').update({
+    question_lines:lines,
+    question_mode:'text',
+    content_status:'imported',
+    updated_at:new Date().toISOString(),
+  }).eq('id',input.questionId)
+    .eq('practice_test_id',input.practiceTestId)
+    .eq('content_status','metadata')
+    .eq('updated_at',existing.updated_at)
+    .is('question_lines',null)
+    .select('id,question_lines').maybeSingle()
+  if(error)throw new Error(`Canonical backfill failed: ${error.message}`)
+  if(!data){
+    const {data:current}=await supabase.from('sat_question_bank').select('question_lines').eq('id',input.questionId).maybeSingle()
+    if(Array.isArray(current?.question_lines)&&current.question_lines.length)return 'already-present'
+    throw new Error('No canonical change was allowed. Ensure content-admin editing is enabled.')
+  }
+  if(!questionLinesEqual(data.question_lines,lines))throw new Error('The canonical text did not match the extracted source.')
+  window.dispatchEvent(new CustomEvent('sat-question-content-updated',{detail:{questionId:input.questionId}}))
+  return 'saved'
 }

@@ -13,7 +13,7 @@ function renderMath(math:string,displayMode:boolean,key:string){
 }
 
 const NATURAL_LANGUAGE_WORD=/\b(?:a|an|and|at|by|each|for|from|in|is|of|on|or|per|purchase|than|that|the|to|was|were|with)\b/i
-const CURRENCY_AT_START=/^\$(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{1,2})?(?=$|[\s.,;:!?)\]}])/
+const CURRENCY_AT_START=/^\$(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{1,2})?(?![\d^_{\\]|\.\d)(?=$|[\s.,;:!?)\]}])/
 const UNDERLINE_MARKUP=/<u>([\s\S]*?)<\/u>/gi
 
 export function isLikelyMathToken(math:string,displayMode=false){
@@ -27,7 +27,7 @@ export function isLikelyMathToken(math:string,displayMode=false){
   return /^[A-Za-z0-9\s.,:;()\[\]|'′″%\-]+$/.test(value)
 }
 
-function currencyAt(text:string,index:number){
+export function currencyAt(text:string,index:number){
   return text.slice(index).match(CURRENCY_AT_START)?.[0]??null
 }
 

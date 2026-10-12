@@ -131,48 +131,21 @@ describe('ReadingQuestionLines',()=>{
     expect(screen.getAllByRole('listitem')).toHaveLength(4)
   })
 
-  it('renders Reading data tables as structured tables without duplicating table text into the passage',()=>{
+  it('renders structured tables solely from supplied canonical question lines',()=>{
     const lines=[
-      'Earth’s atmosphere is bombarded by cosmic dust originating from several sources.',
-      'Some of the dust’s material vaporizes in the atmosphere in a process called ablation.',
-      READING_PARAGRAPH_BREAK,
-      'Which choice most effectively uses data from the table to complete the example?',
-      READING_PARAGRAPH_BREAK,
-      'A) iron from SPC dust is 20%.',
-      'B) sodium from OCC dust is 100%.',
-      'C) iron from HTC dust is 90%.',
-      'D) sodium from AST dust is 75%.',
+      'Researchers compared two synthetic samples.',
+      'Which result is larger?',
+      'A) Sample A','B) Sample B','C) Equal','D) Cannot determine',
+      'Sample measurements',
+      'Sample\tValue',
+      'A\t12',
+      'B\t8',
     ]
-    render(<ReadingQuestionLines lines={lines} questionId="rw1-15"/>)
-    expect(screen.getByText('Ablation Rates for Three Elements in Cosmic Dust, by Dust Source')).toBeInTheDocument()
+    render(<ReadingQuestionLines lines={lines} questionId="synthetic-question"/>)
     expect(screen.getByRole('table')).toBeInTheDocument()
-    expect(screen.getByText('potassium')).toBeInTheDocument()
-    expect(screen.getByText(/Earth’s atmosphere is bombarded by cosmic dust/)).toBeInTheDocument()
-    expect(screen.getAllByText('20%')).toHaveLength(1)
-  })
-
-  it('does not duplicate Q17 table text when a legacy editor save embedded the table in question_lines',()=>{
-    const lines=[
-      'Effects of Mycorrhizal Fungi on 3 Plant Species',
-      'Plant species',
-      'Mycorrhizal host',
-      'Average mass of plants grown in soil containing mycorrhizal fungi (in grams)',
-      'Average mass of plants grown in soil treated to kill fungi (in grams)',
-      'Corn yes 15.1 3.8',
-      'Marigold yes 10.2 2.4',
-      'Broccoli no 7.5 7',
-      'Mycorrhizal fungi in soil benefits many plants, substantially increasing the mass of some.',
-      'Which choice most effectively uses data from the table to complete the statement?',
-      'A) broccoli comparison',
-      'B) corn comparison',
-      'C) marigold comparison',
-      'D) treated-soil comparison',
-    ]
-    render(<ReadingQuestionLines lines={lines} questionId="rw1-17"/>)
-    expect(screen.getAllByText('Effects of Mycorrhizal Fungi on 3 Plant Species')).toHaveLength(1)
-    expect(screen.getAllByText('Corn')).toHaveLength(1)
-    expect(screen.getByText(/Mycorrhizal fungi in soil benefits many plants/)).toBeInTheDocument()
+    expect(screen.getByText('Sample measurements')).toBeInTheDocument()
     expect(screen.getAllByRole('listitem')).toHaveLength(4)
+    expect(screen.getByText('Researchers compared two synthetic samples.')).toBeInTheDocument()
   })
 
   it('keeps wrapped choice text attached to its answer label',()=>{

@@ -1,10 +1,13 @@
 import {fireEvent,render,screen} from '@testing-library/react'
 import {describe,expect,it,vi} from 'vitest'
 import PracticeAnswerPanel from './PracticeAnswerPanel'
-import {QUESTION_BANK} from '../../lib/questionBank'
+import type {PracticeQuestion} from '../../types'
 
-const openResponseQuestion=QUESTION_BANK.find(question=>question.responseType!=='multiple-choice')
-if(!openResponseQuestion)throw new Error('Expected an open-response question fixture.')
+const openResponseQuestion:PracticeQuestion={
+  id:'synthetic-open-response',practiceTestId:'practice-test-4',subject:'math',
+  module:'math1',number:1,sourcePage:0,answerPage:0,
+  correctAnswer:'31',acceptedAnswers:['31'],responseType:'student-produced',
+}
 
 describe('PracticeAnswerPanel open response keyboard submit',()=>{
   it('submits a non-empty open response when Enter is pressed',()=>{
