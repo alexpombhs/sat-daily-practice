@@ -18,7 +18,7 @@ describe('QuestionStatsTable review drawer',()=>{
       questionId:'rw2-8',practiceTestId:'practice-test-4',subject:'english',module:'rw2',questionNumber:8,attempts:2,correct:1,successRate:50,averageMs:42000,lastAttemptAt:'2026-09-18T12:00:00.000Z',
     }
     render(<QuestionStatsTable questions={[question]} answersPdf={new ArrayBuffer(8)}/>)
-    await screen.findByRole('button',{name:'Review Practice Test 4 Reading and Writing question 8'})
+    await screen.findAllByRole('button',{name:'Review Practice Test 4 Reading and Writing question 8'})
     fireEvent.click(screen.getAllByRole('button',{name:'Review Practice Test 4 Reading and Writing question 8'})[0])
     expect(screen.getByText('Question review')).toBeInTheDocument()
     expect(await screen.findByText('Rendered question rw2-8')).toBeInTheDocument()
