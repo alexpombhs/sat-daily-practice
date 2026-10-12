@@ -5,19 +5,10 @@ import SourceViewer from './SourceViewer'
 import StructuredQuestionLines from './StructuredQuestionLines'
 import OriginalPT1Graph from './OriginalPT1Graph'
 import ReadingQuestionLines from './ReadingQuestionLines'
-import {ensureQuestionText} from '../../lib/pdfStructuredImport'
-import {getQuestionContent,isCurrentQuestionContent,QUESTION_CONTENT_VERSION,type StoredQuestionContent} from '../../lib/questionContentStore'
 import {loadSharedQuestionContent} from '../../lib/sharedQuestionBank'
-import {verifiedMathContent} from '../../lib/verifiedMathQuestions'
-import {questionVisualSpecs,type QuestionVisualSpec} from '../../lib/questionVisuals'
-import {isPracticeTest5Math1Verified} from '../../lib/practiceTest5Math1Layout'
-import {verifiedPracticeTest5Math1Content} from '../../lib/verifiedPracticeTest5Math1'
-import {verifiedPracticeTest6Reading1Content} from '../../lib/verifiedPracticeTest6Reading1'
-import {verifiedPracticeTest6Reading2Content} from '../../lib/verifiedPracticeTest6Reading2'
-import {verifiedPracticeTest6Math1Content} from '../../lib/verifiedPracticeTest6Math1'
-import {verifiedPracticeTest6Math2Content} from '../../lib/verifiedPracticeTest6Math2'
-import {verifiedPracticeTest7Math1Content} from '../../lib/verifiedPracticeTest7Math1'
-import {verifiedPracticeTest7Math2Content} from '../../lib/verifiedPracticeTest7Math2'
+import {QUESTION_CONTENT_VERSION,type StoredQuestionContent} from '../../lib/questionContentStore'
+import type {QuestionVisualSpec} from '../../lib/questionVisuals'
+import type {CanonicalGraphic} from './OriginalPT1Graph'
 import usePracticeTestPdf from '../../hooks/usePracticeTestPdf'
 import type {PracticeQuestion} from '../../types'
 
@@ -59,6 +50,7 @@ export default function QuestionContent({question,bytes,alt,showOriginalLayout=t
   const sourceBytes=usePracticeTestPdf(question,'questions',bytes)
   const[content,setContent]=useState<StoredQuestionContent|null>(null)
   const[visuals,setVisuals]=useState<QuestionVisualSpec[]>([])
+  const[inlineVisuals,setInlineVisuals]=useState<CanonicalGraphic[]>([])
   const[error,setError]=useState('')
   const[revision,setRevision]=useState(0)
 
@@ -76,116 +68,26 @@ export default function QuestionContent({question,bytes,alt,showOriginalLayout=t
     setContent(null)
     setError('')
     setVisuals([])
-
+    setInlineVisuals([])
     void (async()=>{
       try{
-        const shared=await loadSharedQuestionContent(question.id,question.practiceTestId).catch(()=>null)
+        // Canonical content only: no bundled question bodies, edits-overlays or PDF fallback.
+        const shared=await loadSharedQuestionContent(question.id,question.practiceTestId)
         if(cancelled)return
-
-        const bundledVisuals=questionVisualSpecs(question.id)
-        const verifiedBundled=question.practiceTestId==='practice-test-6'
-          ?question.module==='rw1'
-            ?verifiedPracticeTest6Reading1Content(question.number)
-            :question.module==='rw2'
-              ?verifiedPracticeTest6Reading2Content(question.number)
-              :question.module==='math1'
-                ?verifiedPracticeTest6Math1Content(question.number)
-                :question.module==='math2'
-                  ?verifiedPracticeTest6Math2Content(question.number)
-                  :undefined
-          :question.practiceTestId==='practice-test-7'
-            ?question.module==='math1'
-              ?verifiedPracticeTest7Math1Content(question.number)
-              :question.module==='math2'
-                ?verifiedPracticeTest7Math2Content(question.number)
-                :undefined
-            :undefined
-        const sharedHasText=Boolean(shared?.questionLines.length)&&!(question.id==='practice-test-6:math2-26'&&shared?.questionLines.some(line=>/no test material on this page/i.test(line)))
-        const sharedControlsVisual=Boolean(shared&&shared.contentStatus!=='metadata'&&!(verifiedBundled&&!sharedHasText))
-        const sharedVisuals=shared?.visualSpecs??[]
-        const hasRequiredBundledVisuals=question.id==='practice-test-5:math1-16'
-        const resolvedVisuals=sharedVisuals.length?sharedVisuals:(hasRequiredBundledVisuals?bundledVisuals:(sharedControlsVisual&&!shared?.needsVisual?[]:bundledVisuals))
-        setVisuals(resolvedVisuals)
-
-        if(sharedHasText&&shared){
-          setContent(storedFromShared(question.id,shared.questionLines,shared.explanationLines,resolvedVisuals.length>0,'text'))
+        if(!shared||!shared.questionLines.length){
+          setError('Canonical question text is unavailable. Please report this question to the content administrator.')
           return
         }
-
-        if(verifiedBundled){
-          setContent(storedFromShared(question.id,verifiedBundled.lines,shared?.explanationLines??[],resolvedVisuals.length>0||Boolean(verifiedBundled.needsVisual),'text'))
-          return
-        }
-
-        const canExtractVerifiedSource=Boolean(
-          sourceBytes
-          &&question.contentStatus==='verified'
-          &&question.sourceCrop
-        )
-
-        if(canExtractVerifiedSource&&sourceBytes){
-          const extracted=await ensureQuestionText(question,sourceBytes)
-          if(cancelled)return
-          if(extracted&&isCurrentQuestionContent(extracted)&&extracted.questionLines.length){
-            setContent({...extracted,questionMode:'text',needsVisual:resolvedVisuals.length>0||extracted.needsVisual})
-            return
-          }
-        }
-
-        if(shared?.questionMode==='image-fallback'){
-          setContent(storedFromShared(question.id,[],shared.explanationLines,resolvedVisuals.length>0,'image-fallback'))
-          return
-        }
-
-        if(question.questionMode==='image-fallback'&&question.contentStatus==='verified'){
-          setContent(storedFromShared(question.id,[],[],false,'image-fallback'))
-          return
-        }
-
-        if(question.practiceTestId==='practice-test-5'&&question.module==='math1'){
-          const verified=verifiedPracticeTest5Math1Content(question.number)
-          if(verified?.imageFallback){
-            setContent({questionId:question.id,questionLines:[],explanationLines:[],questionMode:'image-fallback',explanationMode:'image-fallback',needsVisual:false,importedAt:new Date().toISOString(),contentVersion:QUESTION_CONTENT_VERSION})
-            return
-          }
-          if(verified){
-            setContent(storedFromShared(question.id,verified.lines,[],resolvedVisuals.length>0||Boolean(verified.needsVisual)))
-            return
-          }
-        }
-
-        const verified=question.practiceTestId==='practice-test-4'&&question.subject==='math'?verifiedMathContent(question.id):undefined
-        if(verified){
-          setContent(storedFromShared(question.id,verified.lines,shared?.explanationLines??[],resolvedVisuals.length>0||Boolean(verified.needsVisual)))
-          return
-        }
-
-        const sourceExtractable=Boolean(sourceBytes&&question.sourceCrop&&question.contentStatus==='verified')
-          ||question.practiceTestId==='practice-test-7'&&(question.module==='rw1'||question.module==='rw2')&&question.contentStatus==='verified'
-        if(question.practiceTestId!=='practice-test-4'&&!isPracticeTest5Math1Verified(question.id)&&!sourceExtractable&&!shared?.questionLines.length){
-          setError('This question has not been parsed and verified for this practice set yet.')
-          return
-        }
-
-        if(question.subject==='english'&&sourceBytes){
-          const extracted=await ensureQuestionText(question,sourceBytes)
-          if(cancelled)return
-          if(extracted&&isCurrentQuestionContent(extracted))setContent({...extracted,needsVisual:resolvedVisuals.length>0||extracted.needsVisual})
-          else setError('Question text is not available in this browser yet.')
-          return
-        }
-
-        const local=sourceBytes?await ensureQuestionText(question,sourceBytes):await getQuestionContent(question.id)
-        if(cancelled)return
-        if(local&&isCurrentQuestionContent(local))setContent({...local,needsVisual:resolvedVisuals.length>0||local.needsVisual})
-        else setError('Question text is not available in this browser yet.')
+        const canonicalVisuals=shared.visualSpecs??[]
+        setVisuals(canonicalVisuals)
+        setInlineVisuals(shared.inlineVisuals??[])
+        setContent(storedFromShared(question.id,shared.questionLines,shared.explanationLines,canonicalVisuals.length>0||shared.needsVisual,shared.questionMode))
       }catch(reason){
-        if(!cancelled)setError(reason instanceof Error?reason.message:'Unable to read this question as text.')
+        if(!cancelled)setError(reason instanceof Error?reason.message:'Unable to load canonical question.')
       }
     })()
-
     return()=>{cancelled=true}
-  },[question,sourceBytes,revision])
+  },[question,revision])
 
   if(content?.questionMode==='image-fallback'){
     if(sourceBytes)return <SourceViewer pdfKey="questions" bytes={sourceBytes} page={question.sourcePage} questionNumber={question.number} alt={alt} practiceTestId={question.practiceTestId} module={question.module} sourceCrop={question.sourceCrop}/>
@@ -195,7 +97,7 @@ export default function QuestionContent({question,bytes,alt,showOriginalLayout=t
   if(!content)return <div className="structured-loading">Preparing text question…</div>
 
   return <div className={question.subject==='english'?'structured-question reading-structured-question':'structured-question'}>
-    <OriginalPT1Graph question={question}/>
+    <OriginalPT1Graph graph={inlineVisuals[0]??null}/>
     <div className="structured-lines">
       {visuals.length&&sourceBytes
         ?<LinesWithSourceVisuals question={question} bytes={sourceBytes} lines={content.questionLines} alt={alt} visuals={visuals} sourceCrop={question.sourceCrop} reflowProse={reflowProse}/>
