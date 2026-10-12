@@ -2,6 +2,13 @@ import {supabase} from './supabase'
 import type {QuestionVisualSpec} from './questionVisuals'
 import type {ModuleKey,PracticeQuestion,SourceCrop,Subject} from '../types'
 
+// Cached canonical content is only requested after an authenticated user session.
+// Supabase RLS is the server-side authorization boundary; UI checks alone are insufficient.
+async function requireAuthenticatedQuestionAccess(){
+  const {data,error}=await supabase.auth.getUser()
+  if(error||!data.user)throw new Error('Sign in to access SAT practice questions.')
+}
+
 export type SharedQuestionContent={
   questionId:string
   practiceTestId:string
@@ -52,6 +59,7 @@ export function mergeQuestionBanks(bundled:PracticeQuestion[],shared:PracticeQue
 
 export async function loadSharedQuestionBank():Promise<PracticeQuestion[]|null>{
   if(!supabase)return null
+  await requireAuthenticatedQuestionAccess()
   const {data,error}=await supabase
     .from('sat_question_bank')
     .select('id,practice_test_id,subject,module,question_number,source_page,answer_page,correct_answer,accepted_answers,response_type,source_crop,content_status,question_mode')
@@ -84,6 +92,7 @@ export async function loadSharedQuestionBank():Promise<PracticeQuestion[]|null>{
 
 export async function loadSharedQuestionContent(questionId:string,expectedPracticeTestId?:string):Promise<SharedQuestionContent|null>{
   if(!supabase)return null
+  await requireAuthenticatedQuestionAccess()
   const {data,error}=await supabase
     .from('sat_question_bank')
     .select('id,practice_test_id,updated_at,question_lines,explanation_lines,needs_visual,content_status,visual_specs,visual_crop,visual_after_line,source_crop,question_mode,inline_visuals')
