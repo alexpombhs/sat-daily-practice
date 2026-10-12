@@ -54,6 +54,7 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
   const resolvedQuestionsPdf=usePracticeTestPdf(question,'questions',questionsPdf)
   const[questionText,setQuestionText]=useState('')
   const[textOrigin,setTextOrigin]=useState<TextOrigin>('empty')
+  const[canonicalUpdatedAt,setCanonicalUpdatedAt]=useState<string|null>(null)
   const questionTextRef=useRef<HTMLInputElement|HTMLTextAreaElement|null>(null)
   const[visualSpecs,setVisualSpecs]=useState<QuestionVisualSpec[]>([])
   const[loading,setLoading]=useState(true)
@@ -66,10 +67,10 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
 
   useEffect(()=>{
     let cancelled=false
-    setLoading(true);setError('');setMessage('')
+    setLoading(true);setError('');setMessage('');setCanonicalUpdatedAt(null)
     void (async()=>{
       try{
-        const shared=await loadSharedQuestionContent(question.id,question.practiceTestId).catch(()=>null)
+        const shared=await loadSharedQuestionContent(question.id,question.practiceTestId)
         let local=await getQuestionContent(question.id).catch(()=>undefined)
         const verified=question.practiceTestId==='practice-test-6'&&(question.module==='rw1'||question.module==='rw2'||question.module==='math1'||question.module==='math2')
           ?question.module==='rw1'
@@ -103,6 +104,7 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
 
         setQuestionText(editorText(question,stripEmbeddedReadingTableLines(question.id,questionLines)))
         setTextOrigin(origin)
+        setCanonicalUpdatedAt(shared?.updatedAt??null)
         setVisualSpecs(resolvedVisuals)
       }catch(reason){
         if(!cancelled)setError(reason instanceof Error?reason.message:'Unable to prepare this question for editing.')
@@ -192,7 +194,9 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
     }
     setSaving(true);setError('');setMessage('')
     try{
-      await saveSharedQuestionRepair({questionId:question.id,questionLines,visualSpecs})
+      if(!canonicalUpdatedAt)throw new Error('Canonical question version is unavailable. Reload before saving so another device’s edits cannot be overwritten.')
+      const saved=await saveSharedQuestionRepair({questionId:question.id,questionLines,visualSpecs,expectedUpdatedAt:canonicalUpdatedAt})
+      setCanonicalUpdatedAt(saved.updatedAt)
       setTextOrigin('shared')
       setMessage('Fix saved to the shared Question Bank.')
       onSaved?.()
