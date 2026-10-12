@@ -1,18 +1,12 @@
 import {readFileSync} from 'node:fs'
 import {resolve} from 'node:path'
 import {describe,expect,it} from 'vitest'
-import {expandNormalizedCrop,QUESTION_VISUALS} from './questionVisuals'
+import {expandNormalizedCrop,questionVisualSpecs} from './questionVisuals'
 
 describe('question source visuals',()=>{
-  it('keeps every configured crop inside normalized question bounds',()=>{
-    for(const [questionId,{crop}] of Object.entries(QUESTION_VISUALS)){
-      expect(crop.x,questionId).toBeGreaterThanOrEqual(0)
-      expect(crop.y,questionId).toBeGreaterThanOrEqual(0)
-      expect(crop.x+crop.width,questionId).toBeLessThanOrEqual(1)
-      expect(crop.y+crop.height,questionId).toBeLessThanOrEqual(1)
-    }
+  it('contains no bundled question-specific crop definitions',()=>{
+    expect(questionVisualSpecs('synthetic-id')).toEqual([])
   })
-
   it('adds a safe margin without ever extending outside the question crop',()=>{
     const expanded=expandNormalizedCrop({x:.06,y:.09,width:.88,height:.29})
     expect(expanded.x).toBeCloseTo(.03)
