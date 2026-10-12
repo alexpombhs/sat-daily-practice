@@ -1,7 +1,7 @@
 import {describe,expect,it} from 'vitest'
 import {buildPracticePlanRecommendation} from './practicePlan'
 import type {PerformanceAnalytics} from './performanceAnalytics'
-import {QUESTION_BANK} from './questionBank'
+import {TEST_QUESTION_METADATA as QUESTION_BANK} from '../test/questionMetadataFixture'
 import type {Attempt,Settings} from '../types'
 
 const baseSettings:Settings={
