@@ -215,27 +215,27 @@
     "question_number": 7,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "In an original poem about a public archive, the speaker recalls being told that the institution is <u>a wall built from other people's names</u>. The next lines describe freely accessible records and neighbors helping one another trace family histories. Why does the speaker introduce the underlined image?",
+    "stem": "A speaker in an original poem recalls hearing that the municipal archive is 'a wall built from other people's names.' At first, the image seems to capture the speaker's childhood feeling that history belonged to famous families rather than ordinary residents. But the poem later describes a volunteer explaining how to search property records and neighbors discovering accounts of relatives previously absent from published histories. The speaker ends by imagining the wall's stones rearranged into a public staircase. What is the principal function of the original wall metaphor?",
     "options": [
       {
         "label": "A",
-        "text": "To concede that archives are inevitably inaccessible"
+        "text": "It acknowledges a perception of exclusion that the poem then revises through experiences of public access."
       },
       {
         "label": "B",
-        "text": "To establish an interpretation that the later details challenge"
+        "text": "It proposes replacing the archive building with a monument to well-known families."
       },
       {
         "label": "C",
-        "text": "To suggest that the building was constructed as a memorial"
+        "text": "It suggests that volunteer assistance is less reliable than published historical accounts."
       },
       {
         "label": "D",
-        "text": "To compare the archive's architecture with nearby homes"
+        "text": "It establishes that preserving records prevents ordinary residents from learning about the past."
       }
     ],
-    "correct_answer": "B",
-    "explanation": "The wall suggests exclusion, but the subsequent details offer counterevidence; the image sets up the speaker's rebuttal.",
+    "correct_answer": "A",
+    "explanation": "The wall initially embodies perceived exclusion. Later encounters and the transformed staircase image rebut that perception without denying the speaker once felt excluded.",
     "difficulty": "advanced",
     "concepts": [
       "poetry structure",
@@ -488,27 +488,27 @@
     "question_number": 14,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "To study adaptation to warmer weather, scientists monitored two populations of the same insect for five summers. The percentage active before sunrise was, in years 1 through 5, 12, 19, 31, 42, 51 in population A and 13, 15, 14, 16, 15 in population B. Which finding most clearly supports the hypothesis that only A underwent a sustained shift toward earlier activity?",
+    "stem": "Scientists studying activity patterns in two populations of an alpine insect proposed that repeated warm summers would shift feeding toward the cooler hours before sunrise, but only in the population inhabiting exposed rock slopes. Both populations were monitored with identical sensors over five summers. The percentages of recorded feeding events before sunrise for population A were 12, 19, 31, 42, and 51; for population B, in a shaded valley, the values were 13, 15, 14, 16, and 15. The researchers caution that changes in population size could influence total feeding events, so they analyze percentages rather than counts. Which finding most directly supports their prediction?",
     "options": [
       {
         "label": "A",
-        "text": "In the first year, the populations had similar percentages of early activity."
+        "text": "Population A's early-feeding percentage increased consistently while population B's stayed near its initial level."
       },
       {
         "label": "B",
-        "text": "Population A increased across every measured interval while B fluctuated in a narrow range."
+        "text": "The two populations began with nearly identical early-feeding percentages."
       },
       {
         "label": "C",
-        "text": "Population B ended with a slightly larger value than it began with."
+        "text": "The exposed population was monitored using the same sensor model as the valley population."
       },
       {
         "label": "D",
-        "text": "Both populations were monitored for the same number of years."
+        "text": "The shaded population's final percentage exceeded its initial percentage by two points."
       }
     ],
-    "correct_answer": "B",
-    "explanation": "Repeated increases in A versus nearly flat B over several years support divergence; a single endpoint would be less informative.",
+    "correct_answer": "A",
+    "explanation": "The proportion of early activity rose continuously only in A. Comparing percentages rather than event totals addresses variation in population size.",
     "difficulty": "advanced",
     "concepts": [
       "scientific hypothesis",
@@ -524,27 +524,27 @@
     "question_number": 15,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "A laboratory tested heat loss from two insulating panels of equal thickness. Results (heat units lost per hour): at an outside temperature of 0°C, panel R lost 22 and panel S lost 31; at 10°C, R lost 14 and S lost 19; at 20°C, R lost 8 and S lost 10. A researcher claims R retains heat better at every tested temperature, but that its advantage is smaller in warmer conditions. Which evidence best supports this claim?",
+    "stem": "A thermal-engineering team tested two insulating panels, R and S, at three exterior temperatures while maintaining the same interior temperature. Each panel had the same thickness and area, and all measurements used the same apparatus. Recorded heat losses, in units per hour, were as follows: at 0°C, R lost 22 and S lost 31; at 10°C, R lost 14 and S lost 19; at 20°C, R lost 8 and S lost 10. A researcher claims that R's absolute advantage over S declines as the outside air becomes warmer. Which statement gives the strongest evidence for the full claim?",
     "options": [
       {
         "label": "A",
-        "text": "At 0°C, R lost 22 units and S lost 31, while at 20°C, R lost 8 and S lost 10."
+        "text": "R loses less heat in each matched comparison, and the R–S difference falls from 9 to 5 to 2 units."
       },
       {
         "label": "B",
-        "text": "At 0°C, both panels lost less heat than they did at 20°C."
+        "text": "At every temperature, both panels lose exactly the same proportion of heat."
       },
       {
         "label": "C",
-        "text": "At 10°C, R lost more heat than S by five units."
+        "text": "Both panels lose more heat at 20°C than they do at 0°C."
       },
       {
         "label": "D",
-        "text": "The heat-loss difference was largest at 20°C."
+        "text": "The advantage of R can be determined only by comparing the two panels at different temperatures."
       }
     ],
     "correct_answer": "A",
-    "explanation": "R loses less heat throughout; the gap falls from nine units at 0°C to two at 20°C, matching both parts of the claim.",
+    "explanation": "The matched differences are 31-22=9, 19-14=5, and 10-8=2; this verifies both the direction and decline in the absolute difference.",
     "difficulty": "advanced",
     "concepts": [
       "two-way scientific table",
@@ -641,27 +641,27 @@
     "question_number": 18,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Archaeologists recovered identical abstract motifs on pottery at two coastal sites separated by mountains. Clay analysis shows that the vessels were made locally at each site. Which interpretation is most consistent with these findings?",
+    "stem": "At two coastal settlements separated by a mountain range, archaeologists discovered pottery marked with the same uncommon spiral-and-dot motif. A preliminary report attributed the match to a single workshop distributing finished vessels over a wide region. Later chemical analysis, however, indicated that each settlement's vessels were made from clay available only near that settlement. Archaeologists also found differences in firing techniques, although the decorative motifs remained strikingly similar. Which inference is most defensible given all the evidence?",
     "options": [
       {
         "label": "A",
-        "text": "A single workshop manufactured every vessel and shipped them to both settlements."
+        "text": "Craftspeople at the two settlements may have exchanged decorative ideas while manufacturing the vessels locally."
       },
       {
         "label": "B",
-        "text": "Similar decorative ideas may have circulated even though the objects were made separately."
+        "text": "Identical motifs establish that the two settlements had a shared political authority."
       },
       {
         "label": "C",
-        "text": "The communities necessarily spoke the same language."
+        "text": "The vessels were certainly traded as finished products from one workshop despite the clay analyses."
       },
       {
         "label": "D",
-        "text": "The motif was created independently at both sites, ruling out any contact."
+        "text": "The differences in firing techniques demonstrate that cultural contact between the settlements was impossible."
       }
     ],
-    "correct_answer": "B",
-    "explanation": "Local manufacture rules out a shared production site while identical motifs leave cultural transmission as a plausible explanation.",
+    "correct_answer": "A",
+    "explanation": "Local clay and different production techniques undermine single-workshop distribution, while unusual shared motifs are consistent with transmission of ideas.",
     "difficulty": "advanced",
     "concepts": [
       "archaeological evidence",
@@ -1541,27 +1541,27 @@
     "question_number": 11,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "A botanist predicts that additional nitrogen always increases leaf mass, regardless of soil type. In identical pots, extra nitrogen raised average mass on sandy soil but reduced it on clay-rich soil compared with untreated controls. What is the strongest conclusion?",
+    "stem": "A botanist hypothesized that extra nitrogen would increase leaf mass in a newly cultivated plant regardless of soil composition. To test this prediction, the botanist used genetically similar plants and assigned equal numbers to sandy and clay-rich soils. Within each soil group, half the plants received additional nitrogen and half served as untreated controls. At the end of the growing period, treated plants in sandy soil averaged 16% more leaf mass than their controls, whereas treated plants in clay-rich soil averaged 9% less than their controls. Assuming the measurements are reliable, how should the botanist interpret the findings?",
     "options": [
       {
         "label": "A",
-        "text": "The hypothesis is not supported across both tested soils."
+        "text": "Nitrogen treatment has no measurable relationship with leaf mass in either soil."
       },
       {
         "label": "B",
-        "text": "Nitrogen never affects leaf mass in sandy soil."
+        "text": "The results undermine a soil-independent increase, while leaving open why the effect differs by soil."
       },
       {
         "label": "C",
-        "text": "Soil type cannot influence nutrient response."
+        "text": "The results establish that clay-rich soil prevents plants from absorbing any nitrogen."
       },
       {
         "label": "D",
-        "text": "The clay-rich controls must have received nitrogen."
+        "text": "The sandy-soil result alone confirms the prediction for all possible soils."
       }
     ],
-    "correct_answer": "A",
-    "explanation": "The negative response in one controlled soil condition contradicts an unconditional positive-effect prediction.",
+    "correct_answer": "B",
+    "explanation": "Because nitrogen treatment decreased mass relative to controls in clay-rich soil, the claim of an increase regardless of soil is contradicted; the mechanism remains untested.",
     "difficulty": "advanced",
     "concepts": [
       "testing a scientific hypothesis",
@@ -1768,27 +1768,27 @@
     "question_number": 17,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Genetic markers in two island populations share rare variants. Archaeological dates place occupation of island A several centuries before occupation of island B; the first known trading records are later still. What is the most defensible inference?",
+    "stem": "Researchers examining the settlement history of two islands found that people on island A and island B share several unusual genetic variants. Archaeological layers indicate that island A was inhabited centuries before the earliest secure occupation date on island B. The first surviving written records of commercial voyages between the islands are considerably later than both dates. One team proposed that the variants reflect early movement between the islands; another noted that both groups could instead descend from an older population elsewhere. Which conclusion is best supported by the combined evidence?",
     "options": [
       {
         "label": "A",
-        "text": "Contact or shared ancestry involving the islands may predate the written trading records."
+        "text": "The shared variants prove that voyagers traveled directly from A to B at a known date."
       },
       {
         "label": "B",
-        "text": "The date of each migration can be calculated precisely from the markers."
+        "text": "The genetic similarities are compatible with movement or shared ancestry predating written trade records, but do not establish a particular route."
       },
       {
         "label": "C",
-        "text": "All settlement on island B must have originated in the latest recorded trade voyage."
+        "text": "Written voyage records establish when the first people reached either island."
       },
       {
         "label": "D",
-        "text": "The variants prove that the populations never mixed with others."
+        "text": "The older occupation of island A rules out shared ancestry with inhabitants of island B."
       }
     ],
-    "correct_answer": "A",
-    "explanation": "Shared variants and the settlement chronology permit earlier movement or ancestry, but cannot establish precise routes or dates.",
+    "correct_answer": "B",
+    "explanation": "Genetic overlap plus chronology support an earlier relationship, but they do not distinguish direct migration from shared ancestry or specify a route.",
     "difficulty": "advanced",
     "concepts": [
       "genetic evidence",
@@ -1803,27 +1803,27 @@
     "question_number": 18,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "To evaluate a new reading program, a district compared students who volunteered for it with students who did not. Participants gained six points more on average. Which additional finding would most weaken the conclusion that the program caused the entire difference?",
+    "stem": "A district compared reading scores for students who voluntarily enrolled in an after-school tutoring program with those of students who did not enroll. By the end of the term, participants had improved six points more on average. The program's supporters attributed the entire difference to tutoring. However, records collected before the program began showed that volunteers already spent more hours reading outside school and had somewhat higher baseline scores. The groups also differed in how often they attended optional academic events. Which criticism most directly challenges the supporters' causal claim?",
     "options": [
       {
         "label": "A",
-        "text": "Before the program, volunteers already scored substantially higher and reported more weekly reading."
+        "text": "The comparison does not isolate the tutoring effect because students selected into groups that differed before the program began."
       },
       {
         "label": "B",
-        "text": "The program met in the same buildings where students normally attended classes."
+        "text": "The comparison shows that tutoring necessarily lowered scores among nonparticipants."
       },
       {
         "label": "C",
-        "text": "Both groups completed the same end-of-term assessment."
+        "text": "Because participants improved, they must have had identical academic habits before joining."
       },
       {
         "label": "D",
-        "text": "The volunteers came from several grade levels."
+        "text": "Differences between groups are irrelevant whenever both groups take the same final assessment."
       }
     ],
     "correct_answer": "A",
-    "explanation": "Preexisting reading habits and performance make volunteer groups noncomparable, leaving a selection effect as a competing explanation.",
+    "explanation": "Self-selection and preexisting differences offer alternative explanations for the outcome, preventing a clean attribution of the full six-point difference to the program.",
     "difficulty": "advanced",
     "concepts": [
       "controlled experiment",
