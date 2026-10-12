@@ -7,9 +7,9 @@ import AlexTextField from '../atoms/AlexTextField'
 import AlexText from '../atoms/AlexText'
 import ParsingIssueReporter from '../molecules/ParsingIssueReporter'
 import QuestionSourceReview from '../molecules/QuestionSourceReview'
-import {availablePracticeTests,moduleLabel,practiceTestLabel,QUESTION_BANK} from '../../lib/questionBank'
+import {availablePracticeTests,moduleLabel,practiceTestLabel} from '../../lib/questionBank'
 import {groupQuestionsByPracticeTest} from '../../lib/questionBankGroups'
-import {loadSharedQuestionBank,mergeQuestionBanks,promoteMissingCanonicalQuestion} from '../../lib/sharedQuestionBank'
+import {loadSharedQuestionBank,loadSharedQuestionContent,promoteMissingCanonicalQuestion} from '../../lib/sharedQuestionBank'
 import {getPracticeTestPdf} from '../../lib/pdfStore'
 import {extractQuestionLines} from '../../lib/pdfStructuredImport'
 import type {PracticeQuestion,PracticeTestFilter} from '../../types'
@@ -23,7 +23,7 @@ export default function QuestionBankReview({questionsPdf}:Props){
   const[practiceTestFilter,setPracticeTestFilter]=useState<PracticeTestFilter>('all')
   const[moduleFilter,setModuleFilter]=useState<ModuleFilter>('all')
   const[search,setSearch]=useState('')
-  const[bank,setBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
+  const[bank,setBank]=useState<PracticeQuestion[]>([])
   const[selectedId,setSelectedId]=useState('')
   const[backfillRunning,setBackfillRunning]=useState(false)
   const[backfillResult,setBackfillResult]=useState('')
@@ -33,8 +33,8 @@ export default function QuestionBankReview({questionsPdf}:Props){
   useEffect(()=>{
     let cancelled=false
     void loadSharedQuestionBank().then(shared=>{
-      if(!cancelled)setBank(mergeQuestionBanks(QUESTION_BANK,shared))
-    }).catch(error=>console.warn('Shared Question Bank load failed; using bundled metadata.',error))
+      if(!cancelled)setBank(shared??[])
+    }).catch(error=>console.warn('Canonical Question Bank unavailable.',error))
     return()=>{cancelled=true}
   },[])
 
