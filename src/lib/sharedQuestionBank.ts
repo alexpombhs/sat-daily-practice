@@ -14,6 +14,7 @@ export type SharedQuestionContent={
   visualSpecs:QuestionVisualSpec[]
   sourceCrop:SourceCrop|null
   questionMode:'text'|'image-fallback'
+  inlineVisuals:Array<{title:string;labels:string[];values:number[];kind:'bar'|'line'|'scatter';xLabel?:string;yLabel?:string}>
 }
 
 function parseOneVisualSpec(crop:unknown,afterLine:unknown):QuestionVisualSpec|null{
@@ -85,7 +86,7 @@ export async function loadSharedQuestionContent(questionId:string,expectedPracti
   if(!supabase)return null
   const {data,error}=await supabase
     .from('sat_question_bank')
-    .select('id,practice_test_id,updated_at,question_lines,explanation_lines,needs_visual,content_status,visual_specs,visual_crop,visual_after_line,source_crop,question_mode')
+    .select('id,practice_test_id,updated_at,question_lines,explanation_lines,needs_visual,content_status,visual_specs,visual_crop,visual_after_line,source_crop,question_mode,inline_visuals')
     .eq('id',questionId)
     .maybeSingle()
   if(error)throw error
@@ -105,6 +106,7 @@ export async function loadSharedQuestionContent(questionId:string,expectedPracti
     visualSpecs,
     sourceCrop:data.source_crop as SourceCrop|null,
     questionMode:data.question_mode as SharedQuestionContent['questionMode'],
+    inlineVisuals:Array.isArray(data.inline_visuals)?data.inline_visuals as SharedQuestionContent['inlineVisuals']:[],
   }
 }
 
