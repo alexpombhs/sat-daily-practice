@@ -578,34 +578,41 @@
     "question_number": 16,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "A museum director proposed arranging a new exhibition chronologically, beginning with the oldest objects. The exhibition designers instead suggested grouping objects by the trade routes along which they circulated. A historian claims that the eventual arrangement resulted from negotiation among the designers rather than a directive from the director. Which additional evidence would most directly support the historian's claim?",
+    "stem": "A museum director proposed arranging an exhibition in chronological order so visitors could observe gradual changes in ceramic techniques. Several curators objected that a chronological layout would separate objects that had circulated along the same trade routes. A historian later claimed that the exhibition's final design reflected a negotiated compromise rather than the director's unilateral decision. Which newly discovered document would provide the strongest evidence for the historian's claim?",
     "options": [
       {
         "label": "A",
-        "text": "A brochure states that the director attended the exhibition's opening ceremony."
+        "text": "A publicity brochure quoting the director on the historical significance of ceramics"
       },
       {
         "label": "B",
-        "text": "Meeting minutes record multiple competing layouts and a final arrangement agreed upon after designers exchanged revisions."
+        "text": "Annotated planning minutes showing curators jointly revising a layout that combines time periods with trade-route groupings"
       },
       {
         "label": "C",
-        "text": "A visitor survey finds that most guests preferred thematic exhibitions to chronological ones."
+        "text": "A visitor survey conducted after the exhibition opened showing a preference for thematic exhibits"
       },
       {
         "label": "D",
-        "text": "The director previously oversaw exhibitions at several regional museums."
+        "text": "A museum inventory listing the dimensions and provenance of each displayed object"
       }
     ],
     "correct_answer": "B",
-    "explanation": "Negotiation requires evidence of deliberation and joint revision; the meeting minutes describe those processes directly.",
+    "explanation": "Annotated minutes that document multiple participants revising a hybrid layout directly substantiate the claim that the arrangement resulted from negotiation.",
     "difficulty": "medium",
     "concepts": [
       "command of evidence",
       "matching quotation to claim",
       "collaboration versus individual control"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "A museum director proposed arranging an exhibition in chronological order so visitors could observe gradual changes in ceramic techniques. Several curators objected that a chronological layout would separate objects that had circulated along the same trade routes. A historian later claimed that the exhibition's final design reflected a negotiated compromise rather than the director's unilateral decision. Which newly discovered document would provide the strongest evidence for the historian's claim?",
+      "A) A publicity brochure quoting the director on the historical significance of ceramics",
+      "B) Annotated planning minutes showing curators jointly revising a layout that combines time periods with trade-route groupings",
+      "C) A visitor survey conducted after the exhibition opened showing a preference for thematic exhibits",
+      "D) A museum inventory listing the dimensions and provenance of each displayed object"
+    ]
   },
   {
     "id": "pt1-rw1-17",
@@ -1720,33 +1727,40 @@
     "question_number": 14,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "Two researchers debate whether wetlands reduce flood peaks. Researcher A cites lower downstream peaks in watersheds with wetlands. Researcher B notes that those watersheds also tend to contain fewer paved surfaces. Which study design would best address B's concern?",
+    "stem": "Across twelve watersheds, ecologist Lin observed that those containing more wetlands had smaller downstream flood peaks after comparable rainstorms. Hydrologist Ortiz cautioned that wetland-rich watersheds in the sample also had substantially less pavement, which could independently reduce runoff. Lin proposes a follow-up study to isolate the effect of wetlands. Which additional evidence would most directly address Ortiz's objection?",
     "options": [
       {
         "label": "A",
-        "text": "Compare watersheds with similar pavement coverage but different wetland areas."
+        "text": "A comparison of flood peaks in watersheds matched for pavement coverage and rainfall but differing substantially in wetland area"
       },
       {
         "label": "B",
-        "text": "Observe one wetland during a single dry week."
+        "text": "Photographs documenting changes in wetland vegetation across one dry summer"
       },
       {
         "label": "C",
-        "text": "Measure pavement coverage only in wetland-rich watersheds."
+        "text": "A survey showing that residents of wetland-rich watersheds consider flooding a serious problem"
       },
       {
         "label": "D",
-        "text": "Survey residents about which landscapes they prefer."
+        "text": "A comparison of average annual rainfall in all wetland-rich watersheds without measuring impervious cover"
       }
     ],
     "correct_answer": "A",
-    "explanation": "Matching pavement coverage helps isolate the role of wetlands from the competing explanation.",
+    "explanation": "By comparing watersheds with comparable rainfall and pavement, the follow-up study reduces the rival explanation and better isolates wetland area.",
     "difficulty": "advanced",
     "concepts": [
       "experimental evidence",
       "comparing multiple perspectives with debates"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "Across twelve watersheds, ecologist Lin observed that those containing more wetlands had smaller downstream flood peaks after comparable rainstorms. Hydrologist Ortiz cautioned that wetland-rich watersheds in the sample also had substantially less pavement, which could independently reduce runoff. Lin proposes a follow-up study to isolate the effect of wetlands. Which additional evidence would most directly address Ortiz's objection?",
+      "A) A comparison of flood peaks in watersheds matched for pavement coverage and rainfall but differing substantially in wetland area",
+      "B) Photographs documenting changes in wetland vegetation across one dry summer",
+      "C) A survey showing that residents of wetland-rich watersheds consider flooding a serious problem",
+      "D) A comparison of average annual rainfall in all wetland-rich watersheds without measuring impervious cover"
+    ]
   },
   {
     "id": "pt1-rw2-15",
@@ -1796,34 +1810,41 @@
     "question_number": 16,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "A critic claims that historical fiction and biography cannot be compared because one can invent dialogue whereas the other is bound by documentary evidence. Another critic argues that both genres organize selected details to shape readers' understanding. Which conclusion is most justified?",
+    "stem": "Literary critic Imani Cole contends that historical novels and biographies should not be evaluated using the same interpretive methods: novelists can invent scenes, whereas biographers must reconcile their accounts with surviving records. Critic Mateo Ruiz agrees that evidence constrains the genres differently but argues that both writers choose where to begin, which voices to include, and how to arrange events; such decisions influence readers even when every statement is documented. Which statement would both critics most likely accept?",
     "options": [
       {
         "label": "A",
-        "text": "Narrative choices can be compared even when evidence requirements differ."
+        "text": "Historical novels and biographies differ in their obligations to evidence, even if the organizational choices of their authors invite comparison."
       },
       {
         "label": "B",
-        "text": "The two genres have identical standards of factual accuracy."
+        "text": "Because biographies rely on records, their authors cannot shape how readers interpret historical events."
       },
       {
         "label": "C",
-        "text": "Invented dialogue is the defining feature of biography."
+        "text": "Inventions in historical novels prevent readers from analyzing those works' narrative structures."
       },
       {
         "label": "D",
-        "text": "Selecting details eliminates all differences between the genres."
+        "text": "The distinction between factual and invented dialogue is irrelevant to how the two genres should be assessed."
       }
     ],
     "correct_answer": "A",
-    "explanation": "Both can be studied as narrative constructions while differing in the freedom to invent events or language.",
+    "explanation": "Both critics acknowledge differing evidentiary obligations; Ruiz's point about narrative selection still allows comparison without erasing Cole's distinction.",
     "difficulty": "advanced",
     "concepts": [
       "logical conclusion",
       "audience prior knowledge",
       "literary genre comparison"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "Literary critic Imani Cole contends that historical novels and biographies should not be evaluated using the same interpretive methods: novelists can invent scenes, whereas biographers must reconcile their accounts with surviving records. Critic Mateo Ruiz agrees that evidence constrains the genres differently but argues that both writers choose where to begin, which voices to include, and how to arrange events; such decisions influence readers even when every statement is documented. Which statement would both critics most likely accept?",
+      "A) Historical novels and biographies differ in their obligations to evidence, even if the organizational choices of their authors invite comparison.",
+      "B) Because biographies rely on records, their authors cannot shape how readers interpret historical events.",
+      "C) Inventions in historical novels prevent readers from analyzing those works' narrative structures.",
+      "D) The distinction between factual and invented dialogue is irrelevant to how the two genres should be assessed."
+    ]
   },
   {
     "id": "pt1-rw2-17",
@@ -1866,34 +1887,41 @@
     "question_number": 18,
     "subject": "english",
     "response_type": "multiple-choice",
-    "stem": "A district compared reading scores for students who voluntarily enrolled in an after-school tutoring program with those of students who did not enroll. By the end of the term, participants had improved six points more on average. The program's supporters attributed the entire difference to tutoring. However, records collected before the program began showed that volunteers already spent more hours reading outside school and had somewhat higher baseline scores. The groups also differed in how often they attended optional academic events. Which criticism most directly challenges the supporters' causal claim?",
+    "stem": "A district compared standardized reading scores for students who voluntarily attended an after-school tutoring program with those of students who declined to enroll. Participants gained six more points on average by the end of the term. The district concluded that tutoring caused the entire difference. However, records collected before enrollment showed that participants spent more time reading outside school and had somewhat higher starting scores. Which finding would most directly help assess the district's conclusion?",
     "options": [
       {
         "label": "A",
-        "text": "The comparison does not isolate the tutoring effect because students selected into groups that differed before the program began."
+        "text": "A comparison of changes in reading scores between randomly assigned tutoring and control groups with similar starting scores"
       },
       {
         "label": "B",
-        "text": "The comparison shows that tutoring necessarily lowered scores among nonparticipants."
+        "text": "A report showing that participants generally enjoyed the tutoring sessions"
       },
       {
         "label": "C",
-        "text": "Because participants improved, they must have had identical academic habits before joining."
+        "text": "A tally of books borrowed from the library by the participating students after the program ended"
       },
       {
         "label": "D",
-        "text": "Differences between groups are irrelevant whenever both groups take the same final assessment."
+        "text": "A survey asking teachers whether reading scores are useful indicators of academic progress"
       }
     ],
     "correct_answer": "A",
-    "explanation": "Self-selection and preexisting differences offer alternative explanations for the outcome, preventing a clean attribution of the full six-point difference to the program.",
+    "explanation": "Random assignment and comparable baselines reduce selection bias and allow a stronger test of whether tutoring, rather than prior differences, explains the gains.",
     "difficulty": "advanced",
     "concepts": [
       "controlled experiment",
       "treatment effects",
       "selection of comparable groups"
     ],
-    "practice_test_id": "practice-test-1"
+    "practice_test_id": "practice-test-1",
+    "display_lines": [
+      "A district compared standardized reading scores for students who voluntarily attended an after-school tutoring program with those of students who declined to enroll. Participants gained six more points on average by the end of the term. The district concluded that tutoring caused the entire difference. However, records collected before enrollment showed that participants spent more time reading outside school and had somewhat higher starting scores. Which finding would most directly help assess the district's conclusion?",
+      "A) A comparison of changes in reading scores between randomly assigned tutoring and control groups with similar starting scores",
+      "B) A report showing that participants generally enjoyed the tutoring sessions",
+      "C) A tally of books borrowed from the library by the participating students after the program ended",
+      "D) A survey asking teachers whether reading scores are useful indicators of academic progress"
+    ]
   },
   {
     "id": "pt1-rw2-19",
