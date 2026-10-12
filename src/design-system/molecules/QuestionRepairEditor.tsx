@@ -10,21 +10,12 @@ import AlexTextField from '../atoms/AlexTextField'
 import ReadingQuestionLines from './ReadingQuestionLines'
 import StructuredQuestionLines from './StructuredQuestionLines'
 import VisualCropEditor from './VisualCropEditor'
-import {ensureQuestionText,extractQuestionLines} from '../../lib/pdfStructuredImport'
-import {getQuestionContent} from '../../lib/questionContentStore'
+import {extractQuestionLines} from '../../lib/pdfStructuredImport'
 import {hasUnderlineMarkup,preserveUnderlineMarkup,refersToUnderlinedText,underlineSelection} from '../../lib/questionTextMarkup'
 import {readingTableSpec,stripEmbeddedReadingTableLines} from '../../lib/readingTables'
 import {editorTextToReadingLines,readingLinesToEditorText,READING_LATEX_QUOTE_END,READING_LATEX_QUOTE_START} from '../../lib/readingQuestionFormat'
 import {loadSharedQuestionContent,saveSharedQuestionRepair} from '../../lib/sharedQuestionBank'
-import {verifiedMathContent} from '../../lib/verifiedMathQuestions'
-import {verifiedPracticeTest5Math1Content} from '../../lib/verifiedPracticeTest5Math1'
-import {verifiedPracticeTest6Reading1Content} from '../../lib/verifiedPracticeTest6Reading1'
-import {verifiedPracticeTest6Reading2Content} from '../../lib/verifiedPracticeTest6Reading2'
-import {verifiedPracticeTest6Math1Content} from '../../lib/verifiedPracticeTest6Math1'
-import {verifiedPracticeTest6Math2Content} from '../../lib/verifiedPracticeTest6Math2'
-import {verifiedPracticeTest7Math1Content} from '../../lib/verifiedPracticeTest7Math1'
-import {verifiedPracticeTest7Math2Content} from '../../lib/verifiedPracticeTest7Math2'
-import {questionVisualSpecs,type QuestionVisualSpec} from '../../lib/questionVisuals'
+import type {QuestionVisualSpec} from '../../lib/questionVisuals'
 import usePracticeTestPdf from '../../hooks/usePracticeTestPdf'
 import type {PracticeQuestion} from '../../types'
 
@@ -71,47 +62,18 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
     void (async()=>{
       try{
         const shared=await loadSharedQuestionContent(question.id,question.practiceTestId)
-        let local=await getQuestionContent(question.id).catch(()=>undefined)
-        const verified=question.practiceTestId==='practice-test-6'&&(question.module==='rw1'||question.module==='rw2'||question.module==='math1'||question.module==='math2')
-          ?question.module==='rw1'
-            ?verifiedPracticeTest6Reading1Content(question.number)
-            :question.module==='rw2'
-              ?verifiedPracticeTest6Reading2Content(question.number)
-              :question.module==='math1'
-                ?verifiedPracticeTest6Math1Content(question.number)
-                :verifiedPracticeTest6Math2Content(question.number)
-          :question.practiceTestId==='practice-test-7'&&(question.module==='math1'||question.module==='math2')
-            ?question.module==='math1'?verifiedPracticeTest7Math1Content(question.number):verifiedPracticeTest7Math2Content(question.number)
-          :question.practiceTestId==='practice-test-5'&&question.module==='math1'
-            ?verifiedPracticeTest5Math1Content(question.number)
-            :question.practiceTestId==='practice-test-4'&&question.subject==='math'?verifiedMathContent(question.id):undefined
-
-        if(!local?.questionLines.length&&resolvedQuestionsPdf&&!verified){
-          local=await ensureQuestionText(question,resolvedQuestionsPdf).catch(()=>local)
-        }
         if(cancelled)return
-
-        const sharedHasText=Boolean(shared?.questionLines.length)&&!(question.id==='practice-test-6:math2-26'&&shared?.questionLines.some(line=>/no test material on this page/i.test(line)))
-        const verifiedHasText=Boolean(verified?.lines?.length)
-        const localHasText=Boolean(local?.questionLines.length)
-        const questionLines=sharedHasText?shared!.questionLines:verifiedHasText?verified!.lines:local?.questionLines??[]
-        const origin:TextOrigin=sharedHasText?'shared':verifiedHasText?'verified':localHasText?'browser':'empty'
-        const bundledVisuals=questionVisualSpecs(question.id)
-        const sharedControlsVisual=Boolean(shared&&shared.contentStatus!=='metadata'&&!(verified&&!sharedHasText))
-        const resolvedVisuals=shared?.visualSpecs?.length
-          ?shared.visualSpecs
-          :sharedControlsVisual&&!shared?.needsVisual?[]:bundledVisuals
-
-        setQuestionText(editorText(question,stripEmbeddedReadingTableLines(question.id,questionLines)))
-        setTextOrigin(origin)
-        setCanonicalUpdatedAt(shared?.updatedAt??null)
-        setVisualSpecs(resolvedVisuals)
+        if(!shared||!shared.questionLines.length)throw new Error('No canonical question text found in Supabase.')
+        setQuestionText(editorText(question,shared.questionLines))
+        setTextOrigin('shared')
+        setCanonicalUpdatedAt(shared.updatedAt)
+        setVisualSpecs(shared.visualSpecs??[])
       }catch(reason){
-        if(!cancelled)setError(reason instanceof Error?reason.message:'Unable to prepare this question for editing.')
+        if(!cancelled)setError(reason instanceof Error?reason.message:'Unable to load the canonical question.')
       }finally{if(!cancelled)setLoading(false)}
     })()
     return()=>{cancelled=true}
-  },[question,resolvedQuestionsPdf])
+  },[question])
 
   async function reloadFromSource(){
     if(!resolvedQuestionsPdf){
@@ -121,10 +83,9 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
     setExtracting(true);setError('');setMessage('')
     try{
       const rawLines=await extractQuestionLines(question,resolvedQuestionsPdf)
-      const verifiedSource=question.practiceTestId==='practice-test-5'&&question.module==='math1'?verifiedPracticeTest5Math1Content(question.number):undefined
-      const lines=verifiedSource?.lines?.length?verifiedSource.lines:rawLines
+      const lines=rawLines
       if(!lines.length)throw new Error('No quality-reviewed text could be reconstructed from this question’s source.')
-      const extractedText=editorText(question,stripEmbeddedReadingTableLines(question.id,lines))
+      const extractedText=editorText(question,lines)
       const nextText=preserveUnderlineMarkup(questionText,extractedText)
       setQuestionText(nextText)
       setTextOrigin('source')
