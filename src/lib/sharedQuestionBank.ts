@@ -163,3 +163,48 @@ export async function saveSharedQuestionRepair(input:{
   window.dispatchEvent(new CustomEvent('sat-question-content-updated',{detail:{questionId:input.questionId}}))
   return {questionId:data.id,questionLines:savedLines,updatedAt:data.updated_at as string}
 }
+
+/**
+ * One-time, additive promotion of a currently displayed PDF reconstruction.
+ * Never replaces an existing canonical question, explanation, or visual.
+ * Only an authenticated content admin can write, through existing Supabase RLS.
+ */
+export async function promoteMissingCanonicalQuestion(input:{
+  questionId:string
+  practiceTestId:string
+  questionLines:string[]
+}):Promise<'saved'|'already-present'>{
+  if(!supabase)throw new Error('Supabase is not configured.')
+  if(input.practiceTestId!=='practice-test-4')throw new Error('This backfill supports PT4 only.')
+  const lines=input.questionLines
+  if(!lines.length||lines.join(' ').trim().length<25)throw new Error('Extracted question text is incomplete.')
+  const {data:existing,error:loadError}=await supabase.from('sat_question_bank')
+    .select('id,practice_test_id,question_lines,content_status,updated_at')
+    .eq('id',input.questionId).eq('practice_test_id',input.practiceTestId).maybeSingle()
+  if(loadError)throw loadError
+  if(!existing)throw new Error('Canonical question was not found.')
+  if(Array.isArray(existing.question_lines)&&existing.question_lines.length)return 'already-present'
+  if(existing.content_status!=='metadata')throw new Error('This record has already been reviewed; no automatic replacement is allowed.')
+  const {data:auth,error:authError}=await supabase.auth.getUser()
+  if(authError||!auth.user)throw new Error('Sign in with an authorized content administrator account.')
+  const {data,error}=await supabase.from('sat_question_bank').update({
+    question_lines:lines,
+    question_mode:'text',
+    content_status:'imported',
+    updated_at:new Date().toISOString(),
+  }).eq('id',input.questionId)
+    .eq('practice_test_id',input.practiceTestId)
+    .eq('content_status','metadata')
+    .eq('updated_at',existing.updated_at)
+    .is('question_lines',null)
+    .select('id,question_lines').maybeSingle()
+  if(error)throw new Error(`Canonical backfill failed: ${error.message}`)
+  if(!data){
+    const {data:current}=await supabase.from('sat_question_bank').select('question_lines').eq('id',input.questionId).maybeSingle()
+    if(Array.isArray(current?.question_lines)&&current.question_lines.length)return 'already-present'
+    throw new Error('No canonical change was allowed. Ensure content-admin editing is enabled.')
+  }
+  if(!questionLinesEqual(data.question_lines,lines))throw new Error('The canonical text did not match the extracted source.')
+  window.dispatchEvent(new CustomEvent('sat-question-content-updated',{detail:{questionId:input.questionId}}))
+  return 'saved'
+}
