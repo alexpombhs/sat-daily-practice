@@ -9,7 +9,9 @@ import ParsingIssueReporter from '../molecules/ParsingIssueReporter'
 import QuestionSourceReview from '../molecules/QuestionSourceReview'
 import {availablePracticeTests,moduleLabel,practiceTestLabel,QUESTION_BANK} from '../../lib/questionBank'
 import {groupQuestionsByPracticeTest} from '../../lib/questionBankGroups'
-import {loadSharedQuestionBank,mergeQuestionBanks} from '../../lib/sharedQuestionBank'
+import {loadSharedQuestionBank,mergeQuestionBanks,promoteMissingCanonicalQuestion} from '../../lib/sharedQuestionBank'
+import {getPracticeTestPdf} from '../../lib/pdfStore'
+import {extractQuestionLines} from '../../lib/pdfStructuredImport'
 import type {PracticeQuestion,PracticeTestFilter} from '../../types'
 
 type Props={questionsPdf:ArrayBuffer|null}
@@ -23,6 +25,8 @@ export default function QuestionBankReview({questionsPdf}:Props){
   const[search,setSearch]=useState('')
   const[bank,setBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
   const[selectedId,setSelectedId]=useState('')
+  const[backfillRunning,setBackfillRunning]=useState(false)
+  const[backfillResult,setBackfillResult]=useState('')
   const hasQuestionsPdf=Boolean(questionsPdf?.byteLength)
   const validQuestionsPdf=hasQuestionsPdf?questionsPdf:null
 
@@ -33,6 +37,39 @@ export default function QuestionBankReview({questionsPdf}:Props){
     }).catch(error=>console.warn('Shared Question Bank load failed; using bundled metadata.',error))
     return()=>{cancelled=true}
   },[])
+
+  async function consolidateMissingPT4(){
+    if(backfillRunning)return
+    setBackfillRunning(true)
+    setBackfillResult('Loading canonical text and source PDF…')
+    try{
+      const source=validQuestionsPdf??await getPracticeTestPdf('practice-test-4','questions')
+      if(!source)throw new Error('PT4 source PDF is unavailable. Nothing was changed.')
+      const pt4=bank.filter(q=>q.practiceTestId==='practice-test-4'&&q.subject==='english')
+      let saved=0,already=0
+      const review:string[]=[]
+      for(const question of pt4){
+        const existing=await loadSharedQuestionContent(question.id,'practice-test-4')
+        if(existing?.questionLines.length){already++;continue}
+        try{
+          const lines=await extractQuestionLines(question,source)
+          // Never publish partial reading questions as a complete canonical question.
+          const labels=lines.map(line=>line.match(/^\\s*([A-D])[.)]\\s+\\S/i)?.[1]?.toUpperCase()).filter(Boolean)
+          if(labels.join('')!=='ABCD'||lines.join(' ').length<80){
+            review.push(`${question.module} Q${question.number}: extraction needs review`)
+            continue
+          }
+          const status=await promoteMissingCanonicalQuestion({questionId:question.id,practiceTestId:'practice-test-4',questionLines:lines})
+          if(status==='saved')saved++;else already++
+          setBackfillResult(`Saved ${saved} canonical questions; ${review.length} require review…`)
+        }catch(error){
+          review.push(`${question.module} Q${question.number}: ${error instanceof Error?error.message:'save failed'}`)
+        }
+      }
+      setBackfillResult(`Canonical PT4 backfill: ${saved} saved, ${already} already present, ${review.length} require review.${review.length?' '+review.slice(0,5).join('; '):''}`)
+    }catch(error){setBackfillResult(error instanceof Error?error.message:'Unable to consolidate.')}
+    finally{setBackfillRunning(false)}
+  }
 
   const questions=useMemo(()=>{
     const needle=search.trim().toLowerCase()
