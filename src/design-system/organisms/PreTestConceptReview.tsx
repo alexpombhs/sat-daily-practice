@@ -38,7 +38,8 @@ export default function PreTestConceptReview({concepts,questions,attempts,onPrac
     .map(question=>{
       const history=[...(historyById.get(question.id)??[])].sort((a,b)=>a.createdAt.localeCompare(b.createdAt))
       const failures=history.filter(a=>!a.correct).length
-      return {question,history,failures,latest:history[history.length-1]}
+      const successRate=history.length?Math.round(100*(history.length-failures)/history.length):null
+      return {question,history,failures,successRate,latest:history[history.length-1]}
     })
     .sort((a,b)=>b.failures-a.failures||Number(!a.latest?.correct)-Number(!b.latest?.correct)||b.history.length-a.history.length||a.question.number-b.question.number)
 
@@ -57,23 +58,10 @@ export default function PreTestConceptReview({concepts,questions,attempts,onPrac
         sx={{minHeight:40,alignSelf:'flex-end',maxWidth:'100%',borderBottom:'1px solid #BFD1E7','& .MuiTab-root':{minHeight:40,px:{xs:1.2,sm:2},fontSize:13.5},'& .MuiTabs-indicator':{height:3}}}
       />
     </AlexBox>
-    <AlexBox sx={{display:'flex',alignItems:'center',gap:{xs:1,sm:2},flexWrap:'wrap',bgcolor:'#fff',border:'1px solid #E2E6ED',borderRadius:2,p:{xs:1.2,sm:1.5}}}>
-      <AlexBox sx={{minWidth:120}}>
-        <AlexText sx={{fontSize:11,color:'#667085',fontWeight:800,textTransform:'uppercase'}}>Review Questions</AlexText>
-        <AlexText sx={{fontSize:21,fontWeight:850,color:'#08275B'}}>{totalReviewQuestions}</AlexText>
-      </AlexBox>
-      <AlexBox sx={{borderLeft:'1px solid #E2E6ED',pl:{xs:1,sm:2},minWidth:120}}>
-        <AlexText sx={{fontSize:11,color:'#667085',fontWeight:800,textTransform:'uppercase'}}>Subject Bank</AlexText>
-        <AlexText sx={{fontSize:21,fontWeight:850,color:'#08275B'}}>{totalSubjectQuestions}</AlexText>
-      </AlexBox>
-      <AlexBox sx={{borderLeft:'1px solid #E2E6ED',pl:{xs:1,sm:2}}}>
-        <AlexText sx={{fontSize:11,color:'#667085',fontWeight:800,textTransform:'uppercase'}}>Priority Concepts</AlexText>
-        <AlexText sx={{fontSize:21,fontWeight:850,color:'#08275B'}}>{ranked.length}</AlexText>
-      </AlexBox>
-    </AlexBox>
     <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'minmax(0,1fr)',md:'minmax(250px,.85fr) minmax(0,2fr)'},gap:1.5,minHeight:0,flex:1}}>
       <AlexBox sx={{bgcolor:'#fff',border:'1px solid #E2E6ED',borderRadius:2,p:1.2,overflowY:'auto',minHeight:0}}>
-        <AlexText sx={{fontSize:12,fontWeight:850,color:'#657389',letterSpacing:'.07em',mb:1}}>TOP REVIEW CONCEPTS · HARDEST FIRST</AlexText>
+        <AlexText sx={{fontSize:12,fontWeight:850,color:'#657389',letterSpacing:'.07em',mb:1}}>TOP REVIEW CONCEPTS</AlexText>
+        <AlexText sx={{fontSize:12,color:'#667085',mb:1}}>{totalReviewQuestions} review questions · {totalSubjectQuestions} in subject bank · {ranked.length} priority concepts</AlexText>
         {ranked.length===0&&<AlexText sx={{fontSize:13,color:'#69788A'}}>No previously missed concepts in this subject.</AlexText>}
         {ranked.map((item,index)=>{
           const selected=active?.concept===item.concept
@@ -93,10 +81,10 @@ export default function PreTestConceptReview({concepts,questions,attempts,onPrac
           <AlexText component="h2" sx={{fontFamily:'Georgia, serif',fontSize:{xs:21,md:26},fontWeight:750,color:'#08275B',mt:.4}}>{displayConcept(active.concept)}</AlexText>
           <AlexText sx={{fontSize:13,color:'#5A6B80',mt:.5,mb:1.5}}>{active.accuracy}% historical success rate · {items.length} related questions. Previously failed questions appear first.</AlexText>
           <AlexBox sx={{display:'flex',flexDirection:'column',gap:.8}}>
-            {items.map(({question,history,failures,latest},index)=><AlexBox key={question.id} sx={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:1,p:1.2,border:'1px solid #E6EAF0',borderRadius:1.5,flexWrap:'wrap'}}>
+            {items.map(({question,history,successRate},index)=><AlexBox key={question.id} sx={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:1,p:1.2,border:'1px solid #E6EAF0',borderRadius:1.5,flexWrap:'wrap'}}>
               <AlexBox>
                 <AlexText sx={{fontSize:13.5,fontWeight:800,color:'#08275B'}}>{index+1}. Test {question.practiceTestId.replace('practice-test-','')} · {question.module.toUpperCase()} · Question {question.number}</AlexText>
-                <AlexText sx={{fontSize:12,color:'#607088',mt:.35}}>{failures>0?`Previously missed ${failures} time${failures===1?'':'s'}`:history.length?'Previously correct':'New question'}{latest?` · Most recent: ${latest.correct?'correct':'incorrect'}`:''}</AlexText>
+                <AlexText sx={{fontSize:12,color:'#607088',mt:.35}}>{successRate===null?'Not attempted':`${successRate}% success · ${history.length} attempt${history.length===1?'':'s'}`}</AlexText>
               </AlexBox>
               <AlexBox sx={{display:'flex',gap:.7}}>
                 <AlexButton tone="secondary" onClick={()=>onReview(question)}>Review</AlexButton>
