@@ -2,6 +2,7 @@ import {useEffect,useState,type ReactNode} from 'react'
 import {CalendarDays,Clock3,ListChecks,PenLine,Target} from 'lucide-react'
 import AlexBox from './design-system/atoms/AlexBox'
 import AlexButton from './design-system/atoms/AlexButton'
+import AlexConfirmDialog from './design-system/atoms/AlexConfirmDialog'
 import AlexStatusChip from './design-system/atoms/AlexStatusChip'
 import AlexTabs from './design-system/atoms/AlexTabs'
 import ExplanationContent from './design-system/molecules/ExplanationContent'
@@ -63,6 +64,8 @@ export default function App(){
   const[settingsCloudReady,setSettingsCloudReady]=useState(false)
   const[questionBank,setQuestionBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
   const[resumableSession,setResumableSession]=useState<ActivePracticeSession|null>(null)
+  const[pendingPractice,setPendingPractice]=useState<{mode:SubjectMode;test:Settings['practiceTest'];questionIds?:string[];groups?:Array<{concept:string;questionIds:string[]}>}|null>(null)
+  const[replacingSession,setReplacingSession]=useState(false)
   const[reviewMode,setReviewMode]=useState(false)
   const[preTestGroups,setPreTestGroups]=useState<Array<{concept:string;questionIds:string[]}>>([])
   const[reviewContentTab,setReviewContentTab]=useState<'question'|'explanation'>('question')
@@ -244,23 +247,15 @@ export default function App(){
       return {id:session.id,endedAt:session.endedAt,correct:metrics.correct,total:metrics.total,accuracy:metrics.accuracy}
     })
 
-  async function beginPractice(nextMode:SubjectMode=settings.mode,nextPracticeTest=settings.practiceTest??'all',reviewQuestionIds?:string[],conceptGroups?:Array<{concept:string;questionIds:string[]}>){
+  async function beginPractice(nextMode:SubjectMode=settings.mode,nextPracticeTest=settings.practiceTest??'all',reviewQuestionIds?:string[],conceptGroups?:Array<{concept:string;questionIds:string[]}>,sessionConflictResolved=false){
     if(!authUser){
       window.alert('Sign in to practice so your progress stays identical across devices.')
       navigateTo('account')
       return
     }
-    if(resumableSession){
-      const replace=window.confirm('You already have a practice session in progress. Start a new session and mark the unfinished one as ended?')
-      if(!replace)return
-      try{
-        await abandonActiveSession(resumableSession.id)
-        setResumableSession(null)
-      }catch(error){
-        console.warn('Unable to end previous active session',error)
-        window.alert('The previous active session could not be ended. Please try again before starting a new session.')
-        return
-      }
+    if(resumableSession&&!sessionConflictResolved){
+      setPendingPractice({mode:nextMode,test:nextPracticeTest,questionIds:reviewQuestionIds,groups:conceptGroups})
+      return
     }
     const nextSettings={...settings,mode:nextMode,practiceTest:nextPracticeTest}
     const nextQuestions=reviewQuestionIds
@@ -343,6 +338,23 @@ export default function App(){
     }catch(error){
       console.warn('Unable to end active session',error)
       window.alert('The session could not be ended. Please try again.')
+    }
+  }
+
+  async function confirmReplaceSession(){
+    if(!pendingPractice||replacingSession)return
+    const pending=pendingPractice
+    setReplacingSession(true)
+    try{
+      if(resumableSession)await abandonActiveSession(resumableSession.id)
+      setResumableSession(null)
+      setPendingPractice(null)
+      await beginPractice(pending.mode,pending.test,pending.questionIds,pending.groups,true)
+    }catch(error){
+      console.warn('Unable to replace unfinished session',error)
+      setPendingPractice(null)
+    }finally{
+      setReplacingSession(false)
     }
   }
 
@@ -463,7 +475,7 @@ export default function App(){
   }
 
   function withSidebar(active:SidebarKey,content:ReactNode,background='#fff'){
-    return <AppSidebarLayout
+    return <><AppSidebarLayout
       active={active}
       collapsed={sidebarCollapsed}
       onToggleCollapsed={()=>setSidebarCollapsed(value=>!value)}
@@ -478,6 +490,17 @@ export default function App(){
       onSettings={()=>navigateTo('account')}
       contentBackground={background}
     >{content}</AppSidebarLayout>
+      <AlexConfirmDialog
+        open={Boolean(pendingPractice)}
+        title="Unfinished practice session"
+        description="You have a practice session in progress. Starting a new one will end the unfinished session, but your submitted answers will remain in your history."
+        confirmLabel="End session and continue"
+        cancelLabel="Keep current session"
+        busy={replacingSession}
+        onConfirm={()=>void confirmReplaceSession()}
+        onCancel={()=>setPendingPractice(null)}
+      />
+    </>
   }
 
   if(view==='pre-test-review')return withSidebar('dashboard',<main className="shell" style={{overflowY:'auto',height:'100%'}}>
