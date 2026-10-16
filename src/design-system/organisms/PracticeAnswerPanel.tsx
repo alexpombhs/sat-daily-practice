@@ -22,7 +22,7 @@ type Props={
 
 export default function PracticeAnswerPanel({question,selected,submitted,attempt,explanationBytes,onSelect,onSubmit,revealFeedback=true,reviewMode=false,preTestMode=false}:Props){
   return <aside className="answer-panel">
-    <div><p className="answer-kicker">{preTestMode?'Pre-Test Review':reviewMode?'Session review':'Your answer'}</p><h2>{question.responseType==='multiple-choice'?'Choose the best answer.':'Enter your answer.'}</h2><p className="answer-helper">{preTestMode?'Try an answer without starting a session. Use the Explanation tab for a walkthrough.':reviewMode?'Compare your response with the accepted answer. Use the Explanation tab for the walkthrough.':revealFeedback?'Your response is checked against the answer key when you submit.':'Your response is saved now and scored after the session.'}</p></div>
+    <div><p className="answer-kicker">{preTestMode?'Pre-Test Review':reviewMode?'Session review':'Your answer'}</p><h2>{question.responseType==='multiple-choice'?'Choose the best answer.':'Enter your answer.'}</h2><p className="answer-helper">{preTestMode?'Choose an answer to think it through, then use the Explanation tab. Nothing is scored or saved.':reviewMode?'Compare your response with the accepted answer. Use the Explanation tab for the walkthrough.':revealFeedback?'Your response is checked against the answer key when you submit.':'Your response is saved now and scored after the session.'}</p></div>
     {question.responseType==='multiple-choice'?<div className="choices">{['A','B','C','D'].map(choice=><AlexChoiceButton disabled={Boolean(attempt)} selected={selected===choice} onClick={()=>onSelect(choice)} key={choice} label={choice}/>)}</div>:<AlexTextField
       disabled={Boolean(attempt)||submitted}
       value={selected}
@@ -34,8 +34,8 @@ export default function PracticeAnswerPanel({question,selected,submitted,attempt
       }}
       placeholder="Type a number, decimal, or fraction"
     />}
-    {!attempt&&!submitted&&<AlexButton fullWidth disabled={!selected.trim()} onClick={onSubmit}>{preTestMode?'Save response locally':'Submit answer'}</AlexButton>}
-    {preTestMode&&submitted&&<p className="muted">Response saved for this review only. Open the Explanation tab to study the solution.</p>}
+    {!preTestMode&&!attempt&&!submitted&&<AlexButton fullWidth disabled={!selected.trim()} onClick={onSubmit}>Submit answer</AlexButton>}
+    {preTestMode&&<p className="muted">Review only. Your selection is temporary and does not affect practice history or scores.</p>}
     {attempt&&!preTestMode&&revealFeedback&&<AnswerFeedback correct={attempt.correct} acceptedAnswer={answerLabel(question)} elapsedLabel={formatDuration(attempt.elapsedMs)}/>}
     {attempt&&!preTestMode&&!revealFeedback&&<p className="muted">Answer saved. Correct answers and explanations will be available after you finish the session.</p>}
     {attempt&&!preTestMode&&revealFeedback&&!reviewMode&&explanationBytes&&<details className="inline-review"><summary>Review walkthrough</summary><ExplanationContent question={question} bytes={explanationBytes}/></details>}
