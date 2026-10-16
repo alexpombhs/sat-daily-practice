@@ -19,6 +19,7 @@ import PracticeSetupPanel from './design-system/organisms/PracticeSetupPanel'
 import PracticeTestsDashboard from './design-system/organisms/PracticeTestsDashboard'
 import StudyPlanCalendar from './design-system/organisms/StudyPlanCalendar'
 import StudyPlanHero from './design-system/organisms/StudyPlanHero'
+import PreTestConceptReview from './design-system/organisms/PreTestConceptReview'
 import QuestionBankReview from './design-system/organisms/QuestionBankReview'
 import VocabularyPractice from './design-system/organisms/VocabularyPractice'
 import {dashboardTypography} from './design-system/theme'
@@ -346,28 +347,26 @@ export default function App(){
   }
 
   function startPreTestReview(){
-    // Concepts are sorted hardest-to-easiest. Each concept forms a contiguous
-    // mini-section with multiple relevant questions for retrieval and practice.
-    const used=new Set<string>()
-    const groups=conceptPriorities.slice(0,8).map(item=>{
-      const rankedQuestions=questionBank.filter(q=>q.concepts?.includes(item.concept))
-        .sort((a,b)=>{
-          const aMiss=attempts.filter(x=>x.questionId===a.id&&!x.correct).length
-          const bMiss=attempts.filter(x=>x.questionId===b.id&&!x.correct).length
-          return bMiss-aMiss
-        })
-      const questionIds=rankedQuestions.filter(q=>!used.has(q.id)).slice(0,2).map(q=>{
-        used.add(q.id);return q.id
-      })
-      return {concept:item.concept,questionIds}
-    }).filter(item=>item.questionIds.length>=2)
-      .slice(0,Math.max(1,Math.floor(settings.questionsPerSession/2)))
-    const ids=groups.flatMap(group=>group.questionIds)
-    if(!ids.length){
-      window.alert('There are not enough tagged questions to start a concept review.')
-      return
-    }
-    void beginPractice('both','all',ids,groups)
+    navigateTo('pre-test-review')
+  }
+
+  function practiceConceptQuestion(question:PracticeQuestion){
+    void beginPractice(question.subject,question.practiceTestId,[question.id])
+  }
+
+  function reviewConceptQuestion(question:PracticeQuestion){
+    const history=attempts.filter(a=>a.questionId===question.id).sort((a,b)=>b.createdAt.localeCompare(a.createdAt))
+    const previous=history[0]
+    setReviewMode(true)
+    setPreTestGroups([])
+    setReviewContentTab('explanation')
+    setQs([question])
+    setSid('')
+    setCurrentAttempts(previous?[previous]:[])
+    setI(0)
+    setSelected(previous?.selectedAnswer??'')
+    setSubmitted(true)
+    navigateTo('practice')
   }
 
   function start(){void beginPractice(settings.mode)}
@@ -452,7 +451,7 @@ export default function App(){
     if(reviewMode){
       if(i+1>=qs.length){
         setReviewMode(false)
-        navigateTo('home')
+        navigateTo(sid?'home':'pre-test-review')
         return
       }
       goTo(i+1)
@@ -480,6 +479,16 @@ export default function App(){
       contentBackground={background}
     >{content}</AppSidebarLayout>
   }
+
+  if(view==='pre-test-review')return withSidebar('dashboard',<main className="shell" style={{overflowY:'auto',height:'100%'}}>
+    <PreTestConceptReview
+      concepts={conceptPriorities}
+      questions={questionBank}
+      attempts={attempts}
+      onPractice={practiceConceptQuestion}
+      onReview={reviewConceptQuestion}
+    />
+  </main>,'#F7F6F2')
 
   if(view==='practice'&&!current){
     return withSidebar('practice-tests',<main className="shell">
