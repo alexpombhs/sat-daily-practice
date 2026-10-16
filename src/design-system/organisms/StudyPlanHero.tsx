@@ -19,11 +19,13 @@ type Props={
   questionsPerSession:number
   onChoosePracticeTest:()=>void
   onStartPractice:()=>void
+  onStartPreTestReview:()=>void
+  showPreTestReview:boolean
 }
 
 export default function StudyPlanHero({
   accuracy,estimatedScore,scoreBreakdown,nationalMeritChance,projectedSelectionIndex,estimateConfidence,targetScore,daysRemaining,questionsPerSession,
-  onChoosePracticeTest,onStartPractice,
+  onChoosePracticeTest,onStartPractice,onStartPreTestReview,showPreTestReview,
 }:Props){
   return <AlexSurface
     sx={{
@@ -45,6 +47,7 @@ export default function StudyPlanHero({
       <AlexBox sx={{display:'flex',gap:1,flexWrap:'wrap',mt:{xs:.55,sm:.7,lg:.8},flexDirection:{xs:'column',sm:'row'}}}>
         <AlexButton fullWidth onClick={onChoosePracticeTest} sx={{width:{xs:'100%',sm:'auto'}}}>Choose a practice test</AlexButton>
         <AlexButton fullWidth tone="secondary" onClick={onStartPractice} sx={{width:{xs:'100%',sm:'auto'}}}>Start {questionsPerSession} questions</AlexButton>
+        {showPreTestReview&&<AlexButton fullWidth tone="secondary" onClick={onStartPreTestReview} sx={{width:{xs:'100%',sm:'auto'}}}>Pre-Test Review</AlexButton>}
       </AlexBox>
 
     </AlexBox>
