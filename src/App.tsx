@@ -703,7 +703,7 @@ export default function App(){
           sx={{flex:{xs:'0 0 auto',xl:'1 1 0'}}}
         >
           <AlexBox sx={{
-            display:'grid',
+            display:practiceRecommendation.planPhase==='final-review'?'none':'grid',
             gridTemplateColumns:{xs:'minmax(0,1fr)',sm:'repeat(2,minmax(0,1fr))'},
             columnGap:0,
             rowGap:0,
@@ -769,15 +769,20 @@ export default function App(){
             </AlexBox>)}
           </AlexBox>
           {practiceRecommendation.planPhase==='final-review'&&
-            <AlexBox sx={{borderTop:'1px solid #EEF1F4',pt:1.2,mt:1.2}}>
-              <AlexBox sx={{fontSize:13,fontWeight:850,color:'#08275B',mb:.65}}>Final review · highest priority concepts</AlexBox>
+            <AlexBox sx={{display:'flex',flexDirection:'column',gap:.65,minHeight:0,flex:1}}>
+              <AlexBox sx={{fontSize:12.5,fontWeight:800,color:'#08275B'}}>PRE-TEST REVIEW · MOST CHALLENGING CONCEPTS</AlexBox>
               {finalReviewConcepts.length?<>
-                {finalReviewConcepts.map((concept,index)=>
-                  <AlexBox key={concept.concept} sx={{fontSize:12.5,color:'#344054',lineHeight:1.5,mb:.35}}>
-                    {index+1}. {concept.concept} · {concept.accuracy}% historical accuracy ({concept.incorrect} missed of {concept.attempts} attempts)
-                  </AlexBox>)}
-                <AlexButton onClick={startFinalReview} sx={{mt:.75}}>Review top concepts</AlexButton>
-              </>:<AlexBox sx={{fontSize:12.5,color:'#667085'}}>Concept history is not available yet. Complete some practice to generate priorities.</AlexBox>}
+                <AlexBox sx={{display:'flex',flexWrap:'wrap',gap:.4,minWidth:0}}>
+                  {finalReviewConcepts.map((concept,index)=>
+                    <AlexBox key={concept.concept} title={`${concept.accuracy}% historical accuracy · ${concept.incorrect} misses / ${concept.attempts} attempts`} sx={{bgcolor:'#EEF3FB',px:.8,py:.25,borderRadius:1,fontSize:11.5,color:'#08275B',fontWeight:650,maxWidth:'100%',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
+                      {index+1}. {concept.concept}
+                    </AlexBox>)}
+                </AlexBox>
+                <AlexBox sx={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:1,mt:'auto'}}>
+                  <AlexBox sx={{fontSize:11.5,color:'#667085'}}>Up to {practiceRecommendation.estimatedDailyMinutes} min · personalized review</AlexBox>
+                  <AlexButton onClick={startFinalReview}>Start review</AlexButton>
+                </AlexBox>
+              </>:<AlexBox sx={{fontSize:12.5,color:'#667085'}}>No concept history available yet.</AlexBox>}
             </AlexBox>}
         </DashboardCard>
       </AlexBox>
