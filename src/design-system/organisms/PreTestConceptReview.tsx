@@ -1,6 +1,7 @@
 import {useState} from 'react'
 import AlexBox from '../atoms/AlexBox'
 import AlexButton from '../atoms/AlexButton'
+import AlexButtonBase from '../atoms/AlexButtonBase'
 import AlexText from '../atoms/AlexText'
 import type {Attempt,PracticeQuestion,Subject} from '../../types'
 import {reviewConceptGroup,type ConceptPriority} from '../../lib/conceptReview'
@@ -63,15 +64,14 @@ export default function PreTestConceptReview({concepts,questions,attempts,onPrac
         {ranked.length===0&&<AlexText sx={{fontSize:13,color:'#69788A'}}>No previously missed concepts in this subject.</AlexText>}
         {ranked.map((item,index)=>{
           const selected=active?.concept===item.concept
-          return <AlexBox key={item.concept} onClick={()=>setSelectedConcept(item.concept)} role="button" tabIndex={0}
-            onKeyDown={event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();setSelectedConcept(item.concept)}}}
-            sx={{border:selected?'1px solid #8CAEDB':'1px solid transparent',borderBottom:selected?'1px solid #8CAEDB':'1px solid #E9EDF3',borderRadius:1.5,p:1.15,mb:.35,cursor:'pointer',bgcolor:selected?'#EAF3FF':'#fff','&:hover':{bgcolor:'#F2F7FD'}}}>
+          return <AlexButtonBase key={item.concept} onClick={()=>setSelectedConcept(item.concept)}
+            sx={{border:selected?'1px solid #8CAEDB':'1px solid transparent',borderBottom:selected?'1px solid #8CAEDB':'1px solid #E9EDF3',borderRadius:1.5,p:1.15,mb:.35,width:'100%',display:'block',textAlign:'left',cursor:'pointer',bgcolor:selected?'#EAF3FF':'#fff','&:hover':{bgcolor:'#F2F7FD'}}}>
             <AlexBox sx={{display:'flex',justifyContent:'space-between',gap:1,alignItems:'center'}}>
               <AlexText sx={{fontSize:13.5,fontWeight:800,color:'#08275B'}}>{index+1}. {displayConcept(item.concept)}</AlexText>
               <AlexText sx={{fontSize:12.5,fontWeight:850,color:'#9A4C27',whiteSpace:'nowrap'}}>{item.accuracy}% success</AlexText>
             </AlexBox>
             <AlexText sx={{fontSize:11.5,color:'#667085',mt:.4}}>{item.correct} correct / {item.attempts} attempts</AlexText>
-          </AlexBox>
+          </AlexButtonBase>
         })}
       </AlexBox>
       <AlexBox sx={{bgcolor:'#fff',border:'1px solid #E2E6ED',borderRadius:2,p:{xs:1.2,md:1.8},minHeight:0,overflowY:'auto'}}>
