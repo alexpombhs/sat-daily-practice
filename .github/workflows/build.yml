@@ -95,9 +95,6 @@ jobs:
       - name: Link Supabase project
         run: supabase link --project-ref "$SUPABASE_PROJECT_ID"
 
-      - name: Reconcile remote-applied migration history in checkout
-        run: python3 scripts/reconcile_remote_migrations.py
-
       - name: Preview pending migrations
         run: supabase db push --include-all --dry-run
 
