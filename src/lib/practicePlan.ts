@@ -1,6 +1,8 @@
 import type {PerformanceAnalytics} from './performanceAnalytics'
 import type {Attempt,PracticeQuestion,Settings} from '../types'
 
+export type PracticePlanPhase='steady'|'final-review'
+
 export type PracticePlanRecommendation={
   bankQuestionCount:number
   availablePracticeSetCount:number
@@ -14,7 +16,9 @@ export type PracticePlanRecommendation={
   recommendedSessionsPerDay:number
   estimatedSessionMinutes:number
   estimatedDailyMinutes:number
-  paceSource:'history'|'configured fallback'
+  paceSource:'configured plan'
+  planPhase:PracticePlanPhase
+  practiceGuidance:string
   targetScore:number|null
   estimatedScore:number|null
   scoreGap:number|null
@@ -53,13 +57,22 @@ export function buildPracticePlanRecommendation(settings:Settings,questions:Prac
   const estimatedScore=performance.latestScoreEstimate
   const scoreGap=targetScore!==null&&estimatedScore!==null?targetScore-estimatedScore:null
   const needsScoreWork=targetScore!==null&&(estimatedScore===null||(scoreGap!==null&&scoreGap>0))
-  const coverageSessionsPerDay=remainingSessions?Math.max(1,Math.ceil(remainingSessions/daysRemaining)):0
-  const recommendedSessionsPerDay=Math.max(coverageSessionsPerDay,remainingQuestions===0&&needsScoreWork?1:0)
 
-  const timed=attempts.filter(attempt=>attempt.elapsedMs>0&&attempt.elapsedMs<20*60*1000)
-  const historyMinutes=timed.length>=5?timed.reduce((sum,attempt)=>sum+attempt.elapsedMs,0)/timed.length/60000:null
-  const minutesPerQuestion=historyMinutes??Math.max(.25,settings.fallbackMinutesPerQuestion??2)
-  const estimatedSessionMinutes=Math.max(1,Math.ceil(questionsPerSession*minutesPerQuestion))
+  // The daily target is a stable training prescription, not a deadline catch-up
+  // calculation. Do not increase workload because fewer calendar days remain or
+  // because the learner happened to spend longer on recent questions.
+  const hasActiveGoal=remainingQuestions>0||needsScoreWork
+  const recommendedSessionsPerDay=hasActiveGoal?1:0
+  const plannedMinutesPerQuestion=Math.max(.25,settings.fallbackMinutesPerQuestion??2)
+  const estimatedSessionMinutes=Math.max(1,Math.ceil(questionsPerSession*plannedMinutesPerQuestion))
+  const estimatedDailyMinutes=estimatedSessionMinutes*recommendedSessionsPerDay
+
+  const planPhase:PracticePlanPhase=daysRemaining<=3?'final-review':'steady'
+  const practiceGuidance=planPhase==='final-review'
+    ?daysRemaining===1
+      ?'Final review day: keep the planned session short. Review the concepts behind recent misses, then stop; do not add extra volume to finish unused questions.'
+      :'Final 3-day review: prioritize retrieval of weak concepts and previously missed questions. Keep the normal daily duration instead of increasing volume as the exam approaches.'
+    :'Keep the daily workload steady. Progress comes from repeated retrieval and spaced review, not from increasing minutes as the exam gets closer.'
 
   const focusLabel=needsScoreWork?performance.recommendation?.label??null:null
   const focusSharePercent=scoreFocusShare(scoreGap)
@@ -75,9 +88,8 @@ export function buildPracticePlanRecommendation(settings:Settings,questions:Prac
 
   return{
     bankQuestionCount,availablePracticeSetCount,targetPracticeSets,daysRemaining,uniqueQuestionsCompleted,targetQuestions,remainingQuestions,
-    questionsPerSession,remainingSessions,recommendedSessionsPerDay,estimatedSessionMinutes,
-    estimatedDailyMinutes:estimatedSessionMinutes*recommendedSessionsPerDay,
-    paceSource:historyMinutes===null?'configured fallback':'history',
+    questionsPerSession,remainingSessions,recommendedSessionsPerDay,estimatedSessionMinutes,estimatedDailyMinutes,
+    paceSource:'configured plan',planPhase,practiceGuidance,
     targetScore,estimatedScore,scoreGap,focusLabel,focusSharePercent,scoreGuidance,
   }
 }
