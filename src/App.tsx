@@ -26,6 +26,7 @@ import {answerLabel,matchesAnswer} from './lib/answerCompare'
 import {getPdf} from './lib/pdfStore'
 import {availablePracticeTests,moduleLabel,practiceTestLabel,QUESTION_BANK} from './lib/questionBank'
 import {buildPracticePlanRecommendation} from './lib/practicePlan'
+import {rankReviewConcepts} from './lib/conceptReview'
 import {buildNationalMeritOutlook} from './lib/nationalMeritOutlook'
 import {estimateSectionPracticeScore} from './lib/performanceAnalytics'
 import {loadSharedQuestionBank,mergeQuestionBanks} from './lib/sharedQuestionBank'
@@ -220,6 +221,8 @@ export default function App(){
   const newQuestionCount=countNewPracticeQuestions(settings,attempts,questionBank)
   const failedQuestionCount=countFailedPracticeQuestions(settings,attempts,questionBank)
   const practiceRecommendation=buildPracticePlanRecommendation(settings,questionBank,attempts,performance)
+  const conceptPriorities=rankReviewConcepts(questionBank,attempts)
+  const finalReviewConcepts=conceptPriorities.slice(0,3)
   const nationalMeritOutlook=buildNationalMeritOutlook(performance.scorePredictionBasis,performance.scoreEstimateConfidence)
   const practiceTestOptions=[
     {value:'all' as const,label:'All available tests'},
@@ -239,7 +242,7 @@ export default function App(){
       return {id:session.id,endedAt:session.endedAt,correct:metrics.correct,total:metrics.total,accuracy:metrics.accuracy}
     })
 
-  async function beginPractice(nextMode:SubjectMode=settings.mode,nextPracticeTest=settings.practiceTest??'all'){
+  async function beginPractice(nextMode:SubjectMode=settings.mode,nextPracticeTest=settings.practiceTest??'all',reviewQuestionIds?:string[]){
     if(!authUser){
       window.alert('Sign in to practice so your progress stays identical across devices.')
       navigateTo('account')
@@ -258,7 +261,9 @@ export default function App(){
       }
     }
     const nextSettings={...settings,mode:nextMode,practiceTest:nextPracticeTest}
-    const nextQuestions=choosePracticeQuestions(nextSettings,attempts,Math.random,questionBank)
+    const nextQuestions=reviewQuestionIds
+      ?reviewQuestionIds.map(id=>questionBank.find(q=>q.id===id)).filter((q):q is PracticeQuestion=>Boolean(q)).slice(0,settings.questionsPerSession)
+      :choosePracticeQuestions(nextSettings,attempts,Math.random,questionBank)
     if(!nextQuestions.length){
       window.alert('No questions match these practice settings yet. Adjust the practice test, subject, or question-history filter.')
       navigateTo('settings')
@@ -336,6 +341,21 @@ export default function App(){
       console.warn('Unable to end active session',error)
       window.alert('The session could not be ended. Please try again.')
     }
+  }
+
+  function startFinalReview(){
+    const orderedIds:string[]=[]
+    const seen=new Set<string>()
+    // Cycle through the most challenging concepts instead of filling the
+    // entire session with repeated questions from only one concept.
+    for(let round=0;round<settings.questionsPerSession;round++){
+      for(const concept of finalReviewConcepts){
+        const id=concept.questionIds[round]
+        if(id&&!seen.has(id)){seen.add(id);orderedIds.push(id)}
+      }
+    }
+    if(!orderedIds.length)return
+    void beginPractice('both','all',orderedIds)
   }
 
   function start(){void beginPractice(settings.mode)}
@@ -748,6 +768,17 @@ export default function App(){
               </AlexBox>
             </AlexBox>)}
           </AlexBox>
+          {practiceRecommendation.planPhase==='final-review'&&
+            <AlexBox sx={{borderTop:'1px solid #EEF1F4',pt:1.2,mt:1.2}}>
+              <AlexBox sx={{fontSize:13,fontWeight:850,color:'#08275B',mb:.65}}>Final review · highest priority concepts</AlexBox>
+              {finalReviewConcepts.length?<>
+                {finalReviewConcepts.map((concept,index)=>
+                  <AlexBox key={concept.concept} sx={{fontSize:12.5,color:'#344054',lineHeight:1.5,mb:.35}}>
+                    {index+1}. {concept.concept} · {concept.accuracy}% historical accuracy ({concept.incorrect} missed of {concept.attempts} attempts)
+                  </AlexBox>)}
+                <AlexButton onClick={startFinalReview} sx={{mt:.75}}>Review top concepts</AlexButton>
+              </>:<AlexBox sx={{fontSize:12.5,color:'#667085'}}>Concept history is not available yet. Complete some practice to generate priorities.</AlexBox>}
+            </AlexBox>}
         </DashboardCard>
       </AlexBox>
     </AlexBox>
