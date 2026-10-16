@@ -3,7 +3,7 @@ import AlexBox from '../atoms/AlexBox'
 import AlexButton from '../atoms/AlexButton'
 import AlexText from '../atoms/AlexText'
 import type {Attempt,PracticeQuestion,Subject} from '../../types'
-import type {ConceptPriority} from '../../lib/conceptReview'
+import {reviewConceptGroup,type ConceptPriority} from '../../lib/conceptReview'
 
 type Props={
   concepts:ConceptPriority[]
@@ -26,10 +26,10 @@ export default function PreTestConceptReview({concepts,questions,attempts,onPrac
 
   // Subjects are filtered before choosing a concept. Sort within each subject
   // by actual failure percentage; number of attempts is the tie-break.
-  const ranked=concepts.filter(item=>item.questionIds.some(id=>byId.get(id)?.subject===subject))
+  const ranked=concepts.filter(item=>item.questionIds.some(id=>byId.get(id)?.subject===subject)).slice(0,7)
     .sort((a,b)=>b.failureRate-a.failureRate||b.attempts-a.attempts||b.unresolved-a.unresolved||a.concept.localeCompare(b.concept))
   const active=ranked.find(item=>item.concept===selectedConcept)??ranked[0]
-  const items=(active?questions.filter(q=>q.subject===subject&&q.concepts?.includes(active.concept)):[])
+  const items=(active?questions.filter(q=>q.subject===subject&&q.concepts?.length&&reviewConceptGroup(q.concepts,q.subject)===active.concept):[])
     .map(question=>{
       const history=[...(historyById.get(question.id)??[])].sort((a,b)=>a.createdAt.localeCompare(b.createdAt))
       const failures=history.filter(a=>!a.correct).length
@@ -51,7 +51,7 @@ export default function PreTestConceptReview({concepts,questions,attempts,onPrac
     </AlexBox>
     <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'minmax(0,1fr)',md:'minmax(250px,.85fr) minmax(0,2fr)'},gap:1.5,minHeight:0,flex:1}}>
       <AlexBox sx={{bgcolor:'#fff',border:'1px solid #E2E6ED',borderRadius:2,p:1.2,overflowY:'auto',minHeight:0}}>
-        <AlexText sx={{fontSize:12,fontWeight:850,color:'#657389',letterSpacing:'.07em',mb:1}}>CONCEPTS · HARDEST FIRST</AlexText>
+        <AlexText sx={{fontSize:12,fontWeight:850,color:'#657389',letterSpacing:'.07em',mb:1}}>TOP REVIEW CONCEPTS · HARDEST FIRST</AlexText>
         {ranked.length===0&&<AlexText sx={{fontSize:13,color:'#69788A'}}>No previously missed concepts in this subject.</AlexText>}
         {ranked.map((item,index)=>{
           const selected=active?.concept===item.concept
