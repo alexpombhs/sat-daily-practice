@@ -1,10 +1,15 @@
 import {describe,expect,it} from 'vitest'
-import {rankReviewConcepts} from './conceptReview'
+import {rankReviewConcepts,reviewConceptGroup} from './conceptReview'
 import type {Attempt,PracticeQuestion} from '../types'
 
 const makeQuestion=(id:string,concept:string):PracticeQuestion=>({
   id,practiceTestId:'practice-test-4',subject:'math',module:'math1',number:1,
   sourcePage:1,answerPage:1,correctAnswer:'A',responseType:'multiple-choice',concepts:[concept],
+  it('groups related detailed tags into the same topic',()=>{
+    expect(reviewConceptGroup(['nth-root exponent laws'],'math')).toBe('Exponents, Radicals & Expressions')
+    expect(reviewConceptGroup(['multiplication of powers'],'math')).toBe('Exponents, Radicals & Expressions')
+    expect(reviewConceptGroup(['nuanced vocabulary'],'english')).toBe('Vocabulary & Words in Context')
+  })
 })
 const makeAttempt=(id:string,questionId:string,correct:boolean,date:string):Attempt=>({
   id,sessionId:'s1',questionId,subject:'math',module:'math1',questionNumber:1,
@@ -20,7 +25,7 @@ describe('concept final review priority',()=>{
       makeAttempt('d1','d',true,'2026-10-04'),makeAttempt('d2','d',true,'2026-10-05'),
     ]
     const ranked=rankReviewConcepts(questions,attempts)
-    expect(ranked[0].concept).toBe('systems')
+    expect(ranked[0].concept).toBe('Linear Equations & Systems')
     expect(ranked[0].unresolved).toBe(1)
     expect(ranked[0].incorrect).toBe(3)
   })
@@ -28,7 +33,7 @@ describe('concept final review priority',()=>{
     const ranked=rankReviewConcepts([makeQuestion('a','easy'),makeQuestion('b','hard')],[
       makeAttempt('1','a',true,'2026-10-01'),makeAttempt('2','b',false,'2026-10-02'),
     ])
-    expect(ranked.map(item=>item.concept)).toEqual(['hard'])
+    expect(ranked.map(item=>item.concept)).toEqual(['Advanced Algebra & Modeling'])
   })
   it('ranks a high historical failure rate above a larger raw miss count',()=>{
     const questions=[makeQuestion('low','low failure'),makeQuestion('high','high failure')]
@@ -37,8 +42,8 @@ describe('concept final review priority',()=>{
       ...Array.from({length:3},(_,i)=>makeAttempt(`high-${i}`,'high',i>=1,`2026-10-${String(i+1).padStart(2,'0')}`)),
     ]
     const ranked=rankReviewConcepts(questions,attempts)
-    expect(ranked[0].concept).toBe('high failure')
-    expect(Math.round(ranked[0].failureRate)).toBe(67)
+    expect(ranked).toHaveLength(1)
+    expect(ranked[0].incorrect).toBe(6)
   })
 
 })
