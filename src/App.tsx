@@ -67,6 +67,9 @@ export default function App(){
   const[pendingPractice,setPendingPractice]=useState<{mode:SubjectMode;test:Settings['practiceTest'];questionIds?:string[];groups?:Array<{concept:string;questionIds:string[]}>}|null>(null)
   const[replacingSession,setReplacingSession]=useState(false)
   const[confirmEndSession,setConfirmEndSession]=useState(false)
+  const[preTestQuestion,setPreTestQuestion]=useState<PracticeQuestion|null>(null)
+  const[preTestSelected,setPreTestSelected]=useState('')
+  const[preTestSubmitted,setPreTestSubmitted]=useState(false)
   const[reviewMode,setReviewMode]=useState(false)
   const[preTestGroups,setPreTestGroups]=useState<Array<{concept:string;questionIds:string[]}>>([])
   const[reviewContentTab,setReviewContentTab]=useState<'question'|'explanation'>('question')
@@ -368,23 +371,20 @@ export default function App(){
     navigateTo('pre-test-review')
   }
 
+  function openPreTestQuestion(question:PracticeQuestion,tab:'question'|'explanation'){
+    setPreTestQuestion(question)
+    setPreTestSelected('')
+    setPreTestSubmitted(false)
+    setReviewContentTab(tab)
+    navigateTo('pre-test-question')
+  }
+
   function practiceConceptQuestion(question:PracticeQuestion){
-    void beginPractice(question.subject,question.practiceTestId,[question.id])
+    openPreTestQuestion(question,'question')
   }
 
   function reviewConceptQuestion(question:PracticeQuestion){
-    const history=attempts.filter(a=>a.questionId===question.id).sort((a,b)=>b.createdAt.localeCompare(a.createdAt))
-    const previous=history[0]
-    setReviewMode(true)
-    setPreTestGroups([])
-    setReviewContentTab('explanation')
-    setQs([question])
-    setSid('')
-    setCurrentAttempts(previous?[previous]:[])
-    setI(0)
-    setSelected(previous?.selectedAnswer??'')
-    setSubmitted(true)
-    navigateTo('practice')
+    openPreTestQuestion(question,'explanation')
   }
 
   function start(){void beginPractice(settings.mode)}
@@ -516,6 +516,41 @@ export default function App(){
       />
     </>
   }
+
+  if(view==='pre-test-question')return withSidebar('dashboard',<main className="practice">
+    <AlexBox sx={{display:'flex',alignItems:'center',justifyContent:'space-between',p:1,mb:1}}>
+      <AlexBox sx={{fontWeight:850,color:'#08275B'}}>PRE-TEST REVIEW · Individual question</AlexBox>
+      <AlexButton tone="secondary" onClick={()=>navigateTo('pre-test-review')}>Back to concepts</AlexButton>
+    </AlexBox>
+    {preTestQuestion?<div className="practice-workspace">
+      <section className="question-panel">
+        <div className="question-heading">
+          <div><span>QUESTION {preTestQuestion.number}</span><b>{preTestQuestion.subject==='math'?'Math':'Reading & Writing'}</b></div>
+          <AlexStatusChip>REVIEW</AlexStatusChip>
+        </div>
+        <AlexTabs
+          value={reviewContentTab}
+          options={[{value:'question',label:'Question'},{value:'explanation',label:'Explanation'}]}
+          onChange={setReviewContentTab}
+          aria-label="Pre-test question and explanation"
+          sx={{mb:2}}
+        />
+        {reviewContentTab==='question'
+          ?<QuestionContent question={preTestQuestion} bytes={qpdf} alt={`Question ${preTestQuestion.number}`}/>
+          :<AlexBox sx={{minHeight:{xs:420,md:560},width:'100%'}}><ExplanationContent question={preTestQuestion} bytes={apdf}/></AlexBox>}
+      </section>
+      <PracticeAnswerPanel
+        question={preTestQuestion}
+        selected={preTestSelected}
+        submitted={preTestSubmitted}
+        explanationBytes={apdf}
+        onSelect={value=>{setPreTestSelected(value);setPreTestSubmitted(false)}}
+        onSubmit={()=>setPreTestSubmitted(true)}
+        revealFeedback={false}
+        preTestMode
+      />
+    </div>:<AlexBox sx={{p:2}}>Choose a question from Pre-Test Review to begin.</AlexBox>}
+  </main>,'#F7F6F2')
 
   if(view==='pre-test-review')return withSidebar('dashboard',<main className="shell" style={{overflowY:'auto',height:'100%'}}>
     <PreTestConceptReview
