@@ -15,6 +15,13 @@ const performance=(score:number|null,focus:'english'|'math'='math'):PerformanceA
   recommendation:{subject:focus,label:focus==='math'?'Math':'Reading & Writing',reason:'Lower practice performance'},
 })
 
+function isoDateFromToday(offsetDays:number){
+  const date=new Date()
+  date.setHours(12,0,0,0)
+  date.setDate(date.getDate()+offsetDays)
+  return date.toISOString().slice(0,10)
+}
+
 describe('practice plan recommendations',()=>{
   it('uses the live bank size when calculating remaining coverage',()=>{
     const small=buildPracticePlanRecommendation(baseSettings,QUESTION_BANK.slice(0,40),[],performance(1200))
@@ -48,5 +55,34 @@ describe('practice plan recommendations',()=>{
     const plan=buildPracticePlanRecommendation(baseSettings,QUESTION_BANK,[],performance(null))
     expect(plan.estimatedScore).toBeNull()
     expect(plan.scoreGuidance).toContain('Build a baseline in both sections')
+  })
+
+  it('keeps planned time stable instead of using recent slow question timing',()=>{
+    const question=QUESTION_BANK[0]
+    const slowAttempts:Attempt[]=Array.from({length:8},(_,index)=>({
+      id:`slow-${index}`,sessionId:'s1',questionId:question.id,practiceTestId:question.practiceTestId,subject:question.subject,module:question.module,questionNumber:question.number,
+      selectedAnswer:question.correctAnswer,correctAnswer:question.correctAnswer,correct:index%2===0,elapsedMs:150000,createdAt:new Date(Date.now()+index*1000).toISOString(),
+    }))
+    const plan=buildPracticePlanRecommendation(baseSettings,QUESTION_BANK,slowAttempts,performance(1200))
+    expect(plan.estimatedSessionMinutes).toBe(20)
+    expect(plan.estimatedDailyMinutes).toBe(20)
+    expect(plan.paceSource).toBe('configured plan')
+  })
+
+  it('does not increase sessions per day when the exam is tomorrow',()=>{
+    const plan=buildPracticePlanRecommendation({...baseSettings,targetExamDate:isoDateFromToday(1)},QUESTION_BANK,[],performance(1200))
+    expect(plan.daysRemaining).toBe(1)
+    expect(plan.recommendedSessionsPerDay).toBe(1)
+    expect(plan.estimatedDailyMinutes).toBe(20)
+    expect(plan.planPhase).toBe('final-review')
+    expect(plan.practiceGuidance).toContain('Final review day')
+  })
+
+  it('enters final review mode three days before the exam without adding volume',()=>{
+    const plan=buildPracticePlanRecommendation({...baseSettings,targetExamDate:isoDateFromToday(3)},QUESTION_BANK,[],performance(1200))
+    expect(plan.planPhase).toBe('final-review')
+    expect(plan.recommendedSessionsPerDay).toBe(1)
+    expect(plan.estimatedDailyMinutes).toBe(20)
+    expect(plan.practiceGuidance).toContain('Final 3-day review')
   })
 })

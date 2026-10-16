@@ -56,12 +56,14 @@ export async function loadSharedQuestionBank():Promise<PracticeQuestion[]|null>{
     .order('question_number',{ascending:true})
   if(error)throw error
   const {data:difficultyRows,error:difficultyError}=await supabase
-    .from('sat_question_difficulty').select('question_id,difficulty')
+    .from('sat_question_difficulty').select('question_id,difficulty,concepts')
   if(difficultyError)throw difficultyError
   const difficulties=new Map((difficultyRows??[]).map(row=>[row.question_id,row.difficulty]))
+  const concepts=new Map((difficultyRows??[]).map(row=>[row.question_id,Array.isArray(row.concepts)?row.concepts.filter((item:unknown):item is string=>typeof item==='string'):[]]))
   const remote=(data??[]).filter(row=>idMatchesPracticeTest(row.id,row.practice_test_id)).map(row=>({
     id:row.id,
     difficulty:difficulties.get(row.id) as PracticeQuestion['difficulty'],
+    concepts:concepts.get(row.id)??[],
     practiceTestId:row.practice_test_id,
     subject:row.subject as Subject,
     module:row.module as ModuleKey,

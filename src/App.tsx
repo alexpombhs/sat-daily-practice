@@ -2,6 +2,7 @@ import {useEffect,useState,type ReactNode} from 'react'
 import {CalendarDays,Clock3,ListChecks,PenLine,Target} from 'lucide-react'
 import AlexBox from './design-system/atoms/AlexBox'
 import AlexButton from './design-system/atoms/AlexButton'
+import AlexConfirmDialog from './design-system/atoms/AlexConfirmDialog'
 import AlexStatusChip from './design-system/atoms/AlexStatusChip'
 import AlexTabs from './design-system/atoms/AlexTabs'
 import ExplanationContent from './design-system/molecules/ExplanationContent'
@@ -19,6 +20,7 @@ import PracticeSetupPanel from './design-system/organisms/PracticeSetupPanel'
 import PracticeTestsDashboard from './design-system/organisms/PracticeTestsDashboard'
 import StudyPlanCalendar from './design-system/organisms/StudyPlanCalendar'
 import StudyPlanHero from './design-system/organisms/StudyPlanHero'
+import PreTestConceptReview from './design-system/organisms/PreTestConceptReview'
 import QuestionBankReview from './design-system/organisms/QuestionBankReview'
 import VocabularyPractice from './design-system/organisms/VocabularyPractice'
 import {dashboardTypography} from './design-system/theme'
@@ -26,6 +28,7 @@ import {answerLabel,matchesAnswer} from './lib/answerCompare'
 import {getPdf} from './lib/pdfStore'
 import {availablePracticeTests,moduleLabel,practiceTestLabel,QUESTION_BANK} from './lib/questionBank'
 import {buildPracticePlanRecommendation} from './lib/practicePlan'
+import {rankReviewConcepts} from './lib/conceptReview'
 import {buildNationalMeritOutlook} from './lib/nationalMeritOutlook'
 import {estimateSectionPracticeScore} from './lib/performanceAnalytics'
 import {loadSharedQuestionBank,mergeQuestionBanks} from './lib/sharedQuestionBank'
@@ -61,7 +64,14 @@ export default function App(){
   const[settingsCloudReady,setSettingsCloudReady]=useState(false)
   const[questionBank,setQuestionBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
   const[resumableSession,setResumableSession]=useState<ActivePracticeSession|null>(null)
+  const[pendingPractice,setPendingPractice]=useState<{mode:SubjectMode;test:Settings['practiceTest'];questionIds?:string[];groups?:Array<{concept:string;questionIds:string[]}>}|null>(null)
+  const[replacingSession,setReplacingSession]=useState(false)
+  const[confirmEndSession,setConfirmEndSession]=useState(false)
+  const[preTestQuestion,setPreTestQuestion]=useState<PracticeQuestion|null>(null)
+  const[preTestSelected,setPreTestSelected]=useState('')
+  const[preTestSubmitted,setPreTestSubmitted]=useState(false)
   const[reviewMode,setReviewMode]=useState(false)
+  const[preTestGroups,setPreTestGroups]=useState<Array<{concept:string;questionIds:string[]}>>([])
   const[reviewContentTab,setReviewContentTab]=useState<'question'|'explanation'>('question')
   const[performanceTimeRange,setPerformanceTimeRange]=useState<PerformanceTimeRange>('30d')
   const[performanceCustomStart,setPerformanceCustomStart]=useState('')
@@ -220,6 +230,8 @@ export default function App(){
   const newQuestionCount=countNewPracticeQuestions(settings,attempts,questionBank)
   const failedQuestionCount=countFailedPracticeQuestions(settings,attempts,questionBank)
   const practiceRecommendation=buildPracticePlanRecommendation(settings,questionBank,attempts,performance)
+  const conceptPriorities=rankReviewConcepts(questionBank,attempts)
+  const finalReviewConcepts=conceptPriorities.slice(0,3)
   const nationalMeritOutlook=buildNationalMeritOutlook(performance.scorePredictionBasis,performance.scoreEstimateConfidence)
   const practiceTestOptions=[
     {value:'all' as const,label:'All available tests'},
@@ -239,26 +251,20 @@ export default function App(){
       return {id:session.id,endedAt:session.endedAt,correct:metrics.correct,total:metrics.total,accuracy:metrics.accuracy}
     })
 
-  async function beginPractice(nextMode:SubjectMode=settings.mode,nextPracticeTest=settings.practiceTest??'all'){
+  async function beginPractice(nextMode:SubjectMode=settings.mode,nextPracticeTest=settings.practiceTest??'all',reviewQuestionIds?:string[],conceptGroups?:Array<{concept:string;questionIds:string[]}>,sessionConflictResolved=false){
     if(!authUser){
       window.alert('Sign in to practice so your progress stays identical across devices.')
       navigateTo('account')
       return
     }
-    if(resumableSession){
-      const replace=window.confirm('You already have a practice session in progress. Start a new session and mark the unfinished one as ended?')
-      if(!replace)return
-      try{
-        await abandonActiveSession(resumableSession.id)
-        setResumableSession(null)
-      }catch(error){
-        console.warn('Unable to end previous active session',error)
-        window.alert('The previous active session could not be ended. Please try again before starting a new session.')
-        return
-      }
+    if(resumableSession&&!sessionConflictResolved){
+      setPendingPractice({mode:nextMode,test:nextPracticeTest,questionIds:reviewQuestionIds,groups:conceptGroups})
+      return
     }
     const nextSettings={...settings,mode:nextMode,practiceTest:nextPracticeTest}
-    const nextQuestions=choosePracticeQuestions(nextSettings,attempts,Math.random,questionBank)
+    const nextQuestions=reviewQuestionIds
+      ?reviewQuestionIds.map(id=>questionBank.find(q=>q.id===id)).filter((q):q is PracticeQuestion=>Boolean(q)).slice(0,settings.questionsPerSession)
+      :choosePracticeQuestions(nextSettings,attempts,Math.random,questionBank)
     if(!nextQuestions.length){
       window.alert('No questions match these practice settings yet. Adjust the practice test, subject, or question-history filter.')
       navigateTo('settings')
@@ -289,6 +295,7 @@ export default function App(){
       }
     }
     setReviewMode(false)
+    setPreTestGroups(conceptGroups??[])
     setSettings(nextSettings)
     setQs(nextQuestions)
     setSid(sessionId)
@@ -328,14 +335,56 @@ export default function App(){
 
   async function endResumableSession(){
     if(!resumableSession)return
-    if(!window.confirm('End this unfinished session? Your submitted answers will remain in your history, but the session will no longer be resumable.'))return
+    setConfirmEndSession(true)
+  }
+
+  async function confirmEndResumableSession(){
+    if(!resumableSession)return
     try{
       await abandonActiveSession(resumableSession.id)
       setResumableSession(null)
+      setConfirmEndSession(false)
     }catch(error){
       console.warn('Unable to end active session',error)
       window.alert('The session could not be ended. Please try again.')
     }
+  }
+
+  async function confirmReplaceSession(){
+    if(!pendingPractice||replacingSession)return
+    const pending=pendingPractice
+    setReplacingSession(true)
+    try{
+      if(resumableSession)await abandonActiveSession(resumableSession.id)
+      setResumableSession(null)
+      setPendingPractice(null)
+      await beginPractice(pending.mode,pending.test,pending.questionIds,pending.groups,true)
+    }catch(error){
+      console.warn('Unable to replace unfinished session',error)
+      setPendingPractice(null)
+    }finally{
+      setReplacingSession(false)
+    }
+  }
+
+  function startPreTestReview(){
+    navigateTo('pre-test-review')
+  }
+
+  function openPreTestQuestion(question:PracticeQuestion,tab:'question'|'explanation'){
+    setPreTestQuestion(question)
+    setPreTestSelected('')
+    setPreTestSubmitted(false)
+    setReviewContentTab(tab)
+    navigateTo('pre-test-question')
+  }
+
+  function practiceConceptQuestion(question:PracticeQuestion){
+    openPreTestQuestion(question,'question')
+  }
+
+  function reviewConceptQuestion(question:PracticeQuestion){
+    openPreTestQuestion(question,'explanation')
   }
 
   function start(){void beginPractice(settings.mode)}
@@ -349,6 +398,7 @@ export default function App(){
       return
     }
     setReviewMode(true)
+    setPreTestGroups([])
     setQs(reviewQuestions)
     setSid(session.id)
     setStarted(session.startedAt)
@@ -419,7 +469,7 @@ export default function App(){
     if(reviewMode){
       if(i+1>=qs.length){
         setReviewMode(false)
-        navigateTo('home')
+        navigateTo(sid?'home':'pre-test-review')
         return
       }
       goTo(i+1)
@@ -431,7 +481,7 @@ export default function App(){
   }
 
   function withSidebar(active:SidebarKey,content:ReactNode,background='#fff'){
-    return <AppSidebarLayout
+    return <><AppSidebarLayout
       active={active}
       collapsed={sidebarCollapsed}
       onToggleCollapsed={()=>setSidebarCollapsed(value=>!value)}
@@ -446,7 +496,71 @@ export default function App(){
       onSettings={()=>navigateTo('account')}
       contentBackground={background}
     >{content}</AppSidebarLayout>
+      <AlexConfirmDialog
+        open={confirmEndSession}
+        title="End unfinished session?"
+        description="Submitted answers will remain in your practice history. This session will no longer be resumable."
+        confirmLabel="End session"
+        onConfirm={()=>void confirmEndResumableSession()}
+        onCancel={()=>setConfirmEndSession(false)}
+      />
+      <AlexConfirmDialog
+        open={Boolean(pendingPractice)}
+        title="Start a new practice session?"
+        description="You have an unfinished session. Starting a new one will close it. Your completed answers will be saved in your history."
+        confirmLabel="Start new session"
+        cancelLabel="Continue current session"
+        busy={replacingSession}
+        onConfirm={()=>void confirmReplaceSession()}
+        onCancel={()=>setPendingPractice(null)}
+      />
+    </>
   }
+
+  if(view==='pre-test-question')return withSidebar('dashboard',<main className="practice">
+    <AlexBox sx={{display:'flex',alignItems:'center',justifyContent:'space-between',p:1,mb:1}}>
+      <AlexBox sx={{fontWeight:850,color:'#08275B'}}>PRE-TEST REVIEW · Individual question</AlexBox>
+      <AlexButton tone="secondary" onClick={()=>navigateTo('pre-test-review')}>Back to concepts</AlexButton>
+    </AlexBox>
+    {preTestQuestion?<div className="practice-workspace">
+      <section className="question-panel">
+        <div className="question-heading">
+          <div><span>QUESTION {preTestQuestion.number}</span><b>{preTestQuestion.subject==='math'?'Math':'Reading & Writing'}</b></div>
+          <AlexStatusChip>REVIEW</AlexStatusChip>
+        </div>
+        <AlexTabs
+          value={reviewContentTab}
+          options={[{value:'question',label:'Question'},{value:'explanation',label:'Explanation'}]}
+          onChange={setReviewContentTab}
+          aria-label="Pre-test question and explanation"
+          sx={{mb:2}}
+        />
+        {reviewContentTab==='question'
+          ?<QuestionContent question={preTestQuestion} bytes={qpdf} alt={`Question ${preTestQuestion.number}`}/>
+          :<AlexBox sx={{minHeight:{xs:420,md:560},width:'100%'}}><ExplanationContent question={preTestQuestion} bytes={apdf}/></AlexBox>}
+      </section>
+      <PracticeAnswerPanel
+        question={preTestQuestion}
+        selected={preTestSelected}
+        submitted={preTestSubmitted}
+        explanationBytes={apdf}
+        onSelect={value=>{setPreTestSelected(value);setPreTestSubmitted(false)}}
+        onSubmit={()=>setPreTestSubmitted(true)}
+        revealFeedback={false}
+        preTestMode
+      />
+    </div>:<AlexBox sx={{p:2}}>Choose a question from Pre-Test Review to begin.</AlexBox>}
+  </main>,'#F7F6F2')
+
+  if(view==='pre-test-review')return withSidebar('dashboard',<main className="shell" style={{overflowY:'auto',height:'100%'}}>
+    <PreTestConceptReview
+      concepts={conceptPriorities}
+      questions={questionBank}
+      attempts={attempts}
+      onPractice={practiceConceptQuestion}
+      onReview={reviewConceptQuestion}
+    />
+  </main>,'#F7F6F2')
 
   if(view==='practice'&&!current){
     return withSidebar('practice-tests',<main className="shell">
@@ -479,6 +593,15 @@ export default function App(){
         onNext={next}
         reviewMode={reviewMode}
       />
+      {preTestGroups.length>0&&!reviewMode&&(()=>{
+        const group=preTestGroups.find(g=>g.questionIds.includes(current.id))
+        const groupIndex=preTestGroups.indexOf(group!)
+        const within=group?.questionIds.indexOf(current.id)??0
+        return <AlexBox sx={{p:1.4,mb:1,bgcolor:'#EAF3FF',border:'1px solid #D9E7F8',borderRadius:2}}>
+          <AlexBox sx={{fontWeight:850,color:'#08275B',fontSize:15}}>PRE-TEST REVIEW · Concept {groupIndex+1} of {preTestGroups.length}: {group?.concept}</AlexBox>
+          <AlexBox sx={{fontSize:12.5,color:'#405B80',mt:.3}}>Review this concept through {group?.questionIds.length} questions · Question {within+1} of {group?.questionIds.length} · Concepts progress from most challenging to easier</AlexBox>
+        </AlexBox>
+      })()}
       <div className="practice-workspace">
         <section className="question-panel">
           <div className="question-heading">
@@ -608,6 +731,8 @@ export default function App(){
         questionsPerSession={settings.questionsPerSession}
         onChoosePracticeTest={()=>navigateTo('home')}
         onStartPractice={()=>void beginPractice(settings.mode)}
+        onStartPreTestReview={startPreTestReview}
+        showPreTestReview={practiceRecommendation.planPhase==='final-review'}
       />
     </AlexBox>
 

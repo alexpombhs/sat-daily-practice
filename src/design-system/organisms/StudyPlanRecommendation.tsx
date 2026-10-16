@@ -22,6 +22,11 @@ function RecommendationBody({recommendation,compact}:{recommendation:PracticePla
       </AlexText>}
     </AlexBox>
 
+    {!complete&&recommendation.planPhase==='final-review'&&
+      <AlexText sx={{mt:1.15,fontSize:13.5,lineHeight:1.5,color:'#344054',fontWeight:650}}>
+        {recommendation.practiceGuidance}
+      </AlexText>}
+
     {!complete&&recommendation.focusLabel&&recommendation.focusSharePercent&&
       <AlexText sx={{mt:1.25,fontSize:13.5,lineHeight:1.5,color:'#344054'}}>
         Focus about {recommendation.focusSharePercent}% of targeted work on <b>{recommendation.focusLabel}</b>, and use the rest for mixed practice.
@@ -58,9 +63,11 @@ export default function StudyPlanRecommendation({recommendation,compact=false}:P
   if(compact)return <RecommendationBody recommendation={recommendation} compact/>
 
   return <SectionPanel
-    eyebrow="Daily plan"
-    title="Recommended daily practice"
-    description="Based on your exam date, current practice pace, question coverage, and score goal."
+    eyebrow={recommendation.planPhase==='final-review'?'Final review':'Daily plan'}
+    title={recommendation.planPhase==='final-review'?'Review, don’t cram':'Recommended daily practice'}
+    description={recommendation.planPhase==='final-review'
+      ?'Keep the normal duration and use it for weak-concept retrieval and error review.'
+      :'Based on a steady configured practice plan, with performance data used to choose what to practice rather than to inflate daily workload.'}
     tone="accent"
   >
     <RecommendationBody recommendation={recommendation} compact={false}/>
