@@ -66,6 +66,7 @@ export default function App(){
   const[resumableSession,setResumableSession]=useState<ActivePracticeSession|null>(null)
   const[pendingPractice,setPendingPractice]=useState<{mode:SubjectMode;test:Settings['practiceTest'];questionIds?:string[];groups?:Array<{concept:string;questionIds:string[]}>}|null>(null)
   const[replacingSession,setReplacingSession]=useState(false)
+  const[confirmEndSession,setConfirmEndSession]=useState(false)
   const[reviewMode,setReviewMode]=useState(false)
   const[preTestGroups,setPreTestGroups]=useState<Array<{concept:string;questionIds:string[]}>>([])
   const[reviewContentTab,setReviewContentTab]=useState<'question'|'explanation'>('question')
@@ -331,10 +332,15 @@ export default function App(){
 
   async function endResumableSession(){
     if(!resumableSession)return
-    if(!window.confirm('End this unfinished session? Your submitted answers will remain in your history, but the session will no longer be resumable.'))return
+    setConfirmEndSession(true)
+  }
+
+  async function confirmEndResumableSession(){
+    if(!resumableSession)return
     try{
       await abandonActiveSession(resumableSession.id)
       setResumableSession(null)
+      setConfirmEndSession(false)
     }catch(error){
       console.warn('Unable to end active session',error)
       window.alert('The session could not be ended. Please try again.')
@@ -490,6 +496,14 @@ export default function App(){
       onSettings={()=>navigateTo('account')}
       contentBackground={background}
     >{content}</AppSidebarLayout>
+      <AlexConfirmDialog
+        open={confirmEndSession}
+        title="End unfinished session?"
+        description="Submitted answers will remain in your practice history. This session will no longer be resumable."
+        confirmLabel="End session"
+        onConfirm={()=>void confirmEndResumableSession()}
+        onCancel={()=>setConfirmEndSession(false)}
+      />
       <AlexConfirmDialog
         open={Boolean(pendingPractice)}
         title="Unfinished practice session"
