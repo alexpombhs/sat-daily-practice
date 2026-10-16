@@ -10,6 +10,7 @@ export type ConceptPriority={
   unresolved:number
   questionIds:string[]
   priority:number
+  failureRate:number
 }
 
 // Rank by persistent difficulty, but count unique questions rather than
@@ -50,7 +51,7 @@ export function rankReviewConcepts(questions:PracticeQuestion[],attempts:Attempt
     const reliability=Math.min(1,Math.sqrt(byQuestion.size/3))
     const priority=reliability*(.55*(100-recentAccuracy)+.30*(100-accuracy)+.15*Math.min(100,failures*15))
       +Math.min(15,unresolved*4)
-    return {concept,attempts:total,correct,incorrect:failures,accuracy:Math.round(accuracy),recentAccuracy:Math.round(recentAccuracy),unresolved,questionIds,priority:Math.round(priority*10)/10}
+    return {concept,attempts:total,correct,incorrect:failures,accuracy:Math.round(accuracy),recentAccuracy:Math.round(recentAccuracy),unresolved,questionIds,priority:Math.round(priority*10)/10,failureRate:total?100*failures/total:0}
   }).filter(item=>item.incorrect>0)
-    .sort((a,b)=>b.priority-a.priority||b.incorrect-a.incorrect||a.concept.localeCompare(b.concept))
+    .sort((a,b)=>b.failureRate-a.failureRate||b.attempts-a.attempts||b.unresolved-a.unresolved||a.concept.localeCompare(b.concept))
 }
