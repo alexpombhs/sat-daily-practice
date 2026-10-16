@@ -96,6 +96,9 @@ jobs:
       - name: Link Supabase project
         run: supabase link --project-ref "$SUPABASE_PROJECT_ID"
 
+      - name: Skip duplicate SQL already applied under another version
+        run: python3 scripts/skip_duplicate_applied_migrations.py
+
       - name: Preview pending migrations
         run: supabase db push --include-all --dry-run
 
