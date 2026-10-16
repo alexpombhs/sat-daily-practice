@@ -506,10 +506,10 @@ export default function App(){
       />
       <AlexConfirmDialog
         open={Boolean(pendingPractice)}
-        title="Unfinished practice session"
-        description="You have a practice session in progress. Starting a new one will end the unfinished session, but your submitted answers will remain in your history."
-        confirmLabel="End session and continue"
-        cancelLabel="Keep current session"
+        title="Start a new practice session?"
+        description="You have an unfinished session. Starting a new one will close it. Your completed answers will be saved in your history."
+        confirmLabel="Start new session"
+        cancelLabel="Continue current session"
         busy={replacingSession}
         onConfirm={()=>void confirmReplaceSession()}
         onCancel={()=>setPendingPractice(null)}
