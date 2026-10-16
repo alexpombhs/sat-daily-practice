@@ -30,4 +30,15 @@ describe('concept final review priority',()=>{
     ])
     expect(ranked.map(item=>item.concept)).toEqual(['hard'])
   })
+  it('ranks a high historical failure rate above a larger raw miss count',()=>{
+    const questions=[makeQuestion('low','low failure'),makeQuestion('high','high failure')]
+    const attempts=[
+      ...Array.from({length:10},(_,i)=>makeAttempt(`low-${i}`,'low',i>=4,`2026-10-${String(i+1).padStart(2,'0')}`)),
+      ...Array.from({length:3},(_,i)=>makeAttempt(`high-${i}`,'high',i>=1,`2026-10-${String(i+1).padStart(2,'0')}`)),
+    ]
+    const ranked=rankReviewConcepts(questions,attempts)
+    expect(ranked[0].concept).toBe('high failure')
+    expect(Math.round(ranked[0].failureRate)).toBe(67)
+  })
+
 })
