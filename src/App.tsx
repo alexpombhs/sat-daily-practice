@@ -63,6 +63,7 @@ export default function App(){
   const[questionBank,setQuestionBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
   const[resumableSession,setResumableSession]=useState<ActivePracticeSession|null>(null)
   const[reviewMode,setReviewMode]=useState(false)
+  const[preTestGroups,setPreTestGroups]=useState<Array<{concept:string;questionIds:string[]}>>([])
   const[reviewContentTab,setReviewContentTab]=useState<'question'|'explanation'>('question')
   const[performanceTimeRange,setPerformanceTimeRange]=useState<PerformanceTimeRange>('30d')
   const[performanceCustomStart,setPerformanceCustomStart]=useState('')
@@ -242,7 +243,7 @@ export default function App(){
       return {id:session.id,endedAt:session.endedAt,correct:metrics.correct,total:metrics.total,accuracy:metrics.accuracy}
     })
 
-  async function beginPractice(nextMode:SubjectMode=settings.mode,nextPracticeTest=settings.practiceTest??'all',reviewQuestionIds?:string[]){
+  async function beginPractice(nextMode:SubjectMode=settings.mode,nextPracticeTest=settings.practiceTest??'all',reviewQuestionIds?:string[],conceptGroups?:Array<{concept:string;questionIds:string[]}>){
     if(!authUser){
       window.alert('Sign in to practice so your progress stays identical across devices.')
       navigateTo('account')
@@ -294,6 +295,7 @@ export default function App(){
       }
     }
     setReviewMode(false)
+    setPreTestGroups(conceptGroups??[])
     setSettings(nextSettings)
     setQs(nextQuestions)
     setSid(sessionId)
@@ -343,19 +345,29 @@ export default function App(){
     }
   }
 
-  function startFinalReview(){
-    const orderedIds:string[]=[]
-    const seen=new Set<string>()
-    // Cycle through the most challenging concepts instead of filling the
-    // entire session with repeated questions from only one concept.
-    for(let round=0;round<settings.questionsPerSession;round++){
-      for(const concept of finalReviewConcepts){
-        const id=concept.questionIds[round]
-        if(id&&!seen.has(id)){seen.add(id);orderedIds.push(id)}
-      }
+  function startPreTestReview(){
+    // Concepts are sorted hardest-to-easiest. Each concept forms a contiguous
+    // mini-section with multiple relevant questions for retrieval and practice.
+    const used=new Set<string>()
+    const groups=conceptPriorities.slice(0,8).map(item=>{
+      const rankedQuestions=questionBank.filter(q=>q.concepts?.includes(item.concept))
+        .sort((a,b)=>{
+          const aMiss=attempts.filter(x=>x.questionId===a.id&&!x.correct).length
+          const bMiss=attempts.filter(x=>x.questionId===b.id&&!x.correct).length
+          return bMiss-aMiss
+        })
+      const questionIds=rankedQuestions.filter(q=>!used.has(q.id)).slice(0,2).map(q=>{
+        used.add(q.id);return q.id
+      })
+      return {concept:item.concept,questionIds}
+    }).filter(item=>item.questionIds.length>=2)
+      .slice(0,Math.max(1,Math.floor(settings.questionsPerSession/2)))
+    const ids=groups.flatMap(group=>group.questionIds)
+    if(!ids.length){
+      window.alert('There are not enough tagged questions to start a concept review.')
+      return
     }
-    if(!orderedIds.length)return
-    void beginPractice('both','all',orderedIds)
+    void beginPractice('both','all',ids,groups)
   }
 
   function start(){void beginPractice(settings.mode)}
@@ -369,6 +381,7 @@ export default function App(){
       return
     }
     setReviewMode(true)
+    setPreTestGroups([])
     setQs(reviewQuestions)
     setSid(session.id)
     setStarted(session.startedAt)
@@ -499,6 +512,15 @@ export default function App(){
         onNext={next}
         reviewMode={reviewMode}
       />
+      {preTestGroups.length>0&&!reviewMode&&(()=>{
+        const group=preTestGroups.find(g=>g.questionIds.includes(current.id))
+        const groupIndex=preTestGroups.indexOf(group!)
+        const within=group?.questionIds.indexOf(current.id)??0
+        return <AlexBox sx={{p:1.4,mb:1,bgcolor:'#EAF3FF',border:'1px solid #D9E7F8',borderRadius:2}}>
+          <AlexBox sx={{fontWeight:850,color:'#08275B',fontSize:15}}>PRE-TEST REVIEW · Concept {groupIndex+1} of {preTestGroups.length}: {group?.concept}</AlexBox>
+          <AlexBox sx={{fontSize:12.5,color:'#405B80',mt:.3}}>Review this concept through {group?.questionIds.length} questions · Question {within+1} of {group?.questionIds.length} · Concepts progress from most challenging to easier</AlexBox>
+        </AlexBox>
+      })()}
       <div className="practice-workspace">
         <section className="question-panel">
           <div className="question-heading">
@@ -628,6 +650,8 @@ export default function App(){
         questionsPerSession={settings.questionsPerSession}
         onChoosePracticeTest={()=>navigateTo('home')}
         onStartPractice={()=>void beginPractice(settings.mode)}
+        onStartPreTestReview={startPreTestReview}
+        showPreTestReview={practiceRecommendation.planPhase==='final-review'}
       />
     </AlexBox>
 
@@ -703,7 +727,7 @@ export default function App(){
           sx={{flex:{xs:'0 0 auto',xl:'1 1 0'}}}
         >
           <AlexBox sx={{
-            display:practiceRecommendation.planPhase==='final-review'?'none':'grid',
+            display:'grid',
             gridTemplateColumns:{xs:'minmax(0,1fr)',sm:'repeat(2,minmax(0,1fr))'},
             columnGap:0,
             rowGap:0,
@@ -768,22 +792,6 @@ export default function App(){
               </AlexBox>
             </AlexBox>)}
           </AlexBox>
-          {practiceRecommendation.planPhase==='final-review'&&
-            <AlexBox sx={{display:'flex',flexDirection:'column',gap:.65,minHeight:0,flex:1}}>
-              <AlexBox sx={{fontSize:12.5,fontWeight:800,color:'#08275B'}}>PRE-TEST REVIEW · MOST CHALLENGING CONCEPTS</AlexBox>
-              {finalReviewConcepts.length?<>
-                <AlexBox sx={{display:'flex',flexWrap:'wrap',gap:.4,minWidth:0}}>
-                  {finalReviewConcepts.map((concept,index)=>
-                    <AlexBox key={concept.concept} title={`${concept.accuracy}% historical accuracy · ${concept.incorrect} misses / ${concept.attempts} attempts`} sx={{bgcolor:'#EEF3FB',px:.8,py:.25,borderRadius:1,fontSize:11.5,color:'#08275B',fontWeight:650,maxWidth:'100%',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
-                      {index+1}. {concept.concept}
-                    </AlexBox>)}
-                </AlexBox>
-                <AlexBox sx={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:1,mt:'auto'}}>
-                  <AlexBox sx={{fontSize:11.5,color:'#667085'}}>Up to {practiceRecommendation.estimatedDailyMinutes} min · personalized review</AlexBox>
-                  <AlexButton onClick={startFinalReview}>Start review</AlexButton>
-                </AlexBox>
-              </>:<AlexBox sx={{fontSize:12.5,color:'#667085'}}>No concept history available yet.</AlexBox>}
-            </AlexBox>}
         </DashboardCard>
       </AlexBox>
     </AlexBox>
