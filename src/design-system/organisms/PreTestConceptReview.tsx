@@ -2,6 +2,7 @@ import {useState} from 'react'
 import AlexBox from '../atoms/AlexBox'
 import AlexButton from '../atoms/AlexButton'
 import AlexButtonBase from '../atoms/AlexButtonBase'
+import AlexTabs from '../atoms/AlexTabs'
 import AlexText from '../atoms/AlexText'
 import type {Attempt,PracticeQuestion,Subject} from '../../types'
 import {reviewConceptGroup,type ConceptPriority} from '../../lib/conceptReview'
@@ -48,15 +49,27 @@ export default function PreTestConceptReview({concepts,questions,attempts,onPrac
         <AlexText component="h1" sx={{fontSize:{xs:25,md:31},fontFamily:'Georgia, serif',fontWeight:750,color:'#08275B'}}>Pre-Test Review</AlexText>
         <AlexText sx={{fontSize:13,color:'#475F7C'}}>Choose a subject. Concepts with lower historical success rates are reviewed first.</AlexText>
       </AlexBox>
-      <AlexBox sx={{display:'flex',p:.4,bgcolor:'#fff',borderRadius:2,border:'1px solid #D9E7F8',gap:.5}}>
-        <AlexButton tone={subject==='math'?'primary':'secondary'} onClick={()=>{setSubject('math');setSelectedConcept(null)}}>Math</AlexButton>
-        <AlexButton tone={subject==='english'?'primary':'secondary'} onClick={()=>{setSubject('english');setSelectedConcept(null)}}>Reading &amp; Writing</AlexButton>
-      </AlexBox>
+      <AlexTabs
+        value={subject}
+        options={[{value:'math',label:'Math'},{value:'english',label:'Reading & Writing'}]}
+        onChange={next=>{setSubject(next);setSelectedConcept(null)}}
+        aria-label="Pre-Test Review subject"
+        sx={{minHeight:40,alignSelf:'flex-end',maxWidth:'100%',borderBottom:'1px solid #BFD1E7','& .MuiTab-root':{minHeight:40,px:{xs:1.2,sm:2},fontSize:13.5},'& .MuiTabs-indicator':{height:3}}}
+      />
     </AlexBox>
-    <AlexBox sx={{display:'flex',gap:1.5,flexWrap:'wrap',fontSize:13,color:'#53657C',px:.5}}>
-      <AlexText sx={{fontWeight:800}}>Review questions: {totalReviewQuestions}</AlexText>
-      <AlexText>Questions in {subject==='math'?'Math':'Reading & Writing'} bank: {totalSubjectQuestions}</AlexText>
-      <AlexText>Priority concepts: {ranked.length}</AlexText>
+    <AlexBox sx={{display:'flex',alignItems:'center',gap:{xs:1,sm:2},flexWrap:'wrap',bgcolor:'#fff',border:'1px solid #E2E6ED',borderRadius:2,p:{xs:1.2,sm:1.5}}}>
+      <AlexBox sx={{minWidth:120}}>
+        <AlexText sx={{fontSize:11,color:'#667085',fontWeight:800,textTransform:'uppercase'}}>Review Questions</AlexText>
+        <AlexText sx={{fontSize:21,fontWeight:850,color:'#08275B'}}>{totalReviewQuestions}</AlexText>
+      </AlexBox>
+      <AlexBox sx={{borderLeft:'1px solid #E2E6ED',pl:{xs:1,sm:2},minWidth:120}}>
+        <AlexText sx={{fontSize:11,color:'#667085',fontWeight:800,textTransform:'uppercase'}}>Subject Bank</AlexText>
+        <AlexText sx={{fontSize:21,fontWeight:850,color:'#08275B'}}>{totalSubjectQuestions}</AlexText>
+      </AlexBox>
+      <AlexBox sx={{borderLeft:'1px solid #E2E6ED',pl:{xs:1,sm:2}}}>
+        <AlexText sx={{fontSize:11,color:'#667085',fontWeight:800,textTransform:'uppercase'}}>Priority Concepts</AlexText>
+        <AlexText sx={{fontSize:21,fontWeight:850,color:'#08275B'}}>{ranked.length}</AlexText>
+      </AlexBox>
     </AlexBox>
     <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'minmax(0,1fr)',md:'minmax(250px,.85fr) minmax(0,2fr)'},gap:1.5,minHeight:0,flex:1}}>
       <AlexBox sx={{bgcolor:'#fff',border:'1px solid #E2E6ED',borderRadius:2,p:1.2,overflowY:'auto',minHeight:0}}>
