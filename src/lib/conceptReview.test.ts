@@ -5,17 +5,12 @@ import type {Attempt,PracticeQuestion} from '../types'
 const makeQuestion=(id:string,concept:string):PracticeQuestion=>({
   id,practiceTestId:'practice-test-4',subject:'math',module:'math1',number:1,
   sourcePage:1,answerPage:1,correctAnswer:'A',responseType:'multiple-choice',concepts:[concept],
-  it('groups related detailed tags into the same topic',()=>{
-    expect(reviewConceptGroup(['nth-root exponent laws'],'math')).toBe('Exponents, Radicals & Expressions')
-    expect(reviewConceptGroup(['multiplication of powers'],'math')).toBe('Exponents, Radicals & Expressions')
-    expect(reviewConceptGroup(['nuanced vocabulary'],'english')).toBe('Vocabulary & Words in Context')
-  })
 })
 const makeAttempt=(id:string,questionId:string,correct:boolean,date:string):Attempt=>({
   id,sessionId:'s1',questionId,subject:'math',module:'math1',questionNumber:1,
   selectedAnswer:correct?'A':'B',correctAnswer:'A',correct,elapsedMs:30000,createdAt:date,
 })
-describe('concept final review priority',()=>{
+describe('concept review priority',()=>{
   it('prioritizes persistent difficulty ahead of well-recovered concepts',()=>{
     const questions=[makeQuestion('a','systems'),makeQuestion('b','systems'),makeQuestion('c','vocabulary'),makeQuestion('d','vocabulary')]
     const attempts=[
@@ -29,21 +24,22 @@ describe('concept final review priority',()=>{
     expect(ranked[0].unresolved).toBe(1)
     expect(ranked[0].incorrect).toBe(3)
   })
-  it('excludes concepts with no misses and ignores questions without tags',()=>{
+  it('excludes concepts with no misses',()=>{
     const ranked=rankReviewConcepts([makeQuestion('a','easy'),makeQuestion('b','hard')],[
       makeAttempt('1','a',true,'2026-10-01'),makeAttempt('2','b',false,'2026-10-02'),
     ])
     expect(ranked.map(item=>item.concept)).toEqual(['Advanced Algebra & Modeling'])
   })
-  it('ranks a high historical failure rate above a larger raw miss count',()=>{
-    const questions=[makeQuestion('low','low failure'),makeQuestion('high','high failure')]
-    const attempts=[
-      ...Array.from({length:10},(_,i)=>makeAttempt(`low-${i}`,'low',i>=4,`2026-10-${String(i+1).padStart(2,'0')}`)),
-      ...Array.from({length:3},(_,i)=>makeAttempt(`high-${i}`,'high',i>=1,`2026-10-${String(i+1).padStart(2,'0')}`)),
-    ]
-    const ranked=rankReviewConcepts(questions,attempts)
+  it('counts all attempts once when multiple tags map to the same group',()=>{
+    const question={...makeQuestion('a','nth-root exponent laws'),concepts:['nth-root exponent laws','multiplication of powers']}
+    const ranked=rankReviewConcepts([question],[makeAttempt('1','a',false,'2026-10-01')])
     expect(ranked).toHaveLength(1)
-    expect(ranked[0].incorrect).toBe(6)
+    expect(ranked[0].attempts).toBe(1)
+    expect(ranked[0].incorrect).toBe(1)
   })
-
+  it('groups related detailed tags into one topic',()=>{
+    expect(reviewConceptGroup(['nth-root exponent laws'],'math')).toBe('Exponents, Radicals & Expressions')
+    expect(reviewConceptGroup(['multiplication of powers'],'math')).toBe('Exponents, Radicals & Expressions')
+    expect(reviewConceptGroup(['nuanced vocabulary'],'english')).toBe('Vocabulary & Words in Context')
+  })
 })
