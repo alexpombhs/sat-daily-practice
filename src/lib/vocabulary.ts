@@ -170,6 +170,99 @@ export const PRACTICE_TEST_VOCABULARY:VocabularyEntry[]=[
   {id:'costly',word:'costly',definition:'requiring a large amount of money or resources',sourceQuestionId:'practice-test-7:rw2-3',difficulty:'easy'},
   {id:'successful',word:'successful',definition:'achieving the intended result',sourceQuestionId:'practice-test-7:rw2-3',difficulty:'easy'},
   {id:'disastrous',word:'disastrous',definition:'causing great damage, failure, or harm',sourceQuestionId:'practice-test-7:rw2-3',difficulty:'easy'},
+
+  {id:'unpredictable',word:'unpredictable',definition:'not able to be known or expected in advance',sourceQuestionId:'practice-test-8:rw1-1',difficulty:'easy'},
+  {id:'important',word:'important',definition:'having great significance, value, or effect',sourceQuestionId:'practice-test-8:rw1-1',difficulty:'easy'},
+  {id:'secretive',word:'secretive',definition:'inclined to keep thoughts, actions, or information hidden',sourceQuestionId:'practice-test-8:rw1-1',difficulty:'easy'},
+  {id:'ordinary',word:'ordinary',definition:'normal, common, or not unusual',sourceQuestionId:'practice-test-8:rw1-1',difficulty:'easy'},
+
+  {id:'disconcerting',word:'disconcerting',definition:'causing unease, confusion, or discomfort',sourceQuestionId:'practice-test-8:rw1-2',difficulty:'advanced'},
+  {id:'acceptable',word:'acceptable',definition:'satisfactory or suitable enough for a purpose',sourceQuestionId:'practice-test-8:rw1-2',difficulty:'easy'},
+  {id:'imperceptible',word:'imperceptible',definition:'so slight that it is difficult or impossible to notice',sourceQuestionId:'practice-test-8:rw1-2',difficulty:'advanced'},
+
+  {id:'dangerous',word:'dangerous',definition:'likely to cause harm or injury',sourceQuestionId:'practice-test-8:rw1-3',difficulty:'easy'},
+  {id:'imaginative',word:'imaginative',definition:'showing creativity or inventiveness',sourceQuestionId:'practice-test-8:rw1-3',difficulty:'easy'},
+  {id:'surprising',word:'surprising',definition:'unexpected or causing astonishment',sourceQuestionId:'practice-test-8:rw1-3',difficulty:'easy'},
+
+  {id:'characterization',word:'characterization',definition:'the act of describing the qualities or nature of someone or something',sourceQuestionId:'practice-test-8:rw1-4',difficulty:'medium'},
+  {id:'interpretation',word:'interpretation',definition:'an explanation of the meaning or significance of something',sourceQuestionId:'practice-test-8:rw1-4',difficulty:'medium'},
+  {id:'collaboration',word:'collaboration',definition:'the act of working together toward a shared goal',sourceQuestionId:'practice-test-8:rw1-4',difficulty:'easy'},
+  {id:'commercialization',word:'commercialization',definition:'the process of turning something into a product or activity for profit',sourceQuestionId:'practice-test-8:rw1-4',difficulty:'advanced'},
+
+  {id:'controversial',word:'controversial',definition:'likely to cause disagreement or public debate',sourceQuestionId:'practice-test-8:rw1-5',difficulty:'medium'},
+  {id:'extensive',word:'extensive',definition:'large in amount, range, or scope',sourceQuestionId:'practice-test-8:rw1-5',difficulty:'easy'},
+  {id:'universal',word:'universal',definition:'applying to all people, cases, or situations',sourceQuestionId:'practice-test-8:rw1-5',difficulty:'medium'},
+
+  {id:'confusing-for',word:'confusing for',definition:'difficult for someone to understand clearly',sourceQuestionId:'practice-test-8:rw2-1',difficulty:'easy'},
+  {id:'attractive-to',word:'attractive to',definition:'appealing or pleasing to',sourceQuestionId:'practice-test-8:rw2-1',difficulty:'easy'},
+  {id:'corrected-by',word:'corrected by',definition:'changed or fixed by someone or something',sourceQuestionId:'practice-test-8:rw2-1',difficulty:'easy'},
+  {id:'similar-to',word:'similar to',definition:'resembling something without being exactly the same',sourceQuestionId:'practice-test-8:rw2-1',difficulty:'easy'},
+
+  {id:'preventable',word:'preventable',definition:'able to be stopped from happening',sourceQuestionId:'practice-test-8:rw2-2',difficulty:'easy'},
+  {id:'undeniable',word:'undeniable',definition:'clearly true and impossible to reasonably dispute',sourceQuestionId:'practice-test-8:rw2-2',difficulty:'medium'},
+  {id:'concerning',word:'concerning',definition:'causing worry or unease',sourceQuestionId:'practice-test-8:rw2-2',difficulty:'easy'},
+
+  {id:'inadequate',word:'inadequate',definition:'not sufficient or good enough for a need or purpose',sourceQuestionId:'practice-test-8:rw2-3',difficulty:'medium'},
+  {id:'dynamic',word:'dynamic',definition:'characterized by change, activity, or energy',sourceQuestionId:'practice-test-8:rw2-3',difficulty:'medium'},
+  {id:'satisfactory',word:'satisfactory',definition:'good enough to meet a requirement or expectation',sourceQuestionId:'practice-test-8:rw2-3',difficulty:'easy'},
+
+  {id:'indecipherable',word:'indecipherable',definition:'impossible or extremely difficult to understand or interpret',sourceQuestionId:'practice-test-8:rw2-4',difficulty:'advanced'},
+  {id:'ornamental',word:'ornamental',definition:'serving mainly as decoration',sourceQuestionId:'practice-test-8:rw2-4',difficulty:'medium'},
+  {id:'obscure',word:'obscure',definition:'unclear, difficult to understand, or not well known',sourceQuestionId:'practice-test-8:rw2-4',difficulty:'medium'},
+  {id:'intricate',word:'intricate',definition:'having many complex and interconnected details',sourceQuestionId:'practice-test-8:rw2-4',difficulty:'advanced'},
+
+  {id:'replicable',word:'replicable',definition:'capable of being repeated or reproduced',sourceQuestionId:'practice-test-8:rw2-5',difficulty:'advanced'},
+  {id:'predetermined',word:'predetermined',definition:'decided or established in advance',sourceQuestionId:'practice-test-8:rw2-5',difficulty:'medium'},
+  {id:'operative',word:'operative',definition:'functioning, active, or having an effect',sourceQuestionId:'practice-test-8:rw2-5',difficulty:'advanced'},
+  {id:'latent',word:'latent',definition:'present but hidden, inactive, or not yet developed',sourceQuestionId:'practice-test-8:rw2-5',difficulty:'advanced'},
+
+  {id:'organized',word:'organized',definition:'arranged in a structured or orderly way',sourceQuestionId:'practice-test-9:rw1-1',difficulty:'easy'},
+  {id:'ranked',word:'ranked',definition:'placed in an order according to position or importance',sourceQuestionId:'practice-test-9:rw1-1',difficulty:'easy'},
+  {id:'scheduled',word:'scheduled',definition:'planned to occur at a particular time',sourceQuestionId:'practice-test-9:rw1-1',difficulty:'easy'},
+  {id:'discussed',word:'discussed',definition:'talked or written about in detail',sourceQuestionId:'practice-test-9:rw1-1',difficulty:'easy'},
+
+  {id:'confident',word:'confident',definition:'certain or self-assured',sourceQuestionId:'practice-test-9:rw1-2',difficulty:'easy'},
+  {id:'expensive',word:'expensive',definition:'costing a large amount of money or resources',sourceQuestionId:'practice-test-9:rw1-2',difficulty:'easy'},
+  {id:'consistent',word:'consistent',definition:'steady, regular, or not changing unpredictably',sourceQuestionId:'practice-test-9:rw1-2',difficulty:'easy'},
+
+  {id:'delegate',word:'delegate',definition:'assign a task or responsibility to another person',sourceQuestionId:'practice-test-9:rw1-3',difficulty:'medium'},
+  {id:'compose',word:'compose',definition:'create or write a work, or make up a whole',sourceQuestionId:'practice-test-9:rw1-3',difficulty:'medium'},
+  {id:'interpret',word:'interpret',definition:'explain or understand the meaning of something',sourceQuestionId:'practice-test-9:rw1-3',difficulty:'medium'},
+  {id:'renounce',word:'renounce',definition:'formally give up, reject, or abandon',sourceQuestionId:'practice-test-9:rw1-3',difficulty:'advanced'},
+
+  {id:'derived-from',word:'derived from',definition:'originating or obtained from a source',sourceQuestionId:'practice-test-9:rw1-4',difficulty:'medium'},
+  {id:'recognized-in',word:'recognized in',definition:'identified or acknowledged within',sourceQuestionId:'practice-test-9:rw1-4',difficulty:'easy'},
+  {id:'confined-to',word:'confined to',definition:'restricted or limited to a particular place or scope',sourceQuestionId:'practice-test-9:rw1-4',difficulty:'medium'},
+  {id:'repressed-by',word:'repressed by',definition:'held back, restrained, or suppressed by',sourceQuestionId:'practice-test-9:rw1-4',difficulty:'advanced'},
+
+  {id:'legitimate',word:'legitimate',definition:'lawful, valid, or generally accepted as proper',sourceQuestionId:'practice-test-9:rw1-5',difficulty:'medium'},
+  {id:'impenetrable',word:'impenetrable',definition:'impossible to enter, understand, or overcome',sourceQuestionId:'practice-test-9:rw1-5',difficulty:'advanced'},
+  {id:'compelling',word:'compelling',definition:'strongly convincing, persuasive, or interesting',sourceQuestionId:'practice-test-9:rw1-5',difficulty:'medium'},
+
+  {id:'destroying',word:'destroying',definition:'causing something to cease to exist or be ruined',sourceQuestionId:'practice-test-9:rw2-1',difficulty:'easy'},
+  {id:'finishing',word:'finishing',definition:'bringing something to an end or completing it',sourceQuestionId:'practice-test-9:rw2-1',difficulty:'easy'},
+  {id:'advertising',word:'advertising',definition:'promoting something publicly to attract attention or buyers',sourceQuestionId:'practice-test-9:rw2-1',difficulty:'easy'},
+  {id:'rejecting',word:'rejecting',definition:'refusing to accept, consider, or approve',sourceQuestionId:'practice-test-9:rw2-1',difficulty:'easy'},
+
+  {id:'avoid',word:'avoid',definition:'keep away from or prevent contact with',sourceQuestionId:'practice-test-9:rw2-2',difficulty:'easy'},
+  {id:'guess',word:'guess',definition:'give an answer without enough information to be certain',sourceQuestionId:'practice-test-9:rw2-2',difficulty:'easy'},
+  {id:'provide',word:'provide',definition:'supply or make something available',sourceQuestionId:'practice-test-9:rw2-2',difficulty:'easy'},
+  {id:'describe',word:'describe',definition:'give an account of the qualities or features of something',sourceQuestionId:'practice-test-9:rw2-2',difficulty:'easy'},
+
+  {id:'indifference-to',word:'indifference to',definition:'lack of interest, concern, or enthusiasm about',sourceQuestionId:'practice-test-9:rw2-3',difficulty:'medium'},
+  {id:'enthusiasm-for',word:'enthusiasm for',definition:'strong interest, excitement, or eagerness about',sourceQuestionId:'practice-test-9:rw2-3',difficulty:'easy'},
+  {id:'concern-about',word:'concern about',definition:'worry or interest regarding something',sourceQuestionId:'practice-test-9:rw2-3',difficulty:'easy'},
+  {id:'surprise-at',word:'surprise at',definition:'astonishment caused by something unexpected',sourceQuestionId:'practice-test-9:rw2-3',difficulty:'easy'},
+
+  {id:'indicated-by',word:'indicated by',definition:'shown, suggested, or signaled by',sourceQuestionId:'practice-test-9:rw2-4',difficulty:'easy'},
+  {id:'handmade-from',word:'handmade from',definition:'made by hand using a particular material',sourceQuestionId:'practice-test-9:rw2-4',difficulty:'easy'},
+  {id:'represented-by',word:'represented by',definition:'shown, symbolized, or depicted by',sourceQuestionId:'practice-test-9:rw2-4',difficulty:'easy'},
+  {id:'collected-with',word:'collected with',definition:'gathered using or together with something',sourceQuestionId:'practice-test-9:rw2-4',difficulty:'easy'},
+
+  {id:'impartial',word:'impartial',definition:'fair and not favoring one side over another',sourceQuestionId:'practice-test-9:rw2-5',difficulty:'medium'},
+  {id:'offhand',word:'offhand',definition:'casual, unplanned, or without careful thought',sourceQuestionId:'practice-test-9:rw2-5',difficulty:'advanced'},
+  {id:'persistent',word:'persistent',definition:'continuing firmly despite difficulty or delay',sourceQuestionId:'practice-test-9:rw2-5',difficulty:'medium'},
+  {id:'mandatory',word:'mandatory',definition:'required by a rule or law; compulsory',sourceQuestionId:'practice-test-9:rw2-5',difficulty:'medium'},
 ]
 
 export const VOCABULARY_BANK:VocabularyEntry[]=[
