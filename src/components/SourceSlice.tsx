@@ -207,7 +207,7 @@ export default function SourceSlice({pdfKey,bytes,page,questionNumber,alt,zoom=1
   useEffect(()=>{
     let cancelled=false;let objectUrl='';const renderTasks:{cancel:()=>void;promise:Promise<void>}[]=[]
     const cropKey=sourceCrop?`${sourceCrop.x},${sourceCrop.y},${sourceCrop.width},${sourceCrop.height}`:'auto'
-    const imageKey=`${isQuestion?'v13':'v15'}:${practiceTestId}:${pdfKey}:${bytes.byteLength}:${page}:${questionNumber}:${cropKey}`
+    const imageKey=`${practiceTestId==='practice-test-9'?'pt9-clean-v1':isQuestion?'v13':'v15'}:${practiceTestId}:${pdfKey}:${bytes.byteLength}:${page}:${questionNumber}:${cropKey}`
     async function showBlob(blob:Blob){objectUrl=URL.createObjectURL(blob);if(!cancelled)setSrc(objectUrl)}
     async function render(){
       try{
