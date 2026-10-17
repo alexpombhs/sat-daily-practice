@@ -20,7 +20,7 @@ export default function PracticeGoalSettings({settings,onChange}:Props){
 
   function saveExamTargets(next:ExamTarget[]){
     const sorted=next
-      .map(target=>({label:target.label.trim()||'Exam',date:target.date}))
+      .map(target=>({label:target.label.trim()||'Exam',date:target.date,score:target.score}))
       .filter(target=>target.date)
       .sort((a,b)=>a.date.localeCompare(b.date))
     onChange({...settings,examTargets:sorted,targetExamDate:sorted[0]?.date})
