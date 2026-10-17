@@ -743,7 +743,7 @@ export default function App(){
         onChoosePracticeTest={()=>navigateTo('home')}
         onStartPractice={()=>void beginPractice(settings.mode)}
         onStartPreTestReview={startPreTestReview}
-        showPreTestReview={practiceRecommendation.planPhase==='final-review'}
+        showPreTestReview={practiceRecommendation.planPhase==='final-review'||practiceRecommendation.planPhase==='exam-day'}
       />
     </AlexBox>
 
