@@ -1,4 +1,4 @@
-import {useEffect,useState,type ReactNode} from 'react'
+import {useEffect,useRef,useState,type ReactNode} from 'react'
 import {CalendarDays,Clock3,ListChecks,PenLine,Target} from 'lucide-react'
 import AlexBox from './design-system/atoms/AlexBox'
 import AlexButton from './design-system/atoms/AlexButton'
@@ -62,6 +62,7 @@ export default function App(){
   const[authUser,setAuthUser]=useState<AuthUser|null>(null)
   const[authReady,setAuthReady]=useState(false)
   const[settingsCloudReady,setSettingsCloudReady]=useState(false)
+  const settingsSaveQueue=useRef<Promise<unknown>>(Promise.resolve())
   const[questionBank,setQuestionBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
   const[resumableSession,setResumableSession]=useState<ActivePracticeSession|null>(null)
   const[pendingPractice,setPendingPractice]=useState<{mode:SubjectMode;test:Settings['practiceTest'];questionIds?:string[];groups?:Array<{concept:string;questionIds:string[]}>}|null>(null)
@@ -161,9 +162,13 @@ export default function App(){
     return()=>{cancelled=true}
   },[authReady,authUser?.id])
   useEffect(()=>{
-    if(authUser&&settingsCloudReady){
-      void saveUserSettings(settings).catch(error=>console.warn('Supabase settings save failed',error))
-    }
+    if(!authUser||!settingsCloudReady)return
+    // Serialize writes: changing a test's date, label, and score quickly must
+    // never let an older Supabase response overwrite the latest settings.
+    settingsSaveQueue.current=settingsSaveQueue.current
+      .catch(error=>console.warn('Previous settings save failed',error))
+      .then(()=>saveUserSettings(settings))
+      .catch(error=>console.warn('Supabase settings save failed',error))
   },[settings,authUser?.id,settingsCloudReady])
   useEffect(()=>{
     setReviewContentTab('question')
