@@ -100,10 +100,12 @@ export function buildPracticePlanRecommendation(settings:Settings,questions:Prac
   const significantGap=scoreGap!==null&&scoreGap>=100
   const desiredDailyQuestions=urgency?10:significantGap?20:15
   const dailyQuestionCap=Math.max(10,Math.min(30,Math.floor(30/plannedMinutesPerQuestion)))
-  const dailyQuestionGoal=hasActiveGoal?Math.max(10,Math.min(desiredDailyQuestions,dailyQuestionCap)):0
-  const recommendedSessionsPerDay=isExamDay?0:dailyQuestionGoal>0?Math.max(1,Math.ceil(dailyQuestionGoal/questionsPerSession)):0
+  const affordableSessions=Math.max(1,Math.floor(dailyQuestionCap/questionsPerSession))
+  const desiredSessions=Math.max(1,Math.ceil(desiredDailyQuestions/questionsPerSession))
+  const recommendedSessionsPerDay=isExamDay||!hasActiveGoal?0:Math.min(affordableSessions,desiredSessions)
+  const dailyQuestionGoal=recommendedSessionsPerDay*questionsPerSession
   const estimatedSessionMinutes=Math.max(1,Math.ceil(questionsPerSession*plannedMinutesPerQuestion))
-  const estimatedDailyMinutes=isExamDay?0:dailyQuestionGoal>0?Math.max(10,Math.min(30,Math.ceil(dailyQuestionGoal*plannedMinutesPerQuestion))):0
+  const estimatedDailyMinutes=dailyQuestionGoal>0?Math.max(10,Math.ceil(dailyQuestionGoal*plannedMinutesPerQuestion)):0
 
   const planPhase:PracticePlanPhase=isExamDay?'exam-day':daysRemaining>0&&daysRemaining<=3?'final-review':'steady'
   const practiceGuidance=planPhase==='exam-day'
