@@ -128,3 +128,37 @@ The original answer explanation remains an on-demand PDF crop in the existing Qu
 2. Review each equation and figure at narrow and wide viewport sizes against the PDF.
 3. Verify explanation crop headings and continuations per question (page references alone are insufficient).
 4. Check the project's unit tests and build before promotion to `verified`.
+
+
+## Reading & Writing Module 2 — 2026-10-17 import report
+
+Imported **33/33 questions** into canonical `sat_question_bank` (IDs `practice-test-8:rw2-1` through `practice-test-8:rw2-33`). The import uses the official user-supplied PT8 question PDF pages 18–30, its answer explanations PDF pages 17–31, and the paper scoring guide's Reading & Writing Module 2 answer key. No question content or PDF binary is bundled in code; question text and tiny crop metadata are stored in Supabase.
+
+- All 33 questions have nonempty semantic text, complete A–D answer choices, official answer-key letters, source-page references, explanation-page references, and per-question source crops. Supabase readback confirmed all 33 rows, four choices each, and `imported` status for all 33.
+- Q14 and Q15 contain semantic tab-separated data tables supported by the shared Reading & Writing renderer (the previous `[TABLE]` format does **not** work in this renderer). Q14 has five language rows and three columns; Q15 has four study rows and four columns.
+- Q7 preserves the individual lines of Bennett's poem. Q9 preserves two distinct passage labels, and explicit underline markup for the source's underlined term. Q32–Q33 preserve note bullets as distinct lines.
+- Question-source crops for all 33 were rendered locally from the authoritative question PDF and inspected as two contact sheets. The crop boundaries preserve their target question, without pulling in the following question. Q15 needs the wider crop for its four-column table. Q32–Q33 crops stop before the PDF's `STOP` and footer decorations.
+- The answer PDF's `QUESTION N` headings were located for all 33 items. Fourteen explanations cross an answer-page boundary: Q2, Q4, Q6, Q9, Q11, Q13, Q14, Q16, Q17, Q19, Q22, Q25, Q27, Q30.
+- The shared explanation viewer was corrected to exclude page footers and avoid stitching the following module's question 1 after this module's Q33. Only explanation image-cache keys were versioned; official PDF bytes remain browser-cached, and no repeated per-question Supabase PDF downloads are required.
+- **No new flags were introduced.** Existing `content_status='imported'` is retained until the application renderer is visually verified.
+
+### Import-quality summary
+
+| Measure | Count |
+|---|---:|
+| Total | 33 |
+| Imported / persisted | 33 |
+| Verified in live production UI | 0 |
+| Source crops present | 33 |
+| Explanation page references present | 33 |
+| Official answers & four choices present | 33 |
+| Figures / graphical choices | 0 |
+| Semantic tables | 2 |
+| Multi-visual questions | 0 |
+| Underline spans explicitly retained | 1 |
+| Explanation continuations across PDF pages | 14 |
+| Known invalid `[TABLE]` markers | 0 |
+
+### Remaining sign-off
+
+Compare each reconstructed question and original source side by side in the running app (especially Q7, Q9, Q14, Q15, Q32, Q33) and inspect each rendered Explanation tab, including cross-page joins. Validate both narrow and desktop rendering, run the documented parsing lint and unit tests, and require the branch's build to pass before promoting any question to verified. Never mark a module verified from database presence or a PDF geometry audit alone.
