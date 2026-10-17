@@ -958,10 +958,17 @@ nav[aria-label="Mobile primary navigation"]{margin:0}
    summary row compact and allow the goal/exam cards adequate vertical padding. */
 @media (min-width:1200px) and (max-height:850px){
   .dashboard-shell{
-    --dashboard-hero:36%;
+    --dashboard-hero:32%;
     --dashboard-gap:8px;
   }
 }
 @media (min-width:1200px) and (max-height:700px){
-  .dashboard-shell{--dashboard-hero:40%}
+  .dashboard-shell{--dashboard-hero:34%}
+}
+
+/* Preserve full non-exam-day goal rows and practice-plan values at short heights. */
+@media (min-width:1200px) and (max-height:850px){
+  .dashboard-bottom-left,
+  .dashboard-bottom-right{grid-template-rows:minmax(0,68%) minmax(0,32%)!important}
+  .dashboard-bottom-left>div{grid-template-rows:minmax(0,68%) minmax(0,32%)!important}
 }
