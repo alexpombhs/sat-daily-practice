@@ -62,6 +62,163 @@ function renderMathAwareText(text:string,keyPrefix:string){
       continue
     }
 
+    // A closed comma-containing math span takes precedence over currency parsing.
+    // '$1,000    if(currency){
+      pushText(currency)
+      cursor=dollar+currency.length
+      continue
+    }
+
+    const end=text.indexOf('$',dollar+1)
+    if(end<0){
+      pushText('$')
+      cursor=dollar+1
+      continue
+    }
+
+    const math=text.slice(dollar+1,end)
+    if(math.trim()){
+      nodes.push(renderMath(math,false,`${keyPrefix}-math-${index++}`))
+      cursor=end+1
+      continue
+    }
+
+    pushText('$')
+    cursor=dollar+1
+  }
+
+  return nodes.length?nodes:[text]
+}
+
+export default function AlexRichText({text,className}:Props){
+  const nodes:ReactNode[]=[]
+  let cursor=0
+  let index=0
+  UNDERLINE_MARKUP.lastIndex=0
+
+  let match:RegExpExecArray|null
+  while((match=UNDERLINE_MARKUP.exec(text))!==null){
+    if(match.index>cursor){
+      nodes.push(<Fragment key={`text-${index}`}>{renderMathAwareText(text.slice(cursor,match.index),`text-${index}`)}</Fragment>)
+    }
+    nodes.push(<u className="rich-underline" key={`underline-${index}`}>{renderMathAwareText(match[1],`underline-${index}`)}</u>)
+    cursor=match.index+match[0].length
+    index++
+  }
+
+  if(cursor<text.length){
+    nodes.push(<Fragment key={`text-${index}`}>{renderMathAwareText(text.slice(cursor),`text-${index}`)}</Fragment>)
+  }
+
+  return <span className={className}>{nodes.length?nodes:renderMathAwareText(text,'text')}</span>
+}
+ and '$(x,y)    if(currency){
+      pushText(currency)
+      cursor=dollar+currency.length
+      continue
+    }
+
+    const end=text.indexOf('$',dollar+1)
+    if(end<0){
+      pushText('$')
+      cursor=dollar+1
+      continue
+    }
+
+    const math=text.slice(dollar+1,end)
+    if(math.trim()){
+      nodes.push(renderMath(math,false,`${keyPrefix}-math-${index++}`))
+      cursor=end+1
+      continue
+    }
+
+    pushText('$')
+    cursor=dollar+1
+  }
+
+  return nodes.length?nodes:[text]
+}
+
+export default function AlexRichText({text,className}:Props){
+  const nodes:ReactNode[]=[]
+  let cursor=0
+  let index=0
+  UNDERLINE_MARKUP.lastIndex=0
+
+  let match:RegExpExecArray|null
+  while((match=UNDERLINE_MARKUP.exec(text))!==null){
+    if(match.index>cursor){
+      nodes.push(<Fragment key={`text-${index}`}>{renderMathAwareText(text.slice(cursor,match.index),`text-${index}`)}</Fragment>)
+    }
+    nodes.push(<u className="rich-underline" key={`underline-${index}`}>{renderMathAwareText(match[1],`underline-${index}`)}</u>)
+    cursor=match.index+match[0].length
+    index++
+  }
+
+  if(cursor<text.length){
+    nodes.push(<Fragment key={`text-${index}`}>{renderMathAwareText(text.slice(cursor),`text-${index}`)}</Fragment>)
+  }
+
+  return <span className={className}>{nodes.length?nodes:renderMathAwareText(text,'text')}</span>
+}
+ are math; '$1,000 $2,000' remains currency.
+    const pairedEnd=text.indexOf('    if(currency){
+      pushText(currency)
+      cursor=dollar+currency.length
+      continue
+    }
+
+    const end=text.indexOf('$',dollar+1)
+    if(end<0){
+      pushText('$')
+      cursor=dollar+1
+      continue
+    }
+
+    const math=text.slice(dollar+1,end)
+    if(math.trim()){
+      nodes.push(renderMath(math,false,`${keyPrefix}-math-${index++}`))
+      cursor=end+1
+      continue
+    }
+
+    pushText('$')
+    cursor=dollar+1
+  }
+
+  return nodes.length?nodes:[text]
+}
+
+export default function AlexRichText({text,className}:Props){
+  const nodes:ReactNode[]=[]
+  let cursor=0
+  let index=0
+  UNDERLINE_MARKUP.lastIndex=0
+
+  let match:RegExpExecArray|null
+  while((match=UNDERLINE_MARKUP.exec(text))!==null){
+    if(match.index>cursor){
+      nodes.push(<Fragment key={`text-${index}`}>{renderMathAwareText(text.slice(cursor,match.index),`text-${index}`)}</Fragment>)
+    }
+    nodes.push(<u className="rich-underline" key={`underline-${index}`}>{renderMathAwareText(match[1],`underline-${index}`)}</u>)
+    cursor=match.index+match[0].length
+    index++
+  }
+
+  if(cursor<text.length){
+    nodes.push(<Fragment key={`text-${index}`}>{renderMathAwareText(text.slice(cursor),`text-${index}`)}</Fragment>)
+  }
+
+  return <span className={className}>{nodes.length?nodes:renderMathAwareText(text,'text')}</span>
+}
+,dollar+1)
+    const pairedText=pairedEnd>=0?text.slice(dollar+1,pairedEnd):''
+    if(pairedText.includes(',')&&pairedText.trim()===pairedText&&isLikelyMathToken(pairedText)){
+      nodes.push(renderMath(pairedText,false,`${keyPrefix}-math-${index++}`))
+      cursor=pairedEnd+1
+      continue
+    }
+
     const currency=currencyAt(text,dollar)
     if(currency){
       pushText(currency)
