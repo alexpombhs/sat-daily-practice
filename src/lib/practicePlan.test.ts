@@ -116,13 +116,13 @@ describe('practice plan recommendations',()=>{
 
   it('recognizes both valid exam dates and preserves entered official results',()=>{
     const settings={...baseSettings,examTargets:[
-      {label:'PSAT',date:'2026-10-17',score:1370},
+      {label:'PSAT',date:'2025-10-17',readingWritingScore:650,mathScore:720},
       {label:'SAT',date:'2026-12-05'},
     ]}
     const targets=examTargetsFromSettings(settings)
     expect(targets).toEqual([
-      {label:'PSAT',date:'2026-10-17',score:1370},
-      {label:'SAT',date:'2026-12-05',score:undefined},
+      {label:'PSAT',date:'2025-10-17',score:undefined,readingWritingScore:650,mathScore:720},
+      {label:'SAT',date:'2026-12-05',score:undefined,readingWritingScore:undefined,mathScore:undefined},
     ])
   })
 
