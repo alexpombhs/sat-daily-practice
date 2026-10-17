@@ -108,7 +108,14 @@ export default function QuestionBankReview({questionsPdf}:Props){
 
       {selected&&<section className="question-bank-viewer">
         <div className="question-bank-viewer-header">
-          <div><span>{practiceTestLabel(selected.practiceTestId)} · {selected.subject==='math'?'Math':'Reading & Writing'}</span><AlexBox sx={{display:'flex',alignItems:'center',gap:.75}}><h2>{questionLabel(selected)}</h2><ParsingIssueReporter question={selected} context="question-bank" compact/></AlexBox></div>
+          <div>
+            <span>{practiceTestLabel(selected.practiceTestId)} · {selected.subject==='math'?'Math':'Reading & Writing'}</span>
+            <AlexBox sx={{display:'flex',alignItems:'center',gap:.75}}><h2>{questionLabel(selected)}</h2><ParsingIssueReporter question={selected} context="question-bank" compact/></AlexBox>
+            {Boolean(selected.concepts?.length)&&<AlexBox sx={{display:'flex',flexWrap:'wrap',alignItems:'baseline',columnGap:.75,rowGap:.25,mt:.5}} aria-label="Question concepts">
+              <AlexText sx={{fontSize:12,color:'#667085',fontWeight:700}}>Concepts:</AlexText>
+              <AlexText sx={{fontSize:12,color:'#475467'}}>{selected.concepts?.join(' · ')}</AlexText>
+            </AlexBox>}
+          </div>
           <AlexText component="span" sx={{fontSize:12,color:'#667085'}}>{hasQuestionsPdf?`PDF page ${selected.sourcePage}`:'Shared bank'}</AlexText>
         </div>
         <div className="question-bank-content-scroll" key={selected.id} tabIndex={0} aria-label="Selected question content"><QuestionSourceReview question={selected} questionsPdf={validQuestionsPdf} showExplanation/></div>
