@@ -28,7 +28,7 @@ const OFFICIAL_SOURCES:Record<PracticeTestId,{questions:string;answers:string}>=
   },
   'practice-test-10':{
     questions:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-10-digital.pdf',
-    answers:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-10-answers-digital.pdf',
+    answers:'https://satsuite.collegeboard.org/media/pdf/scoring-sat-practice-test-10-digital.pdf',
   },
 }
 const supabaseUrl=import.meta.env.VITE_SUPABASE_URL as string|undefined
@@ -97,10 +97,12 @@ async function fetchPdf(url:string,expectedTestId?:PracticeTestId,expectedKind?:
 
 export function sharedSourceCandidates(testId:PracticeTestId,kind:PdfKind){
   const source=OFFICIAL_SOURCES[testId]?.[kind]
-  return [
-    supabaseUrl?`${supabaseUrl.replace(/\/$/,'')}/functions/v1/sat-question-source?kind=${kind}&practiceTestId=${encodeURIComponent(testId)}`:null,
-    source??null,
-  ].filter((value):value is string=>Boolean(value))
+  const proxy=supabaseUrl?`${supabaseUrl.replace(/\/$/,'')}/functions/v1/sat-question-source?kind=${kind}&practiceTestId=${encodeURIComponent(testId)}`:null
+  // PT10 is intentionally proxy-only in the browser. College Board's PDF host does not
+  // consistently allow cross-origin browser fetches, so a direct fallback can turn a useful
+  // proxy error into the misleading generic "Failed to fetch".
+  return (testId==='practice-test-10'?[proxy]:[proxy,source??null])
+    .filter((value):value is string=>Boolean(value))
 }
 
 async function loadCanonicalSource(testId:PracticeTestId,kind:PdfKind){
