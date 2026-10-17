@@ -24,7 +24,7 @@ export default function ExamTargetList({targets,onChange}:Props){
   return <AlexBox sx={{display:'grid',gap:1}}>
     {targets.map((target,index)=><AlexBox
       key={`${target.date}-${index}`}
-      sx={{display:'grid',gridTemplateColumns:{xs:'1fr auto',sm:'minmax(90px,.7fr) minmax(145px,1fr) auto'},gap:.75,alignItems:'center'}}
+      sx={{display:'grid',gridTemplateColumns:{xs:'minmax(0,1fr) auto',sm:'minmax(80px,.65fr) minmax(135px,1fr) minmax(95px,.65fr) auto'},gap:.75,alignItems:'center'}}
     >
       <AlexTextField
         fullWidth
@@ -44,10 +44,29 @@ export default function ExamTargetList({targets,onChange}:Props){
         onChange={event=>updateTarget(index,{date:event.target.value})}
         sx={{gridColumn:{xs:'1 / 2',sm:'auto'}}}
       />
+      <AlexTextField
+        fullWidth
+        size="small"
+        type="number"
+        label="Actual score"
+        placeholder="Not yet available"
+        value={target.score??''}
+        inputProps={{min:400,max:target.label.trim().toUpperCase().startsWith('PSAT')?1520:1600,step:10}}
+        onChange={event=>{
+          const raw=event.target.value
+          if(!raw){updateTarget(index,{score:undefined});return}
+          const value=Number(raw)
+          const maxScore=target.label.trim().toUpperCase().startsWith('PSAT')?1520:1600
+          if(Number.isInteger(value)&&value>=400&&value<=maxScore&&value%10===0){
+            updateTarget(index,{score:value})
+          }
+        }}
+        sx={{gridColumn:{xs:'1 / 2',sm:'auto'}}}
+      />
       <AlexIconButton
         label={`Remove ${target.label||'test'} date`}
         onClick={()=>onChange(targets.filter((_,targetIndex)=>targetIndex!==index))}
-        sx={{gridColumn:{xs:'2 / 3',sm:'auto'},gridRow:{xs:'1 / 3',sm:'auto'}}}
+        sx={{gridColumn:{xs:'2 / 3',sm:'auto'},gridRow:{xs:'1 / 4',sm:'auto'}}}
       >
         <Trash2 size={16}/>
       </AlexIconButton>
