@@ -32,7 +32,7 @@ def remote_versions():
     if proc.returncode:
         raise RuntimeError("Unable to read remote migration history: "+proc.stderr)
     # CLI output may use ANSI colors and either ASCII or Unicode table pipes.
-    output=re.sub(r"\\x1b\\[[0-9;]*[A-Za-z]","",proc.stdout+"\\n"+proc.stderr)
+    output=re.sub(r"\x1b\[[0-9;]*[A-Za-z]","",proc.stdout+"\n"+proc.stderr)
     versions=set()
     header=False
     for line in output.splitlines():
@@ -50,7 +50,7 @@ def remote_versions():
         # Valid empty migration history; no versions to reconcile.
         return set()
     # Include sanitized shape information for diagnosing unexpected CLI formats.
-    preview=[re.sub(r"\\d{14}","<version>",x.strip())[:160]
+    preview=[re.sub(r"\d{14}","<version>",x.strip())[:160]
              for x in output.splitlines() if x.strip()][:8]
     raise RuntimeError("Unrecognized Supabase migration list format: "+repr(preview))
 
