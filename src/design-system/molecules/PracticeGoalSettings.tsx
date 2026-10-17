@@ -22,7 +22,8 @@ export default function PracticeGoalSettings({settings,onChange}:Props){
     // Keep order and draft date values while editing; sorting/remounting date inputs
     // on every keystroke prevents historical years such as 2025 being entered.
     const updated=next.map(target=>({...target}))
-    onChange({...settings,examTargets:updated,targetExamDate:updated.find(target=>/^\d{4}-\d{2}-\d{2}$/.test(target.date))?.date})
+    const validDate=updated.find(target=>/^20\d{2}-\d{2}-\d{2}$/.test(target.date))?.date
+    onChange({...settings,examTargets:updated,targetExamDate:validDate??settings.targetExamDate})
   }
 
   return <AlexBox sx={{display:'grid',gap:2}}>
