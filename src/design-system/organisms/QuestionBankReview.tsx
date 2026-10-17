@@ -111,7 +111,7 @@ export default function QuestionBankReview({questionsPdf}:Props){
           <div><span>{practiceTestLabel(selected.practiceTestId)} · {selected.subject==='math'?'Math':'Reading & Writing'}</span><AlexBox sx={{display:'flex',alignItems:'center',gap:.75}}><h2>{questionLabel(selected)}</h2><ParsingIssueReporter question={selected} context="question-bank" compact/></AlexBox></div>
           <AlexText component="span" sx={{fontSize:12,color:'#667085'}}>{hasQuestionsPdf?`PDF page ${selected.sourcePage}`:'Shared bank'}</AlexText>
         </div>
-        <QuestionSourceReview question={selected} questionsPdf={validQuestionsPdf}/>
+        <QuestionSourceReview question={selected} questionsPdf={validQuestionsPdf} showExplanation/>
       </section>}
     </div>
   </main>
