@@ -33,6 +33,7 @@ export function buildStudyPlanCalendarDays({
   questionsPerSession,
   today=new Date(),
   examDate,
+  examDates,
 }:{
   year:number
   month:number
@@ -42,6 +43,7 @@ export function buildStudyPlanCalendarDays({
   questionsPerSession:number
   today?:Date
   examDate?:string
+  examDates?:string[]
 }):StudyPlanCalendarDay[]{
   const todayKey=localDateKey(today)
   const activityKeys=[
@@ -49,6 +51,9 @@ export function buildStudyPlanCalendarDays({
     ...attempts.map(attempt=>localDateKey(attempt.createdAt)),
   ].filter(Boolean).sort()
   const trackingStart=activityKeys[0]??todayKey
+  const scheduledExamDates=(examDates?.length?examDates:examDate?[examDate]:[]).filter(Boolean).sort()
+  const examDateSet=new Set(scheduledExamDates)
+  const planningEnd=scheduledExamDates[scheduledExamDates.length-1]
   const targetQuestions=Math.max(0,recommendedSessionsPerDay*questionsPerSession)
   const totals=new Map<string,{sessions:number;questions:number;targetQuestions?:number}>()
 
@@ -78,7 +83,9 @@ export function buildStudyPlanCalendarDays({
     const dayTargetQuestions=date<todayKey&&total.targetQuestions?total.targetQuestions:targetQuestions
 
     let status:StudyPlanDayStatus='neutral'
-    if(date>=trackingStart&&(!examDate||date<=examDate)){
+    if(examDateSet.has(date)){
+      status='neutral'
+    }else if(date>=trackingStart&&(!planningEnd||date<=planningEnd)){
       if(date>todayKey){
         status=dayTargetQuestions>0?'planned':'neutral'
       }else if(dayTargetQuestions===0){

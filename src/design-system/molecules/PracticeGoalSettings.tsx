@@ -3,19 +3,35 @@ import AlexBox from '../atoms/AlexBox'
 import AlexNumberField from '../atoms/AlexNumberField'
 import AlexText from '../atoms/AlexText'
 import AlexTextField from '../atoms/AlexTextField'
+import ExamTargetList from './ExamTargetList'
 import PracticeSettingField from './PracticeSettingField'
 import SettingsFieldGroup from './SettingsFieldGroup'
-import type {Settings} from '../../types'
+import type {ExamTarget,Settings} from '../../types'
 
 type Props={settings:Settings;onChange:(settings:Settings)=>void}
 
+function normalizedTargets(settings:Settings):ExamTarget[]{
+  if(settings.examTargets?.length)return settings.examTargets
+  return settings.targetExamDate?[{label:'Exam',date:settings.targetExamDate}]:[]
+}
+
 export default function PracticeGoalSettings({settings,onChange}:Props){
+  const examTargets=normalizedTargets(settings)
+
+  function saveExamTargets(next:ExamTarget[]){
+    // Keep order and draft date values while editing; sorting/remounting date inputs
+    // on every keystroke prevents historical years such as 2025 being entered.
+    const updated=next.map(target=>({...target}))
+    const validDate=updated.find(target=>/^20\d{2}-\d{2}-\d{2}$/.test(target.date))?.date
+    onChange({...settings,examTargets:updated,targetExamDate:validDate??settings.targetExamDate})
+  }
+
   return <AlexBox sx={{display:'grid',gap:2}}>
     <SettingsFieldGroup>
       <PracticeSettingField
-        label="Exam date"
-        helperText="Used to calculate how much practice to do each day."
-        control={<AlexTextField fullWidth size="small" type="date" label="Exam date" value={settings.targetExamDate??''} InputLabelProps={{shrink:true}} onChange={event=>onChange({...settings,targetExamDate:event.target.value})}/>}
+        label="Test dates"
+        helperText="Add each PSAT or SAT date. Test days are rest days and are not counted as missed practice."
+        control={<ExamTargetList targets={examTargets} onChange={saveExamTargets}/>}
       />
       <PracticeSettingField
         label="Target score"

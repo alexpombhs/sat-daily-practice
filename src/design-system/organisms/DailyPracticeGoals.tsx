@@ -14,6 +14,8 @@ type Props={
   failedQuestionCount:number
   recommendationLabel?:string
   recommendationReason?:string
+  isExamDay?:boolean
+  examLabel?:string|null
 }
 
 const DAY_LABELS=['Mo','Tu','We','Th','Fr','Sa','Su']
@@ -29,7 +31,7 @@ function startOfWeek(today:Date){
   return date
 }
 
-export default function DailyPracticeGoals({attempts,sessions,dailyQuestions,dailyMinutes,failedQuestionCount,recommendationLabel='Keep practicing',recommendationReason}:Props){
+export default function DailyPracticeGoals({attempts,sessions,dailyQuestions,dailyMinutes,failedQuestionCount,recommendationLabel='Keep practicing',recommendationReason,isExamDay=false,examLabel}:Props){
   const today=new Date()
   const todayKey=localDayKey(today)
   const todayAttempts=attempts.filter(attempt=>localDayKey(attempt.createdAt)===todayKey)
@@ -82,6 +84,7 @@ export default function DailyPracticeGoals({attempts,sessions,dailyQuestions,dai
   const reviewedFailedToday=reviewedFailedCount>0
   const failedGoalDenominator=Math.max(failedQuestionCount,reviewedFailedCount)
   const minutesDone=Math.round(todayAttempts.reduce((total,attempt)=>total+attempt.elapsedMs,0)/60000)
+  const noPracticeToday=isExamDay||dailyQuestions<=0
   const questionTarget=Math.max(1,dailyQuestions)
   const minuteTarget=Math.max(1,dailyMinutes)
   const weekStart=startOfWeek(today)
@@ -108,17 +111,26 @@ export default function DailyPracticeGoals({attempts,sessions,dailyQuestions,dai
 
   return <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'repeat(auto-fit,minmax(min(100%,260px),1fr))',lg:'repeat(3,minmax(0,1fr))'},gap:1.5,minHeight:0,height:'100%',alignItems:'stretch'}}>
     <DashboardCard tone="white" variant="support" title="Today's goals">
-      <AlexBox sx={{display:'grid',gap:{xs:1.05,xl:.55}}}>
-        {goals.map((goal,index)=>{const complete=index===0?questionsDone>=questionTarget:index===1?minutesDone>=minuteTarget:reviewedFailedToday;return <AlexBox key={goal.label} sx={{display:'grid',gridTemplateColumns:{xs:'30px minmax(0,1fr)',xl:'24px minmax(0,1fr)'},alignItems:'center',columnGap:{xs:1.15,xl:.75}}}>
-          <AlexBox aria-hidden="true" sx={{width:{xs:30,xl:24},height:{xs:30,xl:24},borderRadius:'50%',display:'grid',placeItems:'center',bgcolor:complete?'#E8F7EE':'#EEF2F7',color:complete?'#20935A':'#C7D1DF'}}>
-            <Star size={17} fill="currentColor" strokeWidth={1.4}/>
-          </AlexBox>
-          <AlexText sx={{fontFamily:'inherit',fontSize:dashboardTypography.supportBody,fontWeight:400,lineHeight:1.3,color:'#111',whiteSpace:'nowrap'}}>
-            <AlexBox component="span" sx={{textDecoration:'underline',textUnderlineOffset:'2px'}}>{goal.label}</AlexBox>
-            <AlexBox component="span" sx={{textDecoration:'none'}}> · {goal.value}</AlexBox>
+      {noPracticeToday
+        ?<AlexBox sx={{display:'grid',gap:.45}}>
+          <AlexText sx={{fontSize:dashboardTypography.supportBody,fontWeight:800,color:'#08275B'}}>
+            {isExamDay?`${examLabel??'Exam'} day`:'No practice planned'}
           </AlexText>
-        </AlexBox>})}
-      </AlexBox>
+          <AlexText sx={{fontSize:dashboardTypography.supportSecondary,color:'#667085',lineHeight:1.35}}>
+            {isExamDay?'No practice is expected today. This day will not count as missed practice.':'Your current plan does not require practice today.'}
+          </AlexText>
+        </AlexBox>
+        :<AlexBox sx={{display:'grid',gap:{xs:1.05,xl:.55}}}>
+          {goals.map((goal,index)=>{const complete=index===0?questionsDone>=questionTarget:index===1?minutesDone>=minuteTarget:reviewedFailedToday;return <AlexBox key={goal.label} sx={{display:'grid',gridTemplateColumns:{xs:'30px minmax(0,1fr)',xl:'24px minmax(0,1fr)'},alignItems:'center',columnGap:{xs:1.15,xl:.75}}}>
+            <AlexBox aria-hidden="true" sx={{width:{xs:30,xl:24},height:{xs:30,xl:24},borderRadius:'50%',display:'grid',placeItems:'center',bgcolor:complete?'#E8F7EE':'#EEF2F7',color:complete?'#20935A':'#C7D1DF'}}>
+              <Star size={17} fill="currentColor" strokeWidth={1.4}/>
+            </AlexBox>
+            <AlexText sx={{fontFamily:'inherit',fontSize:dashboardTypography.supportBody,fontWeight:400,lineHeight:1.3,color:'#111',whiteSpace:'nowrap'}}>
+              <AlexBox component="span" sx={{textDecoration:'underline',textUnderlineOffset:'2px'}}>{goal.label}</AlexBox>
+              <AlexBox component="span" sx={{textDecoration:'none'}}> · {goal.value}</AlexBox>
+            </AlexText>
+          </AlexBox>})}
+        </AlexBox>}
     </DashboardCard>
 
     <DashboardCard tone="white" variant="support" icon={<Flame/>} title={`${streak} day streak`}>

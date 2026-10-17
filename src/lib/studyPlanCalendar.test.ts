@@ -110,4 +110,38 @@ describe('study plan calendar',()=>{
     })
   })
 
+
+  it('treats exam dates as no-practice days even when a daily goal exists',()=>{
+    const days=buildStudyPlanCalendarDays({
+      year:2026,
+      month:9,
+      sessions:[session('s1','2026-10-16',10)],
+      attempts:attempts('2026-10-16',10,'s1'),
+      recommendedSessionsPerDay:1,
+      questionsPerSession:10,
+      today:new Date(2026,9,17,12),
+      examDates:['2026-10-17','2026-12-05'],
+    })
+    expect(days[16]).toMatchObject({
+      day:17,
+      questionCount:0,
+      status:'neutral',
+    })
+  })
+
+  it('keeps planning active through the last configured test date',()=>{
+    const days=buildStudyPlanCalendarDays({
+      year:2026,
+      month:10,
+      sessions:[session('s1','2026-10-16',10)],
+      attempts:attempts('2026-10-16',10,'s1'),
+      recommendedSessionsPerDay:1,
+      questionsPerSession:10,
+      today:new Date(2026,10,1,12),
+      examDates:['2026-10-17','2026-12-05'],
+    })
+    expect(days[0].status).toBe('behind')
+    expect(days[1].status).toBe('planned')
+  })
+
 })

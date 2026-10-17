@@ -7,7 +7,7 @@ import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
 import AlexTooltip from '../atoms/AlexTooltip'
 import {buildStudyPlanCalendarDays,type StudyPlanDayStatus} from '../../lib/studyPlanCalendar'
-import type {PracticePlanRecommendation} from '../../lib/practicePlan'
+import {examTargetsFromSettings,type PracticePlanRecommendation} from '../../lib/practicePlan'
 import type {Attempt,SessionSummary,Settings} from '../../types'
 
 type Props={
@@ -35,6 +35,9 @@ export default function StudyPlanCalendar({sessions,attempts,settings,recommenda
   const today=new Date()
   const todayKey=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`
   const [view,setView]=useState(()=>({year:today.getFullYear(),month:today.getMonth()}))
+  const examTargets=useMemo(()=>examTargetsFromSettings(settings),[settings.examTargets,settings.targetExamDate])
+  const examDates=useMemo(()=>examTargets.map(target=>target.date),[examTargets])
+  const examLabelByDate=useMemo(()=>new Map(examTargets.map(target=>[target.date,target.label])),[examTargets])
   const days=useMemo(()=>buildStudyPlanCalendarDays({
     year:view.year,
     month:view.month,
@@ -44,7 +47,8 @@ export default function StudyPlanCalendar({sessions,attempts,settings,recommenda
     questionsPerSession:recommendation.questionsPerSession,
     today,
     examDate:settings.targetExamDate,
-  }),[view.year,view.month,sessions,attempts,recommendation.recommendedSessionsPerDay,recommendation.questionsPerSession,settings.targetExamDate])
+    examDates,
+  }),[view.year,view.month,sessions,attempts,recommendation.recommendedSessionsPerDay,recommendation.questionsPerSession,settings.targetExamDate,examDates])
 
   const firstWeekday=new Date(view.year,view.month,1).getDay()
   const targetQuestions=Math.max(0,recommendation.recommendedSessionsPerDay*recommendation.questionsPerSession)
@@ -113,11 +117,11 @@ export default function StudyPlanCalendar({sessions,attempts,settings,recommenda
       {days.map(day=>{
         const style=STATUS_STYLE[day.status]
         const isToday=day.date===todayKey
-        const isExamDate=Boolean(settings.targetExamDate&&day.date===settings.targetExamDate)
+        const examLabel=examLabelByDate.get(day.date)
+        const isExamDate=Boolean(examLabel)
         const hasTrackedGoal=targetQuestions>0&&(day.status==='ahead'||day.status==='on-track'||day.status==='behind')
         const title=[
-          style.label,
-          isExamDate?'Exam date':'',
+          isExamDate?`${examLabel} · Exam day · No practice expected`:style.label,
           day.questionCount>0
             ?`${day.questionCount}${day.targetQuestionCount>0?` of ${day.targetQuestionCount}`:''} questions`
             :hasTrackedGoal?'0 questions · No practice recorded':'',

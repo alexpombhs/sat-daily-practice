@@ -1,5 +1,5 @@
 import {describe,expect,it} from 'vitest'
-import {buildPracticePlanRecommendation} from './practicePlan'
+import {buildPracticePlanRecommendation,examTargetsFromSettings} from './practicePlan'
 import type {PerformanceAnalytics} from './performanceAnalytics'
 import {QUESTION_BANK} from './questionBank'
 import type {Attempt,Settings} from '../types'
@@ -48,7 +48,9 @@ describe('practice plan recommendations',()=>{
     const plan=buildPracticePlanRecommendation({...baseSettings,questionsPerSession:5},questions,attempts,performance(1300))
     expect(plan.remainingQuestions).toBe(0)
     expect(plan.scoreGap).toBe(100)
-    expect(plan.recommendedSessionsPerDay).toBe(1)
+    expect(plan.recommendedSessionsPerDay).toBe(3)
+    expect(plan.dailyQuestionGoal).toBe(15)
+    expect(plan.estimatedDailyMinutes).toBe(30)
   })
 
   it('asks for a cross-section baseline before treating a target as met',()=>{
@@ -85,4 +87,45 @@ describe('practice plan recommendations',()=>{
     expect(plan.estimatedDailyMinutes).toBe(20)
     expect(plan.practiceGuidance).toContain('Final 3-day review')
   })
+
+  it('does not schedule practice on an exam day and keeps the next test in the plan',()=>{
+    const today=isoDateFromToday(0)
+    const satDate=isoDateFromToday(45)
+    const plan=buildPracticePlanRecommendation({
+      ...baseSettings,
+      examTargets:[{label:'PSAT',date:today},{label:'SAT',date:satDate}],
+    },QUESTION_BANK,[],performance(1200))
+    expect(plan.isExamDay).toBe(true)
+    expect(plan.activeExamLabel).toBe('PSAT')
+    expect(plan.daysRemaining).toBe(0)
+    expect(plan.recommendedSessionsPerDay).toBe(0)
+    expect(plan.estimatedDailyMinutes).toBe(0)
+    expect(plan.planPhase).toBe('exam-day')
+    expect(plan.practiceGuidance).toContain('no practice is expected today')
+  })
+
+  it('moves to the next future test after an earlier exam has passed',()=>{
+    const plan=buildPracticePlanRecommendation({
+      ...baseSettings,
+      examTargets:[{label:'PSAT',date:isoDateFromToday(-1)},{label:'SAT',date:isoDateFromToday(45)}],
+    },QUESTION_BANK,[],performance(1200))
+    expect(plan.isExamDay).toBe(false)
+    expect(plan.activeExamLabel).toBe('SAT')
+    expect(plan.daysRemaining).toBe(45)
+    expect(plan.recommendedSessionsPerDay).toBe(1)
+  })
+
+
+  it('recognizes both valid exam dates and preserves entered official results',()=>{
+    const settings={...baseSettings,examTargets:[
+      {label:'PSAT',date:'2025-10-17',readingWritingScore:650,mathScore:720},
+      {label:'SAT',date:'2026-12-05'},
+    ]}
+    const targets=examTargetsFromSettings(settings)
+    expect(targets).toEqual([
+      {label:'PSAT',date:'2025-10-17',score:undefined,readingWritingScore:650,mathScore:720},
+      {label:'SAT',date:'2026-12-05',score:undefined,readingWritingScore:undefined,mathScore:undefined},
+    ])
+  })
+
 })

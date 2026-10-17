@@ -1,4 +1,4 @@
-import {useEffect,useState,type ReactNode} from 'react'
+import {useEffect,useRef,useState,type ReactNode} from 'react'
 import {CalendarDays,Clock3,ListChecks,PenLine,Target} from 'lucide-react'
 import AlexBox from './design-system/atoms/AlexBox'
 import AlexButton from './design-system/atoms/AlexButton'
@@ -27,7 +27,7 @@ import {dashboardTypography} from './design-system/theme'
 import {answerLabel,matchesAnswer} from './lib/answerCompare'
 import {getPdf} from './lib/pdfStore'
 import {availablePracticeTests,moduleLabel,practiceTestLabel,QUESTION_BANK} from './lib/questionBank'
-import {buildPracticePlanRecommendation} from './lib/practicePlan'
+import {buildPracticePlanRecommendation,examTargetsFromSettings} from './lib/practicePlan'
 import {rankReviewConcepts} from './lib/conceptReview'
 import {buildNationalMeritOutlook} from './lib/nationalMeritOutlook'
 import {estimateSectionPracticeScore} from './lib/performanceAnalytics'
@@ -62,6 +62,7 @@ export default function App(){
   const[authUser,setAuthUser]=useState<AuthUser|null>(null)
   const[authReady,setAuthReady]=useState(false)
   const[settingsCloudReady,setSettingsCloudReady]=useState(false)
+  const settingsSaveQueue=useRef<Promise<unknown>>(Promise.resolve())
   const[questionBank,setQuestionBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
   const[resumableSession,setResumableSession]=useState<ActivePracticeSession|null>(null)
   const[pendingPractice,setPendingPractice]=useState<{mode:SubjectMode;test:Settings['practiceTest'];questionIds?:string[];groups?:Array<{concept:string;questionIds:string[]}>}|null>(null)
@@ -161,9 +162,13 @@ export default function App(){
     return()=>{cancelled=true}
   },[authReady,authUser?.id])
   useEffect(()=>{
-    if(authUser&&settingsCloudReady){
-      void saveUserSettings(settings).catch(error=>console.warn('Supabase settings save failed',error))
-    }
+    if(!authUser||!settingsCloudReady)return
+    // Serialize writes: changing a test's date, label, and score quickly must
+    // never let an older Supabase response overwrite the latest settings.
+    settingsSaveQueue.current=settingsSaveQueue.current
+      .catch(error=>console.warn('Previous settings save failed',error))
+      .then(()=>saveUserSettings(settings))
+      .catch(error=>console.warn('Supabase settings save failed',error))
   },[settings,authUser?.id,settingsCloudReady])
   useEffect(()=>{
     setReviewContentTab('question')
@@ -727,7 +732,13 @@ export default function App(){
         projectedSelectionIndex={nationalMeritOutlook?.projectedSelectionIndex??null}
         estimateConfidence={performance.scoreEstimateConfidence}
         targetScore={practiceRecommendation.targetScore}
+        previousExam={examTargetsFromSettings(settings)
+          .filter(exam=>exam.readingWritingScore!==undefined&&exam.mathScore!==undefined&&exam.date<new Date().toLocaleDateString('en-CA'))
+          .sort((a,b)=>b.date.localeCompare(a.date))
+          .map(exam=>({label:exam.label,year:exam.date.slice(0,4),total:exam.readingWritingScore!+exam.mathScore!}))[0]??null}
         daysRemaining={practiceRecommendation.daysRemaining}
+        activeExamLabel={practiceRecommendation.activeExamLabel}
+        isExamDay={practiceRecommendation.isExamDay}
         questionsPerSession={settings.questionsPerSession}
         onChoosePracticeTest={()=>navigateTo('home')}
         onStartPractice={()=>void beginPractice(settings.mode)}
@@ -766,11 +777,13 @@ export default function App(){
             <DailyPracticeGoals
               attempts={attempts}
               sessions={sessions}
-              dailyQuestions={practiceRecommendation.questionsPerSession*practiceRecommendation.recommendedSessionsPerDay}
+              dailyQuestions={practiceRecommendation.dailyQuestionGoal}
               dailyMinutes={practiceRecommendation.estimatedDailyMinutes}
               failedQuestionCount={failedQuestionCount}
               recommendationLabel={performance.recommendation?.label}
               recommendationReason={performance.recommendation?.reason}
+              isExamDay={practiceRecommendation.isExamDay}
+              examLabel={practiceRecommendation.activeExamLabel}
             />
           }
         />
@@ -807,7 +820,16 @@ export default function App(){
           </AlexButton>}
           sx={{flex:{xs:'0 0 auto',xl:'1 1 0'}}}
         >
-          <AlexBox sx={{
+          {practiceRecommendation.isExamDay
+            ?<AlexBox sx={{display:'flex',flexDirection:'column',justifyContent:'center',gap:.75,py:1.1}}>
+              <AlexBox sx={{fontSize:22,fontWeight:850,color:'#08275B'}}>
+                {practiceRecommendation.activeExamLabel??'Exam'} test day
+              </AlexBox>
+              <AlexBox sx={{fontSize:dashboardTypography.supportBody,color:'#475467'}}>
+                No practice expected today. Your plan continues for the next exam.
+              </AlexBox>
+            </AlexBox>
+            :<AlexBox sx={{
             display:'grid',
             gridTemplateColumns:{xs:'minmax(0,1fr)',sm:'repeat(2,minmax(0,1fr))'},
             columnGap:0,
@@ -817,7 +839,7 @@ export default function App(){
               {label:'Daily time',value:`${practiceRecommendation.estimatedDailyMinutes} min`,icon:<Clock3 size={13}/>},
               {label:'Focus',value:practiceRecommendation.focusLabel??'Balanced',icon:<Target size={13}/>},
               {label:'Session size',value:`${settings.questionsPerSession} questions`,icon:<ListChecks size={13}/>},
-              {label:'Pace',value:`${practiceRecommendation.recommendedSessionsPerDay}/day`,icon:<CalendarDays size={13}/>},
+              {label:'Daily questions',value:`${practiceRecommendation.dailyQuestionGoal} questions`,icon:<CalendarDays size={13}/>},
             ].map((item,index)=><AlexBox
               key={item.label}
               sx={{
@@ -873,6 +895,7 @@ export default function App(){
               </AlexBox>
             </AlexBox>)}
           </AlexBox>
+          }
         </DashboardCard>
       </AlexBox>
     </AlexBox>

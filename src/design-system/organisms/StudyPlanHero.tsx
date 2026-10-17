@@ -15,7 +15,10 @@ type Props={
   projectedSelectionIndex:number|null
   estimateConfidence:{label:string;within80:number;sigmaPoints:number}|null
   targetScore:number|null
+  previousExam?:{label:string;year:string;total:number}|null
   daysRemaining:number
+  activeExamLabel:string|null
+  isExamDay:boolean
   questionsPerSession:number
   onChoosePracticeTest:()=>void
   onStartPractice:()=>void
@@ -24,7 +27,7 @@ type Props={
 }
 
 export default function StudyPlanHero({
-  accuracy,estimatedScore,scoreBreakdown,nationalMeritChance,projectedSelectionIndex,estimateConfidence,targetScore,daysRemaining,questionsPerSession,
+  accuracy,estimatedScore,scoreBreakdown,nationalMeritChance,projectedSelectionIndex,estimateConfidence,targetScore,previousExam,daysRemaining,activeExamLabel,isExamDay,questionsPerSession,
   onChoosePracticeTest,onStartPractice,onStartPreTestReview,showPreTestReview,
 }:Props){
   return <AlexSurface
@@ -38,7 +41,7 @@ export default function StudyPlanHero({
     <AlexBox sx={{position:'relative',zIndex:1,p:{xs:1.1,sm:1.3,md:1.45,lg:1.6},display:'flex',flexDirection:'column',justifyContent:'center',minWidth:0,maxWidth:'100%',overflow:'hidden'}}>
       <AlexText sx={{fontSize:dashboardTypography.eyebrow,textTransform:'uppercase',letterSpacing:'.12em',fontWeight:850,color:'#245F9E'}}>Study plan</AlexText>
       <AlexText component="h1" sx={{fontFamily:'Georgia, "Times New Roman", serif',fontSize:dashboardTypography.heroTitle,lineHeight:1.04,letterSpacing:'-.035em',mt:1,mb:1.5,color:'#08275B'}}>
-        Your SAT practice plan
+        Your SAT & PSAT practice plan
       </AlexText>
       <AlexText sx={{color:'#3F5E86',fontSize:dashboardTypography.heroBody,lineHeight:1.6,maxWidth:650}}>
         Keep your goal in view, focus on the questions that need attention, and make steady progress without overloading each day.
@@ -69,7 +72,7 @@ export default function StudyPlanHero({
         title="Current estimate"
         value={estimatedScore??'—'}
         valueFontSize={dashboardTypography.metricValue}
-        valueTrailing={<AlexBox sx={{display:'inline-flex','@media (min-width:1600px)':{display:'none'}}}>
+        valueTrailing={<AlexBox sx={{display:'inline-flex'}}>
           <AlexInfoTooltipButton
             label="Score estimate information"
             title={<>
@@ -80,7 +83,9 @@ export default function StudyPlanHero({
                 Total: {estimatedScore}. Each question’s probability incorporates its earlier answers, weighted toward more recent attempts.<br/>
                 {scoreBreakdown.change!==null&&<>Change since previous completed session: {scoreBreakdown.change>0?'+':''}{scoreBreakdown.change} points.<br/></>}
               </>:<>Complete questions in both sections to see a breakdown.<br/></>}
-              <br/><b>National Merit outlook</b><br/>
+              <br/><b>Previous official exam</b><br/>
+              {previousExam?`${previousExam.label} ${previousExam.year}: ${previousExam.total} (actual score). This is a historical reference, not a directly comparable SAT practice-score change.`:'No previous official score recorded.'}
+              <br/><br/><b>National Merit outlook</b><br/>
               {nationalMeritChance!==null
                 ?`${nationalMeritChance}% estimated qualifying outlook${projectedSelectionIndex!==null?` · projected Selection Index ~${projectedSelectionIndex}`:''}.`
                 :'The National Merit outlook is still calibrating.'}
@@ -155,8 +160,8 @@ export default function StudyPlanHero({
           tone="lavender"
           variant="compact"
           icon={<CalendarDays/>}
-          title="Days until exam"
-          value={daysRemaining}
+          title={isExamDay?'Exam day':'Days until exam'}
+          value={isExamDay?(activeExamLabel??'Today'):daysRemaining}
           valueFontSize={dashboardTypography.metricValue}
           sx={{justifyContent:'center'}}
         />
