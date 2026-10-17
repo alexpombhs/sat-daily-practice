@@ -1,5 +1,5 @@
 import {describe,expect,it} from 'vitest'
-import {buildPracticePlanRecommendation} from './practicePlan'
+import {buildPracticePlanRecommendation,examTargetsFromSettings} from './practicePlan'
 import type {PerformanceAnalytics} from './performanceAnalytics'
 import {QUESTION_BANK} from './questionBank'
 import type {Attempt,Settings} from '../types'
@@ -111,6 +111,19 @@ describe('practice plan recommendations',()=>{
     expect(plan.activeExamLabel).toBe('SAT')
     expect(plan.daysRemaining).toBe(45)
     expect(plan.recommendedSessionsPerDay).toBe(1)
+  })
+
+
+  it('recognizes both valid exam dates and preserves entered official results',()=>{
+    const settings={...baseSettings,examTargets:[
+      {label:'PSAT',date:'2026-10-17',score:1370},
+      {label:'SAT',date:'2026-12-05'},
+    ]}
+    const targets=examTargetsFromSettings(settings)
+    expect(targets).toEqual([
+      {label:'PSAT',date:'2026-10-17',score:1370},
+      {label:'SAT',date:'2026-12-05',score:undefined},
+    ])
   })
 
 })
