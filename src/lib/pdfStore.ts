@@ -108,13 +108,16 @@ export function sharedSourceCandidates(testId:PracticeTestId,kind:PdfKind){
 async function loadCanonicalSource(testId:PracticeTestId,kind:PdfKind){
   let lastError:unknown=null
   for(const url of sharedSourceCandidates(testId,kind)){
-    try{
-      const bytes=await fetchPdf(url,testId,kind)
-      void storeBytes(testId,kind,bytes).catch(error=>console.warn('Unable to update optional SAT source cache.',error))
-      return bytes
-    }catch(error){
-      lastError=error
-      console.warn(`Shared SAT ${testId} ${kind} source failed: ${url}`,error)
+    const attempts=testId==='practice-test-10'?2:1
+    for(let attempt=1;attempt<=attempts;attempt++){
+      try{
+        const bytes=await fetchPdf(url,testId,kind)
+        void storeBytes(testId,kind,bytes).catch(error=>console.warn('Unable to update optional SAT source cache.',error))
+        return bytes
+      }catch(error){
+        lastError=error
+        console.warn(`Shared SAT ${testId} ${kind} source failed (attempt ${attempt}/${attempts}): ${url}`,error)
+      }
     }
   }
   if(testId==='practice-test-9'||testId==='practice-test-10'){
