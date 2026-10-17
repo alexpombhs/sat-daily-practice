@@ -26,23 +26,35 @@ const OFFICIAL_SOURCES:Record<PracticeTestId,{questions:string;answers:string}>=
     questions:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-9-digital.pdf',
     answers:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-9-answers-digital.pdf',
   },
+  'practice-test-10':{
+    questions:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-10-digital.pdf',
+    answers:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-10-answers-digital.pdf',
+  },
 }
 const supabaseUrl=import.meta.env.VITE_SUPABASE_URL as string|undefined
 export type PdfKind='questions'|'answers'
 
 // Validate the actual PT9 content, not byte-for-byte PDF metadata.
 // Source files can be re-optimized upstream without changing their questions.
-async function verifiedPt9Bytes(testId:PracticeTestId,kind:PdfKind,bytes:ArrayBuffer){
-  if(testId!=='practice-test-9')return true
+async function verifiedCanonicalBytes(testId:PracticeTestId,kind:PdfKind,bytes:ArrayBuffer){
+  if(testId!=='practice-test-9'&&testId!=='practice-test-10')return true
   const {GlobalWorkerOptions,getDocument}=await import('pdfjs-dist')
   GlobalWorkerOptions.workerSrc=new URL('pdfjs-dist/build/pdf.worker.min.mjs',import.meta.url).toString()
   const doc=await getDocument({data:new Uint8Array(bytes.slice(0))}).promise
   try{
     if(kind==='questions'&&doc.numPages!==56)return false
     if(kind==='answers'&&doc.numPages!==47)return false
-    const page=await doc.getPage(kind==='questions'?34:31)
+    const pageNumber=testId==='practice-test-10'
+      ?kind==='questions'?34:32
+      :kind==='questions'?34:31
+    const page=await doc.getPage(pageNumber)
     const content=await page.getTextContent()
     const text=content.items.flatMap(item=>'str' in item?[item.str]:[]).join(' ').toLowerCase()
+    if(testId==='practice-test-10'){
+      return kind==='questions'
+        ?text.includes('used car lot')&&text.includes('system of linear equations')
+        :text.includes('math')&&text.includes('module 1')&&text.includes('question 1')&&text.includes('used car lot')
+    }
     return kind==='questions'
       ?text.includes('triangle')&&text.includes('perimeter')&&text.includes('centimeters')
       :text.includes('question 1')&&text.includes('triangle')
@@ -52,7 +64,7 @@ async function verifiedPt9Bytes(testId:PracticeTestId,kind:PdfKind,bytes:ArrayBu
 const inMemorySources=new Map<string,Promise<ArrayBuffer|null>>()
 
 function openDb():Promise<IDBDatabase>{return new Promise((resolve,reject)=>{const req=indexedDB.open(DB,1);req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains(STORE))req.result.createObjectStore(STORE)};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
-function storageKey(testId:PracticeTestId,kind:PdfKind){return `v${testId==='practice-test-9'?CACHE_VERSION+10:testId==='practice-test-8'?CACHE_VERSION+1:CACHE_VERSION}:${testId}:${kind}`}
+function storageKey(testId:PracticeTestId,kind:PdfKind){return `v${testId==='practice-test-10'?CACHE_VERSION+20:testId==='practice-test-9'?CACHE_VERSION+10:testId==='practice-test-8'?CACHE_VERSION+1:CACHE_VERSION}:${testId}:${kind}`}
 function memoryKey(testId:PracticeTestId,kind:PdfKind){return `${testId}:${kind}`}
 
 async function storeBytes(testId:PracticeTestId,kind:PdfKind,bytes:ArrayBuffer){
@@ -79,7 +91,7 @@ async function fetchPdf(url:string,expectedTestId?:PracticeTestId,expectedKind?:
   if(expectedKind){const actual=response.headers.get('x-sat-source-kind');if(actual&&actual!==expectedKind)throw new Error(`Wrong SAT source kind returned: expected ${expectedKind}, received ${actual}.`)}
   const bytes=await response.arrayBuffer()
   if(!bytes.byteLength)throw new Error('PDF source returned an empty file.')
-  if(expectedTestId&&expectedKind&&!(await verifiedPt9Bytes(expectedTestId,expectedKind,bytes)))throw new Error('PT9 PDF is not the expected official question or explanation document.')
+  if(expectedTestId&&expectedKind&&!(await verifiedCanonicalBytes(expectedTestId,expectedKind,bytes)))throw new Error(`${expectedTestId} PDF is not the expected official question or explanation document.`)
   return bytes
 }
 
@@ -103,13 +115,16 @@ async function loadCanonicalSource(testId:PracticeTestId,kind:PdfKind){
       console.warn(`Shared SAT ${testId} ${kind} source failed: ${url}`,error)
     }
   }
-  if(testId==='practice-test-9')throw new Error(lastError instanceof Error?`PT9 ${kind} PDF unavailable: ${lastError.message}`:`PT9 ${kind} PDF could not be loaded.`)
+  if(testId==='practice-test-9'||testId==='practice-test-10'){
+    const label=testId==='practice-test-10'?'PT10':'PT9'
+    throw new Error(lastError instanceof Error?`${label} ${kind} PDF unavailable: ${lastError.message}`:`${label} ${kind} PDF could not be loaded.`)
+  }
   return null
 }
 
 async function loadCachedThenShared(testId:PracticeTestId,kind:PdfKind){
   const cached=await readStored(testId,kind)
-  if(cached&&await verifiedPt9Bytes(testId,kind,cached))return cached
+  if(cached&&await verifiedCanonicalBytes(testId,kind,cached))return cached
   // Source PDFs are immutable by test ID; the PT8 cache-version bump invalidates older mismatched copies.
 
   // Official SAT PDFs are immutable for a given practice-test ID. Once a browser
