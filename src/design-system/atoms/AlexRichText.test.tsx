@@ -42,4 +42,31 @@ describe('AlexRichText inline math and currency',()=>{
     expect(container.textContent).toContain('$x')
     expect(container.querySelector('.katex')).toBeFalsy()
   })
+  it('recognizes comma-containing closed math even when it starts with numbers',()=>{
+    const {container}=render(<AlexRichText text={'Coordinates $(4,5)$ and $1,000$ and $x,y$'}/>)
+    expect(container.querySelectorAll('.rich-math.inline .katex')).toHaveLength(3)
+    expect(container.textContent).not.toContain('$')
+  })
+  it('keeps spaced comma-separated prices as currency',()=>{
+    const {container}=render(<AlexRichText text={'Items cost $1,250 $2,400 and $3,500.'}/>)
+    expect(container.textContent).toBe('Items cost $1,250 $2,400 and $3,500.')
+    expect(container.querySelector('.katex')).toBeFalsy()
+  })
+
+  it('treats a currency amount as complete without a closing dollar before math',()=>{
+    const {container}=render(<AlexRichText text={'Pay $1,235 $x^2$ for the quantity.'}/>)
+    expect(container.textContent).toContain('$1,235')
+    expect(container.querySelectorAll('.rich-math.inline .katex')).toHaveLength(1)
+  })
+  it('supports two currency amounts each followed by independent math',()=>{
+    const {container}=render(<AlexRichText text={'Pay $1,235 $x^2$ and $2,400 $y^2$ for both.'}/> )
+    expect(container.textContent).toContain('$1,235')
+    expect(container.textContent).toContain('$2,400')
+    expect(container.querySelectorAll('.rich-math.inline .katex')).toHaveLength(2)
+  })
+  it('treats a closed comma expression as math, not currency',()=>{
+    const {container}=render(<AlexRichText text={'$1,235$ and $(2,3)$'}/>)
+    expect(container.querySelectorAll('.rich-math.inline .katex')).toHaveLength(2)
+  })
+
 })

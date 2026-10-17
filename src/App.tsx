@@ -522,13 +522,14 @@ export default function App(){
     </>
   }
 
-  if(view==='pre-test-question')return withSidebar('dashboard',<main className="practice">
+  if(view==='pre-test-question')return withSidebar('dashboard',<main className="practice pre-test-question-page">
     <AlexBox sx={{display:'flex',alignItems:'center',justifyContent:'space-between',p:1,mb:1}}>
       <AlexBox sx={{fontWeight:850,color:'#08275B'}}>PRE-TEST REVIEW · Individual question</AlexBox>
       <AlexButton tone="secondary" onClick={()=>navigateTo('pre-test-review')}>Back to concepts</AlexButton>
     </AlexBox>
     {preTestQuestion?<div className="practice-workspace">
       <section className="question-panel">
+        <div className="pre-test-question-scroll">
         <div className="question-heading">
           <div><span>QUESTION {preTestQuestion.number}</span><b>{preTestQuestion.subject==='math'?'Math':'Reading & Writing'}</b></div>
           <AlexStatusChip>REVIEW</AlexStatusChip>
@@ -543,6 +544,7 @@ export default function App(){
         {reviewContentTab==='question'
           ?<QuestionContent question={preTestQuestion} bytes={qpdf} alt={`Question ${preTestQuestion.number}`}/>
           :<AlexBox sx={{minHeight:{xs:420,md:560},width:'100%'}}><ExplanationContent question={preTestQuestion} bytes={apdf}/></AlexBox>}
+        </div>
       </section>
       <PracticeAnswerPanel
         question={preTestQuestion}
@@ -822,7 +824,7 @@ export default function App(){
         >
           {practiceRecommendation.isExamDay
             ?<AlexBox sx={{display:'flex',flexDirection:'column',justifyContent:'center',gap:.75,py:1.1}}>
-              <AlexBox sx={{fontSize:22,fontWeight:850,color:'#08275B'}}>
+              <AlexBox sx={{fontFamily:'Georgia, "Times New Roman", serif',fontSize:dashboardTypography.supportTitle,fontWeight:700,lineHeight:1,letterSpacing:'-.02em',color:'#08275B'}}>
                 {practiceRecommendation.activeExamLabel??'Exam'} test day
               </AlexBox>
               <AlexBox sx={{fontSize:dashboardTypography.supportBody,color:'#475467'}}>

@@ -85,3 +85,9 @@
 .reading-paired-text{display:grid;gap:7px}
 .reading-paired-label{font-weight:700;line-height:1.25}
 .reading-paired-quote{margin:0;padding-top:4px;padding-bottom:4px}
+
+/* Consecutive display equations form one compact system rather than separate paragraphs. */
+.structured-lines p.structured-display-equation{margin-bottom:6px}
+.structured-lines p.structured-display-equation + p.structured-display-equation{margin-top:0}
+.structured-lines p.structured-display-equation .rich-math.display{margin:2px 0;padding:0}
+.structured-lines p.structured-display-equation + p:not(.structured-display-equation){margin-top:14px}

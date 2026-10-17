@@ -35,58 +35,45 @@ function renderMathAwareText(text:string,keyPrefix:string){
   const nodes:ReactNode[]=[]
   let cursor=0
   let index=0
-
-  const pushText=(value:string)=>{
-    if(value)nodes.push(value)
-  }
+  const pushText=(value:string)=>{if(value)nodes.push(value)}
 
   while(cursor<text.length){
     const dollar=text.indexOf('$',cursor)
-    if(dollar<0){
-      pushText(text.slice(cursor))
-      break
-    }
-
+    if(dollar<0){pushText(text.slice(cursor));break}
     pushText(text.slice(cursor,dollar))
 
     if(text.startsWith('$$',dollar)){
       const end=text.indexOf('$$',dollar+2)
       if(end>=0){
-        const math=text.slice(dollar+2,end)
-        nodes.push(renderMath(math,true,`${keyPrefix}-math-${index++}`))
+        nodes.push(renderMath(text.slice(dollar+2,end),true,`${keyPrefix}-math-${index++}`))
         cursor=end+2
         continue
       }
-      pushText('$$')
-      cursor=dollar+2
-      continue
+      pushText('$$');cursor=dollar+2;continue
     }
 
+    const end=text.indexOf('$',dollar+1)
+    const candidate=end>=0?text.slice(dollar+1,end):''
+    // An explicitly closed compact expression such as $1,235$ or $(x,y)$ is math.
+    // A currency amount followed by whitespace does not need a closing delimiter.
+    if(end>=0&&candidate.includes(',')&&!/\s/.test(candidate)&&isLikelyMathToken(candidate)){
+      nodes.push(renderMath(candidate,false,`${keyPrefix}-math-${index++}`))
+      cursor=end+1
+      continue
+    }
     const currency=currencyAt(text,dollar)
     if(currency){
       pushText(currency)
       cursor=dollar+currency.length
       continue
     }
-
-    const end=text.indexOf('$',dollar+1)
-    if(end<0){
-      pushText('$')
-      cursor=dollar+1
-      continue
-    }
-
-    const math=text.slice(dollar+1,end)
-    if(math.trim()){
-      nodes.push(renderMath(math,false,`${keyPrefix}-math-${index++}`))
+    if(end>=0&&candidate.trim()){
+      nodes.push(renderMath(candidate,false,`${keyPrefix}-math-${index++}`))
       cursor=end+1
       continue
     }
-
-    pushText('$')
-    cursor=dollar+1
+    pushText('$');cursor=dollar+1
   }
-
   return nodes.length?nodes:[text]
 }
 
@@ -95,7 +82,6 @@ export default function AlexRichText({text,className}:Props){
   let cursor=0
   let index=0
   UNDERLINE_MARKUP.lastIndex=0
-
   let match:RegExpExecArray|null
   while((match=UNDERLINE_MARKUP.exec(text))!==null){
     if(match.index>cursor){
@@ -105,10 +91,8 @@ export default function AlexRichText({text,className}:Props){
     cursor=match.index+match[0].length
     index++
   }
-
   if(cursor<text.length){
     nodes.push(<Fragment key={`text-${index}`}>{renderMathAwareText(text.slice(cursor),`text-${index}`)}</Fragment>)
   }
-
   return <span className={className}>{nodes.length?nodes:renderMathAwareText(text,'text')}</span>
 }

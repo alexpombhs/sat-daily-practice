@@ -92,7 +92,7 @@ async function explanationBounds(page:PDFPageProxy,scale:number,questionNumber:n
   // Start just above the current heading and stop just before the next heading.
   // This intentionally excludes adjacent question explanations on the same page.
   const top=Math.max(0,current.y-10*scale)
-  const bottom=Math.min(viewport.height,next?next.y-10*scale:viewport.height-12*scale)
+  const bottom=Math.min(viewport.height,next?next.y-10*scale:viewport.height-52*scale)
   const blockItems=items.filter(item=>item.text&&item.y>=top&&item.y<bottom)
   if(!blockItems.length)return{left:0,right:viewport.width,top,bottom,viewport,currentFound:true,nextFound:!!next}
 
@@ -120,11 +120,15 @@ async function continuationExplanationBounds(page:PDFPageProxy,scale:number,next
   }
 
   const nextHeading=rows.find(row=>new RegExp(`^QUESTION\\s*${nextQuestionNumber}(?:\\s|$)`,'i').test(row.text))
+  // Module numbering restarts at question 1. If a continuation page starts a
+  // different question sequence, don't attach the next module's explanation.
+  const firstQuestionHeading=rows.find(row=>/^QUESTION\\s+\\d+(?:\\s|$)/i.test(row.text))
+  if(firstQuestionHeading&&!nextHeading)return null
   const footerCutoff=viewport.height-52*scale
   const usable=items.filter(item=>{
     if(!item.text||item.y<38*scale||item.y>=footerCutoff)return false
     const normalized=item.text.replace(/\s+/g,' ').trim()
-    if(/^SAT PRACTICE TEST/i.test(normalized))return false
+    if(/^SAT (?:PRACTICE TEST|ANSWER EXPLANATIONS)/i.test(normalized))return false
     return true
   })
 
@@ -203,7 +207,7 @@ export default function SourceSlice({pdfKey,bytes,page,questionNumber,alt,zoom=1
   useEffect(()=>{
     let cancelled=false;let objectUrl='';const renderTasks:{cancel:()=>void;promise:Promise<void>}[]=[]
     const cropKey=sourceCrop?`${sourceCrop.x},${sourceCrop.y},${sourceCrop.width},${sourceCrop.height}`:'auto'
-    const imageKey=`v13:${practiceTestId}:${pdfKey}:${bytes.byteLength}:${page}:${questionNumber}:${cropKey}`
+    const imageKey=`${isQuestion?'v13':'v15'}:${practiceTestId}:${pdfKey}:${bytes.byteLength}:${page}:${questionNumber}:${cropKey}`
     async function showBlob(blob:Blob){objectUrl=URL.createObjectURL(blob);if(!cancelled)setSrc(objectUrl)}
     async function render(){
       try{
