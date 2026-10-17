@@ -100,9 +100,17 @@ export default function StudyPlanHero({
             </>}
           />
         </AlexBox>}
-        subtitle={<AlexText sx={{fontSize:dashboardTypography.supportBody,fontWeight:750,color:'#245F9E'}}>
-          {estimatedScore!==null?'Keep building on your progress!':'Your progress starts here'}
-        </AlexText>}
+        subtitle={<AlexBox sx={{display:'grid',gap:.25,pr:{xs:7,sm:9},minWidth:0}}>
+          <AlexText sx={{fontSize:dashboardTypography.supportBody,fontWeight:750,color:'#245F9E'}}>
+            {estimatedScore!==null?'Keep building on your progress!':'Your progress starts here'}
+          </AlexText>
+          {nationalMeritChance!==null&&<AlexText sx={{fontSize:dashboardTypography.supportBody,color:'#3F5E86'}}>
+            {nationalMeritChance}% National Merit outlook
+          </AlexText>}
+          {estimateConfidence&&<AlexText sx={{fontSize:dashboardTypography.supportBody,color:'#3F5E86'}}>
+            {estimateConfidence.within80}% confidence within ±80 points
+          </AlexText>}
+        </AlexBox>}
         decoration={<>
           <AlexBox sx={{
             position:'absolute',
