@@ -1,21 +1,77 @@
+import {Plus,Trash2} from 'lucide-react'
 import AlexAccordion from '../atoms/AlexAccordion'
 import AlexBox from '../atoms/AlexBox'
+import AlexButton from '../atoms/AlexButton'
+import AlexIconButton from '../atoms/AlexIconButton'
 import AlexNumberField from '../atoms/AlexNumberField'
 import AlexText from '../atoms/AlexText'
 import AlexTextField from '../atoms/AlexTextField'
 import PracticeSettingField from './PracticeSettingField'
 import SettingsFieldGroup from './SettingsFieldGroup'
-import type {Settings} from '../../types'
+import type {ExamTarget,Settings} from '../../types'
 
 type Props={settings:Settings;onChange:(settings:Settings)=>void}
 
+function normalizedTargets(settings:Settings):ExamTarget[]{
+  if(settings.examTargets?.length)return settings.examTargets
+  return settings.targetExamDate?[{label:'Exam',date:settings.targetExamDate}]:[]
+}
+
 export default function PracticeGoalSettings({settings,onChange}:Props){
+  const examTargets=normalizedTargets(settings)
+
+  function saveExamTargets(next:ExamTarget[]){
+    const sorted=next
+      .map(target=>({label:target.label.trim()||'Exam',date:target.date}))
+      .filter(target=>target.date)
+      .sort((a,b)=>a.date.localeCompare(b.date))
+    onChange({...settings,examTargets:sorted,targetExamDate:sorted[0]?.date})
+  }
+
+  function updateTarget(index:number,patch:Partial<ExamTarget>){
+    const next=examTargets.map((target,targetIndex)=>targetIndex===index?{...target,...patch}:target)
+    saveExamTargets(next)
+  }
+
+  function addTarget(){
+    const nextDate=new Date()
+    nextDate.setMonth(nextDate.getMonth()+2)
+    const date=`${nextDate.getFullYear()}-${String(nextDate.getMonth()+1).padStart(2,'0')}-${String(nextDate.getDate()).padStart(2,'0')}`
+    saveExamTargets([...examTargets,{label:'SAT',date}])
+  }
+
   return <AlexBox sx={{display:'grid',gap:2}}>
     <SettingsFieldGroup>
       <PracticeSettingField
-        label="Exam date"
-        helperText="Used to calculate how much practice to do each day."
-        control={<AlexTextField fullWidth size="small" type="date" label="Exam date" value={settings.targetExamDate??''} InputLabelProps={{shrink:true}} onChange={event=>onChange({...settings,targetExamDate:event.target.value})}/>}
+        label="Test dates"
+        helperText="Add each PSAT or SAT date. Test days are rest days and are not counted as missed practice."
+        control={<AlexBox sx={{display:'grid',gap:1}}>
+          {examTargets.map((target,index)=><AlexBox key={`${target.date}-${index}`} sx={{display:'grid',gridTemplateColumns:'minmax(90px,.7fr) minmax(145px,1fr) auto',gap:.75,alignItems:'center'}}>
+            <AlexTextField
+              fullWidth
+              size="small"
+              label="Test"
+              value={target.label}
+              placeholder="PSAT or SAT"
+              onChange={event=>updateTarget(index,{label:event.target.value})}
+            />
+            <AlexTextField
+              fullWidth
+              size="small"
+              type="date"
+              label="Date"
+              value={target.date}
+              InputLabelProps={{shrink:true}}
+              onChange={event=>updateTarget(index,{date:event.target.value})}
+            />
+            <AlexIconButton label={`Remove ${target.label||'test'} date`} onClick={()=>saveExamTargets(examTargets.filter((_,targetIndex)=>targetIndex!==index))}>
+              <Trash2 size={16}/>
+            </AlexIconButton>
+          </AlexBox>)}
+          <AlexButton tone="quiet" startIcon={<Plus size={16}/>} onClick={addTarget} sx={{justifySelf:'start',px:1.25}}>
+            Add another test
+          </AlexButton>
+        </AlexBox>}
       />
       <PracticeSettingField
         label="Target score"
