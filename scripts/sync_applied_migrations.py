@@ -31,18 +31,28 @@ def remote_versions():
     proc=subprocess.run(["supabase","migration","list","--linked"],capture_output=True,text=True)
     if proc.returncode:
         raise RuntimeError("Unable to read remote migration history: "+proc.stderr)
-    rows=[]
+    # CLI output may use ANSI colors and either ASCII or Unicode table pipes.
+    output=re.sub(r"\\x1b\\[[0-9;]*[A-Za-z]","",proc.stdout+"\\n"+proc.stderr)
+    versions=set()
     header=False
-    for line in (proc.stdout+"\n"+proc.stderr).splitlines():
-        fields=[x.strip() for x in line.strip().strip("|").split("|")]
-        if len(fields)<2:continue
-        if fields[0].lower()=="local" and fields[1].lower()=="remote":
+    for line in output.splitlines():
+        normalized=line.replace("│","|")
+        cells=[cell.strip() for cell in normalized.strip().strip("|").split("|")]
+        if len(cells)<2:continue
+        if cells[0].lower()=="local" and cells[1].lower()=="remote":
             header=True
             continue
-        if VERSION.fullmatch(fields[1]):rows.append(fields[1])
-    if not header or not rows:
-        raise RuntimeError("Remote migration history was not parseable; no files changed")
-    return set(rows)
+        if VERSION.fullmatch(cells[1]):
+            versions.add(cells[1])
+    if versions:
+        return versions
+    if header:
+        # Valid empty migration history; no versions to reconcile.
+        return set()
+    # Include sanitized shape information for diagnosing unexpected CLI formats.
+    preview=[re.sub(r"\\d{14}","<version>",x.strip())[:160]
+             for x in output.splitlines() if x.strip()][:8]
+    raise RuntimeError("Unrecognized Supabase migration list format: "+repr(preview))
 
 def main():
     applied=remote_versions()
