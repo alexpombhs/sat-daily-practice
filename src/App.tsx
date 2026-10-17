@@ -529,6 +529,7 @@ export default function App(){
     </AlexBox>
     {preTestQuestion?<div className="practice-workspace">
       <section className="question-panel">
+        <div className="pre-test-question-scroll">
         <div className="question-heading">
           <div><span>QUESTION {preTestQuestion.number}</span><b>{preTestQuestion.subject==='math'?'Math':'Reading & Writing'}</b></div>
           <AlexStatusChip>REVIEW</AlexStatusChip>
@@ -543,6 +544,7 @@ export default function App(){
         {reviewContentTab==='question'
           ?<QuestionContent question={preTestQuestion} bytes={qpdf} alt={`Question ${preTestQuestion.number}`}/>
           :<AlexBox sx={{minHeight:{xs:420,md:560},width:'100%'}}><ExplanationContent question={preTestQuestion} bytes={apdf}/></AlexBox>}
+        </div>
       </section>
       <PracticeAnswerPanel
         question={preTestQuestion}
