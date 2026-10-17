@@ -42,7 +42,7 @@ async function verifiedPt9Bytes(testId:PracticeTestId,kind:PdfKind,bytes:ArrayBu
     if(kind==='answers'&&doc.numPages!==47)return false
     const page=await doc.getPage(kind==='questions'?34:31)
     const content=await page.getTextContent()
-    const text=content.items.filter((item):item is typeof item & {str:string}=>'str' in item).map(item=>item.str).join(' ').toLowerCase()
+    const text=content.items.flatMap(item=>'str' in item?[item.str]:[]).join(' ').toLowerCase()
     return kind==='questions'
       ?text.includes('triangle')&&text.includes('perimeter')&&text.includes('centimeters')
       :text.includes('question 1')&&text.includes('triangle')
