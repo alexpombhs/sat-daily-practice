@@ -162,3 +162,21 @@ Imported **33/33 questions** into canonical `sat_question_bank` (IDs `practice-t
 ### Remaining sign-off
 
 Compare each reconstructed question and original source side by side in the running app (especially Q7, Q9, Q14, Q15, Q32, Q33) and inspect each rendered Explanation tab, including cross-page joins. Validate both narrow and desktop rendering, run the documented parsing lint and unit tests, and require the branch's build to pass before promoting any question to verified. Never mark a module verified from database presence or a PDF geometry audit alone.
+
+## PT8 concept-classification follow-up — 2026-10-17
+
+The canonical import initially left **all 120 PT8 questions without records in `sat_question_difficulty`**. This prevented otherwise imported questions from participating as related questions in Pre-Test Review. Classification records were subsequently added to Supabase and the per-module coverage query confirmed:
+
+| Module | Canonical questions | Classified | Nonempty concepts |
+| --- | ---: | ---: | ---: |
+| Math Module 1 | 27 | 27 | 27 |
+| Math Module 2 | 27 | 27 | 27 |
+| Reading & Writing Module 1 | 33 | 33 | 33 |
+| Reading & Writing Module 2 | 33 | 33 | 33 |
+| **Total** | **120** | **120** | **120** |
+
+PT8 Math Module 2 Q23 is tagged `systems of linear equations`, `no solution`, `parallel lines` and classified `medium`. It should map to the existing **Linear Equations & Systems** review group.
+
+**Scope of verification:** the database confirmed record coverage and this specific example's tags; it did **not** establish that every tag is semantically correct, nor that a live browser includes every eligible PT8 question. The existing 0/120 production-verified status above remains unchanged. Before release, audit granular tag accuracy against each question and test the question-bank loading/join and Pre-Test Review selection.
+
+**Benchmark changes learned from PT8:** use the rendering format accepted by each subject for semantic tables (RW2 Q14–Q15), preserve poem lines/underlining/research bullets, verify explanation crops that span PDF pages and end correctly at module boundaries, and ensure question/source/explanation scrolling does not displace the answer panel or review header. See `docs/PRACTICE_TEST_PARSING_STANDARDS.md` section 22.
