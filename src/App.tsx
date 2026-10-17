@@ -27,7 +27,7 @@ import {dashboardTypography} from './design-system/theme'
 import {answerLabel,matchesAnswer} from './lib/answerCompare'
 import {getPdf} from './lib/pdfStore'
 import {availablePracticeTests,moduleLabel,practiceTestLabel,QUESTION_BANK} from './lib/questionBank'
-import {buildPracticePlanRecommendation} from './lib/practicePlan'
+import {buildPracticePlanRecommendation,examTargetsFromSettings} from './lib/practicePlan'
 import {rankReviewConcepts} from './lib/conceptReview'
 import {buildNationalMeritOutlook} from './lib/nationalMeritOutlook'
 import {estimateSectionPracticeScore} from './lib/performanceAnalytics'
@@ -768,6 +768,7 @@ export default function App(){
         <PerformanceDashboard
           summary={performance}
           hasHistory={attempts.length>0}
+          examTargets={examTargetsFromSettings(settings)}
           compact
           compactRecommendationExtra={
             <DailyPracticeGoals
