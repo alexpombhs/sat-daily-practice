@@ -16,6 +16,7 @@ import DashboardCard from '../molecules/DashboardCard'
 import PerformanceChartCard from '../molecules/PerformanceChartCard'
 import QuestionStatsTable from '../molecules/QuestionStatsTable'
 import type {PerformanceAnalytics} from '../../lib/performanceAnalytics'
+import type {ExamTarget} from '../../types'
 
 export type PerformanceTimeRange='7d'|'14d'|'21d'|'30d'|'90d'|'all'|'custom'
 
@@ -30,6 +31,7 @@ type SessionReviewSummary={
 type Props={
   summary:PerformanceAnalytics
   hasHistory:boolean
+  examTargets?:ExamTarget[]
   compact?:boolean
   compactRecommendationExtra?:React.ReactNode
   questionsPdf?:ArrayBuffer|null
@@ -52,7 +54,7 @@ const chartTheme={
 }
 
 export default function PerformanceDashboard({
-  summary,hasHistory,compact=false,compactRecommendationExtra=null,questionsPdf=null,answersPdf=null,
+  summary,hasHistory,examTargets=[],compact=false,compactRecommendationExtra=null,questionsPdf=null,answersPdf=null,
   timeRange='30d',customStartDate='',customEndDate='',onTimeRangeChange,onCustomStartDateChange,onCustomEndDateChange,
   sessionHistory=[],onReviewSession,
 }:Props){
@@ -122,6 +124,12 @@ export default function PerformanceDashboard({
     :summary.weeklyScoreChange>0?'#027A48':'#B42318'
   const progressDelta=summary.weeklyScoreChange??latestDelta
   const progressDirection=progressDelta<0?'down' as const:'up' as const
+  const officialResults=examTargets
+    .filter(exam=>exam.readingWritingScore!==undefined&&exam.mathScore!==undefined)
+    .map(exam=>({...exam,total:exam.readingWritingScore!+exam.mathScore!}))
+    .sort((a,b)=>b.date.localeCompare(a.date))
+  const latestOfficial=officialResults[0]
+  const officialTitle=latestOfficial?`${latestOfficial.label} ${latestOfficial.date.slice(0,4)} · actual`:null
   const progressWord=!hasHistory?'Building':progressDelta>0?'Improving':progressDelta<0?'Keep going':'Steady'
   const progressColor=progressDirection==='up'?'#027A48':'#B42318'
   const progressTone=progressDirection==='up'?'green' as const:'peach' as const
@@ -154,15 +162,27 @@ export default function PerformanceDashboard({
       <MetricCard compact tone="cream" icon={<Clock3/>} label="Avg. time" value={hasHistory?formatMs(summary.averageMs):'—'}/>
       <MetricCard compact tone="green" icon={<BarChart3/>} label="Questions seen" value={`${summary.questionsSeen}/${summary.totalQuestions}`}/>
       <MetricCard compact tone="peach" icon={<TrendingUp/>} label="7-day score trend" value={weeklyScoreValue} valueColor={weeklyScoreColor}/>
-      <MetricCard
-        compact
-        tone={progressTone}
-        icon={<AlexProgressThumbIcon direction={progressDirection}/>}
-        label="Overall progress"
-        value={progressWord}
-        valueColor={progressColor}
-        valueFontSize={22}
-      />
+      {latestOfficial
+        ?<DashboardCard
+          tone="peach"
+          variant="metric"
+          icon={<TrendingUp/>}
+          title="Official exam score"
+          value={latestOfficial.total}
+          subtitle={<AlexBox sx={{display:'grid',gap:.25}}>
+            <AlexText sx={{fontSize:11.5,fontWeight:750,color:'#475467'}}>{officialTitle}</AlexText>
+            <AlexText sx={{fontSize:11,color:'#667085'}}>R&W {latestOfficial.readingWritingScore} · Math {latestOfficial.mathScore}</AlexText>
+          </AlexBox>}
+        />
+        :<MetricCard
+          compact
+          tone={progressTone}
+          icon={<AlexProgressThumbIcon direction={progressDirection}/>}
+          label="Overall progress"
+          value={progressWord}
+          valueColor={progressColor}
+          valueFontSize={22}
+        />}
       {summary.recommendation&&<DashboardCard
         tone="lavender"
         variant="support"
