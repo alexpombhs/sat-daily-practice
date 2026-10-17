@@ -773,7 +773,7 @@ export default function App(){
             <DailyPracticeGoals
               attempts={attempts}
               sessions={sessions}
-              dailyQuestions={practiceRecommendation.questionsPerSession*practiceRecommendation.recommendedSessionsPerDay}
+              dailyQuestions={practiceRecommendation.dailyQuestionGoal}
               dailyMinutes={practiceRecommendation.estimatedDailyMinutes}
               failedQuestionCount={failedQuestionCount}
               recommendationLabel={performance.recommendation?.label}
@@ -816,7 +816,16 @@ export default function App(){
           </AlexButton>}
           sx={{flex:{xs:'0 0 auto',xl:'1 1 0'}}}
         >
-          <AlexBox sx={{
+          {practiceRecommendation.isExamDay
+            ?<AlexBox sx={{display:'flex',flexDirection:'column',justifyContent:'center',gap:.75,py:1.1}}>
+              <AlexBox sx={{fontSize:22,fontWeight:850,color:'#08275B'}}>
+                {practiceRecommendation.activeExamLabel??'Exam'} test day
+              </AlexBox>
+              <AlexBox sx={{fontSize:dashboardTypography.supportBody,color:'#475467'}}>
+                No practice expected today. Your plan continues for the next exam.
+              </AlexBox>
+            </AlexBox>
+            :<AlexBox sx={{
             display:'grid',
             gridTemplateColumns:{xs:'minmax(0,1fr)',sm:'repeat(2,minmax(0,1fr))'},
             columnGap:0,
@@ -826,7 +835,7 @@ export default function App(){
               {label:'Daily time',value:`${practiceRecommendation.estimatedDailyMinutes} min`,icon:<Clock3 size={13}/>},
               {label:'Focus',value:practiceRecommendation.focusLabel??'Balanced',icon:<Target size={13}/>},
               {label:'Session size',value:`${settings.questionsPerSession} questions`,icon:<ListChecks size={13}/>},
-              {label:'Pace',value:`${practiceRecommendation.recommendedSessionsPerDay}/day`,icon:<CalendarDays size={13}/>},
+              {label:'Daily questions',value:`${practiceRecommendation.dailyQuestionGoal} questions`,icon:<CalendarDays size={13}/>},
             ].map((item,index)=><AlexBox
               key={item.label}
               sx={{
@@ -882,6 +891,7 @@ export default function App(){
               </AlexBox>
             </AlexBox>)}
           </AlexBox>
+          }
         </DashboardCard>
       </AlexBox>
     </AlexBox>
