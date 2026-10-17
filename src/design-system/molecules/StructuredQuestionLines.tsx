@@ -341,6 +341,25 @@ export default function StructuredQuestionLines({lines,reflowProse=false}:{lines
       }
     }
 
+    // Render consecutive standalone display equations in one KaTeX block.
+    const displayEquation=/^\$\$([\s\S]+)\$\$$/
+    if(displayEquation.test(line)){
+      const equations:string[]=[]
+      let end=index
+      while(end<sourceLines.length){
+        const match=cleanPdfMathArtifacts(sourceLines[end]).match(displayEquation)
+        if(!match)break
+        equations.push(match[1])
+        end++
+      }
+      if(equations.length>1){
+        const grouped='$$\\begin{gathered}'+equations.join(' \\\\ ')+'\\end{gathered}$$'
+        output.push(<p key={`equation-group-${index}`} className="structured-equation-group"><AlexRichText text={grouped}/></p>)
+        index=end
+        continue
+      }
+    }
+
     output.push(<p key={`line-${index}`} className={/^\$\$[\s\S]*\$\$/.test(line)?'structured-display-equation':undefined}><AlexRichText text={line}/></p>)
     index++
   }
