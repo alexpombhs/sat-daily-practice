@@ -50,7 +50,7 @@ export function usePracticeTestPdfState(question:PracticeQuestion,kind:PdfKind,f
       .finally(()=>{if(!cancelled)setLoading(false)})
 
     return()=>{cancelled=true}
-  },[testId,kind,trustedFallback,enabled])
+  },[question.id,testId,kind,trustedFallback,enabled])
 
   return {source,loading,error,usingFallback}
 }
