@@ -91,3 +91,8 @@ Rendered all **27 actual stored source-crop rectangles** from the uploaded offic
 Confirmed the Math Module 1 answer PDF has question headings on PDF pages 32–39, and Q27 explanation continues onto PDF page 40. The production explanation renderer stitches continuations; verify their actual boundaries in the browser, especially Q3, Q4, Q17, Q23 and Q27. A correct explanation **page** is not itself proof of a correct explanation **crop**.
 
 PT8 PDF cache should be reused once successfully fetched; do not disable caching while fixing stale content. No PDF binaries or per-question image blobs need to be persisted in the canonical question table.
+
+
+### Local explanation-crop review
+
+Rendered and reviewed a 27-item explanation contact sheet from the official answer PDF using the identified `QUESTION N` headings and page transitions. Every question 1–27 had its own correct heading. The continuation sections were included where the next question begins on a later PDF page, including Q3 (32→33), Q16 (35→36), Q19 (36→37), Q22 (37→38), Q24 (38→39), and Q27 (39→40). The current browser component derives these regions dynamically, so parity between this local inspection and the production renderer remains to be checked in-browser. Do not describe these as final verified application crops until that parity test is done.
