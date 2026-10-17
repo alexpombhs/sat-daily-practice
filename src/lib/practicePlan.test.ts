@@ -13,6 +13,33 @@ const performance=(score:number|null,focus:'english'|'math'='math'):PerformanceA
   accuracy:70,averageMs:60000,sessions:3,questionsSeen:20,totalQuestions:QUESTION_BANK.length,
   sections:[],questions:[],sessionMetrics:[],scoreTrend:[],latestScoreEstimate:score,weeklyScoreChange:null,scorePredictionBasis:null,scoreEstimateConfidence:null,
   recommendation:{subject:focus,label:focus==='math'?'Math':'Reading & Writing',reason:'Lower practice performance'},
+  it('does not schedule practice on an exam day and keeps the next test in the plan',()=>{
+    const today=isoDateFromToday(0)
+    const satDate=isoDateFromToday(45)
+    const plan=buildPracticePlanRecommendation({
+      ...baseSettings,
+      examTargets:[{label:'PSAT',date:today},{label:'SAT',date:satDate}],
+    },QUESTION_BANK,[],performance(1200))
+    expect(plan.isExamDay).toBe(true)
+    expect(plan.activeExamLabel).toBe('PSAT')
+    expect(plan.daysRemaining).toBe(0)
+    expect(plan.recommendedSessionsPerDay).toBe(0)
+    expect(plan.estimatedDailyMinutes).toBe(0)
+    expect(plan.planPhase).toBe('exam-day')
+    expect(plan.practiceGuidance).toContain('no practice is expected today')
+  })
+
+  it('moves to the next future test after an earlier exam has passed',()=>{
+    const plan=buildPracticePlanRecommendation({
+      ...baseSettings,
+      examTargets:[{label:'PSAT',date:isoDateFromToday(-1)},{label:'SAT',date:isoDateFromToday(45)}],
+    },QUESTION_BANK,[],performance(1200))
+    expect(plan.isExamDay).toBe(false)
+    expect(plan.activeExamLabel).toBe('SAT')
+    expect(plan.daysRemaining).toBe(45)
+    expect(plan.recommendedSessionsPerDay).toBe(1)
+  })
+
 })
 
 function isoDateFromToday(offsetDays:number){
