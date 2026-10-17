@@ -849,3 +849,72 @@ nav[aria-label="Mobile primary navigation"]{margin:0}
     min-height:340px;
   }
 }
+
+/* Question Bank desktop: pinned filters/sidebar; the selected question is the
+   only vertically scrolling content. PDF views expand naturally within it. */
+@media(min-width:901px){
+  .question-bank-page{
+    display:flex;
+    flex-direction:column;
+    height:calc(100dvh - 16px);
+    min-height:0;
+    overflow:hidden;
+    padding-bottom:12px;
+  }
+  .question-bank-heading{flex:0 0 auto}
+  .question-bank-workspace{
+    flex:1 1 auto;
+    min-height:0;
+    height:auto;
+    align-items:stretch;
+    overflow:hidden;
+  }
+  .question-bank-list{
+    position:static;
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+    height:100%;
+  }
+  .question-bank-list-scroll{
+    flex:1 1 auto;
+    min-height:0;
+    max-height:none;
+    overflow-y:auto;
+    scrollbar-width:none;
+  }
+  .question-bank-list-scroll::-webkit-scrollbar{display:none}
+  .question-bank-viewer{
+    display:flex;
+    flex-direction:column;
+    height:100%;
+    min-height:0;
+  }
+  .question-bank-viewer-header{flex:0 0 auto}
+  .question-bank-content-scroll{
+    flex:1 1 auto;
+    min-height:0;
+    min-width:0;
+    overflow-y:auto;
+    overflow-x:hidden;
+    overscroll-behavior:contain;
+  }
+  .question-bank-content-scroll .question-source-review-pane,
+  .question-bank-content-scroll .question-source-review-pane--source{
+    height:auto;
+    min-height:0;
+  }
+  .question-bank-content-scroll .source-viewer,
+  .question-bank-content-scroll .source-slice,
+  .question-bank-content-scroll .source-slice-content--zoomable,
+  .question-bank-content-scroll .question-source .source-slice-content--zoomable,
+  .question-bank-content-scroll .question-source-review-pane--source > [role="tabpanel"] > .source-viewer > .source-slice > .source-slice-content--zoomable{
+    height:auto;
+    min-height:0;
+    max-height:none;
+    overflow:visible;
+  }
+}
+@media(max-width:900px){
+  .question-bank-content-scroll{min-width:0}
+}
