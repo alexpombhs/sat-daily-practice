@@ -55,9 +55,9 @@ export default function StudyPlanHero({
 
     </AlexBox>
 
-    <AlexBox sx={{
+    <AlexBox className="study-plan-metrics" sx={{
       display:'grid',
-      gridTemplateRows:{xs:'auto auto',lg:'minmax(0,1fr) minmax(0,.78fr)'},
+      gridTemplateRows:{xs:'auto auto',lg:'minmax(0,1.2fr) minmax(0,.8fr)'},
       gap:{xs:.75,sm:1},
       position:'relative',
       zIndex:1,
@@ -100,7 +100,7 @@ export default function StudyPlanHero({
             </>}
           />
         </AlexBox>}
-        subtitle={<AlexBox sx={{minWidth:0,pr:{xs:7,sm:8}}}>
+        subtitle={<AlexBox className="study-plan-estimate-details" sx={{minWidth:0,pr:{xs:7,sm:8}}}>
           <AlexBox sx={{display:'flex',flexWrap:'wrap',alignItems:'center',columnGap:{xs:1,sm:1.5},rowGap:.25,mb:.3}}>
             <AlexText sx={{fontSize:'inherit',fontWeight:800,color:'inherit',whiteSpace:'nowrap'}}>
               Reading &amp; Writing {estimatedScore!==null&&scoreBreakdown?.english?scoreBreakdown.english.score:'—'}
@@ -143,7 +143,7 @@ export default function StudyPlanHero({
           </AlexBox>
           <Sparkles size={20} style={{position:'absolute',right:112,top:24}}/>
         </>}
-        sx={{pr:{xs:9,sm:11}}}
+        sx={{pr:{xs:9,sm:11},'@container (max-width: 520px)':{pr:1.25}}}
       />
 
       <AlexBox sx={{display:'grid',gridTemplateColumns:'repeat(2,minmax(0,1fr))',gap:{xs:.75,sm:1},minHeight:0,height:{lg:'100%'},minWidth:0,maxWidth:'100%'}}>
