@@ -117,6 +117,9 @@ function explicitTableAt(lines:string[],start:number){
 }
 
 function dataTableAt(lines:string[],start:number){
+  // Choice rows such as "B) -9", "C) 11", "D) 15" are not table headers.
+  // Only explicit [TABLE] or actual data headers should enter table parsing.
+  if(isChoiceStart(cleanPdfMathArtifacts(lines[start]??'')))return null
   const header=tableCells(lines[start])
   if(!header||header.some(isNumericCell))return null
 
