@@ -341,7 +341,7 @@ export default function StructuredQuestionLines({lines,reflowProse=false}:{lines
       }
     }
 
-    output.push(<p key={`line-${index}`}><AlexRichText text={line}/></p>)
+    output.push(<p key={`line-${index}`} className={/^\$\$[\s\S]*\$\$/.test(line)?'structured-display-equation':undefined}><AlexRichText text={line}/></p>)
     index++
   }
 
