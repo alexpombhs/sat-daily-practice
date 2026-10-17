@@ -30,6 +30,19 @@ const OFFICIAL_SOURCES:Record<PracticeTestId,{questions:string;answers:string}>=
 const supabaseUrl=import.meta.env.VITE_SUPABASE_URL as string|undefined
 export type PdfKind='questions'|'answers'
 
+// SHA-256 hashes checked against the user-supplied PT9 PDFs. Prevent a
+// mismatched source from silently appearing under a valid PT9 question ID.
+const PT9_EXPECTED_SHA256:Record<PdfKind,string>={
+  questions:'ff929c946ebfa8d8d7f199e52e1eb12d7cf7d68256b894846725df0da87a6d69',
+  answers:'5c06af4bd2379763fbaabdae16f9cd03e14cabc7ee041131ba6b2837f5bf4696',
+}
+async function verifiedPt9Bytes(testId:PracticeTestId,kind:PdfKind,bytes:ArrayBuffer){
+  if(testId!=='practice-test-9')return true
+  const hash=await crypto.subtle.digest('SHA-256',bytes)
+  const actual=[...new Uint8Array(hash)].map(value=>value.toString(16).padStart(2,'0')).join('')
+  return actual===PT9_EXPECTED_SHA256[kind]
+}
+
 const inMemorySources=new Map<string,Promise<ArrayBuffer|null>>()
 
 function openDb():Promise<IDBDatabase>{return new Promise((resolve,reject)=>{const req=indexedDB.open(DB,1);req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains(STORE))req.result.createObjectStore(STORE)};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
@@ -60,6 +73,7 @@ async function fetchPdf(url:string,expectedTestId?:PracticeTestId,expectedKind?:
   if(expectedKind){const actual=response.headers.get('x-sat-source-kind');if(actual&&actual!==expectedKind)throw new Error(`Wrong SAT source kind returned: expected ${expectedKind}, received ${actual}.`)}
   const bytes=await response.arrayBuffer()
   if(!bytes.byteLength)throw new Error('PDF source returned an empty file.')
+  if(expectedTestId&&expectedKind&&!(await verifiedPt9Bytes(expectedTestId,expectedKind,bytes)))throw new Error('PT9 PDF content does not match the supplied source; refusing to show the wrong questions.')
   return bytes
 }
 
@@ -86,7 +100,7 @@ async function loadCanonicalSource(testId:PracticeTestId,kind:PdfKind){
 
 async function loadCachedThenShared(testId:PracticeTestId,kind:PdfKind){
   const cached=await readStored(testId,kind)
-  if(cached)return cached
+  if(cached&&await verifiedPt9Bytes(testId,kind,cached))return cached
   // Source PDFs are immutable by test ID; the PT8 cache-version bump invalidates older mismatched copies.
 
   // Official SAT PDFs are immutable for a given practice-test ID. Once a browser
