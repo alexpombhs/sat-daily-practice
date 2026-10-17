@@ -919,3 +919,37 @@ nav[aria-label="Mobile primary navigation"]{margin:0}
 @media(max-width:900px){
   .question-bank-content-scroll{min-width:0}
 }
+
+/* Dashboard score cards are sometimes only ~450px wide inside a desktop
+   two-column layout. Respond to card width, not solely the viewport width. */
+.study-plan-metrics{container-type:inline-size}
+@container (max-width:520px){
+  .study-plan-metrics > :first-child{
+    padding:10px 12px!important;
+    gap:2px!important;
+  }
+  .study-plan-metrics > :first-child .study-plan-estimate-details{
+    padding-right:0!important;
+    padding-bottom:2px;
+    font-size:clamp(11px,2.9cqw,13px);
+  }
+  .study-plan-metrics > :first-child .study-plan-estimate-details > :first-child{
+    row-gap:0!important;
+    column-gap:8px!important;
+    margin-bottom:0!important;
+  }
+  .study-plan-metrics > :first-child .study-plan-estimate-details > :nth-child(2){
+    white-space:normal!important;
+    line-height:1.2;
+  }
+  .study-plan-metrics > :first-child > :last-child{
+    display:none!important;
+  }
+  .study-plan-metrics > :nth-child(2) > *{
+    padding:8px 10px!important;
+    gap:3px!important;
+  }
+  .study-plan-metrics > :nth-child(2) > * > :nth-child(2) > div{
+    font-size:clamp(23px,7cqw,32px)!important;
+  }
+}
