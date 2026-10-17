@@ -115,8 +115,7 @@ export default function StudyPlanHero({
               :accuracy!==null?'Calibrating National Merit outlook':'Complete a few questions to calibrate'}
           </AlexText>
           {estimateConfidence&&<AlexText sx={{
-            display:'none',
-            '@media (min-width:1600px)':{display:'block'},
+            display:'block',
             mt:.25,
             fontSize:'inherit',
             fontWeight:750,
