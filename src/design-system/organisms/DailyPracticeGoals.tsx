@@ -113,7 +113,7 @@ export default function DailyPracticeGoals({attempts,sessions,dailyQuestions,dai
     <DashboardCard tone="white" variant="support" title="Today's goals">
       {noPracticeToday
         ?<AlexBox sx={{display:'grid',gap:.45}}>
-          <AlexText sx={{fontSize:dashboardTypography.supportBody,fontWeight:800,color:'#08275B'}}>
+          <AlexText sx={isExamDay?{fontFamily:'Georgia, "Times New Roman", serif',fontSize:dashboardTypography.supportTitle,fontWeight:700,lineHeight:1,letterSpacing:'-.02em',color:'#08275B'}:{fontSize:dashboardTypography.supportBody,fontWeight:800,color:'#08275B'}}>
             {isExamDay?`${examLabel??'Exam'} day`:'No practice planned'}
           </AlexText>
           <AlexText sx={{fontSize:dashboardTypography.supportSecondary,color:'#667085',lineHeight:1.35}}>
