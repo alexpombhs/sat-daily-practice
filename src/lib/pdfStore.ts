@@ -29,7 +29,7 @@ export type PdfKind='questions'|'answers'
 const inMemorySources=new Map<string,Promise<ArrayBuffer|null>>()
 
 function openDb():Promise<IDBDatabase>{return new Promise((resolve,reject)=>{const req=indexedDB.open(DB,1);req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains(STORE))req.result.createObjectStore(STORE)};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
-function storageKey(testId:PracticeTestId,kind:PdfKind){return `v${CACHE_VERSION}:${testId}:${kind}`}
+function storageKey(testId:PracticeTestId,kind:PdfKind){return `v${testId==='practice-test-8'?CACHE_VERSION+1:CACHE_VERSION}:${testId}:${kind}`}
 function memoryKey(testId:PracticeTestId,kind:PdfKind){return `${testId}:${kind}`}
 
 async function storeBytes(testId:PracticeTestId,kind:PdfKind,bytes:ArrayBuffer){
@@ -48,7 +48,7 @@ async function readStored(testId:PracticeTestId,kind:PdfKind):Promise<ArrayBuffe
 }
 
 async function fetchPdf(url:string,expectedTestId?:PracticeTestId,expectedKind?:PdfKind){
-  const response=await fetch(url,{cache:'force-cache'})
+  const response=await fetch(url,{cache:expectedTestId==='practice-test-8'?'reload':'force-cache'})
   if(!response.ok)throw new Error(`PDF source returned ${response.status}.`)
   const contentType=response.headers.get('content-type')??''
   if(contentType&&!contentType.includes('pdf')&&!contentType.includes('octet-stream'))throw new Error(`Unexpected PDF content type: ${contentType}`)
@@ -82,7 +82,8 @@ async function loadCanonicalSource(testId:PracticeTestId,kind:PdfKind){
 
 async function loadCachedThenShared(testId:PracticeTestId,kind:PdfKind){
   const cached=await readStored(testId,kind)
-  if(cached)return cached
+  if(cached&&testId!=='practice-test-8')return cached
+  // PT8 must use the canonical source rather than a previously uploaded or mismatched cached PDF.
 
   // Official SAT PDFs are immutable for a given practice-test ID. Once a browser
   // has a verified copy, reuse it instead of proxying the full PDF through
