@@ -22,6 +22,10 @@ const OFFICIAL_SOURCES:Record<PracticeTestId,{questions:string;answers:string}>=
     questions:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-8-digital.pdf',
     answers:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-8-answers-digital.pdf',
   },
+  'practice-test-9':{
+    questions:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-9-digital.pdf',
+    answers:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-9-answers-digital.pdf',
+  },
 }
 const supabaseUrl=import.meta.env.VITE_SUPABASE_URL as string|undefined
 export type PdfKind='questions'|'answers'
@@ -29,7 +33,7 @@ export type PdfKind='questions'|'answers'
 const inMemorySources=new Map<string,Promise<ArrayBuffer|null>>()
 
 function openDb():Promise<IDBDatabase>{return new Promise((resolve,reject)=>{const req=indexedDB.open(DB,1);req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains(STORE))req.result.createObjectStore(STORE)};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
-function storageKey(testId:PracticeTestId,kind:PdfKind){return `v${testId==='practice-test-8'?CACHE_VERSION+1:CACHE_VERSION}:${testId}:${kind}`}
+function storageKey(testId:PracticeTestId,kind:PdfKind){return `v${testId==='practice-test-9'?CACHE_VERSION+10:testId==='practice-test-8'?CACHE_VERSION+1:CACHE_VERSION}:${testId}:${kind}`}
 function memoryKey(testId:PracticeTestId,kind:PdfKind){return `${testId}:${kind}`}
 
 async function storeBytes(testId:PracticeTestId,kind:PdfKind,bytes:ArrayBuffer){
@@ -102,7 +106,7 @@ export async function getPracticeTestPdf(testId:PracticeTestId,kind:PdfKind):Pro
   const key=memoryKey(testId,kind)
   const existing=inMemorySources.get(key)
   if(existing)return existing
-  const loading=loadCachedThenShared(testId,kind)
+  const loading=loadCachedThenShared(testId,kind).then(bytes=>{if(!bytes)inMemorySources.delete(key);return bytes}).catch(error=>{inMemorySources.delete(key);throw error})
   inMemorySources.set(key,loading)
   return loading
 }
