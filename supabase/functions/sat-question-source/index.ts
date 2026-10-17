@@ -15,6 +15,10 @@ const SOURCES={
     questions:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-7-digital.pdf',
     answers:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-7-answers-digital.pdf',
   },
+  'practice-test-8':{
+    questions:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-8-digital.pdf',
+    answers:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-8-answers-digital.pdf',
+  },
 } as const
 
 type PracticeTestId=keyof typeof SOURCES
