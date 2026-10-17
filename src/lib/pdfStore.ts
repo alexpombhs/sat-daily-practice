@@ -82,8 +82,8 @@ async function loadCanonicalSource(testId:PracticeTestId,kind:PdfKind){
 
 async function loadCachedThenShared(testId:PracticeTestId,kind:PdfKind){
   const cached=await readStored(testId,kind)
-  if(cached&&testId!=='practice-test-8')return cached
-  // PT8 must use the canonical source rather than a previously uploaded or mismatched cached PDF.
+  if(cached)return cached
+  // Source PDFs are immutable by test ID; the PT8 cache-version bump invalidates older mismatched copies.
 
   // Official SAT PDFs are immutable for a given practice-test ID. Once a browser
   // has a verified copy, reuse it instead of proxying the full PDF through
