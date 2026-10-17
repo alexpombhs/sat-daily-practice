@@ -2,7 +2,6 @@ import {useMemo,useState} from 'react'
 import {CalendarDays,ChevronLeft,ChevronRight} from 'lucide-react'
 import AlexBox from '../atoms/AlexBox'
 import AlexCalendarDay from '../atoms/AlexCalendarDay'
-import AlexButton from '../atoms/AlexButton'
 import AlexIconButton from '../atoms/AlexIconButton'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
@@ -80,26 +79,6 @@ export default function StudyPlanCalendar({sessions,attempts,settings,recommenda
         {targetQuestions>0?`${targetQuestions} questions/day`:'Flexible pace'}
       </AlexText>
     </AlexBox>
-
-    {examTargets.length>0&&<AlexBox sx={{display:'flex',flexWrap:'wrap',gap:.5,mb:{xs:.8,xl:.5}}}>
-      {examTargets.map((target,index)=>{
-        const [year,month]=target.date.split('-').map(Number)
-        const isVisible=year===view.year&&month===view.month+1
-        const displayDate=new Date(year,month-1,Number(target.date.slice(8)))
-        const dateLabel=Number.isNaN(displayDate.getTime())?target.date:
-          new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(displayDate)
-        return <AlexButton
-          key={`${target.label}-${target.date}-${index}`}
-          tone={isVisible?'secondary':'quiet'}
-          size="small"
-          onClick={()=>setView({year,month:month-1})}
-          aria-label={`Show ${target.label} on ${target.date} in calendar`}
-          sx={{minHeight:25,fontSize:10.5,px:1.1,py:.1,borderRadius:2}}
-        >
-          {target.label} · {dateLabel}
-        </AlexButton>
-      })}
-    </AlexBox>}
 
     <AlexBox sx={{display:'flex',alignItems:'center',justifyContent:'space-between',mb:{xs:1,xl:.55}}}>
       <AlexIconButton label="Previous month" onClick={()=>moveMonth(-1)}><ChevronLeft size={16}/></AlexIconButton>
