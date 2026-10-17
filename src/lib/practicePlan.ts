@@ -36,8 +36,8 @@ function localDateKey(date:Date){
 
 export function examTargetsFromSettings(settings:Settings):ExamTarget[]{
   const targets=(settings.examTargets??[])
-    .filter(target=>target&&typeof target.date==='string'&&/^\\d{4}-\\d{2}-\\d{2}$/.test(target.date))
-    .map(target=>({label:target.label?.trim()||'Exam',date:target.date}))
+    .filter(target=>target&&typeof target.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(target.date))
+    .map(target=>({label:target.label?.trim()||'Exam',date:target.date,score:target.score}))
   if(targets.length===0&&settings.targetExamDate){
     targets.push({label:'Exam',date:settings.targetExamDate})
   }
