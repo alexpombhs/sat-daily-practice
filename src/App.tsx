@@ -728,6 +728,8 @@ export default function App(){
         estimateConfidence={performance.scoreEstimateConfidence}
         targetScore={practiceRecommendation.targetScore}
         daysRemaining={practiceRecommendation.daysRemaining}
+        activeExamLabel={practiceRecommendation.activeExamLabel}
+        isExamDay={practiceRecommendation.isExamDay}
         questionsPerSession={settings.questionsPerSession}
         onChoosePracticeTest={()=>navigateTo('home')}
         onStartPractice={()=>void beginPractice(settings.mode)}
@@ -771,6 +773,8 @@ export default function App(){
               failedQuestionCount={failedQuestionCount}
               recommendationLabel={performance.recommendation?.label}
               recommendationReason={performance.recommendation?.reason}
+              isExamDay={practiceRecommendation.isExamDay}
+              examLabel={practiceRecommendation.activeExamLabel}
             />
           }
         />
