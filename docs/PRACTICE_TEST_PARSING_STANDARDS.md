@@ -502,3 +502,42 @@ For each additional practice test, "parsed" means more than records existing in 
 - regression suite and production build passing
 
 Record any intentionally unresolved source ambiguity explicitly; never silently guess and mark it verified.
+
+## 22. PT8-derived benchmark additions: source fidelity and concept coverage
+
+PT8 demonstrated that **successful canonical import is not equivalent to a complete learning-ready question**. Parsing, source/explanation rendering, and instructional classification are separate release gates. A row with `content_status='imported'` has not passed production visual QA, even when the database has full text and crop coordinates.
+
+### Renderer-specific table fidelity
+
+- Preserve tabular structure from the source, but verify that the **actual student-facing subject renderer** accepts its serialized format. PT8 Reading & Writing Module 2 Q14–Q15 used tab-separated table rows because the Reading renderer did not accept the Math-oriented `[TABLE]` repair markup as-is.
+- The benchmark is semantic table fidelity **after rendering**, not uniform text storage syntax. Test header/cell ordering and the absence of raw table delimiters in each rendering path.
+- Include wide multi-column tables, intentional poem line breaks (PT8 RW2 Q7), underlined spans across labeled passages (RW2 Q9), and individual research-note bullets (RW2 Q32–Q33) in regression fixtures.
+
+### PDF source and explanation boundaries
+
+- Verify source crops against the **correct version of that test's PDF**, including axes, labels, complete figures, and full table rows; reject the next question and the page's STOP/footer decorations.
+- Validate explanation crops against the rendered PDF, not simply the stored explanation page number. Several PT8 explanations continue to the next PDF page; end the crop at the next explanation heading, and never join the first question of the *next module* after the current module's last question.
+- Keep source PDF caching separate from rendered crop cache invalidation. When crop rules change, version the crop cache rather than bypassing the underlying PDF cache.
+- Verify scrolling in the *question/source/explanation content region* on constrained desktop heights: content must remain reachable without making the review header and answer panel scroll away. Include this in viewport QA for long questions and multi-page explanations.
+
+### Mandatory concept and difficulty classification
+
+Every canonical question must have a matching, per-question `sat_question_difficulty` record identified by **the exact canonical question ID**. Classification is part of the import acceptance criteria, not an optional later enhancement.
+
+Required fields and validations:
+
+1. `question_id`: resolves to exactly one existing `sat_question_bank.id` for the intended test and module. Never join on question number alone.
+2. `concepts`: nonempty JSON array of specific, meaningful skills inferred from that question's actual stem, answer choices, and any required figure/table. Generic filler tags are not acceptable; use a second granular tag for key variations such as “no solution” and “parallel lines.”
+3. `difficulty`: use the database's allowed values `easy`, `medium`, `advanced`; `hard` is invalid. Difficulty is content-based and must not be mistaken for measured student success rate.
+4. `reasoning_steps`, `integration_level`, `confidence`, and `rubric_version`: populate consistently with the schema, and flag uncertain decisions for review rather than claiming precision unsupported by the source.
+5. Read the classification back from Supabase and check full coverage by module before release.
+
+Pre-Test Review groups stored concept strings into broad categories, ranks those categories from **practice attempts**, then lists related tagged questions. A question with no `concepts` is invisible to this workflow even if its canonical wording and answers exist. The benchmark therefore requires a **functional join-and-display test** from canonical question → difficulty/concepts → review grouping → related question list. Whether a tagged question appears depends on the chosen priority category; tagging alone does not force it onto every review screen.
+
+PT8 Math Module 2 Q23 is a regression fixture: it asks for a second linear equation giving **no solution** and needs tags equivalent to `systems of linear equations`, `no solution`, `parallel lines`. It must resolve to **Linear Equations & Systems** and be eligible among related review questions when that priority category is selected.
+
+### Measurable import gates
+
+For each module, publish `total`, `canonical_text_present`, `source_crop_present`, `explanation_reference_present`, `answer_complete`, `classified`, `concepts_nonempty`, `verified`, and `blocking_issues`. Treat a missing concept record as a failing **learning-readiness** gate, not as a passing parse. Keep parsing verification and concept-classification verification distinct in dashboards and audits.
+
+For PT8, the database coverage check on 2026-10-17 showed **120/120 canonical questions with concept records** (27/27 each Math module; 33/33 each Reading & Writing module). This is a **metadata coverage check**, not a final semantic accuracy audit of all labels or browser proof of Pre-Test Review rendering. PT8 questions remain `imported` until the original parsing verification steps pass.
