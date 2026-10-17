@@ -29,11 +29,13 @@ function attempt(vocabularyId:string,correct:boolean,createdAt:string):Vocabular
 
 describe('vocabulary practice',()=>{
   it('keeps the SAT-derived vocabulary bank unique and source-linked',()=>{
-    expect(PRACTICE_TEST_VOCABULARY.length).toBe(86)
-    expect(VOCABULARY_BANK.length).toBe(282)
+    expect(PRACTICE_TEST_VOCABULARY.length).toBe(159)
+    expect(VOCABULARY_BANK.length).toBe(355)
     expect(new Set(VOCABULARY_BANK.map(entry=>entry.id)).size).toBe(VOCABULARY_BANK.length)
     expect(VOCABULARY_BANK.every(entry=>entry.word&&entry.definition)).toBe(true)
     expect(vocabularySources()).toEqual(expect.arrayContaining(['practice-test-derived','sat-open-dataset']))
+    expect(PRACTICE_TEST_VOCABULARY.some(entry=>entry.sourceQuestionId?.startsWith('practice-test-8:'))).toBe(true)
+    expect(PRACTICE_TEST_VOCABULARY.some(entry=>entry.sourceQuestionId?.startsWith('practice-test-9:'))).toBe(true)
   })
 
   it('assigns every vocabulary entry one of the three supported difficulty levels',()=>{
