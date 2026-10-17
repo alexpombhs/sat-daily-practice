@@ -2,6 +2,7 @@ import {useMemo,useState} from 'react'
 import {CalendarDays,ChevronLeft,ChevronRight} from 'lucide-react'
 import AlexBox from '../atoms/AlexBox'
 import AlexCalendarDay from '../atoms/AlexCalendarDay'
+import AlexButton from '../atoms/AlexButton'
 import AlexIconButton from '../atoms/AlexIconButton'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
@@ -80,6 +81,26 @@ export default function StudyPlanCalendar({sessions,attempts,settings,recommenda
       </AlexText>
     </AlexBox>
 
+    {examTargets.length>0&&<AlexBox sx={{display:'flex',flexWrap:'wrap',gap:.5,mb:{xs:.8,xl:.5}}}>
+      {examTargets.map((target,index)=>{
+        const [year,month]=target.date.split('-').map(Number)
+        const isVisible=year===view.year&&month===view.month+1
+        const displayDate=new Date(year,month-1,Number(target.date.slice(8)))
+        const dateLabel=Number.isNaN(displayDate.getTime())?target.date:
+          new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(displayDate)
+        return <AlexButton
+          key={`${target.label}-${target.date}-${index}`}
+          tone={isVisible?'secondary':'quiet'}
+          size="small"
+          onClick={()=>setView({year,month:month-1})}
+          aria-label={`Show ${target.label} on ${target.date} in calendar`}
+          sx={{minHeight:25,fontSize:10.5,px:1.1,py:.1,borderRadius:2}}
+        >
+          {target.label} · {dateLabel}
+        </AlexButton>
+      })}
+    </AlexBox>}
+
     <AlexBox sx={{display:'flex',alignItems:'center',justifyContent:'space-between',mb:{xs:1,xl:.55}}}>
       <AlexIconButton label="Previous month" onClick={()=>moveMonth(-1)}><ChevronLeft size={16}/></AlexIconButton>
       <AlexText sx={{fontSize:11.5,fontWeight:900,letterSpacing:'.045em',color:'#08275B',textTransform:'uppercase'}}>
@@ -121,8 +142,7 @@ export default function StudyPlanCalendar({sessions,attempts,settings,recommenda
         const isExamDate=Boolean(examLabel)
         const hasTrackedGoal=targetQuestions>0&&(day.status==='ahead'||day.status==='on-track'||day.status==='behind')
         const title=[
-          style.label,
-          isExamDate?`${examLabel} date`:'',
+          isExamDate?`${examLabel} · Exam day · No practice expected`:style.label,
           day.questionCount>0
             ?`${day.questionCount}${day.targetQuestionCount>0?` of ${day.targetQuestionCount}`:''} questions`
             :hasTrackedGoal?'0 questions · No practice recorded':'',
