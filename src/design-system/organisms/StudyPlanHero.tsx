@@ -15,6 +15,7 @@ type Props={
   projectedSelectionIndex:number|null
   estimateConfidence:{label:string;within80:number;sigmaPoints:number}|null
   targetScore:number|null
+  previousExam?:{label:string;year:string;total:number}|null
   daysRemaining:number
   activeExamLabel:string|null
   isExamDay:boolean
@@ -26,7 +27,7 @@ type Props={
 }
 
 export default function StudyPlanHero({
-  accuracy,estimatedScore,scoreBreakdown,nationalMeritChance,projectedSelectionIndex,estimateConfidence,targetScore,daysRemaining,activeExamLabel,isExamDay,questionsPerSession,
+  accuracy,estimatedScore,scoreBreakdown,nationalMeritChance,projectedSelectionIndex,estimateConfidence,targetScore,previousExam,daysRemaining,activeExamLabel,isExamDay,questionsPerSession,
   onChoosePracticeTest,onStartPractice,onStartPreTestReview,showPreTestReview,
 }:Props){
   return <AlexSurface
@@ -111,6 +112,10 @@ export default function StudyPlanHero({
               ?`${nationalMeritChance}% National Merit outlook${projectedSelectionIndex!==null?` · SI ~${projectedSelectionIndex}`:''}`
               :accuracy!==null?'Calibrating National Merit outlook':'Complete a few questions to calibrate'}
           </AlexText>
+          {previousExam&&<AlexText sx={{mt:.3,fontSize:'inherit',color:'inherit',lineHeight:1.3}}>
+            Your starting point: {previousExam.label} {previousExam.year} · {previousExam.total} actual
+            {estimatedScore!==null?' · Current practice estimate shown above':''}
+          </AlexText>}
           {estimateConfidence&&<AlexText sx={{
             display:'none',
             '@media (min-width:1600px)':{display:'block'},
