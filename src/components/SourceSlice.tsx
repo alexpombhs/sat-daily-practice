@@ -10,6 +10,9 @@ import type {ModuleKey,PracticeTestId,SourceCrop} from '../types'
 const cache=new Map<string,PDFDocumentProxy>()
 async function loadPdf(key:string,bytes:ArrayBuffer){
   const cacheKey=`${key}:${bytes.byteLength}`
+  // PT9 PDFs must never reuse a document keyed by byte length alone.
+  // A previous incorrect asset can have the same length as the canonical PDF.
+  if(key.startsWith('practice-test-9:'))return getDocument({data:new Uint8Array(bytes.slice(0))}).promise
   const cached=cache.get(cacheKey);if(cached)return cached
   const doc=await getDocument({data:new Uint8Array(bytes.slice(0))}).promise;cache.set(cacheKey,doc);return doc
 }
@@ -207,7 +210,7 @@ export default function SourceSlice({pdfKey,bytes,page,questionNumber,alt,zoom=1
   useEffect(()=>{
     let cancelled=false;let objectUrl='';const renderTasks:{cancel:()=>void;promise:Promise<void>}[]=[]
     const cropKey=sourceCrop?`${sourceCrop.x},${sourceCrop.y},${sourceCrop.width},${sourceCrop.height}`:'auto'
-    const imageKey=`${isQuestion?'v13':'v15'}:${practiceTestId}:${pdfKey}:${bytes.byteLength}:${page}:${questionNumber}:${cropKey}`
+    const imageKey=`${practiceTestId==='practice-test-9'?'pt9-clean-v1':isQuestion?'v13':'v15'}:${practiceTestId}:${pdfKey}:${bytes.byteLength}:${page}:${questionNumber}:${cropKey}`
     async function showBlob(blob:Blob){objectUrl=URL.createObjectURL(blob);if(!cancelled)setSrc(objectUrl)}
     async function render(){
       try{

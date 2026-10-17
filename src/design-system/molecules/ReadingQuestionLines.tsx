@@ -175,17 +175,18 @@ export function parseReadingQuestion(lines:string[]):ParsedReadingQuestion{
 }
 
 function canonicalTabTable(lines:string[]){
-  const first=lines.findIndex(line=>line.includes('\t'))
+  const normalizedLines=lines.filter(line=>!/^\[\/?TABLE\]$/i.test(line.trim()))
+  const first=normalizedLines.findIndex(line=>line.includes('\t'))
   if(first<0)return null
   let end=first
-  while(end<lines.length&&lines[end].includes('\t'))end++
+  while(end<normalizedLines.length&&normalizedLines[end].includes('\t'))end++
   if(end-first<2)return null
-  const rows=lines.slice(first,end).map(line=>line.split(/\t+/).map(cell=>clean(cell)).filter(Boolean))
+  const rows=normalizedLines.slice(first,end).map(line=>line.split(/\t+/).map(cell=>clean(cell)).filter(Boolean))
   const width=rows[0].length
   if(width<2||rows.some(row=>row.length!==width))return null
-  const title=first>0?clean(lines[first-1]):''
+  const title=first>0?clean(normalizedLines[first-1]):''
   const table:ReadingTableSpec={title,headers:rows[0],rows:rows.slice(1),sourceCrop:{x:0,y:0,width:1,height:1}}
-  const content=lines.filter((_,index)=>index<Math.max(0,first-1)||index>=end)
+  const content=normalizedLines.filter((_,index)=>index<Math.max(0,first-1)||index>=end)
   return {table,content}
 }
 
@@ -265,7 +266,8 @@ function isSourceAttribution(block:string[]){
 }
 
 export default function ReadingQuestionLines({lines,questionId}:{lines:string[];questionId?:string}){
-  const safeLines=questionId?stripEmbeddedReadingTableLines(questionId,lines):lines
+  const withoutMarkers=lines.filter(line=>!/^\[\/?TABLE\]$/i.test(line.trim()))
+  const safeLines=questionId?stripEmbeddedReadingTableLines(questionId,withoutMarkers):withoutMarkers
   const canonicalTable=canonicalTabTable(safeLines)
   const parsed=parseReadingQuestion(canonicalTable?.content??safeLines)
   const table=canonicalTable?.table??(questionId?readingTableSpec(questionId):undefined)

@@ -22,14 +22,37 @@ const OFFICIAL_SOURCES:Record<PracticeTestId,{questions:string;answers:string}>=
     questions:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-8-digital.pdf',
     answers:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-8-answers-digital.pdf',
   },
+  'practice-test-9':{
+    questions:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-9-digital.pdf',
+    answers:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-9-answers-digital.pdf',
+  },
 }
 const supabaseUrl=import.meta.env.VITE_SUPABASE_URL as string|undefined
 export type PdfKind='questions'|'answers'
 
+// Validate the actual PT9 content, not byte-for-byte PDF metadata.
+// Source files can be re-optimized upstream without changing their questions.
+async function verifiedPt9Bytes(testId:PracticeTestId,kind:PdfKind,bytes:ArrayBuffer){
+  if(testId!=='practice-test-9')return true
+  const {GlobalWorkerOptions,getDocument}=await import('pdfjs-dist')
+  GlobalWorkerOptions.workerSrc=new URL('pdfjs-dist/build/pdf.worker.min.mjs',import.meta.url).toString()
+  const doc=await getDocument({data:new Uint8Array(bytes.slice(0))}).promise
+  try{
+    if(kind==='questions'&&doc.numPages!==56)return false
+    if(kind==='answers'&&doc.numPages!==47)return false
+    const page=await doc.getPage(kind==='questions'?34:31)
+    const content=await page.getTextContent()
+    const text=content.items.flatMap(item=>'str' in item?[item.str]:[]).join(' ').toLowerCase()
+    return kind==='questions'
+      ?text.includes('triangle')&&text.includes('perimeter')&&text.includes('centimeters')
+      :text.includes('question 1')&&text.includes('triangle')
+  }finally{await doc.destroy()}
+}
+
 const inMemorySources=new Map<string,Promise<ArrayBuffer|null>>()
 
 function openDb():Promise<IDBDatabase>{return new Promise((resolve,reject)=>{const req=indexedDB.open(DB,1);req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains(STORE))req.result.createObjectStore(STORE)};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
-function storageKey(testId:PracticeTestId,kind:PdfKind){return `v${testId==='practice-test-8'?CACHE_VERSION+1:CACHE_VERSION}:${testId}:${kind}`}
+function storageKey(testId:PracticeTestId,kind:PdfKind){return `v${testId==='practice-test-9'?CACHE_VERSION+10:testId==='practice-test-8'?CACHE_VERSION+1:CACHE_VERSION}:${testId}:${kind}`}
 function memoryKey(testId:PracticeTestId,kind:PdfKind){return `${testId}:${kind}`}
 
 async function storeBytes(testId:PracticeTestId,kind:PdfKind,bytes:ArrayBuffer){
@@ -48,7 +71,7 @@ async function readStored(testId:PracticeTestId,kind:PdfKind):Promise<ArrayBuffe
 }
 
 async function fetchPdf(url:string,expectedTestId?:PracticeTestId,expectedKind?:PdfKind){
-  const response=await fetch(url,{cache:expectedTestId==='practice-test-8'?'reload':'force-cache'})
+  const response=await fetch(url,{cache:expectedTestId==='practice-test-9'||expectedTestId==='practice-test-8'?'reload':'force-cache'})
   if(!response.ok)throw new Error(`PDF source returned ${response.status}.`)
   const contentType=response.headers.get('content-type')??''
   if(contentType&&!contentType.includes('pdf')&&!contentType.includes('octet-stream'))throw new Error(`Unexpected PDF content type: ${contentType}`)
@@ -56,6 +79,7 @@ async function fetchPdf(url:string,expectedTestId?:PracticeTestId,expectedKind?:
   if(expectedKind){const actual=response.headers.get('x-sat-source-kind');if(actual&&actual!==expectedKind)throw new Error(`Wrong SAT source kind returned: expected ${expectedKind}, received ${actual}.`)}
   const bytes=await response.arrayBuffer()
   if(!bytes.byteLength)throw new Error('PDF source returned an empty file.')
+  if(expectedTestId&&expectedKind&&!(await verifiedPt9Bytes(expectedTestId,expectedKind,bytes)))throw new Error('PT9 PDF is not the expected official question or explanation document.')
   return bytes
 }
 
@@ -68,21 +92,24 @@ export function sharedSourceCandidates(testId:PracticeTestId,kind:PdfKind){
 }
 
 async function loadCanonicalSource(testId:PracticeTestId,kind:PdfKind){
+  let lastError:unknown=null
   for(const url of sharedSourceCandidates(testId,kind)){
     try{
       const bytes=await fetchPdf(url,testId,kind)
       void storeBytes(testId,kind,bytes).catch(error=>console.warn('Unable to update optional SAT source cache.',error))
       return bytes
     }catch(error){
+      lastError=error
       console.warn(`Shared SAT ${testId} ${kind} source failed: ${url}`,error)
     }
   }
+  if(testId==='practice-test-9')throw new Error(lastError instanceof Error?`PT9 ${kind} PDF unavailable: ${lastError.message}`:`PT9 ${kind} PDF could not be loaded.`)
   return null
 }
 
 async function loadCachedThenShared(testId:PracticeTestId,kind:PdfKind){
   const cached=await readStored(testId,kind)
-  if(cached)return cached
+  if(cached&&await verifiedPt9Bytes(testId,kind,cached))return cached
   // Source PDFs are immutable by test ID; the PT8 cache-version bump invalidates older mismatched copies.
 
   // Official SAT PDFs are immutable for a given practice-test ID. Once a browser
@@ -102,7 +129,7 @@ export async function getPracticeTestPdf(testId:PracticeTestId,kind:PdfKind):Pro
   const key=memoryKey(testId,kind)
   const existing=inMemorySources.get(key)
   if(existing)return existing
-  const loading=loadCachedThenShared(testId,kind)
+  const loading=loadCachedThenShared(testId,kind).then(bytes=>{if(!bytes)inMemorySources.delete(key);return bytes}).catch(error=>{inMemorySources.delete(key);throw error})
   inMemorySources.set(key,loading)
   return loading
 }

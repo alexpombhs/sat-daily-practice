@@ -11,15 +11,17 @@ export type PracticeTestPdfState={
 
 export function usePracticeTestPdfState(question:PracticeQuestion,kind:PdfKind,fallback:ArrayBuffer|null=null,enabled=true):PracticeTestPdfState{
   const testId=question.practiceTestId
-  const[source,setSource]=useState<ArrayBuffer|null>(fallback)
+  // PT9 must never display a parent-provided (possibly different-test) PDF.
+  const trustedFallback=testId==='practice-test-9'?null:fallback
+  const[source,setSource]=useState<ArrayBuffer|null>(trustedFallback)
   const[loading,setLoading]=useState(enabled)
   const[error,setError]=useState('')
-  const[usingFallback,setUsingFallback]=useState(Boolean(fallback))
+  const[usingFallback,setUsingFallback]=useState(Boolean(trustedFallback))
 
   useEffect(()=>{
     let cancelled=false
-    setSource(fallback)
-    setUsingFallback(Boolean(fallback))
+    setSource(trustedFallback)
+    setUsingFallback(Boolean(trustedFallback))
     setError('')
     if(!enabled){
       setLoading(false)
@@ -33,20 +35,20 @@ export function usePracticeTestPdfState(question:PracticeQuestion,kind:PdfKind,f
         if(bytes){
           setSource(bytes)
           setUsingFallback(false)
-        }else if(!fallback){
+        }else if(!trustedFallback){
           setSource(null)
           setError('The shared source PDF is temporarily unavailable.')
         }
       })
       .catch(reason=>{
         if(cancelled)return
-        if(!fallback)setSource(null)
+        if(!trustedFallback)setSource(null)
         setError(reason instanceof Error?reason.message:'Unable to load the shared source PDF.')
       })
       .finally(()=>{if(!cancelled)setLoading(false)})
 
     return()=>{cancelled=true}
-  },[testId,kind,fallback,enabled])
+  },[testId,kind,trustedFallback,enabled])
 
   return {source,loading,error,usingFallback}
 }

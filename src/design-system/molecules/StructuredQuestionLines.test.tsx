@@ -87,6 +87,22 @@ describe('StructuredQuestionLines rich text',()=>{
   })
 })
 
+describe('PT9 multiple-choice rendering',()=>{
+  it('renders numeric answer choices as separate lines, not a data table',()=>{
+    const {container}=render(<StructuredQuestionLines lines={[
+      'What is the value of $a+b+c$?',
+      'A) $-15$',
+      'B) $-9$',
+      'C) 11',
+      'D) 15',
+    ]}/>)
+    expect(container.querySelector('table')).not.toBeInTheDocument()
+    expect(container.querySelectorAll('p')).toHaveLength(5)
+    expect(container.textContent).toContain('B)')
+    expect(container.textContent).toContain('D) 15')
+  })
+})
+
 describe('StructuredQuestionLines tables',()=>{
   it('renders a two-column function table as a real table',()=>{
     render(<StructuredQuestionLines lines={[
