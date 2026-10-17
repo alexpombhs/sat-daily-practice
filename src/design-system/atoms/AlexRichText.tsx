@@ -213,7 +213,7 @@ export default function AlexRichText({text,className}:Props){
 }
 ,dollar+1)
     const pairedText=pairedEnd>=0?text.slice(dollar+1,pairedEnd):''
-    if(pairedText.includes(',')&&pairedText.trim()===pairedText&&isLikelyMathToken(pairedText)){
+    if(pairedText.includes(',')&&!/\s/.test(pairedText)&&isLikelyMathToken(pairedText)){
       nodes.push(renderMath(pairedText,false,`${keyPrefix}-math-${index++}`))
       cursor=pairedEnd+1
       continue
