@@ -1,13 +1,16 @@
 import type {PerformanceAnalytics} from './performanceAnalytics'
-import type {Attempt,PracticeQuestion,Settings} from '../types'
+import type {Attempt,ExamTarget,PracticeQuestion,Settings} from '../types'
 
-export type PracticePlanPhase='steady'|'final-review'
+export type PracticePlanPhase='steady'|'final-review'|'exam-day'
 
 export type PracticePlanRecommendation={
   bankQuestionCount:number
   availablePracticeSetCount:number
   targetPracticeSets:number
   daysRemaining:number
+  activeExamLabel:string|null
+  activeExamDate:string|null
+  isExamDay:boolean
   uniqueQuestionsCompleted:number
   targetQuestions:number
   remainingQuestions:number
@@ -27,11 +30,33 @@ export type PracticePlanRecommendation={
   scoreGuidance:string
 }
 
-function daysUntil(dateValue:string){
+function localDateKey(date:Date){
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`
+}
+
+export function examTargetsFromSettings(settings:Settings):ExamTarget[]{
+  const targets=(settings.examTargets??[])
+    .filter(target=>target&&typeof target.date==='string'&&/^\\d{4}-\\d{2}-\\d{2}$/.test(target.date))
+    .map(target=>({label:target.label?.trim()||'Exam',date:target.date}))
+  if(targets.length===0&&settings.targetExamDate){
+    targets.push({label:'Exam',date:settings.targetExamDate})
+  }
+  return targets
+    .filter((target,index,array)=>array.findIndex(item=>item.date===target.date&&item.label===target.label)===index)
+    .sort((a,b)=>a.date.localeCompare(b.date))
+}
+
+function activeExamTarget(settings:Settings,today=new Date()){
+  const todayKey=localDateKey(today)
+  const targets=examTargetsFromSettings(settings)
+  return targets.find(target=>target.date>=todayKey)??null
+}
+
+function daysUntil(dateValue:string,today=new Date()){
   const target=new Date(`${dateValue}T12:00:00`)
-  if(Number.isNaN(target.getTime()))return 1
-  const today=new Date();today.setHours(12,0,0,0)
-  return Math.max(1,Math.ceil((target.getTime()-today.getTime())/86400000))
+  if(Number.isNaN(target.getTime()))return 0
+  const base=new Date(today);base.setHours(12,0,0,0)
+  return Math.max(0,Math.ceil((target.getTime()-base.getTime())/86400000))
 }
 
 function scoreFocusShare(gap:number|null){
@@ -51,7 +76,11 @@ export function buildPracticePlanRecommendation(settings:Settings,questions:Prac
   const remainingQuestions=Math.max(0,targetQuestions-uniqueQuestionsCompleted)
   const questionsPerSession=Math.max(1,settings.questionsPerSession)
   const remainingSessions=Math.ceil(remainingQuestions/questionsPerSession)
-  const daysRemaining=daysUntil(settings.targetExamDate??new Date().toISOString().slice(0,10))
+  const activeExam=activeExamTarget(settings)
+  const activeExamDate=activeExam?.date??null
+  const activeExamLabel=activeExam?.label??null
+  const daysRemaining=activeExamDate?daysUntil(activeExamDate):0
+  const isExamDay=Boolean(activeExamDate&&daysRemaining===0)
 
   const targetScore=typeof settings.targetScore==='number'?Math.max(400,Math.min(1600,Math.round(settings.targetScore/10)*10)):null
   const estimatedScore=performance.latestScoreEstimate
@@ -62,17 +91,19 @@ export function buildPracticePlanRecommendation(settings:Settings,questions:Prac
   // calculation. Do not increase workload because fewer calendar days remain or
   // because the learner happened to spend longer on recent questions.
   const hasActiveGoal=remainingQuestions>0||needsScoreWork
-  const recommendedSessionsPerDay=hasActiveGoal?1:0
+  const recommendedSessionsPerDay=isExamDay?0:hasActiveGoal?1:0
   const plannedMinutesPerQuestion=Math.max(.25,settings.fallbackMinutesPerQuestion??2)
   const estimatedSessionMinutes=Math.max(1,Math.ceil(questionsPerSession*plannedMinutesPerQuestion))
   const estimatedDailyMinutes=estimatedSessionMinutes*recommendedSessionsPerDay
 
-  const planPhase:PracticePlanPhase=daysRemaining<=3?'final-review':'steady'
-  const practiceGuidance=planPhase==='final-review'
-    ?daysRemaining===1
-      ?'Final review day: keep the planned session short. Review the concepts behind recent misses, then stop; do not add extra volume to finish unused questions.'
-      :'Final 3-day review: prioritize retrieval of weak concepts and previously missed questions. Keep the normal daily duration instead of increasing volume as the exam approaches.'
-    :'Keep the daily workload steady. Progress comes from repeated retrieval and spaced review, not from increasing minutes as the exam gets closer.'
+  const planPhase:PracticePlanPhase=isExamDay?'exam-day':daysRemaining>0&&daysRemaining<=3?'final-review':'steady'
+  const practiceGuidance=planPhase==='exam-day'
+    ?`${activeExamLabel??'Exam'} day: no practice is expected today. The study plan resumes for the next scheduled test afterward.`
+    :planPhase==='final-review'
+      ?daysRemaining===1
+        ?'Final review day: keep the planned session short. Review the concepts behind recent misses, then stop; do not add extra volume to finish unused questions.'
+        :'Final 3-day review: prioritize retrieval of weak concepts and previously missed questions. Keep the normal daily duration instead of increasing volume as the exam approaches.'
+      :'Keep the daily workload steady. Progress comes from repeated retrieval and spaced review, not from increasing minutes as the exam gets closer.'
 
   const focusLabel=needsScoreWork?performance.recommendation?.label??null:null
   const focusSharePercent=scoreFocusShare(scoreGap)
@@ -87,7 +118,7 @@ export function buildPracticePlanRecommendation(settings:Settings,questions:Prac
   }
 
   return{
-    bankQuestionCount,availablePracticeSetCount,targetPracticeSets,daysRemaining,uniqueQuestionsCompleted,targetQuestions,remainingQuestions,
+    bankQuestionCount,availablePracticeSetCount,targetPracticeSets,daysRemaining,activeExamLabel,activeExamDate,isExamDay,uniqueQuestionsCompleted,targetQuestions,remainingQuestions,
     questionsPerSession,remainingSessions,recommendedSessionsPerDay,estimatedSessionMinutes,estimatedDailyMinutes,
     paceSource:'configured plan',planPhase,practiceGuidance,
     targetScore,estimatedScore,scoreGap,focusLabel,focusSharePercent,scoreGuidance,
