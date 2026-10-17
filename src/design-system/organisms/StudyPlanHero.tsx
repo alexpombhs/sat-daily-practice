@@ -100,15 +100,30 @@ export default function StudyPlanHero({
             </>}
           />
         </AlexBox>}
-        subtitle={<AlexBox sx={{display:'grid',gap:.25,pr:{xs:7,sm:9},minWidth:0}}>
-          <AlexText sx={{fontSize:dashboardTypography.supportBody,fontWeight:750,color:'#245F9E'}}>
-            {estimatedScore!==null?'Keep building on your progress!':'Your progress starts here'}
+        subtitle={<AlexBox sx={{minWidth:0,pr:{xs:7,sm:8}}}>
+          <AlexBox sx={{display:'flex',flexWrap:'wrap',alignItems:'center',columnGap:{xs:1,sm:1.5},rowGap:.25,mb:.3}}>
+            <AlexText sx={{fontSize:'inherit',fontWeight:800,color:'inherit',whiteSpace:'nowrap'}}>
+              Reading &amp; Writing {estimatedScore!==null&&scoreBreakdown?.english?scoreBreakdown.english.score:'—'}
+            </AlexText>
+            <AlexText sx={{fontSize:'inherit',fontWeight:800,color:'inherit',whiteSpace:'nowrap'}}>
+              Math {estimatedScore!==null&&scoreBreakdown?.math?scoreBreakdown.math.score:'—'}
+            </AlexText>
+          </AlexBox>
+          <AlexText sx={{fontSize:'inherit',color:'inherit',minWidth:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
+            {nationalMeritChance!==null
+              ?`${nationalMeritChance}% National Merit outlook${projectedSelectionIndex!==null?` · SI ~${projectedSelectionIndex}`:''}`
+              :accuracy!==null?'Calibrating National Merit outlook':'Complete a few questions to calibrate'}
           </AlexText>
-          {nationalMeritChance!==null&&<AlexText sx={{fontSize:dashboardTypography.supportBody,color:'#3F5E86'}}>
-            {nationalMeritChance}% National Merit outlook
-          </AlexText>}
-          {estimateConfidence&&<AlexText sx={{fontSize:dashboardTypography.supportBody,color:'#3F5E86'}}>
-            {estimateConfidence.within80}% confidence within ±80 points
+          {estimateConfidence&&<AlexText sx={{
+            display:'none',
+            '@media (min-width:1600px)':{display:'block'},
+            mt:.25,
+            fontSize:'inherit',
+            fontWeight:750,
+            color:'inherit',
+            whiteSpace:'nowrap',
+          }}>
+            {estimateConfidence.label} estimate confidence · {estimateConfidence.within80}% within ±80
           </AlexText>}
         </AlexBox>}
         decoration={<>
