@@ -522,7 +522,7 @@ export default function App(){
     </>
   }
 
-  if(view==='pre-test-question')return withSidebar('dashboard',<main className="practice">
+  if(view==='pre-test-question')return withSidebar('dashboard',<main className="practice pre-test-question-page">
     <AlexBox sx={{display:'flex',alignItems:'center',justifyContent:'space-between',p:1,mb:1}}>
       <AlexBox sx={{fontWeight:850,color:'#08275B'}}>PRE-TEST REVIEW · Individual question</AlexBox>
       <AlexButton tone="secondary" onClick={()=>navigateTo('pre-test-review')}>Back to concepts</AlexButton>
