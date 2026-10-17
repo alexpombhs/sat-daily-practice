@@ -732,6 +732,10 @@ export default function App(){
         projectedSelectionIndex={nationalMeritOutlook?.projectedSelectionIndex??null}
         estimateConfidence={performance.scoreEstimateConfidence}
         targetScore={practiceRecommendation.targetScore}
+        previousExam={examTargetsFromSettings(settings)
+          .filter(exam=>exam.readingWritingScore!==undefined&&exam.mathScore!==undefined&&exam.date<new Date().toLocaleDateString('en-CA'))
+          .sort((a,b)=>b.date.localeCompare(a.date))
+          .map(exam=>({label:exam.label,year:exam.date.slice(0,4),total:exam.readingWritingScore!+exam.mathScore!}))[0]??null}
         daysRemaining={practiceRecommendation.daysRemaining}
         activeExamLabel={practiceRecommendation.activeExamLabel}
         isExamDay={practiceRecommendation.isExamDay}
@@ -768,7 +772,6 @@ export default function App(){
         <PerformanceDashboard
           summary={performance}
           hasHistory={attempts.length>0}
-          examTargets={examTargetsFromSettings(settings)}
           compact
           compactRecommendationExtra={
             <DailyPracticeGoals
