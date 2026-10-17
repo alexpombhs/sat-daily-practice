@@ -20,8 +20,8 @@ const question:PracticeQuestion={
   responseType:'multiple-choice',
 }
 
-function Harness({fallback=null}:{fallback?:ArrayBuffer|null}){
-  const state=usePracticeTestPdfState(question,'questions',fallback)
+function Harness({fallback=null,testQuestion=question}:{fallback?:ArrayBuffer|null;testQuestion?:PracticeQuestion}){
+  const state=usePracticeTestPdfState(testQuestion,'questions',fallback)
   return <div>
     <span>{state.loading?'loading':'done'}</span>
     <span>{state.source?.byteLength?'source-ready':'no-source'}</span>
@@ -49,6 +49,16 @@ describe('usePracticeTestPdfState',()=>{
     await waitFor(()=>expect(screen.getByText('done')).toBeInTheDocument())
     expect(screen.getByText('source-ready')).toBeInTheDocument()
     expect(screen.getByText('fallback')).toBeInTheDocument()
+  })
+
+  it('never displays a mismatched fallback PDF for PT10',async()=>{
+    const pt10Question={...question,id:'practice-test-10:math1-2',practiceTestId:'practice-test-10' as const,module:'math1' as const,subject:'math' as const,number:2,sourcePage:34,answerPage:32,correctAnswer:'A'}
+    vi.mocked(getPracticeTestPdf).mockResolvedValue(null)
+    render(<Harness testQuestion={pt10Question} fallback={new Uint8Array([9]).buffer}/>)
+    await waitFor(()=>expect(screen.getByText('done')).toBeInTheDocument())
+    expect(screen.getByText('no-source')).toBeInTheDocument()
+    expect(screen.getByText('shared')).toBeInTheDocument()
+    expect(screen.getByText('The shared source PDF is temporarily unavailable.')).toBeInTheDocument()
   })
 
   it('reports a shared-source failure without asking for a device-local upload',async()=>{
