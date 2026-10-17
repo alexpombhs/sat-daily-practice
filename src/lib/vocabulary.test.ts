@@ -27,6 +27,7 @@ function attempt(vocabularyId:string,correct:boolean,createdAt:string):Vocabular
   }
 }
 
+// PT8/PT9 vocabulary coverage is verified below.
 describe('vocabulary practice',()=>{
   it('keeps the SAT-derived vocabulary bank unique and source-linked',()=>{
     expect(PRACTICE_TEST_VOCABULARY.length).toBe(159)
