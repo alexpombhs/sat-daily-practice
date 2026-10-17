@@ -22,9 +22,9 @@ function canvasToBlob(canvas:HTMLCanvasElement):Promise<Blob>{
   return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('Could not create visual image.')),'image/png'))
 }
 
-type Props={question:PracticeQuestion;bytes:ArrayBuffer;crop:NormalizedCrop;alt:string;expand?:boolean;sourceCrop?:SourceCrop|null;variant?:'figure'|'choice-grid'}
+type Props={question:PracticeQuestion;bytes:ArrayBuffer;crop:NormalizedCrop;alt:string;expand?:boolean;sourceCrop?:SourceCrop|null;sourcePage?:number;variant?:'figure'|'choice-grid'}
 
-export default function QuestionVisualSlice({question,bytes,crop,alt,expand=true,sourceCrop,variant='figure'}:Props){
+export default function QuestionVisualSlice({question,bytes,crop,alt,expand=true,sourceCrop,sourcePage,variant='figure'}:Props){
   const[src,setSrc]=useState('')
   const[error,setError]=useState('')
 
@@ -34,7 +34,7 @@ export default function QuestionVisualSlice({question,bytes,crop,alt,expand=true
     let renderTask:{cancel:()=>void;promise:Promise<void>}|null=null
     const expandedCrop=expand?expandNormalizedCrop(crop):crop
     // Bump the cache version when crop/render behavior changes so browsers do not keep a clipped image.
-    const imageKey=`visual-v2:${bytes.byteLength}:${question.id}:${expandedCrop.x}:${expandedCrop.y}:${expandedCrop.width}:${expandedCrop.height}`
+    const imageKey=`visual-v3:${bytes.byteLength}:${question.id}:${sourcePage??question.sourcePage}:${expandedCrop.x}:${expandedCrop.y}:${expandedCrop.width}:${expandedCrop.height}`
 
     async function showBlob(blob:Blob){
       objectUrl=URL.createObjectURL(blob)
@@ -52,7 +52,7 @@ export default function QuestionVisualSlice({question,bytes,crop,alt,expand=true
         if(!questionCrop)throw new Error(`Question ${question.number} crop is not configured.`)
 
         const doc=await loadPdf(bytes)
-        const pdfPage=await doc.getPage(question.sourcePage)
+        const pdfPage=await doc.getPage(sourcePage??question.sourcePage)
         const scale=2.4
         const viewport=pdfPage.getViewport({scale})
         const dpr=window.devicePixelRatio||1
@@ -98,7 +98,7 @@ export default function QuestionVisualSlice({question,bytes,crop,alt,expand=true
       try{renderTask?.cancel()}catch{}
       if(objectUrl)URL.revokeObjectURL(objectUrl)
     }
-  },[question,bytes,crop,expand,sourceCrop])
+  },[question,bytes,crop,expand,sourceCrop,sourcePage])
 
   return <div className={`question-visual-slice ${variant==='choice-grid'?'graphical-choice-grid':''}`} role="img" aria-label={alt}>
     {error?<div className="source-error">{error}</div>:src?<img src={src} alt={alt}/>:<div className="source-loading">Preparing figure…</div>}
