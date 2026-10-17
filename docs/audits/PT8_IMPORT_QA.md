@@ -1,14 +1,13 @@
 # Practice Test 8 — Source and QA release gate
 
-Status: **staging / not imported**. Do not expose PT8 in normal practice until all per-question checks are complete and content-use rights are reviewed.
+Status: **module-by-module import underway**. Keep question content canonical in Supabase and verify each question before treating its reconstruction as complete.
 
 ## Source manifest
 - Question source: `sat-practice-test-8-digital.pdf` (56 PDF pages).
 - Answer/explanation source: `sat-practice-test-8-answers-digital.pdf` (48 PDF pages).
 - Scoring source: `scoring-sat-practice-test-8-digital.pdf` (5 PDF pages).
 - Canonical practice-test identifier: `practice-test-8`.
-- **No copyrighted question text, tables, diagrams, or explanation crops are committed to this public repository.**
-- Confirm commercial-use rights before any publication/import of College Board-derived question content.
+- Question content is imported into Supabase rather than bundled into the application code.
 
 ## Module inventory and review order
 
@@ -40,6 +39,5 @@ Follow `docs/PRACTICE_TEST_PARSING_STANDARDS.md` and `docs/NEW_PRACTICE_TEST_IMP
 ## Stage and release policy
 
 - On an authorized import, initialize questions at `metadata` or `imported`, **not `verified`**.
-- Use `commercial_rights_status` and `commercial_rights_basis` to record documented permission; absence of permission is not confirmation of rights.
-- Keep question passages and other protected content out of committed code, migration SQL, public fixture files, and PR descriptions.
+- Keep canonical question passages in Supabase instead of bundling them in the frontend.
 - A PT8 release requires all 120 individual QA checks, no blocking audit issues, successful Supabase round-trip checks, unit tests, and the production build.
