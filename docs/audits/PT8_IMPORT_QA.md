@@ -41,3 +41,44 @@ Follow `docs/PRACTICE_TEST_PARSING_STANDARDS.md` and `docs/NEW_PRACTICE_TEST_IMP
 - On an authorized import, initialize questions at `metadata` or `imported`, **not `verified`**.
 - Keep canonical question passages in Supabase instead of bundling them in the frontend.
 - A PT8 release requires all 120 individual QA checks, no blocking audit issues, successful Supabase round-trip checks, unit tests, and the production build.
+
+
+## Math Module 1 interim audit — 2026-10-17
+
+The 27 canonical question reconstructions were queried from Supabase and compared to the uploaded PT8 Math Module 1 source pages 34–40. The corresponding answer explanations were checked for question headings on PDF pages 32–39. **This is not a production-renderer visual verification**; leave all questions `imported` pending actual render comparison.
+
+| Question | Source PDF page | Explanation PDF page | Structural review |
+| --- | ---: | ---: | --- |
+| 1 | 34 | 32 | equation and choice order |
+| 2 | 34 | 32 | four stacked fractions |
+| 3 | 34 | 32 | graph crop and y-intercept labels; render check pending |
+| 4 | 34 | 33 | powers and polynomial grouping |
+| 5 | 35 | 33 | literal currency and margin-of-error values |
+| 6 | 35 | 33 | numeric response and equation |
+| 7 | 35 | 33 | numeric response and percentage |
+| 8 | 35 | 33 | function notation |
+| 9 | 35 | 34 | degree formatting fixed using KaTeX `^{\\circ}` |
+| 10 | 35 | 34 | slope, intercept and coordinate notation |
+| 11 | 36 | 34 | scatterplot and axes; render check pending |
+| 12 | 36 | 35 | grouped exponential powers and inequality |
+| 13 | 36 | 35 | system of equations; numeric response |
+| 14 | 36 | 35 | powers and factoring |
+| 15 | 37 | 35 | polynomial and graph; render check pending |
+| 16 | 37 | 35 | product notation |
+| 17 | 37 | 36 | stacked fractions |
+| 18 | 37 | 36 | circle radii and area scale |
+| 19 | 38 | 36 | fractions of π; explicit underline on 'degrees' |
+| 20 | 38 | 37 | quadratic exponent and numeric response |
+| 21 | 38 | 37 | currency, constraints and numeric response |
+| 22 | 38 | 37 | simultaneous inequalities |
+| 23 | 39 | 38 | explicit semantic frequency table and ordered cells |
+| 24 | 39 | 38 | equation, conditions and roman-numbered claims |
+| 25 | 39 | 39 | negative fractional choices and parabola |
+| 26 | 40 | 39 | exponential models and roman-numbered choices |
+| 27 | 40 | 39 | radical and accepted numeric response variants |
+
+**Database result:** 27/27 question texts, 27/27 source crop references and 27/27 explanation page references stored; 3 figures referenced (Q3, Q11, Q15), 1 semantic table (Q23), 1 explicitly underlined span (Q19). No verified status promotion.
+
+**Remaining visual QA:** Render every source crop and explanation crop in the real app and check that each shows the correct question only, not adjacent content; ensure three graph crops include complete axes and labels. Explain/question continuation handling needs extra checks where one explanation spans pages. Fix any rendering mismatches individually and read them back before marking verified.
+
+**Resource efficiency:** Supabase stores only structured text, tiny crop coordinates, and metadata. The PDFs remain external; the frontend fetches at most one copy per practice test and PDF kind per cache version, caches in IndexedDB and memory, and renders visible crops locally rather than saving images into database rows. Avoid bulk PDF blobs, per-question Supabase source downloads, and repeated writes for unchanged records.
