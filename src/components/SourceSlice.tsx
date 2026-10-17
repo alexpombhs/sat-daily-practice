@@ -120,6 +120,10 @@ async function continuationExplanationBounds(page:PDFPageProxy,scale:number,next
   }
 
   const nextHeading=rows.find(row=>new RegExp(`^QUESTION\\s*${nextQuestionNumber}(?:\\s|$)`,'i').test(row.text))
+  // Module numbering restarts at question 1. If a continuation page starts a
+  // different question sequence, don't attach the next module's explanation.
+  const firstQuestionHeading=rows.find(row=>/^QUESTION\\s+\\d+(?:\\s|$)/i.test(row.text))
+  if(firstQuestionHeading&&!nextHeading)return null
   const footerCutoff=viewport.height-52*scale
   const usable=items.filter(item=>{
     if(!item.text||item.y<38*scale||item.y>=footerCutoff)return false
