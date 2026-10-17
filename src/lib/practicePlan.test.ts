@@ -48,7 +48,9 @@ describe('practice plan recommendations',()=>{
     const plan=buildPracticePlanRecommendation({...baseSettings,questionsPerSession:5},questions,attempts,performance(1300))
     expect(plan.remainingQuestions).toBe(0)
     expect(plan.scoreGap).toBe(100)
-    expect(plan.recommendedSessionsPerDay).toBe(1)
+    expect(plan.recommendedSessionsPerDay).toBe(3)
+    expect(plan.dailyQuestionGoal).toBe(15)
+    expect(plan.estimatedDailyMinutes).toBe(30)
   })
 
   it('asks for a cross-section baseline before treating a target as met',()=>{
