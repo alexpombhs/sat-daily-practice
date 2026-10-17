@@ -815,3 +815,37 @@ nav[aria-label="Mobile primary navigation"]{margin:0}
     grid-template-rows:minmax(0,68%) minmax(0,32%)!important;
   }
 }
+
+/* Tabs add a tabpanel wrapper around SourceViewer. Stretch the viewer through
+   that wrapper so the PDF uses the full comparison-card height. */
+.question-source-review-pane--source > [role="tabpanel"]{
+  display:flex;
+  flex:1 1 auto;
+  flex-direction:column;
+  min-height:0;
+  min-width:0;
+}
+.question-source-review-pane--source > [role="tabpanel"] > .source-viewer{
+  display:flex;
+  flex:1 1 auto;
+  flex-direction:column;
+  min-height:0;
+}
+.question-source-review-pane--source > [role="tabpanel"] > .source-viewer > .source-slice{
+  display:flex;
+  flex:1 1 auto;
+  min-height:0;
+  flex-direction:column;
+}
+.question-source-review-pane--source > [role="tabpanel"] > .source-viewer > .source-slice > .source-slice-content--zoomable{
+  flex:1 1 auto;
+  height:auto;
+  min-height:0;
+  max-height:none;
+  overflow:auto;
+}
+@media(max-width:1199.98px){
+  .question-source-review-pane--source > [role="tabpanel"] > .source-viewer > .source-slice > .source-slice-content--zoomable{
+    min-height:340px;
+  }
+}
