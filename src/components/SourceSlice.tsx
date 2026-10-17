@@ -214,7 +214,7 @@ export default function SourceSlice({pdfKey,bytes,page,questionNumber,alt,zoom=1
     async function showBlob(blob:Blob){objectUrl=URL.createObjectURL(blob);if(!cancelled)setSrc(objectUrl)}
     async function render(){
       try{
-        setError('');setSrc('');const existing=practiceTestId==='practice-test-9'?null:await getQuestionImage(imageKey);if(existing){await showBlob(existing);return}
+        setError('');setSrc('');const existing=await getQuestionImage(imageKey);if(existing){await showBlob(existing);return}
         const doc=await loadPdf(`${practiceTestId}:${pdfKey}`,bytes);const pdfPage=await doc.getPage(page);const dpr=window.devicePixelRatio||1
 
         if(!isQuestion){
@@ -233,7 +233,7 @@ export default function SourceSlice({pdfKey,bytes,page,questionNumber,alt,zoom=1
           }
 
           const blob=await canvasToBlob(stitchCanvases(parts,dpr))
-          if(practiceTestId!=='practice-test-9')await saveQuestionImage(imageKey,blob)
+          await saveQuestionImage(imageKey,blob)
           if(!cancelled)await showBlob(blob)
           return
         }
