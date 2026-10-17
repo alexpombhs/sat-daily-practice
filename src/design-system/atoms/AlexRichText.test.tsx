@@ -42,4 +42,15 @@ describe('AlexRichText inline math and currency',()=>{
     expect(container.textContent).toContain('$x')
     expect(container.querySelector('.katex')).toBeFalsy()
   })
+  it('recognizes comma-containing closed math even when it starts with numbers',()=>{
+    const {container}=render(<AlexRichText text={'Coordinates $(4,5)$ and $1,000$ and $x,y$'}/>)
+    expect(container.querySelectorAll('.rich-math.inline .katex')).toHaveLength(3)
+    expect(container.textContent).not.toContain('$')
+  })
+  it('keeps spaced comma-separated prices as currency',()=>{
+    const {container}=render(<AlexRichText text={'Items cost $1,250 $2,400 and $3,500.'}/>)
+    expect(container.textContent).toBe('Items cost $1,250 $2,400 and $3,500.')
+    expect(container.querySelector('.katex')).toBeFalsy()
+  })
+
 })
