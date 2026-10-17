@@ -28,7 +28,7 @@ const OFFICIAL_SOURCES:Record<PracticeTestId,{questions:string;answers:string}>=
   },
   'practice-test-10':{
     questions:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-10-digital.pdf',
-    answers:'https://satsuite.collegeboard.org/media/pdf/scoring-sat-practice-test-10-digital.pdf',
+    answers:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-10-answers-digital.pdf',
   },
 }
 const supabaseUrl=import.meta.env.VITE_SUPABASE_URL as string|undefined
@@ -45,7 +45,7 @@ async function verifiedCanonicalBytes(testId:PracticeTestId,kind:PdfKind,bytes:A
     if(kind==='questions'&&doc.numPages!==56)return false
     if(kind==='answers'&&doc.numPages!==47)return false
     const pageNumber=testId==='practice-test-10'
-      ?kind==='questions'?34:32
+      ?kind==='questions'?34:33
       :kind==='questions'?34:31
     const page=await doc.getPage(pageNumber)
     const content=await page.getTextContent()
@@ -53,7 +53,7 @@ async function verifiedCanonicalBytes(testId:PracticeTestId,kind:PdfKind,bytes:A
     if(testId==='practice-test-10'){
       return kind==='questions'
         ?text.includes('used car lot')&&text.includes('system of linear equations')
-        :text.includes('math')&&text.includes('module 1')&&text.includes('question 1')&&text.includes('used car lot')
+        :text.includes('question 6')&&text.includes('correct answer is 77')&&text.includes('math')
     }
     return kind==='questions'
       ?text.includes('triangle')&&text.includes('perimeter')&&text.includes('centimeters')
