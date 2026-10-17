@@ -57,7 +57,7 @@ export default function ExamTargetList({targets,onChange}:Props){
           if(!raw){updateTarget(index,{score:undefined});return}
           const value=Number(raw)
           const maxScore=target.label.trim().toUpperCase().startsWith('PSAT')?1520:1600
-          if(Number.isInteger(value)&&value>=400&&value<=maxScore&&value%10===0){
+          if(Number.isInteger(value)&&value>=0&&value<=maxScore){
             updateTarget(index,{score:value})
           }
         }}
