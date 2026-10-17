@@ -19,10 +19,10 @@ export default function PracticeGoalSettings({settings,onChange}:Props){
   const examTargets=normalizedTargets(settings)
 
   function saveExamTargets(next:ExamTarget[]){
-    const sorted=next
-      .map(target=>({label:target.label.trim()||'Exam',date:target.date,score:target.score,readingWritingScore:target.readingWritingScore,mathScore:target.mathScore}))
-      .sort((a,b)=>a.date.localeCompare(b.date))
-    onChange({...settings,examTargets:sorted,targetExamDate:sorted[0]?.date})
+    // Keep order and draft date values while editing; sorting/remounting date inputs
+    // on every keystroke prevents historical years such as 2025 being entered.
+    const updated=next.map(target=>({...target}))
+    onChange({...settings,examTargets:updated,targetExamDate:updated.find(target=>/^\d{4}-\d{2}-\d{2}$/.test(target.date))?.date})
   }
 
   return <AlexBox sx={{display:'grid',gap:2}}>
