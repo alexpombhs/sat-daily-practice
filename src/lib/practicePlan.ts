@@ -17,6 +17,7 @@ export type PracticePlanRecommendation={
   questionsPerSession:number
   remainingSessions:number
   recommendedSessionsPerDay:number
+  dailyQuestionGoal:number
   estimatedSessionMinutes:number
   estimatedDailyMinutes:number
   paceSource:'configured plan'
@@ -91,10 +92,18 @@ export function buildPracticePlanRecommendation(settings:Settings,questions:Prac
   // calculation. Do not increase workload because fewer calendar days remain or
   // because the learner happened to spend longer on recent questions.
   const hasActiveGoal=remainingQuestions>0||needsScoreWork
-  const recommendedSessionsPerDay=isExamDay?0:hasActiveGoal?1:0
+  // Keep the user's configured session size unchanged. Recommend a realistic
+  // daily total based on the remaining preparation window and score gap.
+  // Do not multiply volume just to clear the whole bank before an exam.
   const plannedMinutesPerQuestion=Math.max(.25,settings.fallbackMinutesPerQuestion??2)
+  const urgency=daysRemaining>0&&daysRemaining<=14
+  const significantGap=scoreGap!==null&&scoreGap>=100
+  const desiredDailyQuestions=urgency?10:significantGap?20:15
+  const dailyQuestionCap=Math.max(10,Math.min(30,Math.floor(30/plannedMinutesPerQuestion)))
+  const dailyQuestionGoal=hasActiveGoal?Math.max(10,Math.min(desiredDailyQuestions,dailyQuestionCap)):0
+  const recommendedSessionsPerDay=isExamDay?0:dailyQuestionGoal>0?Math.max(1,Math.ceil(dailyQuestionGoal/questionsPerSession)):0
   const estimatedSessionMinutes=Math.max(1,Math.ceil(questionsPerSession*plannedMinutesPerQuestion))
-  const estimatedDailyMinutes=estimatedSessionMinutes*recommendedSessionsPerDay
+  const estimatedDailyMinutes=isExamDay?0:dailyQuestionGoal>0?Math.max(10,Math.min(30,Math.ceil(dailyQuestionGoal*plannedMinutesPerQuestion))):0
 
   const planPhase:PracticePlanPhase=isExamDay?'exam-day':daysRemaining>0&&daysRemaining<=3?'final-review':'steady'
   const practiceGuidance=planPhase==='exam-day'
@@ -119,7 +128,7 @@ export function buildPracticePlanRecommendation(settings:Settings,questions:Prac
 
   return{
     bankQuestionCount,availablePracticeSetCount,targetPracticeSets,daysRemaining,activeExamLabel,activeExamDate,isExamDay,uniqueQuestionsCompleted,targetQuestions,remainingQuestions,
-    questionsPerSession,remainingSessions,recommendedSessionsPerDay,estimatedSessionMinutes,estimatedDailyMinutes,
+    questionsPerSession,remainingSessions,recommendedSessionsPerDay,dailyQuestionGoal:isExamDay?0:dailyQuestionGoal,estimatedSessionMinutes,estimatedDailyMinutes,
     paceSource:'configured plan',planPhase,practiceGuidance,
     targetScore,estimatedScore,scoreGap,focusLabel,focusSharePercent,scoreGuidance,
   }
