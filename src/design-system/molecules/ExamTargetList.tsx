@@ -23,8 +23,8 @@ export default function ExamTargetList({targets,onChange}:Props){
 
   return <AlexBox sx={{display:'grid',gap:1}}>
     {targets.map((target,index)=><AlexBox
-      key={`${target.date}-${index}`}
-      sx={{display:'grid',gridTemplateColumns:{xs:'minmax(0,1fr) auto',sm:'minmax(80px,.65fr) minmax(135px,1fr) minmax(95px,.65fr) auto'},gap:.75,alignItems:'center'}}
+      key={index}
+      sx={{display:'grid',gridTemplateColumns:{xs:'minmax(0,1fr) auto',sm:'minmax(70px,.6fr) minmax(140px,1fr) minmax(88px,.65fr) minmax(88px,.65fr) auto'},gap:.75,alignItems:'center'}}
     >
       <AlexTextField
         fullWidth
@@ -44,29 +44,32 @@ export default function ExamTargetList({targets,onChange}:Props){
         onChange={event=>updateTarget(index,{date:event.target.value})}
         sx={{gridColumn:{xs:'1 / 2',sm:'auto'}}}
       />
-      <AlexTextField
+      {(['readingWritingScore','mathScore'] as const).map((field)=><AlexTextField
+        key={field}
         fullWidth
         size="small"
         type="number"
-        label="Actual score"
-        placeholder="Not yet available"
-        value={target.score??''}
-        inputProps={{min:400,max:target.label.trim().toUpperCase().startsWith('PSAT')?1520:1600,step:10}}
+        label={field==='readingWritingScore'?'Reading & Writing':'Math'}
+        placeholder="—"
+        value={target[field]??''}
+        inputProps={{min:160,max:target.label.toUpperCase().includes('PSAT')?760:800,step:10}}
         onChange={event=>{
           const raw=event.target.value
-          if(!raw){updateTarget(index,{score:undefined});return}
+          if(raw===''){updateTarget(index,{[field]:undefined});return}
           const value=Number(raw)
-          const maxScore=target.label.trim().toUpperCase().startsWith('PSAT')?1520:1600
-          if(Number.isInteger(value)&&value>=0&&value<=maxScore){
-            updateTarget(index,{score:value})
-          }
+          if(Number.isInteger(value)&&value>=0&&value<=800)updateTarget(index,{[field]:value,score:undefined})
         }}
         sx={{gridColumn:{xs:'1 / 2',sm:'auto'}}}
-      />
+      />)}
+      <AlexBox sx={{gridColumn:{xs:'1 / 2',sm:'1 / -2'},fontSize:12,fontWeight:750,color:'#667085'}}>
+        Total: {target.readingWritingScore!==undefined&&target.mathScore!==undefined
+          ?target.readingWritingScore+target.mathScore
+          :target.score??'—'}
+      </AlexBox>
       <AlexIconButton
         label={`Remove ${target.label||'test'} date`}
         onClick={()=>onChange(targets.filter((_,targetIndex)=>targetIndex!==index))}
-        sx={{gridColumn:{xs:'2 / 3',sm:'auto'},gridRow:{xs:'1 / 4',sm:'auto'}}}
+        sx={{gridColumn:{xs:'2 / 3',sm:'auto'},gridRow:{xs:'1 / 5',sm:'1 / 2'}}}
       >
         <Trash2 size={16}/>
       </AlexIconButton>
