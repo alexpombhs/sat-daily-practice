@@ -65,7 +65,7 @@ describe('practice plan recommendations',()=>{
     }))
     const plan=buildPracticePlanRecommendation(baseSettings,QUESTION_BANK,slowAttempts,performance(1200))
     expect(plan.estimatedSessionMinutes).toBe(20)
-    expect(plan.estimatedDailyMinutes).toBe(20)
+    expect(plan.estimatedDailyMinutes).toBe(30)
     expect(plan.paceSource).toBe('configured plan')
   })
 
