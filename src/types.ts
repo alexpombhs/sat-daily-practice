@@ -7,7 +7,7 @@ export type PracticeSelectionMode = 'adaptive' | 'random'
 export type QuestionDifficulty = 'easy' | 'medium' | 'advanced'
 export type DifficultyFilter = 'all' | QuestionDifficulty
 export type AnswerFeedbackTiming = 'immediate' | 'end'
-export interface ExamTarget { label:string; date:string; score?:number }
+export interface ExamTarget { label:string; date:string; score?:number; readingWritingScore?:number; mathScore?:number }
 export interface VocabularyPreferences { sources:Array<'practice-test-derived'|'sat-open-dataset'|'supplemental'>; difficulty:'all'|'easy'|'medium'|'advanced'; history:'all'|'new'|'failed'; selection:'adaptive'|'random'; direction:'word-to-definition'|'definition-to-word' }
 export type SourceCrop = {x:number;y:number;width:number;height:number}
 export interface PracticeQuestion { id:string; practiceTestId:PracticeTestId; subject:Subject; module:ModuleKey; number:number; sourcePage:number; answerPage:number; correctAnswer:string; acceptedAnswers?:string[]; responseType:'multiple-choice'|'student-produced'; sourceCrop?:SourceCrop|null; contentStatus?:'metadata'|'imported'|'verified'; questionMode?:'text'|'image-fallback'; difficulty?:QuestionDifficulty; concepts?:string[] }
