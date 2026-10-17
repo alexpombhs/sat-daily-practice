@@ -92,7 +92,7 @@ async function explanationBounds(page:PDFPageProxy,scale:number,questionNumber:n
   // Start just above the current heading and stop just before the next heading.
   // This intentionally excludes adjacent question explanations on the same page.
   const top=Math.max(0,current.y-10*scale)
-  const bottom=Math.min(viewport.height,next?next.y-10*scale:viewport.height-12*scale)
+  const bottom=Math.min(viewport.height,next?next.y-10*scale:viewport.height-52*scale)
   const blockItems=items.filter(item=>item.text&&item.y>=top&&item.y<bottom)
   if(!blockItems.length)return{left:0,right:viewport.width,top,bottom,viewport,currentFound:true,nextFound:!!next}
 
