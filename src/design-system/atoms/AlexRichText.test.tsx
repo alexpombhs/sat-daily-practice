@@ -120,7 +120,7 @@ describe('AlexRichText inline math and currency',()=>{
     expect(container.querySelectorAll('.rich-math.inline .katex')).toHaveLength(1)
   })
   it('supports two currency amounts each followed by independent math',()=>{
-    const {container}=render(<AlexRichText }/>)
+    const {container}=render(<AlexRichText text={'Pay $1,235 $x^2$ and $2,400 $y^2$ for both.'}/> )
     expect(container.textContent).toContain('$1,235')
     expect(container.textContent).toContain('$2,400')
     expect(container.querySelectorAll('.rich-math.inline .katex')).toHaveLength(2)
