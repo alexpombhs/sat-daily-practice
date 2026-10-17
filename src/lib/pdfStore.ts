@@ -30,17 +30,23 @@ const OFFICIAL_SOURCES:Record<PracticeTestId,{questions:string;answers:string}>=
 const supabaseUrl=import.meta.env.VITE_SUPABASE_URL as string|undefined
 export type PdfKind='questions'|'answers'
 
-// SHA-256 hashes checked against the user-supplied PT9 PDFs. Prevent a
-// mismatched source from silently appearing under a valid PT9 question ID.
-const PT9_EXPECTED_SHA256:Record<PdfKind,string>={
-  questions:'ff929c946ebfa8d8d7f199e52e1eb12d7cf7d68256b894846725df0da87a6d69',
-  answers:'5c06af4bd2379763fbaabdae16f9cd03e14cabc7ee041131ba6b2837f5bf4696',
-}
+// Validate the actual PT9 content, not byte-for-byte PDF metadata.
+// Source files can be re-optimized upstream without changing their questions.
 async function verifiedPt9Bytes(testId:PracticeTestId,kind:PdfKind,bytes:ArrayBuffer){
   if(testId!=='practice-test-9')return true
-  const hash=await crypto.subtle.digest('SHA-256',bytes)
-  const actual=[...new Uint8Array(hash)].map(value=>value.toString(16).padStart(2,'0')).join('')
-  return actual===PT9_EXPECTED_SHA256[kind]
+  const {GlobalWorkerOptions,getDocument}=await import('pdfjs-dist')
+  GlobalWorkerOptions.workerSrc=new URL('pdfjs-dist/build/pdf.worker.min.mjs',import.meta.url).toString()
+  const doc=await getDocument({data:new Uint8Array(bytes.slice(0))}).promise
+  try{
+    if(kind==='questions'&&doc.numPages!==56)return false
+    if(kind==='answers'&&doc.numPages!==47)return false
+    const page=await doc.getPage(kind==='questions'?34:31)
+    const content=await page.getTextContent()
+    const text=content.items.filter((item):item is typeof item & {str:string}=>'str' in item).map(item=>item.str).join(' ').toLowerCase()
+    return kind==='questions'
+      ?text.includes('triangle')&&text.includes('perimeter')&&text.includes('centimeters')
+      :text.includes('question 1')&&text.includes('triangle')
+  }finally{await doc.destroy()}
 }
 
 const inMemorySources=new Map<string,Promise<ArrayBuffer|null>>()
@@ -65,7 +71,7 @@ async function readStored(testId:PracticeTestId,kind:PdfKind):Promise<ArrayBuffe
 }
 
 async function fetchPdf(url:string,expectedTestId?:PracticeTestId,expectedKind?:PdfKind){
-  const response=await fetch(url,{cache:expectedTestId==='practice-test-8'?'reload':'force-cache'})
+  const response=await fetch(url,{cache:expectedTestId==='practice-test-9'||expectedTestId==='practice-test-8'?'reload':'force-cache'})
   if(!response.ok)throw new Error(`PDF source returned ${response.status}.`)
   const contentType=response.headers.get('content-type')??''
   if(contentType&&!contentType.includes('pdf')&&!contentType.includes('octet-stream'))throw new Error(`Unexpected PDF content type: ${contentType}`)
@@ -73,7 +79,7 @@ async function fetchPdf(url:string,expectedTestId?:PracticeTestId,expectedKind?:
   if(expectedKind){const actual=response.headers.get('x-sat-source-kind');if(actual&&actual!==expectedKind)throw new Error(`Wrong SAT source kind returned: expected ${expectedKind}, received ${actual}.`)}
   const bytes=await response.arrayBuffer()
   if(!bytes.byteLength)throw new Error('PDF source returned an empty file.')
-  if(expectedTestId&&expectedKind&&!(await verifiedPt9Bytes(expectedTestId,expectedKind,bytes)))throw new Error('PT9 PDF content does not match the supplied source; refusing to show the wrong questions.')
+  if(expectedTestId&&expectedKind&&!(await verifiedPt9Bytes(expectedTestId,expectedKind,bytes)))throw new Error('PT9 PDF is not the expected official question or explanation document.')
   return bytes
 }
 
