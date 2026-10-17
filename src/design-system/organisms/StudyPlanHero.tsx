@@ -72,7 +72,7 @@ export default function StudyPlanHero({
         title="Current estimate"
         value={estimatedScore??'—'}
         valueFontSize={dashboardTypography.metricValue}
-        valueTrailing={<AlexBox sx={{display:'inline-flex','@media (min-width:1600px)':{display:'none'}}}>
+        valueTrailing={<AlexBox sx={{display:'inline-flex'}}>
           <AlexInfoTooltipButton
             label="Score estimate information"
             title={<>
@@ -83,7 +83,9 @@ export default function StudyPlanHero({
                 Total: {estimatedScore}. Each question’s probability incorporates its earlier answers, weighted toward more recent attempts.<br/>
                 {scoreBreakdown.change!==null&&<>Change since previous completed session: {scoreBreakdown.change>0?'+':''}{scoreBreakdown.change} points.<br/></>}
               </>:<>Complete questions in both sections to see a breakdown.<br/></>}
-              <br/><b>National Merit outlook</b><br/>
+              <br/><b>Previous official exam</b><br/>
+              {previousExam?`${previousExam.label} ${previousExam.year}: ${previousExam.total} (actual score). This is a historical reference, not a directly comparable SAT practice-score change.`:'No previous official score recorded.'}
+              <br/><br/><b>National Merit outlook</b><br/>
               {nationalMeritChance!==null
                 ?`${nationalMeritChance}% estimated qualifying outlook${projectedSelectionIndex!==null?` · projected Selection Index ~${projectedSelectionIndex}`:''}.`
                 :'The National Merit outlook is still calibrating.'}
@@ -98,36 +100,9 @@ export default function StudyPlanHero({
             </>}
           />
         </AlexBox>}
-        subtitle={<AlexBox sx={{minWidth:0,pr:{xs:7,sm:8}}}>
-          <AlexBox sx={{display:'flex',flexWrap:'wrap',alignItems:'center',columnGap:{xs:1,sm:1.5},rowGap:.25,mb:.3}}>
-            <AlexText sx={{fontSize:'inherit',fontWeight:800,color:'inherit',whiteSpace:'nowrap'}}>
-              Reading &amp; Writing {estimatedScore!==null&&scoreBreakdown?.english?scoreBreakdown.english.score:'—'}
-            </AlexText>
-            <AlexText sx={{fontSize:'inherit',fontWeight:800,color:'inherit',whiteSpace:'nowrap'}}>
-              Math {estimatedScore!==null&&scoreBreakdown?.math?scoreBreakdown.math.score:'—'}
-            </AlexText>
-          </AlexBox>
-          <AlexText sx={{fontSize:'inherit',color:'inherit',minWidth:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
-            {nationalMeritChance!==null
-              ?`${nationalMeritChance}% National Merit outlook${projectedSelectionIndex!==null?` · SI ~${projectedSelectionIndex}`:''}`
-              :accuracy!==null?'Calibrating National Merit outlook':'Complete a few questions to calibrate'}
-          </AlexText>
-          {previousExam&&<AlexText sx={{mt:.3,fontSize:'inherit',color:'inherit',lineHeight:1.3}}>
-            Your starting point: {previousExam.label} {previousExam.year} · {previousExam.total} actual
-            {estimatedScore!==null?' · Current practice estimate shown above':''}
-          </AlexText>}
-          {estimateConfidence&&<AlexText sx={{
-            display:'none',
-            '@media (min-width:1600px)':{display:'block'},
-            mt:.25,
-            fontSize:'inherit',
-            fontWeight:750,
-            color:'inherit',
-            whiteSpace:'nowrap',
-          }}>
-            {estimateConfidence.label} estimate confidence · {estimateConfidence.within80}% within ±80
-          </AlexText>}
-        </AlexBox>}
+        subtitle={<AlexText sx={{fontSize:dashboardTypography.supportBody,fontWeight:750,color:'#245F9E'}}>
+          {estimatedScore!==null?'Keep building on your progress!':'Your progress starts here'}
+        </AlexText>}
         decoration={<>
           <AlexBox sx={{
             position:'absolute',
