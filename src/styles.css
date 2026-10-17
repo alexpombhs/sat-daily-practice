@@ -881,9 +881,10 @@ nav[aria-label="Mobile primary navigation"]{margin:0}
     min-height:0;
     max-height:none;
     overflow-y:auto;
-    scrollbar-width:none;
+    scrollbar-width:thin;
+    scrollbar-gutter:stable;
+    overscroll-behavior:contain;
   }
-  .question-bank-list-scroll::-webkit-scrollbar{display:none}
   .question-bank-viewer{
     display:flex;
     flex-direction:column;
