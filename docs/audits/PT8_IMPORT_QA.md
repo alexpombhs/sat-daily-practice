@@ -82,3 +82,12 @@ The 27 canonical question reconstructions were queried from Supabase and compare
 **Remaining visual QA:** Render every source crop and explanation crop in the real app and check that each shows the correct question only, not adjacent content; ensure three graph crops include complete axes and labels. Explain/question continuation handling needs extra checks where one explanation spans pages. Fix any rendering mismatches individually and read them back before marking verified.
 
 **Resource efficiency:** Supabase stores only structured text, tiny crop coordinates, and metadata. The PDFs remain external; the frontend fetches at most one copy per practice test and PDF kind per cache version, caches in IndexedDB and memory, and renders visible crops locally rather than saving images into database rows. Avoid bulk PDF blobs, per-question Supabase source downloads, and repeated writes for unchanged records.
+
+
+### Local source-crop visual pass
+
+Rendered all **27 actual stored source-crop rectangles** from the uploaded official PT8 PDF (pages 34–40) as a contact sheet. Visually inspected the full sheet: each rectangle contains only its intended question; Q3, Q11 and Q15 include the full source graph and its labeled axes, and Q23 includes all table rows. This addresses the earlier adjacent-question screenshot caused by source/crop mismatch. This local PDF verification is **not** a completed live browser QA pass.
+
+Confirmed the Math Module 1 answer PDF has question headings on PDF pages 32–39, and Q27 explanation continues onto PDF page 40. The production explanation renderer stitches continuations; verify their actual boundaries in the browser, especially Q3, Q4, Q17, Q23 and Q27. A correct explanation **page** is not itself proof of a correct explanation **crop**.
+
+PT8 PDF cache should be reused once successfully fetched; do not disable caching while fixing stale content. No PDF binaries or per-question image blobs need to be persisted in the canonical question table.
