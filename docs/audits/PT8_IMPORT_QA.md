@@ -96,3 +96,35 @@ PT8 PDF cache should be reused once successfully fetched; do not disable caching
 ### Local explanation-crop review
 
 Rendered and reviewed a 27-item explanation contact sheet from the official answer PDF using the identified `QUESTION N` headings and page transitions. Every question 1–27 had its own correct heading. The continuation sections were included where the next question begins on a later PDF page, including Q3 (32→33), Q16 (35→36), Q19 (36→37), Q22 (37→38), Q24 (38→39), and Q27 (39→40). The current browser component derives these regions dynamically, so parity between this local inspection and the production renderer remains to be checked in-browser. Do not describe these as final verified application crops until that parity test is done.
+
+
+## Math Module 2 — 2026-10-17 import and source crop audit
+
+Canonical PT8 Math Module 2 Q1–Q27 imported into `sat_question_bank`, `practice_test_id='practice-test-8'`, `module='math2'`. Every record contains question text, source page, source crop, answer/explanation page, response type, and the official scoring-guide answer. Student-produced Q6, Q7, Q13, Q14, Q20, Q21 and Q27 are distinguished from multiple-choice questions. Q21 accepts both `1.8` and `9/5`.
+
+Source PDF pages 44–50; explanation PDF pages 41–48. Matched source page-to-question mapping per page and rendered a source-crop contact sheet for **all 27** stored crop coordinates. Checked individual regions visually for correct question identity and absence of next-question bleed. Nontextual figures are separately represented in `visual_specs` for Q1 (line graph), Q3 (parallel-line angle figure), Q5 (right triangle), Q12 (right triangle), and Q19 (two dot plots). Q2 is a semantic `[TABLE]` and Q22 preserves explicit underlining on “not”.
+
+### Module 2 QA status
+
+| Check | Result |
+| --- | --- |
+| Canonical question text | 27 imported |
+| Source crop references | 27 present; locally reviewed |
+| Official answer metadata | 27 imported and read back |
+| Explanation PDF page references | 27 present; headings mapped |
+| Source diagrams | 5 figures registered |
+| Data tables | 1 semantic table |
+| Student-produced | 7 |
+| Formatting concerns | Fractional powers, indexed radicals, systems and currency preserved in structured text |
+| Production UI comparison | Pending |
+| Explanation *crop* render verification | Pending |
+| Status promoted to verified | 0 |
+
+The original answer explanation remains an on-demand PDF crop in the existing Question Bank Explanation tab; no explanation text or PDF binary duplicated in Supabase. All records intentionally remain `imported` until final browser rendering and explanation-crop checks pass. Source-crop and explanation-page metadata are lightweight. A single source PDF is reused via browser cache rather than fetched/stored per question.
+
+### Follow-up verification
+
+1. Confirm the production app renders the correct PT8 PDF version for Math2 and reads these canonical rows.
+2. Review each equation and figure at narrow and wide viewport sizes against the PDF.
+3. Verify explanation crop headings and continuations per question (page references alone are insufficient).
+4. Check the project's unit tests and build before promotion to `verified`.
