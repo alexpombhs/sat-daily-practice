@@ -822,7 +822,7 @@ export default function App(){
         >
           {practiceRecommendation.isExamDay
             ?<AlexBox sx={{display:'flex',flexDirection:'column',justifyContent:'center',gap:.75,py:1.1}}>
-              <AlexBox sx={{fontSize:22,fontWeight:850,color:'#08275B'}}>
+              <AlexBox sx={{fontFamily:'Georgia, "Times New Roman", serif',fontSize:dashboardTypography.supportTitle,fontWeight:700,lineHeight:1,letterSpacing:'-.02em',color:'#08275B'}}>
                 {practiceRecommendation.activeExamLabel??'Exam'} test day
               </AlexBox>
               <AlexBox sx={{fontSize:dashboardTypography.supportBody,color:'#475467'}}>
