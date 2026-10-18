@@ -50,11 +50,6 @@ describe('DailyPracticeGoals weekly streak',()=>{
         sessions={sessions}
         dailyQuestions={20}
         failedQuestionCount={0}
-      signedIn={false}
-      onPracticeMath={()=>{}}
-      onPracticeReadingWriting={()=>{}}
-      onPracticeVocabulary={()=>{}}
-      onReviewFailed={()=>{}}
         signedIn={false}
         onPracticeMath={()=>{}}
         onPracticeReadingWriting={()=>{}}
@@ -84,11 +79,6 @@ describe('DailyPracticeGoals weekly streak',()=>{
         sessions={[failedOnlySession]}
         dailyQuestions={20}
         failedQuestionCount={0}
-      signedIn={false}
-      onPracticeMath={()=>{}}
-      onPracticeReadingWriting={()=>{}}
-      onPracticeVocabulary={()=>{}}
-      onReviewFailed={()=>{}}
         signedIn={false}
         onPracticeMath={()=>{}}
         onPracticeReadingWriting={()=>{}}
@@ -132,11 +122,6 @@ describe('DailyPracticeGoals weekly streak',()=>{
         sessions={[]}
         dailyQuestions={20}
         failedQuestionCount={0}
-      signedIn={false}
-      onPracticeMath={()=>{}}
-      onPracticeReadingWriting={()=>{}}
-      onPracticeVocabulary={()=>{}}
-      onReviewFailed={()=>{}}
         signedIn={false}
         onPracticeMath={()=>{}}
         onPracticeReadingWriting={()=>{}}
