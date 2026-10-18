@@ -66,7 +66,8 @@ export default function App(){
   const[questionBank,setQuestionBank]=useState<PracticeQuestion[]>([])
   const[questionBankLoadState,setQuestionBankLoadState]=useState<'loading'|'ready'|'error'>('loading')
   const[resumableSession,setResumableSession]=useState<ActivePracticeSession|null>(null)
-  const[pendingPractice,setPendingPractice]=useState<{mode:SubjectMode;test:Settings['practiceTest'];questionIds?:string[];groups?:Array<{concept:string;questionIds:string[]}>}|null>(null)
+  const[pendingPractice,setPendingPractice]=useState<{mode:SubjectMode;test:Settings['practiceTest'];questionIds?:string[];groups?:Array<{concept:string;questionIds:string[]}>;sessionOverrides?:Partial<Settings>}|null>(null)
+  const[sessionSettings,setSessionSettings]=useState<Settings|null>(null)
   const[replacingSession,setReplacingSession]=useState(false)
   const[confirmEndSession,setConfirmEndSession]=useState(false)
   const[preTestQuestion,setPreTestQuestion]=useState<PracticeQuestion|null>(null)
@@ -267,17 +268,17 @@ export default function App(){
       return {id:session.id,endedAt:session.endedAt,correct:metrics.correct,total:metrics.total,accuracy:metrics.accuracy}
     })
 
-  async function beginPractice(nextMode:SubjectMode=settings.mode,nextPracticeTest=settings.practiceTest??'all',reviewQuestionIds?:string[],conceptGroups?:Array<{concept:string;questionIds:string[]}>,sessionConflictResolved=false){
+  async function beginPractice(nextMode:SubjectMode=settings.mode,nextPracticeTest=settings.practiceTest??'all',reviewQuestionIds?:string[],conceptGroups?:Array<{concept:string;questionIds:string[]}>,sessionConflictResolved=false,sessionOverrides:Partial<Settings>={}){
     if(!authUser){
       window.alert('Sign in to practice so your progress stays identical across devices.')
       navigateTo('account')
       return
     }
     if(resumableSession&&!sessionConflictResolved){
-      setPendingPractice({mode:nextMode,test:nextPracticeTest,questionIds:reviewQuestionIds,groups:conceptGroups})
+      setPendingPractice({mode:nextMode,test:nextPracticeTest,questionIds:reviewQuestionIds,groups:conceptGroups,sessionOverrides})
       return
     }
-    const nextSettings={...settings,mode:nextMode,practiceTest:nextPracticeTest,...(reviewQuestionIds?{failedOnly:false,failedEverOnly:true}: {})}
+    const nextSettings={...settings,mode:nextMode,practiceTest:nextPracticeTest,...sessionOverrides,...(reviewQuestionIds?{failedOnly:false,failedEverOnly:true}: {})}
     const nextQuestions=reviewQuestionIds
       ?reviewQuestionIds.map(id=>questionBank.find(q=>q.id===id)).filter((q):q is PracticeQuestion=>Boolean(q)).slice(0,settings.questionsPerSession)
       :choosePracticeQuestions(nextSettings,attempts,Math.random,questionBank)
@@ -313,7 +314,7 @@ export default function App(){
     setReviewMode(false)
     setFailedSessionOrder('mixed')
     setPreTestGroups(conceptGroups??[])
-    setSettings(nextSettings)
+    setSessionSettings(nextSettings)
     setQs(nextQuestions)
     setSid(sessionId)
     setStarted(startedAt)
@@ -339,7 +340,7 @@ export default function App(){
     const priorAttempt=currentQuestion?resumableSession.attempts.find(attempt=>attempt.questionId===currentQuestion.id):undefined
     setReviewMode(false)
     setFailedSessionOrder('mixed')
-    setSettings({...settings,...resumableSession.settings})
+    setSessionSettings(resumableSession.settings)
     setQs(resumedQuestions)
     setSid(resumableSession.id)
     setStarted(resumableSession.startedAt)
@@ -376,7 +377,7 @@ export default function App(){
       if(resumableSession)await abandonActiveSession(resumableSession.id)
       setResumableSession(null)
       setPendingPractice(null)
-      await beginPractice(pending.mode,pending.test,pending.questionIds,pending.groups,true)
+      await beginPractice(pending.mode,pending.test,pending.questionIds,pending.groups,true,pending.sessionOverrides)
     }catch(error){
       console.warn('Unable to replace unfinished session',error)
       setPendingPractice(null)
@@ -416,7 +417,7 @@ export default function App(){
   }
 
   async function changeFailedReviewOrder(order:'math-first'|'reading-first'|'mixed'){
-    if(!sid||!settings.failedEverOnly||reviewMode)return
+    if(!sid||!(sessionSettings??settings).failedEverOnly||reviewMode)return
     // Keep answered questions in place; reorder only the unanswered part.
     const answeredIds=new Set(currentAttempts.map(attempt=>attempt.questionId))
     const completed=qs.filter(question=>answeredIds.has(question.id))
@@ -482,6 +483,7 @@ export default function App(){
     }
     setReviewMode(true)
     setPreTestGroups([])
+    setSessionSettings(session.settings??settings)
     setQs(reviewQuestions)
     setSid(session.id)
     setStarted(session.startedAt)
@@ -536,7 +538,8 @@ export default function App(){
   }
 
   async function finish(){
-    const session:SessionSummary={id:sid,startedAt:started,endedAt:new Date().toISOString(),mode:settings.mode,questionCount:qs.length,attempts:currentAttempts,dailyQuestionGoal:practiceRecommendation.questionsPerSession*practiceRecommendation.recommendedSessionsPerDay,settings:{...settings}}
+    const activeSettings=sessionSettings??settings
+    const session:SessionSummary={id:sid,startedAt:started,endedAt:new Date().toISOString(),mode:activeSettings.mode,questionCount:qs.length,attempts:currentAttempts,dailyQuestionGoal:practiceRecommendation.questionsPerSession*practiceRecommendation.recommendedSessionsPerDay,settings:{...activeSettings}}
     try{
       await syncSession(session)
       setSessions(previous=>[...previous,session])
@@ -671,14 +674,15 @@ export default function App(){
   }
 
   if(view==='practice'&&current){
+    const activeSettings=sessionSettings??settings
     return withSidebar('practice',<main className="practice">
       <PracticeSessionHeader
         moduleLabel={moduleLabel(current.module)}
         subjectLabel={current.subject==='math'?'Math':'Reading & Writing'}
         sourceTestLabel={practiceTestLabel(current.practiceTestId)}
-        failedOrder={!reviewMode&&settings.failedEverOnly?failedSessionOrder:undefined}
+        failedOrder={!reviewMode&&activeSettings.failedEverOnly?failedSessionOrder:undefined}
         onFailedOrderChange={order=>void changeFailedReviewOrder(order)}
-        sessionSummary={`${settings.mode==='both'?'Math & Reading':settings.mode==='math'?'Math':'Reading & Writing'} · ${qs.length} questions · ${settings.failedEverOnly?'Failed only':settings.failedOnly?'New only':'All questions'}`}
+        sessionSummary={`${activeSettings.mode==='both'?'Math & Reading':activeSettings.mode==='math'?'Math':'Reading & Writing'} · ${qs.length} questions · ${activeSettings.failedEverOnly?'Failed only':activeSettings.failedOnly?'New only':'All questions'}`}
         current={i+1}
         total={qs.length}
         canGoPrevious={i>0}
@@ -730,7 +734,7 @@ export default function App(){
           explanationBytes={apdf}
           onSelect={setSelected}
           onSubmit={submit}
-          revealFeedback={reviewMode||(settings.answerFeedbackTiming??'end')==='immediate'}
+          revealFeedback={reviewMode||(activeSettings.answerFeedbackTiming??'end')==='immediate'}
           reviewMode={reviewMode}
         />
       </div>
@@ -863,8 +867,8 @@ export default function App(){
               isExamDay={practiceRecommendation.isExamDay}
               examLabel={practiceRecommendation.activeExamLabel}
               signedIn={Boolean(authUser)}
-              onPracticeMath={()=>void beginPractice('math')}
-              onPracticeReadingWriting={()=>void beginPractice('english')}
+              onPracticeMath={()=>void beginPractice('math',settings.practiceTest??'all',undefined,undefined,false,{failedOnly:true,failedEverOnly:false})}
+              onPracticeReadingWriting={()=>void beginPractice('english',settings.practiceTest??'all',undefined,undefined,false,{failedOnly:true,failedEverOnly:false})}
               onPracticeVocabulary={()=>navigateTo('vocabulary')}
               onReviewFailed={startFailedReview}
             />
