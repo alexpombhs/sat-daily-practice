@@ -210,7 +210,7 @@ export default function SourceSlice({pdfKey,bytes,page,questionNumber,alt,zoom=1
   useEffect(()=>{
     let cancelled=false;let objectUrl='';const renderTasks:{cancel:()=>void;promise:Promise<void>}[]=[]
     const cropKey=sourceCrop?`${sourceCrop.x},${sourceCrop.y},${sourceCrop.width},${sourceCrop.height}`:'auto'
-    const imageKey=`${practiceTestId==='practice-test-9'?'pt9-clean-v1':isQuestion?'v13':'v15'}:${practiceTestId}:${pdfKey}:${bytes.byteLength}:${page}:${questionNumber}:${cropKey}`
+    const imageKey=`${practiceTestId==='practice-test-9'?'pt9-clean-v1':isQuestion?'v14':'v15'}:${practiceTestId}:${pdfKey}:${bytes.byteLength}:${page}:${questionNumber}:${cropKey}`
     async function showBlob(blob:Blob){objectUrl=URL.createObjectURL(blob);if(!cancelled)setSrc(objectUrl)}
     async function render(){
       try{
@@ -257,7 +257,25 @@ export default function SourceSlice({pdfKey,bytes,page,questionNumber,alt,zoom=1
         const srcX=Math.max(0,Math.floor(left*dpr)),srcY=Math.max(0,Math.floor(top*dpr)),srcRight=Math.min(full.width,Math.ceil(right*dpr)),srcBottom=Math.min(full.height,Math.ceil(bottom*dpr))
         const srcWidth=Math.max(1,srcRight-srcX),srcHeight=Math.max(1,srcBottom-srcY);const out=document.createElement('canvas');out.width=srcWidth;out.height=srcHeight
         const ctx=out.getContext('2d')!;ctx.fillStyle='#fff';ctx.fillRect(0,0,out.width,out.height);ctx.drawImage(full,srcX,srcY,srcWidth,srcHeight,0,0,out.width,out.height)
-        const blob=await canvasToBlob(out);await saveQuestionImage(imageKey,blob);if(!cancelled)await showBlob(blob)
+        let rendered=out
+        // PT10 Math Module 1 Q4 is intentionally split across two source pages:
+        // the prompt/original graph is on the first page and the graphical answer
+        // choices A-D are on the following page. Preserve both in the source view.
+        if(practiceTestId==='practice-test-10'&&resolvedModule==='math1'&&questionNumber===4&&page<doc.numPages){
+          const continuationPage=await doc.getPage(page+1)
+          const continuationViewport=continuationPage.getViewport({scale})
+          const continuationBounds={
+            left:30*scale,
+            right:(30+546)*scale,
+            top:102*scale,
+            bottom:Math.min(continuationViewport.height,(102+620)*scale),
+            viewport:continuationViewport,
+          }
+          const continuation=await renderCrop(continuationPage,continuationBounds,dpr,task=>renderTasks.push(task))
+          if(cancelled)return
+          rendered=stitchCanvases([out,continuation],dpr)
+        }
+        const blob=await canvasToBlob(rendered);await saveQuestionImage(imageKey,blob);if(!cancelled)await showBlob(blob)
       }catch(reason){if(!cancelled)setError(reason instanceof Error?reason.message:'Unable to render item.')}
     }
     void render()

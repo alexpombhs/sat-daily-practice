@@ -23,6 +23,10 @@ const SOURCES={
     questions:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-9-digital.pdf',
     answers:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-9-answers-digital.pdf',
   },
+  'practice-test-10':{
+    questions:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-10-digital.pdf',
+    answers:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-10-answers-digital.pdf',
+  },
 } as const
 
 type PracticeTestId=keyof typeof SOURCES
@@ -51,18 +55,26 @@ Deno.serve(async(req:Request)=>{
 
   try{
     const sourceUrl=SOURCES[practiceTestId as PracticeTestId][kind as SourceKind]
-    const upstream=await fetch(sourceUrl,{headers:{'User-Agent':'SAT Practice source proxy'}})
+    const range=req.headers.get('range')
+    const upstream=await fetch(sourceUrl,{headers:{
+      'User-Agent':'SAT Practice source proxy',
+      ...(range?{Range:range}:{}),
+    }})
     if(!upstream.ok)return new Response(`Source unavailable (${upstream.status})`,{status:502,headers:corsHeaders})
-    const bytes=await upstream.arrayBuffer()
-    if(!bytes.byteLength)return new Response('Source PDF is empty',{status:502,headers:corsHeaders})
-    return new Response(bytes,{status:200,headers:{
+    if(!upstream.body)return new Response('Source PDF is empty',{status:502,headers:corsHeaders})
+    const headers={
       ...corsHeaders,
-      'Content-Type':'application/pdf',
-      'Content-Length':String(bytes.byteLength),
+      'Content-Type':upstream.headers.get('content-type')??'application/pdf',
       'Cache-Control':'public, max-age=3600, s-maxage=3600',
+      'Accept-Ranges':upstream.headers.get('accept-ranges')??'bytes',
       'X-SAT-Practice-Test-Id':practiceTestId,
       'X-SAT-Source-Kind':kind,
-    }})
+    } as Record<string,string>
+    const contentLength=upstream.headers.get('content-length')
+    const contentRange=upstream.headers.get('content-range')
+    if(contentLength)headers['Content-Length']=contentLength
+    if(contentRange)headers['Content-Range']=contentRange
+    return new Response(upstream.body,{status:upstream.status,headers})
   }catch(error){
     console.error(error)
     return new Response('Unable to load SAT source PDF',{status:502,headers:corsHeaders})

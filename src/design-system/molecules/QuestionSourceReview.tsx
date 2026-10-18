@@ -43,7 +43,7 @@ export default function QuestionSourceReview({question,questionsPdf,answersPdf=n
           {activeTab==='explanation'&&showExplanation
             ?resolvedAnswersPdf
               ?<SourceViewer pdfKey="answers" bytes={resolvedAnswersPdf} page={question.answerPage} questionNumber={question.number} alt={`Original explanation for ${label}`} label="Original explanation" practiceTestId={question.practiceTestId} module={question.module}/>
-              :<AlexBox sx={{p:3}}><AlexText sx={{fontSize:14,color:answerSource.error?'#B42318':'#667085'}}>{answerSource.loading?'Loading shared explanation PDF…':answerSource.error||'Shared explanation PDF is unavailable right now.'}</AlexText></AlexBox>
+              :<AlexBox sx={{p:3}}><AlexText sx={{fontSize:14,color:answerSource.error?'#B42318':'#667085'}}>{answerSource.loading?'Loading original explanation PDF…':answerSource.error||'Original explanation PDF is unavailable right now.'}</AlexText></AlexBox>
             :hasQuestionSource&&resolvedQuestionsPdf
               ?<SourceViewer pdfKey="questions" bytes={resolvedQuestionsPdf} page={question.sourcePage} questionNumber={question.number} alt={`${label} original PDF`} practiceTestId={question.practiceTestId} module={question.module} sourceCrop={question.sourceCrop}/>
               :<AlexBox sx={{p:3}}><AlexText sx={{fontSize:14,color:questionSource.error?'#B42318':'#667085'}}>{questionSource.loading?'Loading shared source PDF…':questionSource.error||'Shared source PDF is unavailable right now.'}</AlexText></AlexBox>}

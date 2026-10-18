@@ -16,7 +16,7 @@ export default function SessionReviewSelector({value,options,onChange,onReview}:
   return <AlexBox
     sx={{
       display:'grid',
-      gridTemplateColumns:{xs:'1fr',md:'minmax(0,1fr) minmax(280px,360px)'},
+      gridTemplateColumns:{xs:'1fr',md:'minmax(0,1fr) minmax(360px,480px)'},
       gap:{xs:1.25,md:4},
       alignItems:'center',
       py:{xs:1.5,md:1.75},

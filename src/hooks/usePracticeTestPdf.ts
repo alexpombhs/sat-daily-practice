@@ -11,8 +11,10 @@ export type PracticeTestPdfState={
 
 export function usePracticeTestPdfState(question:PracticeQuestion,kind:PdfKind,fallback:ArrayBuffer|null=null,enabled=true):PracticeTestPdfState{
   const testId=question.practiceTestId
-  // PT9 must never display a parent-provided (possibly different-test) PDF.
-  const trustedFallback=testId==='practice-test-9'?null:fallback
+  // Newer tests must never display a parent-provided PDF from a different test while
+  // their canonical source is loading or unavailable.
+  const requiresCanonical=testId==='practice-test-9'||testId==='practice-test-10'
+  const trustedFallback=requiresCanonical?null:fallback
   const[source,setSource]=useState<ArrayBuffer|null>(trustedFallback)
   const[loading,setLoading]=useState(enabled)
   const[error,setError]=useState('')
@@ -48,7 +50,7 @@ export function usePracticeTestPdfState(question:PracticeQuestion,kind:PdfKind,f
       .finally(()=>{if(!cancelled)setLoading(false)})
 
     return()=>{cancelled=true}
-  },[testId,kind,trustedFallback,enabled])
+  },[question.id,testId,kind,trustedFallback,enabled])
 
   return {source,loading,error,usingFallback}
 }
