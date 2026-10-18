@@ -263,6 +263,54 @@ export const PRACTICE_TEST_VOCABULARY:VocabularyEntry[]=[
   {id:'offhand',word:'offhand',definition:'casual, unplanned, or without careful thought',sourceQuestionId:'practice-test-9:rw2-5',difficulty:'advanced'},
   {id:'persistent',word:'persistent',definition:'continuing firmly despite difficulty or delay',sourceQuestionId:'practice-test-9:rw2-5',difficulty:'medium'},
   {id:'mandatory',word:'mandatory',definition:'required by a rule or law; compulsory',sourceQuestionId:'practice-test-9:rw2-5',difficulty:'medium'},
+
+  {id:'source',word:'source',definition:'a place, person, or thing from which something comes or is obtained',sourceQuestionId:'practice-test-10:rw1-1',difficulty:'easy'},
+  {id:'rival',word:'rival',definition:'a person or thing competing with another',sourceQuestionId:'practice-test-10:rw1-1',difficulty:'easy'},
+  {id:'condition',word:'condition',definition:'a state, circumstance, or requirement affecting something',sourceQuestionId:'practice-test-10:rw1-1',difficulty:'easy'},
+  {id:'waste',word:'waste',definition:'material, effort, or resources used without useful purpose',sourceQuestionId:'practice-test-10:rw1-1',difficulty:'easy'},
+
+  {id:'skeptical',word:'skeptical',definition:'doubtful or not easily convinced',sourceQuestionId:'practice-test-10:rw1-2',difficulty:'medium'},
+  {id:'observant',word:'observant',definition:'quick to notice and pay attention to details',sourceQuestionId:'practice-test-10:rw1-2',difficulty:'medium'},
+  {id:'critical',word:'critical',definition:'carefully judging or evaluating something',sourceQuestionId:'practice-test-10:rw1-2',difficulty:'medium'},
+
+  {id:'demands',word:'demands',definition:'requires or insists on something',sourceQuestionId:'practice-test-10:rw1-3',difficulty:'easy'},
+  {id:'speculates',word:'speculates',definition:'forms a theory or guess without firm evidence',sourceQuestionId:'practice-test-10:rw1-3',difficulty:'medium'},
+  {id:'doubts',word:'doubts',definition:'feels uncertain about or questions the truth of',sourceQuestionId:'practice-test-10:rw1-3',difficulty:'easy'},
+  {id:'establishes',word:'establishes',definition:'shows, proves, or sets something firmly',sourceQuestionId:'practice-test-10:rw1-3',difficulty:'medium'},
+
+  {id:'synchronization',word:'synchronization',definition:'the act of causing events or processes to occur at the same time',sourceQuestionId:'practice-test-10:rw1-4',difficulty:'advanced'},
+  {id:'hibernation',word:'hibernation',definition:'a dormant state used by some animals to conserve energy',sourceQuestionId:'practice-test-10:rw1-4',difficulty:'medium'},
+  {id:'prediction',word:'prediction',definition:'a statement about what is expected to happen',sourceQuestionId:'practice-test-10:rw1-4',difficulty:'easy'},
+  {id:'moderation',word:'moderation',definition:'the quality of avoiding extremes',sourceQuestionId:'practice-test-10:rw1-4',difficulty:'medium'},
+
+  {id:'superficial',word:'superficial',definition:'concerned only with the surface or obvious features; not thorough',sourceQuestionId:'practice-test-10:rw1-5',difficulty:'medium'},
+  {id:'exhaustive',word:'exhaustive',definition:'complete and including all relevant details',sourceQuestionId:'practice-test-10:rw1-5',difficulty:'advanced'},
+  {id:'questionable',word:'questionable',definition:'doubtful, uncertain, or open to criticism',sourceQuestionId:'practice-test-10:rw1-5',difficulty:'medium'},
+
+  {id:'widespread',word:'widespread',definition:'found or occurring over a large area or among many people',sourceQuestionId:'practice-test-10:rw2-1',difficulty:'easy'},
+  {id:'careful',word:'careful',definition:'taking thought to avoid mistakes or harm',sourceQuestionId:'practice-test-10:rw2-1',difficulty:'easy'},
+  {id:'unintended',word:'unintended',definition:'not planned or meant to happen',sourceQuestionId:'practice-test-10:rw2-1',difficulty:'easy'},
+  {id:'infrequent',word:'infrequent',definition:'not occurring often',sourceQuestionId:'practice-test-10:rw2-1',difficulty:'medium'},
+
+  {id:'involuntarily',word:'involuntarily',definition:'without conscious control or intention',sourceQuestionId:'practice-test-10:rw2-2',difficulty:'advanced'},
+  {id:'beneficially',word:'beneficially',definition:'in a way that produces a helpful or favorable result',sourceQuestionId:'practice-test-10:rw2-2',difficulty:'medium'},
+  {id:'strenuously',word:'strenuously',definition:'with great effort, force, or intensity',sourceQuestionId:'practice-test-10:rw2-2',difficulty:'advanced'},
+  {id:'smoothly',word:'smoothly',definition:'evenly, easily, or without interruption',sourceQuestionId:'practice-test-10:rw2-2',difficulty:'easy'},
+
+  {id:'unobtrusive',word:'unobtrusive',definition:'not noticeable or attracting attention',sourceQuestionId:'practice-test-10:rw2-3',difficulty:'advanced'},
+  {id:'concealed',word:'concealed',definition:'hidden or kept from view',sourceQuestionId:'practice-test-10:rw2-3',difficulty:'medium'},
+  {id:'approximate',word:'approximate',definition:'close to the actual value or position but not exact',sourceQuestionId:'practice-test-10:rw2-3',difficulty:'medium'},
+  {id:'peripheral',word:'peripheral',definition:'located away from the center or at the outer edge',sourceQuestionId:'practice-test-10:rw2-3',difficulty:'advanced'},
+
+  {id:'stymie',word:'stymie',definition:'prevent or seriously hinder progress',sourceQuestionId:'practice-test-10:rw2-4',difficulty:'advanced'},
+  {id:'compound',word:'compound',definition:'make a problem or situation worse by adding to it',sourceQuestionId:'practice-test-10:rw2-4',difficulty:'advanced'},
+  {id:'disparage',word:'disparage',definition:'speak of as unimportant or inferior; belittle',sourceQuestionId:'practice-test-10:rw2-4',difficulty:'advanced'},
+  {id:'outstrip',word:'outstrip',definition:'surpass or exceed',sourceQuestionId:'practice-test-10:rw2-4',difficulty:'advanced'},
+
+  {id:'sanguine',word:'sanguine',definition:'optimistic or confident about an outcome',sourceQuestionId:'practice-test-10:rw2-5',difficulty:'advanced'},
+  {id:'recalcitrant',word:'recalcitrant',definition:'stubbornly resistant to authority or control',sourceQuestionId:'practice-test-10:rw2-5',difficulty:'advanced'},
+  {id:'misanthropic',word:'misanthropic',definition:'showing dislike or distrust of people in general',sourceQuestionId:'practice-test-10:rw2-5',difficulty:'advanced'},
+  {id:'earnest',word:'earnest',definition:'serious and sincere in attitude or purpose',sourceQuestionId:'practice-test-10:rw2-5',difficulty:'medium'},
 ]
 
 export const VOCABULARY_BANK:VocabularyEntry[]=[
