@@ -11,23 +11,29 @@ function RecommendationBody({recommendation,compact}:{recommendation:PracticePla
   const complete=recommendation.remainingQuestions===0&&scoreGoalMet
   const dailyMinutes=complete?0:recommendation.estimatedDailyMinutes
   const sessionLabel=recommendation.recommendedSessionsPerDay===1?'1 session':`${recommendation.recommendedSessionsPerDay} sessions`
+  const headline=recommendation.isExamDay?'Exam day':complete?'On track':`${dailyMinutes} min/day`
 
   return <>
     <AlexBox sx={{display:'flex',alignItems:'baseline',gap:1.1,flexWrap:'wrap'}}>
       <AlexText sx={{fontSize:compact?28:38,fontWeight:900,lineHeight:1,color:'#08275B'}}>
-        {complete?'On track':`${dailyMinutes} min/day`}
+        {headline}
       </AlexText>
-      {!complete&&<AlexText sx={{fontSize:13.5,color:'#667085'}}>
+      {!complete&&!recommendation.isExamDay&&<AlexText sx={{fontSize:13.5,color:'#667085'}}>
         {sessionLabel} · {recommendation.questionsPerSession} questions/session
       </AlexText>}
     </AlexBox>
 
-    {!complete&&recommendation.planPhase==='final-review'&&
+    {!complete&&recommendation.isExamDay&&
       <AlexText sx={{mt:1.15,fontSize:13.5,lineHeight:1.5,color:'#344054',fontWeight:650}}>
         {recommendation.practiceGuidance}
       </AlexText>}
 
-    {!complete&&recommendation.focusLabel&&recommendation.focusSharePercent&&
+    {!complete&&!recommendation.isExamDay&&recommendation.planPhase==='final-review'&&
+      <AlexText sx={{mt:1.15,fontSize:13.5,lineHeight:1.5,color:'#344054',fontWeight:650}}>
+        {recommendation.practiceGuidance}
+      </AlexText>}
+
+    {!complete&&!recommendation.isExamDay&&recommendation.focusLabel&&recommendation.focusSharePercent&&
       <AlexText sx={{mt:1.25,fontSize:13.5,lineHeight:1.5,color:'#344054'}}>
         Focus about {recommendation.focusSharePercent}% of targeted work on <b>{recommendation.focusLabel}</b>, and use the rest for mixed practice.
       </AlexText>}
