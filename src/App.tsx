@@ -1,5 +1,5 @@
 import {useEffect,useRef,useState,type ReactNode} from 'react'
-import {CalendarDays,Clock3,ListChecks,PenLine,Target} from 'lucide-react'
+import {CalendarDays,ListChecks,PenLine,Target} from 'lucide-react'
 import AlexBox from './design-system/atoms/AlexBox'
 import AlexButton from './design-system/atoms/AlexButton'
 import AlexConfirmDialog from './design-system/atoms/AlexConfirmDialog'
@@ -29,6 +29,7 @@ import {availablePracticeTests,moduleLabel,practiceTestLabel,QUESTION_BANK} from
 import {buildPracticePlanRecommendation,examTargetsFromSettings} from './lib/practicePlan'
 import {rankReviewConcepts} from './lib/conceptReview'
 import {buildNationalMeritOutlook} from './lib/nationalMeritOutlook'
+import {failedQuestionIds} from './lib/questionMastery'
 import {estimateSectionPracticeScore} from './lib/performanceAnalytics'
 import {loadSharedQuestionBank,mergeQuestionBanks} from './lib/sharedQuestionBank'
 import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
@@ -369,6 +370,20 @@ export default function App(){
     }finally{
       setReplacingSession(false)
     }
+  }
+
+  function startFailedReview(){
+    const failedIds=failedQuestionIds(attempts,Math.max(1,Math.min(5,settings.failedRecoveryCorrectAnswers??2)))
+    const scoped=questionBank.filter(question=>
+      failedIds.has(question.id)&&
+      (settings.mode==='both'||question.subject===settings.mode)&&
+      ((settings.practiceTest??'all')==='all'||question.practiceTestId===settings.practiceTest)
+    )
+    if(!scoped.length){
+      window.alert('No failed questions are available in the current practice scope.')
+      return
+    }
+    void beginPractice(settings.mode,settings.practiceTest,scoped.map(question=>question.id))
   }
 
   function startPreTestReview(){
@@ -764,12 +779,16 @@ export default function App(){
               attempts={attempts}
               sessions={sessions}
               dailyQuestions={practiceRecommendation.dailyQuestionGoal}
-              dailyMinutes={practiceRecommendation.estimatedDailyMinutes}
               failedQuestionCount={failedQuestionCount}
               recommendationLabel={performance.recommendation?.label}
               recommendationReason={performance.recommendation?.reason}
               isExamDay={practiceRecommendation.isExamDay}
               examLabel={practiceRecommendation.activeExamLabel}
+              signedIn={Boolean(authUser)}
+              onPracticeMath={()=>void beginPractice('math')}
+              onPracticeReadingWriting={()=>void beginPractice('english')}
+              onPracticeVocabulary={()=>navigateTo('vocabulary')}
+              onReviewFailed={startFailedReview}
             />
           }
         />
@@ -822,10 +841,10 @@ export default function App(){
             rowGap:0,
           }}>
             {[
-              {label:'Daily time',value:`${practiceRecommendation.estimatedDailyMinutes} min`,icon:<Clock3 size={13}/>},
-              {label:'Focus',value:practiceRecommendation.focusLabel??'Balanced',icon:<Target size={13}/>},
-              {label:'Session size',value:`${settings.questionsPerSession} questions`,icon:<ListChecks size={13}/>},
               {label:'Daily questions',value:`${practiceRecommendation.dailyQuestionGoal} questions`,icon:<CalendarDays size={13}/>},
+              {label:'Vocabulary',value:'20 words',icon:<ListChecks size={13}/>},
+              {label:'Failed review',value:failedQuestionCount?'At least 1':'Clear',icon:<Target size={13}/>},
+              {label:'Focus',value:practiceRecommendation.focusLabel??'Balanced',icon:<Target size={13}/>},
             ].map((item,index)=><AlexBox
               key={item.label}
               sx={{
