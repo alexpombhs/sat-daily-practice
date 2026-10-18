@@ -56,18 +56,38 @@ export function mergeQuestionBanks(bundled:PracticeQuestion[],shared:PracticeQue
 
 export async function loadSharedQuestionBank():Promise<PracticeQuestion[]|null>{
   if(!supabase)return null
-  const {data,error}=await supabase
-    .from('sat_question_bank')
-    .select('id,practice_test_id,subject,module,question_number,source_page,answer_page,correct_answer,accepted_answers,response_type,source_crop,content_status,question_mode')
-    .order('module',{ascending:true})
-    .order('question_number',{ascending:true})
-  if(error)throw error
-  const {data:difficultyRows,error:difficultyError}=await supabase
-    .from('sat_question_difficulty').select('question_id,difficulty,concepts')
-  if(difficultyError)throw difficultyError
-  const difficulties=new Map((difficultyRows??[]).map(row=>[row.question_id,row.difficulty]))
-  const concepts=new Map((difficultyRows??[]).map(row=>[row.question_id,Array.isArray(row.concepts)?row.concepts.filter((item:unknown):item is string=>typeof item==='string'):[]]))
-  const remote=(data??[]).filter(row=>idMatchesPracticeTest(row.id,row.practice_test_id)).map(row=>({
+
+  const pageSize=500
+  const questionRows:any[]=[]
+  const difficultyRows:any[]=[]
+
+  for(let from=0;;from+=pageSize){
+    const {data,error}=await supabase
+      .from('sat_question_bank')
+      .select('id,practice_test_id,subject,module,question_number,source_page,answer_page,correct_answer,accepted_answers,response_type,source_crop,content_status,question_mode')
+      .order('practice_test_id',{ascending:true})
+      .order('module',{ascending:true})
+      .order('question_number',{ascending:true})
+      .range(from,from+pageSize-1)
+    if(error)throw error
+    questionRows.push(...(data??[]))
+    if((data?.length??0)<pageSize)break
+  }
+
+  for(let from=0;;from+=pageSize){
+    const {data,error}=await supabase
+      .from('sat_question_difficulty')
+      .select('question_id,difficulty,concepts')
+      .order('question_id',{ascending:true})
+      .range(from,from+pageSize-1)
+    if(error)throw error
+    difficultyRows.push(...(data??[]))
+    if((data?.length??0)<pageSize)break
+  }
+
+  const difficulties=new Map(difficultyRows.map(row=>[row.question_id,row.difficulty]))
+  const concepts=new Map(difficultyRows.map(row=>[row.question_id,Array.isArray(row.concepts)?row.concepts.filter((item:unknown):item is string=>typeof item==='string'):[]]))
+  const remote=questionRows.filter(row=>idMatchesPracticeTest(row.id,row.practice_test_id)).map(row=>({
     id:row.id,
     difficulty:difficulties.get(row.id) as PracticeQuestion['difficulty'],
     concepts:concepts.get(row.id)??[],
