@@ -738,6 +738,9 @@ export default function App(){
   }
 
   if(view==='stats')return withSidebar('performance',<main className="shell"><PerformanceDashboard
+    coverageQuestions={questionBank}
+    coverageAttempts={attempts}
+    recoveryCorrectAnswers={settings.failedRecoveryCorrectAnswers??2}
     summary={rangePerformance}
     hasHistory={performanceAttempts.length>0}
     questionsPdf={qpdf}
