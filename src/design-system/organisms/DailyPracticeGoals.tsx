@@ -1,4 +1,4 @@
-import {useEffect,useState} from 'react'
+import {useEffect,useState,type ReactNode} from 'react'
 import {BookOpen,Check,Flame,Languages,RotateCcw,Sigma,Star} from 'lucide-react'
 import AlexBox from '../atoms/AlexBox'
 import AlexIconButton from '../atoms/AlexIconButton'
@@ -164,7 +164,7 @@ export default function DailyPracticeGoals({
   </AlexBox>
 }
 
-function GoalRow({complete,label,value,children}:{complete:boolean;label:string;value:string;children:React.ReactNode}){
+function GoalRow({complete,label,value,children}:{complete:boolean;label:string;value:string;children:ReactNode}){
   return <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'30px minmax(0,1fr) auto',xl:'24px minmax(0,1fr) auto'},alignItems:'center',columnGap:{xs:1.15,xl:.75},minWidth:0}}>
     <AlexBox aria-hidden="true" sx={{width:{xs:30,xl:24},height:{xs:30,xl:24},borderRadius:'50%',display:'grid',placeItems:'center',bgcolor:complete?'#E8F7EE':'#EEF2F7',color:complete?'#20935A':'#C7D1DF'}}>
       <Star size={17} fill="currentColor" strokeWidth={1.4}/>
