@@ -1,5 +1,5 @@
 import {useEffect,useRef,useState,type ReactNode} from 'react'
-import {CalendarDays,ListChecks,PenLine,Target} from 'lucide-react'
+import {BookOpen,Layers3,ListChecks,PenLine,Target} from 'lucide-react'
 import AlexBox from './design-system/atoms/AlexBox'
 import AlexButton from './design-system/atoms/AlexButton'
 import AlexConfirmDialog from './design-system/atoms/AlexConfirmDialog'
@@ -863,10 +863,10 @@ export default function App(){
             rowGap:0,
           }}>
             {[
-              {label:'Daily questions',value:`${practiceRecommendation.dailyQuestionGoal} questions`,icon:<CalendarDays size={13}/>},
-              {label:'Vocabulary',value:'20 words',icon:<ListChecks size={13}/>},
-              {label:'Failed review',value:failedQuestionCount?'At least 1':'Clear',icon:<Target size={13}/>},
+              {label:'Session size',value:`${settings.questionsPerSession} questions`,icon:<Layers3 size={13}/>},
+              {label:'Subjects',value:settings.mode==='both'?'Math & R&W':settings.mode==='math'?'Math':'R&W',icon:<BookOpen size={13}/>},
               {label:'Focus',value:practiceRecommendation.focusLabel??'Balanced',icon:<Target size={13}/>},
+              {label:'Vocabulary',value:'20 words',icon:<ListChecks size={13}/>},
             ].map((item,index)=><AlexBox
               key={item.label}
               sx={{
