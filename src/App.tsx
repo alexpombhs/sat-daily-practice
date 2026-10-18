@@ -372,7 +372,7 @@ export default function App(){
     }
   }
 
-  function startFailedReview(){
+  function startFailedReview(order:'math-first'|'reading-first'|'mixed'){
     const failedIds=failedQuestionIds(attempts,Math.max(1,Math.min(5,settings.failedRecoveryCorrectAnswers??2)))
     const failedQuestions=questionBank.filter(question=>failedIds.has(question.id))
     if(!failedQuestions.length){
@@ -391,13 +391,19 @@ export default function App(){
     }
     const math=shuffle(failedQuestions.filter(question=>question.subject==='math'))
     const reading=shuffle(failedQuestions.filter(question=>question.subject==='english'))
-    const mixed:PracticeQuestion[]=[]
-    // Include both subjects whenever both have failed questions.
-    while(math.length||reading.length){
-      if(math.length)mixed.push(math.pop()!)
-      if(reading.length)mixed.push(reading.pop()!)
+    const ordered:PracticeQuestion[]=[]
+    if(order==='math-first'){
+      ordered.push(...math,...reading)
+    }else if(order==='reading-first'){
+      ordered.push(...reading,...math)
+    }else{
+      // Interleave subjects while randomizing within each subject.
+      while(math.length||reading.length){
+        if(math.length)ordered.push(math.pop()!)
+        if(reading.length)ordered.push(reading.pop()!)
+      }
     }
-    void beginPractice('both','all',mixed.map(question=>question.id))
+    void beginPractice('both','all',ordered.map(question=>question.id))
   }
 
   function startPreTestReview(){
