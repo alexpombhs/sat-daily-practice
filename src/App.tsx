@@ -604,6 +604,8 @@ export default function App(){
       <PracticeSessionHeader
         moduleLabel={moduleLabel(current.module)}
         subjectLabel={current.subject==='math'?'Math':'Reading & Writing'}
+        sourceTestLabel={practiceTestLabel(current.practiceTestId)}
+        sessionSummary={`${settings.mode==='both'?'Math & Reading':settings.mode==='math'?'Math':'Reading & Writing'} · ${qs.length} questions · ${settings.failedEverOnly?'Failed only':settings.failedOnly?'New only':'All questions'}`}
         current={i+1}
         total={qs.length}
         canGoPrevious={i>0}
