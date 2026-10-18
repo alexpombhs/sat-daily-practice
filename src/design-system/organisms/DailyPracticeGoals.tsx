@@ -1,24 +1,32 @@
-import {Check,Flame,Star} from 'lucide-react'
+import {useEffect,useState} from 'react'
+import {BookOpen,Check,Flame,Languages,RotateCcw,Sigma,Star} from 'lucide-react'
 import AlexBox from '../atoms/AlexBox'
-import AlexSurface from '../atoms/AlexSurface'
+import AlexIconButton from '../atoms/AlexIconButton'
 import AlexText from '../atoms/AlexText'
 import DashboardCard from '../molecules/DashboardCard'
 import {dashboardTypography} from '../theme'
+import {loadVocabularyAttempts} from '../../lib/supabase'
+import type {VocabularyAttempt} from '../../lib/vocabulary'
 import type {Attempt,SessionSummary} from '../../types'
 
 type Props={
   attempts:Attempt[]
   sessions:SessionSummary[]
   dailyQuestions:number
-  dailyMinutes:number
   failedQuestionCount:number
   recommendationLabel?:string
   recommendationReason?:string
   isExamDay?:boolean
   examLabel?:string|null
+  signedIn:boolean
+  onPracticeMath:()=>void
+  onPracticeReadingWriting:()=>void
+  onPracticeVocabulary:()=>void
+  onReviewFailed:()=>void
 }
 
 const DAY_LABELS=['Mo','Tu','We','Th','Fr','Sa','Su']
+const VOCABULARY_DAILY_TARGET=20
 
 function localDayKey(value:string|Date){
   const date=value instanceof Date?value:new Date(value)
@@ -31,11 +39,26 @@ function startOfWeek(today:Date){
   return date
 }
 
-export default function DailyPracticeGoals({attempts,sessions,dailyQuestions,dailyMinutes,failedQuestionCount,recommendationLabel='Keep practicing',recommendationReason,isExamDay=false,examLabel}:Props){
+export default function DailyPracticeGoals({
+  attempts,sessions,dailyQuestions,failedQuestionCount,recommendationLabel='Keep practicing',recommendationReason,
+  isExamDay=false,examLabel,signedIn,onPracticeMath,onPracticeReadingWriting,onPracticeVocabulary,onReviewFailed,
+}:Props){
+  const[vocabularyAttempts,setVocabularyAttempts]=useState<VocabularyAttempt[]>([])
+
+  useEffect(()=>{
+    if(!signedIn){setVocabularyAttempts([]);return}
+    let cancelled=false
+    void loadVocabularyAttempts()
+      .then(rows=>{if(!cancelled)setVocabularyAttempts(rows)})
+      .catch(error=>console.warn('Vocabulary goal history load failed',error))
+    return()=>{cancelled=true}
+  },[signedIn])
+
   const today=new Date()
   const todayKey=localDayKey(today)
   const todayAttempts=attempts.filter(attempt=>localDayKey(attempt.createdAt)===todayKey)
   const questionsDone=todayAttempts.length
+  const vocabularyDone=vocabularyAttempts.filter(attempt=>localDayKey(attempt.createdAt)===todayKey).length
   const reviewedFailedQuestionIds=new Set<string>()
   const masteryByQuestion=new Map<string,{failed:boolean;correctAfterFailure:number}>()
   const previouslyFailedIds=new Set<string>()
@@ -45,33 +68,20 @@ export default function DailyPracticeGoals({attempts,sessions,dailyQuestions,dai
 
   orderedAttempts.forEach(({attempt})=>{
     const mastery=masteryByQuestion.get(attempt.questionId)??{failed:false,correctAfterFailure:0}
-
-    // A failed-question review counts when the question was already in the
-    // failed pool before today's attempt, regardless of whether this retry
-    // is answered correctly.
-    // Older sessions may have lost their failed-only setting at completion.
-    // Their prior incorrect answers still establish review credit, even when
-    // the question has since reached mastery and left the failed pool.
     if(localDayKey(attempt.createdAt)===todayKey&&(mastery.failed||previouslyFailedIds.has(attempt.questionId))){
       reviewedFailedQuestionIds.add(attempt.questionId)
     }
-
     if(!attempt.correct){
       previouslyFailedIds.add(attempt.questionId)
       mastery.failed=true
       mastery.correctAfterFailure=0
     }else if(mastery.failed){
       mastery.correctAfterFailure+=1
-      if(mastery.correctAfterFailure>=2){
-        mastery.failed=false
-      }
+      if(mastery.correctAfterFailure>=2)mastery.failed=false
     }
     masteryByQuestion.set(attempt.questionId,mastery)
   })
 
-  // Completed failed-only sessions are authoritative evidence that these
-  // questions were reviewed while they were still in the failed pool. Keep
-  // this credit even if correct answers remove them from the live pool.
   sessions.forEach(session=>{
     if(!session.settings?.failedEverOnly)return
     const sessionAttempts=attempts.filter(attempt=>attempt.sessionId===session.id)
@@ -81,12 +91,8 @@ export default function DailyPracticeGoals({attempts,sessions,dailyQuestions,dai
   })
 
   const reviewedFailedCount=reviewedFailedQuestionIds.size
-  const reviewedFailedToday=reviewedFailedCount>0
-  const failedGoalDenominator=Math.max(failedQuestionCount,reviewedFailedCount)
-  const minutesDone=Math.round(todayAttempts.reduce((total,attempt)=>total+attempt.elapsedMs,0)/60000)
   const noPracticeToday=isExamDay||dailyQuestions<=0
   const questionTarget=Math.max(1,dailyQuestions)
-  const minuteTarget=Math.max(1,dailyMinutes)
   const weekStart=startOfWeek(today)
   const weekDays=DAY_LABELS.map((label,index)=>{
     const date=new Date(weekStart)
@@ -97,17 +103,15 @@ export default function DailyPracticeGoals({attempts,sessions,dailyQuestions,dai
     return{label,key,practiced,isToday:key===todayKey}
   })
   const practicedDays=weekDays.filter(day=>day.practiced).length
-  // Weekly progress always resets on Monday. Do not carry consecutive
-  // practice days over from the previous week.
   const streak=practicedDays
-  const goals=[
-    {label:'Practice questions',value:`${questionsDone}/${questionTarget}`},
-    {label:'Practice time',value:`${minutesDone}/${minuteTarget} min`},
-    {label:'Review failed questions',value:failedGoalDenominator?`${reviewedFailedCount}/${failedGoalDenominator}`:'Clear'},
-  ]
   const weeklyQuestions=attempts.filter(attempt=>new Date(attempt.createdAt)>=weekStart).length
   const weeklyMinutes=Math.round(attempts.filter(attempt=>new Date(attempt.createdAt)>=weekStart).reduce((total,attempt)=>total+attempt.elapsedMs,0)/60000)
   const daysToWeeklyStreak=Math.max(0,2-practicedDays)
+
+  const actionSx={
+    width:28,height:28,border:'1px solid #D7E0EA',bgcolor:'#fff',color:'#0B376D',
+    '&:hover':{bgcolor:'#F3F7FB'},
+  }
 
   return <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'repeat(auto-fit,minmax(min(100%,260px),1fr))',lg:'repeat(3,minmax(0,1fr))'},gap:1.5,minHeight:0,height:'100%',alignItems:'stretch'}}>
     <DashboardCard tone="white" variant="support" title="Today's goals">
@@ -120,16 +124,17 @@ export default function DailyPracticeGoals({attempts,sessions,dailyQuestions,dai
             {isExamDay?'No practice is expected today. This day will not count as missed practice.':'Your current plan does not require practice today.'}
           </AlexText>
         </AlexBox>
-        :<AlexBox sx={{display:'grid',gap:{xs:1.05,xl:.55}}}>
-          {goals.map((goal,index)=>{const complete=index===0?questionsDone>=questionTarget:index===1?minutesDone>=minuteTarget:reviewedFailedToday;return <AlexBox key={goal.label} sx={{display:'grid',gridTemplateColumns:{xs:'30px minmax(0,1fr)',xl:'24px minmax(0,1fr)'},alignItems:'center',columnGap:{xs:1.15,xl:.75}}}>
-            <AlexBox aria-hidden="true" sx={{width:{xs:30,xl:24},height:{xs:30,xl:24},borderRadius:'50%',display:'grid',placeItems:'center',bgcolor:complete?'#E8F7EE':'#EEF2F7',color:complete?'#20935A':'#C7D1DF'}}>
-              <Star size={17} fill="currentColor" strokeWidth={1.4}/>
-            </AlexBox>
-            <AlexText sx={{fontFamily:'inherit',fontSize:dashboardTypography.supportBody,fontWeight:400,lineHeight:1.3,color:'#111',whiteSpace:'nowrap'}}>
-              <AlexBox component="span" sx={{textDecoration:'underline',textUnderlineOffset:'2px'}}>{goal.label}</AlexBox>
-              <AlexBox component="span" sx={{textDecoration:'none'}}> · {goal.value}</AlexBox>
-            </AlexText>
-          </AlexBox>})}
+        :<AlexBox sx={{display:'grid',gap:{xs:1.05,xl:.65}}}>
+          <GoalRow complete={questionsDone>=questionTarget} label="Practice questions" value={`${questionsDone}/${questionTarget}`}>
+            <AlexIconButton label="Practice Math now" onClick={onPracticeMath} sx={actionSx}><Sigma size={15}/></AlexIconButton>
+            <AlexIconButton label="Practice Reading & Writing now" onClick={onPracticeReadingWriting} sx={actionSx}><BookOpen size={15}/></AlexIconButton>
+          </GoalRow>
+          <GoalRow complete={vocabularyDone>=VOCABULARY_DAILY_TARGET} label="Practice vocabulary" value={`${vocabularyDone}/${VOCABULARY_DAILY_TARGET} words`}>
+            <AlexIconButton label="Practice vocabulary now" onClick={onPracticeVocabulary} sx={actionSx}><Languages size={15}/></AlexIconButton>
+          </GoalRow>
+          <GoalRow complete={failedQuestionCount===0||reviewedFailedCount>0} label="Review failed questions" value={failedQuestionCount===0?'Clear':`${Math.min(reviewedFailedCount,1)}/1`}>
+            <AlexIconButton label={failedQuestionCount===0?'No failed questions to review':'Review failed questions now'} disabled={failedQuestionCount===0} onClick={onReviewFailed} sx={actionSx}><RotateCcw size={15}/></AlexIconButton>
+          </GoalRow>
         </AlexBox>}
     </DashboardCard>
 
@@ -149,12 +154,25 @@ export default function DailyPracticeGoals({attempts,sessions,dailyQuestions,dai
         </AlexBox>)}
       </AlexBox>
       <AlexText sx={{fontSize:dashboardTypography.supportSecondary,fontWeight:400,lineHeight:1.2,color:'#667085',whiteSpace:{lg:'nowrap'},overflow:'hidden',textOverflow:'ellipsis'}}>
-        {weeklyQuestions} items completed · {weeklyMinutes} minutes learned
+        {weeklyQuestions} questions completed · {weeklyMinutes} minutes learned
       </AlexText>
     </DashboardCard>
 
     <DashboardCard tone="lavender" variant="support" title="Recommended focus" value={recommendationLabel} sx={{display:{xs:'none',lg:'flex'}}}>
       {recommendationReason&&<AlexText sx={{fontSize:dashboardTypography.supportBody,lineHeight:1.4,fontWeight:400,color:'#475467'}}>{recommendationReason}</AlexText>}
     </DashboardCard>
+  </AlexBox>
+}
+
+function GoalRow({complete,label,value,children}:{complete:boolean;label:string;value:string;children:React.ReactNode}){
+  return <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'30px minmax(0,1fr) auto',xl:'24px minmax(0,1fr) auto'},alignItems:'center',columnGap:{xs:1.15,xl:.75},minWidth:0}}>
+    <AlexBox aria-hidden="true" sx={{width:{xs:30,xl:24},height:{xs:30,xl:24},borderRadius:'50%',display:'grid',placeItems:'center',bgcolor:complete?'#E8F7EE':'#EEF2F7',color:complete?'#20935A':'#C7D1DF'}}>
+      <Star size={17} fill="currentColor" strokeWidth={1.4}/>
+    </AlexBox>
+    <AlexText sx={{fontFamily:'inherit',fontSize:dashboardTypography.supportBody,fontWeight:400,lineHeight:1.3,color:'#111',minWidth:0}}>
+      <AlexBox component="span" sx={{textDecoration:'underline',textUnderlineOffset:'2px'}}>{label}</AlexBox>
+      <AlexBox component="span"> · {value}</AlexBox>
+    </AlexText>
+    <AlexBox sx={{display:'flex',alignItems:'center',gap:.45}}>{children}</AlexBox>
   </AlexBox>
 }
