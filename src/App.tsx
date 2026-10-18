@@ -867,6 +867,7 @@ export default function App(){
               isExamDay={practiceRecommendation.isExamDay}
               examLabel={practiceRecommendation.activeExamLabel}
               signedIn={Boolean(authUser)}
+              vocabularyDailyTarget={settings.vocabulary?.dailyGoal??20}
               onPracticeMath={()=>void beginPractice('math',settings.practiceTest??'all',undefined,undefined,false,{failedOnly:true,failedEverOnly:false})}
               onPracticeReadingWriting={()=>void beginPractice('english',settings.practiceTest??'all',undefined,undefined,false,{failedOnly:true,failedEverOnly:false})}
               onPracticeVocabulary={()=>navigateTo('vocabulary')}
@@ -926,7 +927,7 @@ export default function App(){
               {label:'Session size',value:`${settings.questionsPerSession} questions`,icon:<Layers3 size={13}/>},
               {label:'Subjects',value:settings.mode==='both'?'Math & R&W':settings.mode==='math'?'Math':'R&W',icon:<BookOpen size={13}/>},
               {label:'Focus',value:practiceRecommendation.focusLabel??'Balanced',icon:<Target size={13}/>},
-              {label:'Vocabulary',value:'20 words',icon:<ListChecks size={13}/>},
+              {label:'Vocabulary',value:`${settings.vocabulary?.dailyGoal??20} words`,icon:<ListChecks size={13}/>},
             ].map((item,index)=><AlexBox
               key={item.label}
               sx={{

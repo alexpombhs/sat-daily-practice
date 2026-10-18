@@ -21,6 +21,7 @@ import {
   vocabularyDifficulties,
   vocabularyDistractorBank,
   vocabularyFailedIds,
+  selectDefaultVocabularyEntry,
   selectVocabularyEntry,
   vocabularySource,
   vocabularySources,
@@ -79,10 +80,12 @@ export default function VocabularyPractice({signedIn,onSignIn,preferences,onPref
   const scopeAttempts=useMemo(()=>attempts.filter(attempt=>scopeIds.has(attempt.vocabularyId)),[attempts,scopeIds])
   const practicedIds=useMemo(()=>new Set(scopeAttempts.map(attempt=>attempt.vocabularyId)),[scopeAttempts])
   const failedIds=useMemo(()=>vocabularyFailedIds(scopeAttempts),[scopeAttempts])
+  const masteredIds=useMemo(()=>new Set(settings.masteredIds??[]),[settings.masteredIds])
+  const masteredEntries=useMemo(()=>scopeBank.filter(entry=>masteredIds.has(entry.id)),[scopeBank,masteredIds])
   const practicedCount=practicedIds.size
   const accuracy=scopeAttempts.length?Math.round(scopeAttempts.filter(attempt=>attempt.correct).length/scopeAttempts.length*100):null
-  const masteredCount=Math.max(0,practicedCount-failedIds.size)
-  const newCount=scopeBank.filter(entry=>!practicedIds.has(entry.id)).length
+  const masteredCount=masteredEntries.length
+  const newCount=scopeBank.filter(entry=>!practicedIds.has(entry.id)&&!masteredIds.has(entry.id)).length
 
   const answered=Boolean(selected)
   const correct=Boolean(current&&answered&&selected===current.answer)
@@ -95,6 +98,8 @@ export default function VocabularyPractice({signedIn,onSignIn,preferences,onPref
       history:next.history,
       selection:next.selection,
       direction:next.direction==='mixed'?'word-to-definition':next.direction,
+      dailyGoal:next.dailyGoal,
+      masteredIds:next.masteredIds??[],
     })
   }
 
@@ -111,7 +116,9 @@ export default function VocabularyPractice({signedIn,onSignIn,preferences,onPref
       ?eligibleWords.filter(entry=>entry.id!==previousId)
       :eligibleWords
     if(!pool.length)return null
-    const entry=selectVocabularyEntry(pool,effectiveSettings.selection,attempts)
+    const entry=effectiveSettings.history==='all'
+      ?selectDefaultVocabularyEntry(pool,attempts)
+      :selectVocabularyEntry(pool,effectiveSettings.selection,attempts)
     if(!entry)return null
     const direction:VocabularyDirection=effectiveSettings.direction==='mixed'
       ?(Math.random()<.5?'word-to-definition':'definition-to-word')
@@ -135,6 +142,7 @@ export default function VocabularyPractice({signedIn,onSignIn,preferences,onPref
     effectiveSettings.history,
     effectiveSettings.selection,
     effectiveSettings.direction,
+    effectiveSettings.masteredIds.join('|'),
   ])
 
   async function choose(option:string){
@@ -165,6 +173,18 @@ export default function VocabularyPractice({signedIn,onSignIn,preferences,onPref
     setSelected('')
     setSaveError('')
     setCurrent(makePrompt(previousId))
+  }
+
+  function markMastered(){
+    if(!current)return
+    updateSettings({masteredIds:[...new Set([...(settings.masteredIds??[]),current.entry.id])]})
+    setSelected('')
+    setSaveError('')
+    setCurrent(null)
+  }
+
+  function restoreMastered(id:string){
+    updateSettings({masteredIds:(settings.masteredIds??[]).filter(value=>value!==id)})
   }
 
   return <PageShell>
@@ -222,7 +242,7 @@ export default function VocabularyPractice({signedIn,onSignIn,preferences,onPref
           ?newCount+' new words in this scope.'
           :settings.history==='failed'
             ?'Failed words stay eligible until answered correctly twice after the latest miss.'
-            :'Practice from the full selected vocabulary scope.'}
+            :'Default practice favors new words and includes at least one previously failed word per day when available.'}
         control={<AlexBox sx={{display:'flex',gap:{xs:.5,sm:2},flexWrap:'wrap'}}>
           <AlexSwitch
             label="New only"
@@ -249,6 +269,21 @@ export default function VocabularyPractice({signedIn,onSignIn,preferences,onPref
           onChange={selection=>updateSettings({selection})}
           aria-label="Vocabulary selection"
         />}
+      />
+
+      <PracticeSettingField
+        label="Mastered words"
+        helperText={masteredCount
+          ?`${masteredCount} mastered word${masteredCount===1?' is':'s are'} hidden from practice. Restore a word any time to put it back in rotation.`
+          :'Mark a word as mastered after answering it to remove it from default practice.'}
+        control={masteredCount
+          ?<AlexBox sx={{display:'grid',gap:.5,maxHeight:180,overflowY:'auto',pr:.5}}>
+            {masteredEntries.map(entry=><AlexBox key={entry.id} sx={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:1,p:.7,border:'1px solid #EEF1F4',borderRadius:'7px'}}>
+              <AlexText sx={{fontSize:13.5,fontWeight:750,color:'#344054'}}>{entry.word}</AlexText>
+              <AlexButton tone="quiet" onClick={()=>restoreMastered(entry.id)} sx={{minWidth:0,px:1}}>Restore</AlexButton>
+            </AlexBox>)}
+          </AlexBox>
+          :<AlexText sx={{fontSize:13,color:'#667085'}}>No mastered words yet.</AlexText>}
       />
 
       <VocabularyPerformanceSummary
@@ -328,7 +363,8 @@ export default function VocabularyPractice({signedIn,onSignIn,preferences,onPref
               {saveError&&<AlexText sx={{fontSize:12,color:'#A33A31',mt:.4}}>{saveError}</AlexText>}
             </AlexSurface>}
 
-            <AlexBox sx={{display:'flex',justifyContent:'flex-end',mt:2}}>
+            <AlexBox sx={{display:'flex',justifyContent:'flex-end',gap:1,mt:2,flexWrap:'wrap'}}>
+              {answered&&!masteredIds.has(current.entry.id)&&<AlexButton tone="secondary" onClick={markMastered}>Mark mastered</AlexButton>}
               <AlexButton disabled={!answered} onClick={next}>Next word</AlexButton>
             </AlexBox>
           </>}

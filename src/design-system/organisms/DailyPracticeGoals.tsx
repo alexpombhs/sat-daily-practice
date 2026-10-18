@@ -19,6 +19,7 @@ type Props={
   isExamDay?:boolean
   examLabel?:string|null
   signedIn:boolean
+  vocabularyDailyTarget?:number
   onPracticeMath:()=>void
   onPracticeReadingWriting:()=>void
   onPracticeVocabulary:()=>void
@@ -26,8 +27,6 @@ type Props={
 }
 
 const DAY_LABELS=['Mo','Tu','We','Th','Fr','Sa','Su']
-const VOCABULARY_DAILY_TARGET=20
-
 function localDayKey(value:string|Date){
   const date=value instanceof Date?value:new Date(value)
   return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`
@@ -41,7 +40,7 @@ function startOfWeek(today:Date){
 
 export default function DailyPracticeGoals({
   attempts,sessions,dailyQuestions,failedQuestionCount,recommendationLabel='Keep practicing',recommendationReason,
-  isExamDay=false,examLabel,signedIn,onPracticeMath,onPracticeReadingWriting,onPracticeVocabulary,onReviewFailed,
+  isExamDay=false,examLabel,signedIn,vocabularyDailyTarget=20,onPracticeMath,onPracticeReadingWriting,onPracticeVocabulary,onReviewFailed,
 }:Props){
   const[vocabularyAttempts,setVocabularyAttempts]=useState<VocabularyAttempt[]>([])
 
@@ -129,7 +128,7 @@ export default function DailyPracticeGoals({
             <AlexIconButton label="Practice Math now" onClick={onPracticeMath} sx={actionSx}><Sigma size={15}/></AlexIconButton>
             <AlexIconButton label="Practice Reading & Writing now" onClick={onPracticeReadingWriting} sx={actionSx}><BookOpen size={15}/></AlexIconButton>
           </GoalRow>
-          <GoalRow complete={vocabularyDone>=VOCABULARY_DAILY_TARGET} label="Practice vocabulary" value={`${vocabularyDone}/${VOCABULARY_DAILY_TARGET} words`}>
+          <GoalRow complete={vocabularyDone>=vocabularyDailyTarget} label="Practice vocabulary" value={`${vocabularyDone}/${vocabularyDailyTarget} words`}>
             <AlexIconButton label="Practice vocabulary now" onClick={onPracticeVocabulary} sx={actionSx}><Languages size={15}/></AlexIconButton>
           </GoalRow>
           <GoalRow complete={failedQuestionCount===0||reviewedFailedCount>0} label="Review failed questions" value={failedQuestionCount===0?'Clear':`${Math.min(reviewedFailedCount,1)}/1`}>
