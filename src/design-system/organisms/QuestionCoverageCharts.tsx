@@ -93,7 +93,7 @@ function CoverageDonut({group,large=false}:{group:CoverageGroup;large?:boolean})
         <AlexBox sx={{width:9,height:9,borderRadius:'50%',bgcolor:slice.color,flexShrink:0}}/>
         <AlexText sx={{fontSize:large?11.5:10,color:'#475467',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{slice.label} <b>{slice.count}</b></AlexText>
       </AlexBox>)}
-    </AlexBox>
+    </AlexBox>}
   </AlexBox>
 }
 
