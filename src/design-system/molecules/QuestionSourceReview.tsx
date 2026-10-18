@@ -1,11 +1,9 @@
-import {useEffect,useState} from 'react'
+import {useState} from 'react'
 import AlexBox from '../atoms/AlexBox'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
 import QuestionContent from './QuestionContent'
 import SourceViewer from './SourceViewer'
-import AlexRichText from '../atoms/AlexRichText'
-import {loadSharedQuestionContent} from '../../lib/sharedQuestionBank'
 import {moduleLabel} from '../../lib/questionBank'
 import {usePracticeTestPdfState} from '../../hooks/usePracticeTestPdf'
 import type {PracticeQuestion} from '../../types'
@@ -20,25 +18,12 @@ type Props={
 
 export default function QuestionSourceReview({question,questionsPdf,answersPdf=null,showExplanation=false,revision=0}:Props){
   const [activeTab,setActiveTab]=useState<'source'|'explanation'>('source')
-  const [parsedExplanation,setParsedExplanation]=useState<string[]>([])
   const label=`${moduleLabel(question.module)} · Q${question.number}`
   const questionSource=usePracticeTestPdfState(question,'questions',questionsPdf)
   const answerSource=usePracticeTestPdfState(question,'answers',answersPdf,showExplanation&&activeTab==='explanation')
   const resolvedQuestionsPdf=questionSource.source
   const resolvedAnswersPdf=answerSource.source
   const hasQuestionSource=Boolean(resolvedQuestionsPdf?.byteLength)
-
-  useEffect(()=>{
-    let cancelled=false
-    if(!showExplanation){
-      setParsedExplanation([])
-      return
-    }
-    void loadSharedQuestionContent(question.id,question.practiceTestId)
-      .then(content=>{if(!cancelled)setParsedExplanation(content?.explanationLines??[])})
-      .catch(()=>{if(!cancelled)setParsedExplanation([])})
-    return()=>{cancelled=true}
-  },[question.id,question.practiceTestId,showExplanation,revision])
 
   return <AlexBox sx={{display:'grid',gap:2}}>
     <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'1fr',xl:'1fr 1fr'},gap:2}}>
@@ -58,13 +43,7 @@ export default function QuestionSourceReview({question,questionsPdf,answersPdf=n
           {activeTab==='explanation'&&showExplanation
             ?resolvedAnswersPdf
               ?<SourceViewer pdfKey="answers" bytes={resolvedAnswersPdf} page={question.answerPage} questionNumber={question.number} alt={`Original explanation for ${label}`} label="Original explanation" practiceTestId={question.practiceTestId} module={question.module}/>
-              :parsedExplanation.length
-                ?<AlexBox sx={{p:3,display:'grid',gap:1.25}}>
-                  <AlexText sx={{fontSize:12,fontWeight:800,color:'#667085',textTransform:'uppercase',letterSpacing:'.06em'}}>Explanation text</AlexText>
-                  {parsedExplanation.map((line,index)=><AlexText key={index} component="div" sx={{fontSize:16,lineHeight:1.65,color:'#10284f'}}><AlexRichText text={line}/></AlexText>)}
-                  {answerSource.error&&<AlexText sx={{fontSize:12,color:'#667085',mt:1}}>Original explanation PDF could not be loaded, so the saved explanation is shown instead.</AlexText>}
-                </AlexBox>
-                :<AlexBox sx={{p:3}}><AlexText sx={{fontSize:14,color:answerSource.error?'#B42318':'#667085'}}>{answerSource.loading?'Loading shared explanation PDF…':answerSource.error||'Shared explanation PDF is unavailable right now.'}</AlexText></AlexBox>
+              :<AlexBox sx={{p:3}}><AlexText sx={{fontSize:14,color:answerSource.error?'#B42318':'#667085'}}>{answerSource.loading?'Loading original explanation PDF…':answerSource.error||'Original explanation PDF is unavailable right now.'}</AlexText></AlexBox>
             :hasQuestionSource&&resolvedQuestionsPdf
               ?<SourceViewer pdfKey="questions" bytes={resolvedQuestionsPdf} page={question.sourcePage} questionNumber={question.number} alt={`${label} original PDF`} practiceTestId={question.practiceTestId} module={question.module} sourceCrop={question.sourceCrop}/>
               :<AlexBox sx={{p:3}}><AlexText sx={{fontSize:14,color:questionSource.error?'#B42318':'#667085'}}>{questionSource.loading?'Loading shared source PDF…':questionSource.error||'Shared source PDF is unavailable right now.'}</AlexText></AlexBox>}
