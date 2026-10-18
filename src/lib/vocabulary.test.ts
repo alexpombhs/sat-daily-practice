@@ -108,11 +108,15 @@ describe('vocabulary practice',()=>{
 
   it('default practice reviews one failed word before focusing on new words',()=>{
     const failed=VOCABULARY_BANK[0]
-    const unseen=VOCABULARY_BANK[1]
-    const history=[attempt(failed.id,false,'2026-10-17T10:00:00Z')]
-    expect(selectDefaultVocabularyEntry([failed,unseen],history,new Date('2026-10-18T09:00:00Z'),zero)?.id).toBe(failed.id)
+    const anotherFailed=VOCABULARY_BANK[1]
+    const unseen=VOCABULARY_BANK[2]
+    const history=[
+      attempt(failed.id,false,'2026-10-17T10:00:00Z'),
+      attempt(anotherFailed.id,false,'2026-10-17T10:01:00Z'),
+    ]
+    expect(selectDefaultVocabularyEntry([failed,anotherFailed,unseen],history,new Date('2026-10-18T09:00:00Z'),zero)?.id).toBe(failed.id)
     const reviewedToday=[...history,attempt(failed.id,true,'2026-10-18T09:05:00Z')]
-    expect(selectDefaultVocabularyEntry([failed,unseen],reviewedToday,new Date('2026-10-18T10:00:00Z'),zero)?.id).toBe(unseen.id)
+    expect(selectDefaultVocabularyEntry([failed,anotherFailed,unseen],reviewedToday,new Date('2026-10-18T10:00:00Z'),zero)?.id).toBe(unseen.id)
   })
 
   it('keeps failed vocabulary until two correct answers after the latest miss',()=>{
