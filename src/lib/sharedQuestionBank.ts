@@ -61,28 +61,33 @@ export async function loadSharedQuestionBank():Promise<PracticeQuestion[]|null>{
   const questionRows:any[]=[]
   const difficultyRows:any[]=[]
 
-  for(let from=0;;from+=pageSize){
+  for(let from=0;;){
     const {data,error}=await supabase
       .from('sat_question_bank')
       .select('id,practice_test_id,subject,module,question_number,source_page,answer_page,correct_answer,accepted_answers,response_type,source_crop,content_status,question_mode')
       .order('practice_test_id',{ascending:true})
       .order('module',{ascending:true})
       .order('question_number',{ascending:true})
+      .order('id',{ascending:true})
       .range(from,from+pageSize-1)
     if(error)throw error
-    questionRows.push(...(data??[]))
-    if((data?.length??0)<pageSize)break
+    const rows=data??[]
+    if(!rows.length)break
+    questionRows.push(...rows)
+    from+=rows.length
   }
 
-  for(let from=0;;from+=pageSize){
+  for(let from=0;;){
     const {data,error}=await supabase
       .from('sat_question_difficulty')
       .select('question_id,difficulty,concepts')
       .order('question_id',{ascending:true})
       .range(from,from+pageSize-1)
     if(error)throw error
-    difficultyRows.push(...(data??[]))
-    if((data?.length??0)<pageSize)break
+    const rows=data??[]
+    if(!rows.length)break
+    difficultyRows.push(...rows)
+    from+=rows.length
   }
 
   const difficulties=new Map(difficultyRows.map(row=>[row.question_id,row.difficulty]))
