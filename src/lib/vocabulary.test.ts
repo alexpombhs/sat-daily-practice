@@ -10,6 +10,7 @@ import {
   filterVocabularyBank,
   vocabularyFailedIds,
   selectVocabularyEntry,
+  selectDefaultVocabularyEntry,
   type VocabularyAttempt,
 } from './vocabulary'
 
@@ -97,6 +98,21 @@ describe('vocabulary practice',()=>{
     const filtered=filterVocabularyBank(settings,[attempt(first.id,true,'2026-10-07T10:00:00Z')])
     expect(filtered.some(entry=>entry.id===first.id)).toBe(false)
     expect(filtered.length).toBe(PRACTICE_TEST_VOCABULARY.length-1)
+  })
+
+  it('excludes manually mastered vocabulary from practice pools',()=>{
+    const first=VOCABULARY_BANK[0]
+    const settings={...DEFAULT_VOCABULARY_SETTINGS,masteredIds:[first.id]}
+    expect(filterVocabularyBank(settings,[]).some(entry=>entry.id===first.id)).toBe(false)
+  })
+
+  it('default practice reviews one failed word before focusing on new words',()=>{
+    const failed=VOCABULARY_BANK[0]
+    const unseen=VOCABULARY_BANK[1]
+    const history=[attempt(failed.id,false,'2026-10-17T10:00:00Z')]
+    expect(selectDefaultVocabularyEntry([failed,unseen],history,new Date('2026-10-18T09:00:00Z'),zero)?.id).toBe(failed.id)
+    const reviewedToday=[...history,attempt(failed.id,true,'2026-10-18T09:05:00Z')]
+    expect(selectDefaultVocabularyEntry([failed,unseen],reviewedToday,new Date('2026-10-18T10:00:00Z'),zero)?.id).toBe(unseen.id)
   })
 
   it('keeps failed vocabulary until two correct answers after the latest miss',()=>{
