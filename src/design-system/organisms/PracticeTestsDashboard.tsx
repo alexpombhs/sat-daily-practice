@@ -5,6 +5,7 @@ import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
 import AlexDropdown from '../atoms/AlexDropdown'
 import SessionReviewSelector from '../molecules/SessionReviewSelector'
+import PracticeSettingField from '../molecules/PracticeSettingField'
 import type {PracticeTestFilter} from '../../types'
 
 type TestSummary={
@@ -88,31 +89,29 @@ export default function PracticeTestsDashboard({tests,currentPracticeTest='all',
         </AlexBox>
       </AlexSurface>}
 
-      <AlexSurface sx={{mt:activeSession?2:3,p:{xs:2,sm:2.5,md:3},border:'1px solid #E4E7EC',borderRadius:2.5,bgcolor:'#fff'}}>
-        <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'1fr',md:'minmax(0,1.25fr) minmax(260px,.75fr)'},gap:{xs:2,md:3},alignItems:'end'}}>
-          <AlexBox>
-            <AlexText component="h2" sx={{m:0,fontSize:18,fontWeight:850,color:'#08275B'}}>Start a practice session</AlexText>
-            <AlexText sx={{fontSize:13,color:'#667085',mt:.45,mb:1.5}}>Select the question source. Your other practice settings stay the same.</AlexText>
-            <AlexDropdown
-              id="practice-test-launch"
-              label="Practice test"
-              value={selectedTest}
-              options={testOptions}
-              onChange={setSelectedTest}
-            />
-            {selectedTestSummary&&<AlexText sx={{fontSize:12.5,color:'#667085',mt:.75}}>
-              {selectedTestSummary.practicedCount} of {selectedTestSummary.questionCount} practiced
-            </AlexText>}
-          </AlexBox>
-
-          <AlexBox sx={{display:'grid',gap:1}}>
-            <AlexText sx={{fontSize:12,fontWeight:800,color:'#667085',textTransform:'uppercase',letterSpacing:'.06em'}}>Current setup</AlexText>
-            <AlexText sx={{fontSize:14,color:'#344054',lineHeight:1.45}}>{sessionSummary}</AlexText>
-            <AlexBox sx={{display:'grid',gridTemplateColumns:'1fr auto',gap:1,mt:.5}}>
-              <AlexButton onClick={()=>onStartTest(selectedTest)}>Start</AlexButton>
-              <AlexButton tone="secondary" onClick={onOpenSetup}>Edit setup</AlexButton>
-            </AlexBox>
-          </AlexBox>
+      <AlexSurface sx={{mt:activeSession?2:3,px:{xs:2.5,md:3},border:'1px solid #E4E7EC',borderRadius:2.5,bgcolor:'#fff'}}>
+        <PracticeSettingField
+          label="Practice test"
+          helperText={selectedTestSummary
+            ?`${selectedTestSummary.practicedCount} of ${selectedTestSummary.questionCount} practiced`
+            :'Choose one test or mix all available questions.'}
+          control={<AlexDropdown
+            id="practice-test-launch"
+            label="Question source"
+            value={selectedTest}
+            options={testOptions}
+            onChange={setSelectedTest}
+          />}
+        />
+        <AlexBox sx={{borderTop:'1px solid #EAECF0'}}>
+          <PracticeSettingField
+            label="Current setup"
+            helperText={sessionSummary}
+            control={<AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'1fr',sm:'minmax(0,1fr) 120px'},gap:1,alignItems:'center'}}>
+              <AlexButton onClick={()=>onStartTest(selectedTest)} sx={{width:'100%'}}>Start practice</AlexButton>
+              <AlexButton tone="secondary" onClick={onOpenSetup} sx={{width:'100%'}}>Edit setup</AlexButton>
+            </AlexBox>}
+          />
         </AlexBox>
       </AlexSurface>
 
