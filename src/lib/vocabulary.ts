@@ -35,6 +35,8 @@ export type VocabularyPracticeSettings={
   selection:VocabularySelectionMode
   direction:VocabularyDirectionMode
   sessionSize:VocabularySessionSize
+  dailyGoal:number
+  masteredIds:string[]
 }
 
 export const DEFAULT_VOCABULARY_SETTINGS:VocabularyPracticeSettings={
@@ -44,6 +46,8 @@ export const DEFAULT_VOCABULARY_SETTINGS:VocabularyPracticeSettings={
   selection:'adaptive',
   direction:'word-to-definition',
   sessionSize:20,
+  dailyGoal:20,
+  masteredIds:[],
 }
 
 export const VOCABULARY_SOURCE_LABELS:Record<VocabularySource,string>={
@@ -424,13 +428,42 @@ export function filterVocabularyBank(
   const sourceSet=new Set(settings.sources)
   const attemptedIds=new Set(attempts.map(attempt=>attempt.vocabularyId))
   const failedIds=vocabularyFailedIds(attempts)
+  const masteredIds=new Set(settings.masteredIds??[])
   return bank.filter(entry=>{
     if(!sourceSet.has(vocabularySource(entry)))return false
     if(settings.difficulty!=='all'&&entry.difficulty!==settings.difficulty)return false
+    if(masteredIds.has(entry.id))return false
     if(settings.history==='new'&&attemptedIds.has(entry.id))return false
     if(settings.history==='failed'&&!failedIds.has(entry.id))return false
     return true
   })
+}
+
+function localVocabularyDay(value:string|Date){
+  const date=value instanceof Date?value:new Date(value)
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+}
+
+export function selectDefaultVocabularyEntry(
+  entries:VocabularyEntry[],
+  attempts:VocabularyAttempt[],
+  now:Date=new Date(),
+  rng:()=>number=Math.random,
+){
+  if(!entries.length)return null
+  const failedIds=vocabularyFailedIds(attempts)
+  const today=localVocabularyDay(now)
+  const attemptedToday=new Set(
+    attempts.filter(attempt=>localVocabularyDay(attempt.createdAt)===today).map(attempt=>attempt.vocabularyId),
+  )
+  const failedNotReviewedToday=entries.filter(entry=>failedIds.has(entry.id)&&!attemptedToday.has(entry.id))
+  if(failedNotReviewedToday.length){
+    return selectVocabularyEntry(failedNotReviewedToday,'adaptive',attempts,rng)
+  }
+  const attemptedIds=new Set(attempts.map(attempt=>attempt.vocabularyId))
+  const newEntries=entries.filter(entry=>!attemptedIds.has(entry.id))
+  if(newEntries.length)return newEntries[Math.floor(rng()*newEntries.length)]
+  return selectVocabularyEntry(entries,'adaptive',attempts,rng)
 }
 
 export function vocabularyDistractorBank(
