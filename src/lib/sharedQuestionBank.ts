@@ -23,7 +23,14 @@ function parseOneVisualSpec(crop:unknown,afterLine:unknown):QuestionVisualSpec|n
   if([x,y,width,height,line].some(number=>Number.isNaN(number)))return null
   if(x<0||y<0||width<=0||height<=0||x+width>1||y+height>1||line<-1)return null
   const kind=value.kind==='choice-grid'?'choice-grid':value.kind==='figure'?'figure':undefined
-  return {afterLine:line,crop:{x,y,width,height},exact:true,kind}
+  const sourcePage=Number(value.sourcePage)
+  let sourceCrop:SourceCrop|undefined
+  if(value.sourceCrop&&typeof value.sourceCrop==='object'&&!Array.isArray(value.sourceCrop)){
+    const raw=value.sourceCrop as Record<string,unknown>
+    const sx=Number(raw.x),sy=Number(raw.y),sw=Number(raw.width),sh=Number(raw.height)
+    if([sx,sy,sw,sh].every(number=>Number.isFinite(number))&&sw>0&&sh>0)sourceCrop={x:sx,y:sy,width:sw,height:sh}
+  }
+  return {afterLine:line,crop:{x,y,width,height},exact:true,kind,...(Number.isFinite(sourcePage)&&sourcePage>0?{sourcePage}:{}),...(sourceCrop?{sourceCrop}:{})}
 }
 
 function parseVisualSpecs(crop:unknown,afterLine:unknown):QuestionVisualSpec[]{
@@ -126,6 +133,8 @@ export async function saveSharedQuestionRepair(input:{
     ...visual.crop,
     ...(includeLine?{afterLine:visual.afterLine}:{}),
     ...(visual.kind?{kind:visual.kind}:{}),
+    ...(visual.sourcePage?{sourcePage:visual.sourcePage}:{}),
+    ...(visual.sourceCrop?{sourceCrop:visual.sourceCrop}:{}),
   })
   const encodedVisuals=visuals.map(visual=>encodeVisual(visual,true))
   const legacyVisualCrop=visuals[0]?encodeVisual(visuals[0],false):null
