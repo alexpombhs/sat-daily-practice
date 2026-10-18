@@ -35,7 +35,7 @@ import {loadSharedQuestionBank,mergeQuestionBanks} from './lib/sharedQuestionBan
 import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
 import {pathForView,viewFromPathname,type AppRouteView} from './lib/appRoutes'
 import {DEFAULT_SETTINGS} from './lib/storage'
-import {abandonActiveSession,createActiveSession,getCurrentAuthUser,loadActiveSession,loadCloudHistory,loadUserSettings,saveActiveSessionProgress,saveUserSettings,subscribeToAuth,syncActiveAttempt,syncSession,type AuthUser} from './lib/supabase'
+import {abandonActiveSession,createActiveSession,getCurrentAuthUser,loadActiveSession,loadCloudHistory,loadUserSettings,saveActiveSessionProgress,saveActiveSessionQuestionOrder,saveUserSettings,subscribeToAuth,syncActiveAttempt,syncSession,type AuthUser} from './lib/supabase'
 import type {ActivePracticeSession,Attempt,PracticeQuestion,SessionSummary,Settings,SubjectMode} from './types'
 
 const uid=()=>crypto.randomUUID()
@@ -72,6 +72,7 @@ export default function App(){
   const[preTestSelected,setPreTestSelected]=useState('')
   const[preTestSubmitted,setPreTestSubmitted]=useState(false)
   const[reviewMode,setReviewMode]=useState(false)
+  const[failedSessionOrder,setFailedSessionOrder]=useState<'math-first'|'reading-first'|'mixed'>('mixed')
   const[preTestGroups,setPreTestGroups]=useState<Array<{concept:string;questionIds:string[]}>>([])
   const[reviewContentTab,setReviewContentTab]=useState<'question'|'explanation'>('question')
   const[performanceTimeRange,setPerformanceTimeRange]=useState<PerformanceTimeRange>('30d')
@@ -300,6 +301,7 @@ export default function App(){
       }
     }
     setReviewMode(false)
+    setFailedSessionOrder('mixed')
     setPreTestGroups(conceptGroups??[])
     setSettings(nextSettings)
     setQs(nextQuestions)
@@ -326,6 +328,7 @@ export default function App(){
     const currentQuestion=resumedQuestions[nextIndex]
     const priorAttempt=currentQuestion?resumableSession.attempts.find(attempt=>attempt.questionId===currentQuestion.id):undefined
     setReviewMode(false)
+    setFailedSessionOrder('mixed')
     setSettings({...settings,...resumableSession.settings})
     setQs(resumedQuestions)
     setSid(resumableSession.id)
@@ -372,7 +375,7 @@ export default function App(){
     }
   }
 
-  function startFailedReview(order:'math-first'|'reading-first'|'mixed'){
+  function startFailedReview(){
     const failedIds=failedQuestionIds(attempts,Math.max(1,Math.min(5,settings.failedRecoveryCorrectAnswers??2)))
     const failedQuestions=questionBank.filter(question=>failedIds.has(question.id))
     if(!failedQuestions.length){
@@ -392,11 +395,7 @@ export default function App(){
     const math=shuffle(failedQuestions.filter(question=>question.subject==='math'))
     const reading=shuffle(failedQuestions.filter(question=>question.subject==='english'))
     const ordered:PracticeQuestion[]=[]
-    if(order==='math-first'){
-      ordered.push(...math,...reading)
-    }else if(order==='reading-first'){
-      ordered.push(...reading,...math)
-    }else{
+    {
       // Interleave subjects while randomizing within each subject.
       while(math.length||reading.length){
         if(math.length)ordered.push(math.pop()!)
@@ -404,6 +403,41 @@ export default function App(){
       }
     }
     void beginPractice('both','all',ordered.map(question=>question.id))
+  }
+
+  async function changeFailedReviewOrder(order:'math-first'|'reading-first'|'mixed'){
+    if(!sid||!settings.failedEverOnly||reviewMode)return
+    // Keep answered questions in place; reorder only the unanswered part.
+    const answeredIds=new Set(currentAttempts.map(attempt=>attempt.questionId))
+    const completed=qs.filter(question=>answeredIds.has(question.id))
+    const outstanding=qs.filter(question=>!answeredIds.has(question.id))
+    const math=outstanding.filter(question=>question.subject==='math')
+    const reading=outstanding.filter(question=>question.subject==='english')
+    const shuffle=(items:PracticeQuestion[])=>[...items].sort(()=>Math.random()-.5)
+    const m=shuffle(math),r=shuffle(reading)
+    const remainder:PracticeQuestion[]=[]
+    if(order==='math-first')remainder.push(...m,...r)
+    else if(order==='reading-first')remainder.push(...r,...m)
+    else while(m.length||r.length){
+      if(m.length)remainder.push(m.pop()!)
+      if(r.length)remainder.push(r.pop()!)
+    }
+    const updated=[...completed,...remainder]
+    if(!updated.length)return
+    try{
+      await saveActiveSessionQuestionOrder(sid,updated.map(question=>question.id),completed.length)
+      setQs(updated)
+      setI(completed.length)
+      setSelected('')
+      setSubmitted(false)
+      setFailedSessionOrder(order)
+      setResumableSession(previous=>previous?.id===sid?{
+        ...previous,questionIds:updated.map(question=>question.id),currentIndex:completed.length,draftAnswer:'',
+      }:previous)
+    }catch(error){
+      console.warn('Unable to save failed review order',error)
+      window.alert('Could not save the review order. Try again.')
+    }
   }
 
   function startPreTestReview(){
@@ -625,7 +659,9 @@ export default function App(){
         moduleLabel={moduleLabel(current.module)}
         subjectLabel={current.subject==='math'?'Math':'Reading & Writing'}
         sourceTestLabel={practiceTestLabel(current.practiceTestId)}
-        sessionSummary={`${settings.mode==='both'?'Math & Reading':settings.mode==='math'?'Math':'Reading & Writing'} · ${qs.length} questions · ${settings.failedEverOnly?'Failed only':settings.failedOnly?'New only':'All questions'}`}
+        failedOrder={!reviewMode&&settings.failedEverOnly?failedSessionOrder:undefined}
+        onFailedOrderChange={order=>void changeFailedReviewOrder(order)}
+        sessionSummary={`${settings.mode='both'?'Math & Reading':settings.mode==='math'?'Math':'Reading & Writing'} · ${qs.length} questions · ${settings.failedEverOnly?'Failed only':settings.failedOnly?'New only':'All questions'}`}
         current={i+1}
         total={qs.length}
         canGoPrevious={i>0}
