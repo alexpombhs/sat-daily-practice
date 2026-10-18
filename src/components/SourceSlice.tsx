@@ -285,6 +285,7 @@ export default function SourceSlice({pdfKey,bytes,page,questionNumber,alt,zoom=1
     const node=contentRef.current
     if(!node||!src)return
     const frame=requestAnimationFrame(()=>{
+      node.scrollTop=0
       node.scrollLeft=Math.max(0,(node.scrollWidth-node.clientWidth)/2)
     })
     return()=>cancelAnimationFrame(frame)
