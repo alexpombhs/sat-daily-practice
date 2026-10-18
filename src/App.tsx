@@ -374,16 +374,30 @@ export default function App(){
 
   function startFailedReview(){
     const failedIds=failedQuestionIds(attempts,Math.max(1,Math.min(5,settings.failedRecoveryCorrectAnswers??2)))
-    const scoped=questionBank.filter(question=>
-      failedIds.has(question.id)&&
-      (settings.mode==='both'||question.subject===settings.mode)&&
-      ((settings.practiceTest??'all')==='all'||question.practiceTestId===settings.practiceTest)
-    )
-    if(!scoped.length){
-      window.alert('No failed questions are available in the current practice scope.')
+    const failedQuestions=questionBank.filter(question=>failedIds.has(question.id))
+    if(!failedQuestions.length){
+      window.alert('No failed questions to review right now.')
       return
     }
-    void beginPractice(settings.mode,settings.practiceTest,scoped.map(question=>question.id))
+    // Dashboard review spans all practice tests and both SAT subjects,
+    // independent of the previous practice session's filters.
+    const shuffle=<T,>(items:T[]):T[]=>{
+      const result=[...items]
+      for(let index=result.length-1;index>0;index--){
+        const swap=Math.floor(Math.random()*(index+1))
+        ;[result[index],result[swap]]=[result[swap],result[index]]
+      }
+      return result
+    }
+    const math=shuffle(failedQuestions.filter(question=>question.subject==='math'))
+    const reading=shuffle(failedQuestions.filter(question=>question.subject==='english'))
+    const mixed:PracticeQuestion[]=[]
+    // Include both subjects whenever both have failed questions.
+    while(math.length||reading.length){
+      if(math.length)mixed.push(math.pop()!)
+      if(reading.length)mixed.push(reading.pop()!)
+    }
+    void beginPractice('both','all',mixed.map(question=>question.id))
   }
 
   function startPreTestReview(){
