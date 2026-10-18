@@ -15,6 +15,8 @@ import SectionPanel from '../molecules/SectionPanel'
 import DashboardCard from '../molecules/DashboardCard'
 import PerformanceChartCard from '../molecules/PerformanceChartCard'
 import QuestionStatsTable from '../molecules/QuestionStatsTable'
+import QuestionCoverageCharts from './QuestionCoverageCharts'
+import type {Attempt,PracticeQuestion} from '../../types'
 import type {PerformanceAnalytics} from '../../lib/performanceAnalytics'
 
 export type PerformanceTimeRange='7d'|'14d'|'21d'|'30d'|'90d'|'all'|'custom'
@@ -29,6 +31,9 @@ type SessionReviewSummary={
 
 type Props={
   summary:PerformanceAnalytics
+  coverageQuestions?:PracticeQuestion[]
+  coverageAttempts?:Attempt[]
+  recoveryCorrectAnswers?:number
   hasHistory:boolean
   compact?:boolean
   compactRecommendationExtra?:React.ReactNode
@@ -52,7 +57,7 @@ const chartTheme={
 }
 
 export default function PerformanceDashboard({
-  summary,hasHistory,compact=false,compactRecommendationExtra=null,questionsPdf=null,answersPdf=null,
+  summary,coverageQuestions=[],coverageAttempts=[],recoveryCorrectAnswers=2,hasHistory,compact=false,compactRecommendationExtra=null,questionsPdf=null,answersPdf=null,
   timeRange='30d',customStartDate='',customEndDate='',onTimeRangeChange,onCustomStartDateChange,onCustomEndDateChange,
   sessionHistory=[],onReviewSession,
 }:Props){
@@ -242,6 +247,8 @@ export default function PerformanceDashboard({
         </AlexBox>
       </AlexBox>}
     </SectionPanel></AlexBox>}
+
+    <AlexBox sx={{mt:2.5}}><QuestionCoverageCharts questions={coverageQuestions} attempts={coverageAttempts} recoveryCorrectAnswers={recoveryCorrectAnswers}/></AlexBox>
 
     {!hasHistory&&!compact&&<AlexSurface sx={{p:3.5,mt:2.5,border:'1px solid #E6E2DB'}}>
       <AlexText component="h2" sx={{fontSize:22,fontWeight:750,mb:1}}>No sessions in this range</AlexText>
