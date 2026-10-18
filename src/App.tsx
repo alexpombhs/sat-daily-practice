@@ -25,12 +25,12 @@ import VocabularyPractice from './design-system/organisms/VocabularyPractice'
 import {dashboardTypography} from './design-system/theme'
 import {answerLabel,matchesAnswer} from './lib/answerCompare'
 import {getPdf} from './lib/pdfStore'
-import {availablePracticeTests,moduleLabel,practiceTestLabel,QUESTION_BANK} from './lib/questionBank'
+import {availablePracticeTests,moduleLabel,practiceTestLabel} from './lib/questionBank'
 import {buildPracticePlanRecommendation,examTargetsFromSettings} from './lib/practicePlan'
 import {rankReviewConcepts} from './lib/conceptReview'
 import {buildNationalMeritOutlook} from './lib/nationalMeritOutlook'
 import {estimateSectionPracticeScore} from './lib/performanceAnalytics'
-import {loadSharedQuestionBank,mergeQuestionBanks} from './lib/sharedQuestionBank'
+import {loadSharedQuestionBank} from './lib/sharedQuestionBank'
 import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
 import {pathForView,viewFromPathname,type AppRouteView} from './lib/appRoutes'
 import {DEFAULT_SETTINGS} from './lib/storage'
@@ -62,7 +62,8 @@ export default function App(){
   const[authReady,setAuthReady]=useState(false)
   const[settingsCloudReady,setSettingsCloudReady]=useState(false)
   const settingsSaveQueue=useRef<Promise<unknown>>(Promise.resolve())
-  const[questionBank,setQuestionBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
+  const[questionBank,setQuestionBank]=useState<PracticeQuestion[]>([])
+  const[questionBankLoadState,setQuestionBankLoadState]=useState<'loading'|'ready'|'error'>('loading')
   const[resumableSession,setResumableSession]=useState<ActivePracticeSession|null>(null)
   const[pendingPractice,setPendingPractice]=useState<{mode:SubjectMode;test:Settings['practiceTest'];questionIds?:string[];groups?:Array<{concept:string;questionIds:string[]}>}|null>(null)
   const[replacingSession,setReplacingSession]=useState(false)
@@ -95,7 +96,16 @@ export default function App(){
   },[])
 
   useEffect(()=>{
-    void loadSharedQuestionBank().then(shared=>setQuestionBank(mergeQuestionBanks(QUESTION_BANK,shared))).catch(error=>console.warn('Shared question bank load failed; using bundled metadata.',error))
+    void loadSharedQuestionBank()
+      .then(shared=>{
+        if(!shared?.length)throw new Error('Canonical Question Bank returned no questions.')
+        setQuestionBank(shared)
+        setQuestionBankLoadState('ready')
+      })
+      .catch(error=>{
+        console.error('Canonical Question Bank failed to load.',error)
+        setQuestionBankLoadState('error')
+      })
     Promise.all([getPdf('questions'),getPdf('answers')]).then(([questionsPdf,answersPdf])=>{
       setQpdf(questionsPdf)
       setApdf(answersPdf)
@@ -520,6 +530,13 @@ export default function App(){
     </>
   }
 
+  if(questionBankLoadState!=='ready')return withSidebar('dashboard',
+    <main className="practice" role="status" aria-live="polite" style={{padding:24}}>
+      {questionBankLoadState==='loading'
+        ?'Loading practice questions…'
+        :'Unable to load questions from Supabase. Check your connection and refresh the page.'}
+    </main>)
+  
   if(view==='pre-test-question')return withSidebar('dashboard',<main className="practice pre-test-question-page">
     <AlexBox sx={{display:'flex',alignItems:'center',justifyContent:'space-between',p:1,mb:1}}>
       <AlexBox sx={{fontWeight:850,color:'#08275B'}}>PRE-TEST REVIEW · Individual question</AlexBox>
