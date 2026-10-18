@@ -661,7 +661,7 @@ export default function App(){
         sourceTestLabel={practiceTestLabel(current.practiceTestId)}
         failedOrder={!reviewMode&&settings.failedEverOnly?failedSessionOrder:undefined}
         onFailedOrderChange={order=>void changeFailedReviewOrder(order)}
-        sessionSummary={`${settings.mode='both'?'Math & Reading':settings.mode==='math'?'Math':'Reading & Writing'} · ${qs.length} questions · ${settings.failedEverOnly?'Failed only':settings.failedOnly?'New only':'All questions'}`}
+        sessionSummary={`${settings.mode==='both'?'Math & Reading':settings.mode==='math'?'Math':'Reading & Writing'} · ${qs.length} questions · ${settings.failedEverOnly?'Failed only':settings.failedOnly?'New only':'All questions'}`}
         current={i+1}
         total={qs.length}
         canGoPrevious={i>0}
