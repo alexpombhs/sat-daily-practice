@@ -451,14 +451,15 @@ export function selectDefaultVocabularyEntry(
   rng:()=>number=Math.random,
 ){
   if(!entries.length)return null
-  const failedIds=vocabularyFailedIds(attempts)
   const today=localVocabularyDay(now)
-  const attemptedToday=new Set(
-    attempts.filter(attempt=>localVocabularyDay(attempt.createdAt)===today).map(attempt=>attempt.vocabularyId),
+  const attemptsBeforeToday=attempts.filter(attempt=>localVocabularyDay(attempt.createdAt)!==today)
+  const previouslyFailedIds=vocabularyFailedIds(attemptsBeforeToday)
+  const reviewedFailedToday=attempts.some(
+    attempt=>localVocabularyDay(attempt.createdAt)===today&&previouslyFailedIds.has(attempt.vocabularyId),
   )
-  const failedNotReviewedToday=entries.filter(entry=>failedIds.has(entry.id)&&!attemptedToday.has(entry.id))
-  if(failedNotReviewedToday.length){
-    return selectVocabularyEntry(failedNotReviewedToday,'adaptive',attempts,rng)
+  const failedCandidates=entries.filter(entry=>previouslyFailedIds.has(entry.id))
+  if(!reviewedFailedToday&&failedCandidates.length){
+    return selectVocabularyEntry(failedCandidates,'adaptive',attempts,rng)
   }
   const attemptedIds=new Set(attempts.map(attempt=>attempt.vocabularyId))
   const newEntries=entries.filter(entry=>!attemptedIds.has(entry.id))
