@@ -4,10 +4,11 @@ import AlexText from '../atoms/AlexText'
 import AlexDropdown from '../atoms/AlexDropdown'
 import SectionPanel from '../molecules/SectionPanel'
 import {buildQuestionMastery} from '../../lib/questionMastery'
+import {reviewConceptGroup} from '../../lib/conceptReview'
 import {practiceTestLabel} from '../../lib/questionBank'
 import type {Attempt,PracticeQuestion} from '../../types'
 
-export type Breakdown='status'|'difficulty'|'subject'|'module'|'concept'
+export type Breakdown='status'|'difficulty'|'subject'|'concept'
 export type CoverageSlice={label:string;count:number;color:string}
 export type CoverageGroup={id:string;label:string;total:number;practiced:number;slices:CoverageSlice[]}
 
@@ -15,13 +16,11 @@ const palette=['#4A75C4','#35A77C','#E9A348','#9C6ADE','#D96573','#2E9BAA','#A08
 const STATUS_COLORS={New:'#DDE3EB',Successful:'#21965B',Failed:'#D84A54',Reviewed:'#F0A44A'}
 const DIFFICULTY_COLORS={Easy:'#35A77C',Medium:'#E9A348',Advanced:'#D96573',Unrated:'#DDE3EB'}
 const SUBJECT_COLORS={Math:'#4A75C4','Reading & Writing':'#9C6ADE'}
-const MODULE_COLORS={'Math · Module 1':'#4A75C4','Math · Module 2':'#35A77C','R&W · Module 1':'#9C6ADE','R&W · Module 2':'#E9A348'}
 const DESCRIPTION:Record<Breakdown,string>={
   status:'New, successful, failed, and reviewed questions, based on full practice history.',
   difficulty:'Distribution by Easy, Medium, and Advanced. Questions without an assigned level appear as Unrated.',
   subject:'How questions are divided between Math and Reading & Writing.',
-  module:'Distribution across the four SAT subject modules.',
-  concept:'Distribution by primary concept tag. Multi-tag questions count once using their first tag; untagged questions appear as Untagged.',
+  concept:'Related question concepts are grouped into broader SAT skills. Each question counts once; questions without concept tags appear as Untagged.',
 }
 
 function labelFor(question:PracticeQuestion,breakdown:Breakdown,mastery:ReturnType<typeof buildQuestionMastery>):string{
@@ -35,10 +34,7 @@ function labelFor(question:PracticeQuestion,breakdown:Breakdown,mastery:ReturnTy
     return question.difficulty==='easy'?'Easy':question.difficulty==='medium'?'Medium':question.difficulty==='advanced'?'Advanced':'Unrated'
   }
   if(breakdown==='subject')return question.subject==='math'?'Math':'Reading & Writing'
-  if(breakdown==='module'){
-    return question.module==='math1'?'Math · Module 1':question.module==='math2'?'Math · Module 2':question.module==='rw1'?'R&W · Module 1':'R&W · Module 2'
-  }
-  return question.concepts?.find(tag=>tag.trim())?.trim()||'Untagged'
+  return question.concepts?.some(tag=>tag.trim())?reviewConceptGroup(question.concepts,question.subject):'Untagged'
 }
 
 export function buildCoverageGroups(questions:PracticeQuestion[],attempts:Attempt[],recoveryCorrectAnswers=2,breakdown:Breakdown='status'):CoverageGroup[]{
@@ -48,14 +44,12 @@ export function buildCoverageGroups(questions:PracticeQuestion[],attempts:Attemp
   const preferred=breakdown==='status'?['Successful','Reviewed','Failed','New']
     :breakdown==='difficulty'?['Easy','Medium','Advanced','Unrated']
     :breakdown==='subject'?['Math','Reading & Writing']
-    :breakdown==='module'?['Math · Module 1','Math · Module 2','R&W · Module 1','R&W · Module 2']
     :allLabels.filter(label=>label!=='Untagged').concat(allLabels.includes('Untagged')?['Untagged']:[])
   const labels=preferred.filter(label=>allLabels.includes(label))
   const colorFor=(label:string,index:number)=>{
     if(breakdown==='status')return STATUS_COLORS[label as keyof typeof STATUS_COLORS]
     if(breakdown==='difficulty')return DIFFICULTY_COLORS[label as keyof typeof DIFFICULTY_COLORS]
     if(breakdown==='subject')return SUBJECT_COLORS[label as keyof typeof SUBJECT_COLORS]
-    if(breakdown==='module')return MODULE_COLORS[label as keyof typeof MODULE_COLORS]
     return label==='Untagged'?'#DDE3EB':palette[index%palette.length]
   }
   const make=(id:string,label:string,items:PracticeQuestion[]):CoverageGroup=>{
@@ -94,7 +88,7 @@ function CoverageDonut({group,large=false}:{group:CoverageGroup;large?:boolean})
       </AlexBox>
     </AlexBox>
     <AlexText sx={{fontSize:large?12.5:11,color:'#475467',textAlign:'center'}}>{group.practiced} practiced / {group.total}</AlexText>
-    <AlexBox sx={{display:'grid',gridTemplateColumns:large?'repeat(2,minmax(0,1fr))':'minmax(0,1fr)',gap:large?.75:.2,width:'100%'}}>
+    {large&&<AlexBox sx={{display:'grid',gridTemplateColumns:'repeat(2,minmax(0,1fr))',gap:.75,width:'100%'}}>
       {group.slices.map(slice=><AlexBox key={slice.label} title={slice.label} sx={{display:'flex',alignItems:'center',gap:.65,minWidth:0}}>
         <AlexBox sx={{width:9,height:9,borderRadius:'50%',bgcolor:slice.color,flexShrink:0}}/>
         <AlexText sx={{fontSize:large?11.5:10,color:'#475467',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{slice.label} <b>{slice.count}</b></AlexText>
@@ -112,7 +106,6 @@ export default function QuestionCoverageCharts({questions,attempts,recoveryCorre
         {value:'status',label:'Question status'},
         {value:'difficulty',label:'Difficulty level'},
         {value:'subject',label:'Subject'},
-        {value:'module',label:'Module'},
         {value:'concept',label:'Primary concept'},
       ]}/>
     </AlexBox>
