@@ -49,7 +49,7 @@ describe('DailyPracticeGoals weekly streak',()=>{
         attempts={attempts}
         sessions={sessions}
         dailyQuestions={20}
-        failedQuestionCount={0}
+        failedQuestionCount={1}
         signedIn={false}
         onPracticeMath={()=>{}}
         onPracticeReadingWriting={()=>{}}
@@ -78,7 +78,7 @@ describe('DailyPracticeGoals weekly streak',()=>{
         attempts={[reviewed]}
         sessions={[failedOnlySession]}
         dailyQuestions={20}
-        failedQuestionCount={0}
+        failedQuestionCount={1}
         signedIn={false}
         onPracticeMath={()=>{}}
         onPracticeReadingWriting={()=>{}}
@@ -87,7 +87,7 @@ describe('DailyPracticeGoals weekly streak',()=>{
       />,
     )
 
-    expect(screen.getByText('Clear')).toBeInTheDocument()
+    expect(screen.getByText('· 1/1')).toBeInTheDocument()
   })
 
   it('reconstructs credit for legacy sessions whose failed-only setting was erased',()=>{
@@ -99,14 +99,14 @@ describe('DailyPracticeGoals weekly streak',()=>{
       attempts={[yesterdayFailure,yesterdayRecovery,todayRetry]}
       sessions={[legacySession]}
       dailyQuestions={20}
-      failedQuestionCount={0}
+      failedQuestionCount={1}
       signedIn={false}
       onPracticeMath={()=>{}}
       onPracticeReadingWriting={()=>{}}
       onPracticeVocabulary={()=>{}}
       onReviewFailed={()=>{}}
     />)
-    expect(screen.getByText('Clear')).toBeInTheDocument()
+    expect(screen.getByText('· 1/1')).toBeInTheDocument()
   })
 
   it('shows actual questions completed when today exceeds the goal',()=>{
@@ -121,7 +121,7 @@ describe('DailyPracticeGoals weekly streak',()=>{
         attempts={attemptsToday}
         sessions={[]}
         dailyQuestions={20}
-        failedQuestionCount={0}
+        failedQuestionCount={1}
         signedIn={false}
         onPracticeMath={()=>{}}
         onPracticeReadingWriting={()=>{}}
