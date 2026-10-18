@@ -53,7 +53,7 @@ describe('AppSidebarLayout',()=>{
     expect(screen.getByTestId('mobile-header')).toBeInTheDocument()
     expect(screen.getByTestId('mobile-bottom-nav')).toBeInTheDocument()
     expect(screen.getAllByRole('button',{name:'Dashboard'}).length).toBeGreaterThan(0)
-    expect(screen.getByRole('button',{name:'Practice'})).toBeInTheDocument()
+    expect(screen.getAllByRole('button',{name:'Practice'}).length).toBeGreaterThan(0)
     expect(screen.getByRole('button',{name:'Stats'})).toBeInTheDocument()
     expect(screen.getByRole('button',{name:'Menu'})).toBeInTheDocument()
 
