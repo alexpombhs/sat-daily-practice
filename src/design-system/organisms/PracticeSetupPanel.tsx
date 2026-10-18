@@ -11,6 +11,7 @@ import PracticeSettingField from '../molecules/PracticeSettingField'
 import PracticeSetupSection from '../molecules/PracticeSetupSection'
 import SettingsFieldGroup from '../molecules/SettingsFieldGroup'
 import StudyPlanRecommendation from './StudyPlanRecommendation'
+import {DEFAULT_VOCABULARY_SETTINGS} from '../../lib/vocabulary'
 import type {PracticePlanRecommendation} from '../../lib/practicePlan'
 import type {PracticeTestFilter,QuestionDifficulty,Settings} from '../../types'
 
@@ -45,6 +46,17 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
   const failedEverOnly=settings.failedEverOnly??false
   const failedRecoveryCorrectAnswers=settings.failedRecoveryCorrectAnswers??2
   const answerFeedbackTiming=settings.answerFeedbackTiming??'end'
+  const vocabularySettings={...DEFAULT_VOCABULARY_SETTINGS,...(settings.vocabulary??{})}
+  const vocabularyDailyGoal=vocabularySettings.dailyGoal??20
+  const updateVocabularyDailyGoal=(dailyGoal:number)=>onChange({...settings,vocabulary:{
+    sources:vocabularySettings.sources,
+    difficulty:vocabularySettings.difficulty,
+    history:vocabularySettings.history,
+    selection:vocabularySettings.selection,
+    direction:vocabularySettings.direction==='mixed'?'word-to-definition':vocabularySettings.direction,
+    dailyGoal,
+    masteredIds:vocabularySettings.masteredIds??[],
+  }})
   const startDisabled=(newOnly&&newQuestionCount===0)||(failedEverOnly&&failedQuestionCount===0)
 
   const subjectLabel=settings.mode==='both'?'Reading & Writing + Math':settings.mode==='english'?'Reading & Writing':'Math'
@@ -184,6 +196,29 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
               min={1}
               max={5}
               onChange={failedRecoveryCorrectAnswers=>onChange({...settings,failedRecoveryCorrectAnswers})}
+            />
+          </AlexBox>}
+        />
+      </SettingsFieldGroup>
+    </PracticeSetupSection>
+
+    <PracticeSetupSection
+      title="Vocabulary"
+      description="Daily vocabulary target used on the dashboard and vocabulary practice."
+      summary={`${vocabularyDailyGoal} words/day · ${vocabularySettings.masteredIds.length} mastered`}
+    >
+      <SettingsFieldGroup>
+        <PracticeSettingField
+          label="Vocabulary daily goal"
+          helperText="Set how many vocabulary words you want to practice each day. This updates Today's goals on the dashboard."
+          control={<AlexBox sx={{maxWidth:260}}>
+            <AlexNumberField
+              fullWidth
+              label="Words per day"
+              value={vocabularyDailyGoal}
+              min={1}
+              max={100}
+              onChange={updateVocabularyDailyGoal}
             />
           </AlexBox>}
         />
