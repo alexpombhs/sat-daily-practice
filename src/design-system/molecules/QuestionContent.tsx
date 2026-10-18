@@ -38,7 +38,7 @@ function LinesWithSourceVisuals({question,bytes,lines,alt,visuals,sourceCrop,ref
     const visualAlt=visual.kind==='choice-grid'
       ?`${alt} graphical answer choices A through D from source PDF`
       :`${alt} figure ${index+1} from source PDF`
-    output.push(<QuestionVisualSlice key={`visual-${index}`} question={question} bytes={bytes} crop={visual.crop} alt={visualAlt} expand={!visual.exact} sourceCrop={sourceCrop} variant={visual.kind}/>)
+    output.push(<QuestionVisualSlice key={`visual-${index}`} question={question} bytes={bytes} crop={visual.crop} alt={visualAlt} expand={!visual.exact} sourcePage={visual.sourcePage} sourceCrop={visual.sourceCrop??sourceCrop} variant={visual.kind}/>)
     cursor=split
   })
   const after=lines.slice(cursor)
