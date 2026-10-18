@@ -16,8 +16,7 @@ import PerformanceDashboard,{type PerformanceTimeRange} from './design-system/or
 import DailyPracticeGoals from './design-system/organisms/DailyPracticeGoals'
 import PracticeAnswerPanel from './design-system/organisms/PracticeAnswerPanel'
 import PracticeSessionHeader from './design-system/organisms/PracticeSessionHeader'
-import PracticeSetupPanel from './design-system/organisms/PracticeSetupPanel'
-import PracticeTestsDashboard from './design-system/organisms/PracticeTestsDashboard'
+import PracticeHub from './design-system/organisms/PracticeHub'
 import StudyPlanCalendar from './design-system/organisms/StudyPlanCalendar'
 import StudyPlanHero from './design-system/organisms/StudyPlanHero'
 import PreTestConceptReview from './design-system/organisms/PreTestConceptReview'
@@ -41,7 +40,7 @@ import type {ActivePracticeSession,Attempt,PracticeQuestion,SessionSummary,Setti
 const uid=()=>crypto.randomUUID()
 
 type View=AppRouteView
-type SidebarKey='dashboard'|'practice-tests'|'practice-setup'|'vocabulary'|'question-bank'|'parsing-issues'|'performance'|'resources'
+type SidebarKey='dashboard'|'practice'|'vocabulary'|'question-bank'|'parsing-issues'|'performance'|'resources'
 
 export default function App(){
   const[settings,setSettings]=useState<Settings>(()=>({...DEFAULT_SETTINGS}))
@@ -491,8 +490,7 @@ export default function App(){
       collapsed={sidebarCollapsed}
       onToggleCollapsed={()=>setSidebarCollapsed(value=>!value)}
       onDashboard={()=>navigateTo('study')}
-      onPracticeTests={()=>navigateTo('home')}
-      onPracticeSetup={()=>navigateTo('settings')}
+      onPractice={()=>navigateTo('home')}
       onVocabulary={()=>navigateTo('vocabulary')}
       onQuestionBank={()=>navigateTo('question-bank')}
       onParsingIssues={()=>navigateTo('parsing-issues')}
@@ -570,7 +568,7 @@ export default function App(){
   </main>,'#F7F6F2')
 
   if(view==='practice'&&!current){
-    return withSidebar('practice-tests',<main className="shell">
+    return withSidebar('practice',<main className="shell">
       <section className="card results">
         <p className="eyebrow">Practice session</p>
         <h1>{resumableSession?'Session ready to resume':'No active session found'}</h1>
@@ -587,7 +585,7 @@ export default function App(){
   }
 
   if(view==='practice'&&current){
-    return withSidebar('practice-tests',<main className="practice">
+    return withSidebar('practice',<main className="practice">
       <PracticeSessionHeader
         moduleLabel={moduleLabel(current.module)}
         subjectLabel={current.subject==='math'?'Math':'Reading & Writing'}
@@ -652,7 +650,7 @@ export default function App(){
   if(view==='results'){
     const session=summarizeSession(currentAttempts)
     const completedSession=sessions.find(item=>item.id===sid)??(sid?{id:sid,startedAt:started,endedAt:new Date().toISOString(),mode:settings.mode,questionCount:qs.length,attempts:currentAttempts}:null)
-    return withSidebar('practice-tests',<main className="shell">
+    return withSidebar('practice',<main className="shell">
       <section className="card results">
         <p className="eyebrow">Session complete</p>
         <h1>{session.accuracy}% accuracy</h1>
@@ -692,24 +690,10 @@ export default function App(){
 
   if(view==='parsing-issues')return withSidebar('parsing-issues',<ParsingIssuesDashboard questionsPdf={qpdf} answersPdf={apdf}/>,'#F7F6F2')
 
-  if(view==='account')return withSidebar('practice-tests',<main className="shell">
+  if(view==='account')return withSidebar('practice',<main className="shell">
     <div className="page-heading"><div><p className="eyebrow">Account</p><h1>Account & sync</h1></div></div>
     <AccountAuthPanel email={authUser?.email??null}/>
   </main>,'#F7F6F2')
-
-  if(view==='settings')return withSidebar('practice-setup',<main className="shell">
-    <div className="page-heading"><div><p className="eyebrow">Practice Setup</p><h1>Practice setup</h1></div></div>
-    <PracticeSetupPanel
-      settings={settings}
-      practiceTests={practiceTestOptions}
-      newQuestionCount={newQuestionCount}
-      difficultyCounts={difficultyCounts}
-      failedQuestionCount={failedQuestionCount}
-      onChange={setSettings}
-      onStart={()=>void beginPractice(settings.mode)}
-      recommendation={practiceRecommendation}
-    />
-  </main>)
 
   if(view==='sources')return withSidebar('resources',<main className="shell">
     <div className="page-heading"><div><p className="eyebrow">Resources</p><h1>Shared sources</h1></div></div>
@@ -903,20 +887,24 @@ export default function App(){
     </AlexBox>
   </main>,'#F7F6F2')
 
-  return withSidebar('practice-tests',<PracticeTestsDashboard
-    tests={practiceTestSummaries}
-    currentPracticeTest={settings.practiceTest??'all'}
-    sessionSummary={`${settings.questionsPerSession} questions · ${settings.mode==='both'?'Reading & Writing + Math':settings.mode==='english'?'Reading & Writing':'Math'} · ${practiceSummary}`}
+  return withSidebar('practice',<PracticeHub
+    settings={settings}
+    practiceTests={practiceTestOptions}
+    difficultyCounts={difficultyCounts}
+    newQuestionCount={newQuestionCount}
+    failedQuestionCount={failedQuestionCount}
+    recommendation={practiceRecommendation}
     activeSession={resumableSession?{
       questionCount:resumableSession.questionCount,
       answeredCount:resumableSession.attempts.length,
       lastActivityAt:resumableSession.lastActivityAt,
     }:null}
     sessionHistory={completedSessionHistory}
-    onStartTest={value=>void beginPractice(settings.mode,value)}
-    onOpenSetup={()=>navigateTo('settings')}
+    onChangeSettings={setSettings}
+    onStart={()=>void beginPractice(settings.mode)}
     onResumeSession={resumeActiveSession}
     onEndSession={()=>void endResumableSession()}
     onReviewSession={reviewPastSession}
   />)
+
 }
