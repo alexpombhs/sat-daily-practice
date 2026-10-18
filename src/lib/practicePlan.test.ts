@@ -48,9 +48,9 @@ describe('practice plan recommendations',()=>{
     const plan=buildPracticePlanRecommendation({...baseSettings,questionsPerSession:5},questions,attempts,performance(1300))
     expect(plan.remainingQuestions).toBe(0)
     expect(plan.scoreGap).toBe(100)
-    expect(plan.recommendedSessionsPerDay).toBe(3)
-    expect(plan.dailyQuestionGoal).toBe(15)
-    expect(plan.estimatedDailyMinutes).toBe(30)
+    expect(plan.recommendedSessionsPerDay).toBe(2)
+    expect(plan.dailyQuestionGoal).toBe(10)
+    expect(plan.estimatedDailyMinutes).toBe(20)
   })
 
   it('asks for a cross-section baseline before treating a target as met',()=>{
@@ -74,8 +74,8 @@ describe('practice plan recommendations',()=>{
   it('does not increase sessions per day when the exam is tomorrow',()=>{
     const plan=buildPracticePlanRecommendation({...baseSettings,targetExamDate:isoDateFromToday(1)},QUESTION_BANK,[],performance(1200))
     expect(plan.daysRemaining).toBe(1)
-    expect(plan.recommendedSessionsPerDay).toBe(1)
-    expect(plan.estimatedDailyMinutes).toBe(20)
+    expect(plan.recommendedSessionsPerDay).toBe(2)
+    expect(plan.estimatedDailyMinutes).toBe(40)
     expect(plan.planPhase).toBe('final-review')
     expect(plan.practiceGuidance).toContain('Final review day')
   })
@@ -83,8 +83,8 @@ describe('practice plan recommendations',()=>{
   it('enters final review mode three days before the exam without adding volume',()=>{
     const plan=buildPracticePlanRecommendation({...baseSettings,targetExamDate:isoDateFromToday(3)},QUESTION_BANK,[],performance(1200))
     expect(plan.planPhase).toBe('final-review')
-    expect(plan.recommendedSessionsPerDay).toBe(1)
-    expect(plan.estimatedDailyMinutes).toBe(20)
+    expect(plan.recommendedSessionsPerDay).toBe(2)
+    expect(plan.estimatedDailyMinutes).toBe(40)
     expect(plan.practiceGuidance).toContain('Final 3-day review')
   })
 
