@@ -30,6 +30,10 @@ const OFFICIAL_SOURCES:Record<PracticeTestId,{questions:string;answers:string}>=
     questions:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-10-digital.pdf',
     answers:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-10-answers-digital.pdf',
   },
+  'practice-test-11':{
+    questions:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-11-digital.pdf',
+    answers:'https://satsuite.collegeboard.org/media/pdf/sat-practice-test-11-answers-digital.pdf',
+  },
 }
 const supabaseUrl=import.meta.env.VITE_SUPABASE_URL as string|undefined
 export type PdfKind='questions'|'answers'
@@ -37,19 +41,28 @@ export type PdfKind='questions'|'answers'
 // Validate the actual PT9 content, not byte-for-byte PDF metadata.
 // Source files can be re-optimized upstream without changing their questions.
 async function verifiedCanonicalBytes(testId:PracticeTestId,kind:PdfKind,bytes:ArrayBuffer){
-  if(testId!=='practice-test-9'&&testId!=='practice-test-10')return true
+  if(testId!=='practice-test-9'&&testId!=='practice-test-10'&&testId!=='practice-test-11')return true
   const {GlobalWorkerOptions,getDocument}=await import('pdfjs-dist')
   GlobalWorkerOptions.workerSrc=new URL('pdfjs-dist/build/pdf.worker.min.mjs',import.meta.url).toString()
   const doc=await getDocument({data:new Uint8Array(bytes.slice(0))}).promise
   try{
-    if(kind==='questions'&&doc.numPages!==56)return false
-    if(kind==='answers'&&doc.numPages!==47)return false
-    const pageNumber=testId==='practice-test-10'
-      ?kind==='questions'?34:33
-      :kind==='questions'?34:31
+    const expectedPages=testId==='practice-test-11'
+      ?kind==='questions'?52:51
+      :kind==='questions'?56:47
+    if(doc.numPages!==expectedPages)return false
+    const pageNumber=testId==='practice-test-11'
+      ?34
+      :testId==='practice-test-10'
+        ?kind==='questions'?34:33
+        :kind==='questions'?34:31
     const page=await doc.getPage(pageNumber)
     const content=await page.getTextContent()
     const text=content.items.flatMap(item=>'str' in item?[item.str]:[]).join(' ').toLowerCase()
+    if(testId==='practice-test-11'){
+      return kind==='questions'
+        ?text.includes('triangle shown')&&text.includes('pq')&&text.includes('qr')
+        :text.includes('sat answer explanations')&&text.includes('math')&&text.includes('module 1')
+    }
     if(testId==='practice-test-10'){
       return kind==='questions'
         ?text.includes('used car lot')&&text.includes('system of linear equations')
@@ -64,7 +77,7 @@ async function verifiedCanonicalBytes(testId:PracticeTestId,kind:PdfKind,bytes:A
 const inMemorySources=new Map<string,Promise<ArrayBuffer|null>>()
 
 function openDb():Promise<IDBDatabase>{return new Promise((resolve,reject)=>{const req=indexedDB.open(DB,1);req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains(STORE))req.result.createObjectStore(STORE)};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
-function storageKey(testId:PracticeTestId,kind:PdfKind){return `v${testId==='practice-test-10'?CACHE_VERSION+21:testId==='practice-test-9'?CACHE_VERSION+10:testId==='practice-test-8'?CACHE_VERSION+1:CACHE_VERSION}:${testId}:${kind}`}
+function storageKey(testId:PracticeTestId,kind:PdfKind){return `v${testId==='practice-test-11'?CACHE_VERSION+31:testId==='practice-test-10'?CACHE_VERSION+21:testId==='practice-test-9'?CACHE_VERSION+10:testId==='practice-test-8'?CACHE_VERSION+1:CACHE_VERSION}:${testId}:${kind}`}
 function memoryKey(testId:PracticeTestId,kind:PdfKind){return `${testId}:${kind}`}
 
 async function storeBytes(testId:PracticeTestId,kind:PdfKind,bytes:ArrayBuffer){
@@ -83,7 +96,7 @@ async function readStored(testId:PracticeTestId,kind:PdfKind):Promise<ArrayBuffe
 }
 
 async function fetchPdf(url:string,expectedTestId?:PracticeTestId,expectedKind?:PdfKind){
-  const response=await fetch(url,{cache:expectedTestId==='practice-test-10'||expectedTestId==='practice-test-9'||expectedTestId==='practice-test-8'?'reload':'force-cache'})
+  const response=await fetch(url,{cache:expectedTestId==='practice-test-11'||expectedTestId==='practice-test-10'||expectedTestId==='practice-test-9'||expectedTestId==='practice-test-8'?'reload':'force-cache'})
   if(!response.ok)throw new Error(`PDF source returned ${response.status}.`)
   const contentType=response.headers.get('content-type')??''
   if(contentType&&!contentType.includes('pdf')&&!contentType.includes('octet-stream'))throw new Error(`Unexpected PDF content type: ${contentType}`)
@@ -97,18 +110,18 @@ async function fetchPdf(url:string,expectedTestId?:PracticeTestId,expectedKind?:
 
 export function sharedSourceCandidates(testId:PracticeTestId,kind:PdfKind){
   const source=OFFICIAL_SOURCES[testId]?.[kind]
-  const proxy=supabaseUrl?`${supabaseUrl.replace(/\/$/,'')}/functions/v1/sat-question-source?kind=${kind}&practiceTestId=${encodeURIComponent(testId)}${testId==='practice-test-10'?'&sourceVersion=2':''}`:null
+  const proxy=supabaseUrl?`${supabaseUrl.replace(/\/$/,'')}/functions/v1/sat-question-source?kind=${kind}&practiceTestId=${encodeURIComponent(testId)}${testId==='practice-test-10'?'&sourceVersion=2':testId==='practice-test-11'?'&sourceVersion=1':''}`:null
   // PT10 is intentionally proxy-only in the browser. College Board's PDF host does not
   // consistently allow cross-origin browser fetches, so a direct fallback can turn a useful
   // proxy error into the misleading generic "Failed to fetch".
-  return (testId==='practice-test-10'?[proxy]:[proxy,source??null])
+  return (testId==='practice-test-10'||testId==='practice-test-11'?[proxy]:[proxy,source??null])
     .filter((value):value is string=>Boolean(value))
 }
 
 async function loadCanonicalSource(testId:PracticeTestId,kind:PdfKind){
   let lastError:unknown=null
   for(const url of sharedSourceCandidates(testId,kind)){
-    const attempts=testId==='practice-test-10'?2:1
+    const attempts=testId==='practice-test-10'||testId==='practice-test-11'?2:1
     for(let attempt=1;attempt<=attempts;attempt++){
       try{
         const bytes=await fetchPdf(url,testId,kind)
@@ -120,8 +133,8 @@ async function loadCanonicalSource(testId:PracticeTestId,kind:PdfKind){
       }
     }
   }
-  if(testId==='practice-test-9'||testId==='practice-test-10'){
-    const label=testId==='practice-test-10'?'PT10':'PT9'
+  if(testId==='practice-test-9'||testId==='practice-test-10'||testId==='practice-test-11'){
+    const label=testId==='practice-test-11'?'PT11':testId==='practice-test-10'?'PT10':'PT9'
     throw new Error(lastError instanceof Error?`${label} ${kind} PDF unavailable: ${lastError.message}`:`${label} ${kind} PDF could not be loaded.`)
   }
   return null
