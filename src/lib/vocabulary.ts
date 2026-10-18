@@ -311,6 +311,56 @@ export const PRACTICE_TEST_VOCABULARY:VocabularyEntry[]=[
   {id:'recalcitrant',word:'recalcitrant',definition:'stubbornly resistant to authority or control',sourceQuestionId:'practice-test-10:rw2-5',difficulty:'advanced'},
   {id:'misanthropic',word:'misanthropic',definition:'showing dislike or distrust of people in general',sourceQuestionId:'practice-test-10:rw2-5',difficulty:'advanced'},
   {id:'earnest',word:'earnest',definition:'serious and sincere in attitude or purpose',sourceQuestionId:'practice-test-10:rw2-5',difficulty:'medium'},
+
+  {id:'comprehend',word:'comprehend',definition:'understand fully',sourceQuestionId:'practice-test-11:rw1-1',difficulty:'medium'},
+  {id:'dislike',word:'dislike',definition:'feel aversion or lack of fondness for',sourceQuestionId:'practice-test-11:rw1-1',difficulty:'easy'},
+  {id:'interrupt',word:'interrupt',definition:'stop or break the continuity of something',sourceQuestionId:'practice-test-11:rw1-1',difficulty:'easy'},
+  {id:'overlook',word:'overlook',definition:'fail to notice or consider',sourceQuestionId:'practice-test-11:rw1-1',difficulty:'medium'},
+
+  {id:'outmoded',word:'outmoded',definition:'old-fashioned or no longer useful',sourceQuestionId:'practice-test-11:rw1-2',difficulty:'advanced'},
+  {id:'informal',word:'informal',definition:'casual or not following formal rules',sourceQuestionId:'practice-test-11:rw1-2',difficulty:'easy'},
+  {id:'interconnected',word:'interconnected',definition:'joined together so that each part relates to the others',sourceQuestionId:'practice-test-11:rw1-2',difficulty:'medium'},
+  {id:'optional',word:'optional',definition:'available by choice rather than required',sourceQuestionId:'practice-test-11:rw1-2',difficulty:'easy'},
+
+  {id:'replicate',word:'replicate',definition:'copy or reproduce',sourceQuestionId:'practice-test-11:rw1-3',difficulty:'medium'},
+  {id:'critique',word:'critique',definition:'analyze and evaluate carefully',sourceQuestionId:'practice-test-11:rw1-3',difficulty:'medium'},
+  {id:'import',word:'import',definition:'bring goods or materials into a country from abroad',sourceQuestionId:'practice-test-11:rw1-3',difficulty:'easy'},
+  {id:'suppress',word:'suppress',definition:'prevent, restrain, or keep from being known or expressed',sourceQuestionId:'practice-test-11:rw1-3',difficulty:'advanced'},
+
+  {id:'investigated',word:'investigated',definition:'examined systematically to discover facts',sourceQuestionId:'practice-test-11:rw1-4',difficulty:'easy'},
+  {id:'misinterpreted',word:'misinterpreted',definition:'understood or explained incorrectly',sourceQuestionId:'practice-test-11:rw1-4',difficulty:'medium'},
+  {id:'anticipated',word:'anticipated',definition:'expected or predicted in advance',sourceQuestionId:'practice-test-11:rw1-4',difficulty:'medium'},
+  {id:'contradicted',word:'contradicted',definition:'shown to conflict with or be false',sourceQuestionId:'practice-test-11:rw1-4',difficulty:'medium'},
+
+  {id:'unassuming',word:'unassuming',definition:'modest and not drawing attention to oneself or itself',sourceQuestionId:'practice-test-11:rw1-5',difficulty:'advanced'},
+  {id:'shrewd',word:'shrewd',definition:'showing sharp judgment and practical intelligence',sourceQuestionId:'practice-test-11:rw1-5',difficulty:'advanced'},
+  {id:'incongruous',word:'incongruous',definition:'not fitting together or out of place',sourceQuestionId:'practice-test-11:rw1-5',difficulty:'advanced'},
+  {id:'pretentious',word:'pretentious',definition:'trying to appear more important or sophisticated than is justified',sourceQuestionId:'practice-test-11:rw1-5',difficulty:'advanced'},
+
+  {id:'chaotic',word:'chaotic',definition:'disordered, confused, or lacking organization',sourceQuestionId:'practice-test-11:rw2-1',difficulty:'medium'},
+  {id:'uniform',word:'uniform',definition:'consistent or the same throughout',sourceQuestionId:'practice-test-11:rw2-1',difficulty:'easy'},
+  {id:'effective',word:'effective',definition:'successful in producing the intended result',sourceQuestionId:'practice-test-11:rw2-1',difficulty:'easy'},
+  {id:'burdensome',word:'burdensome',definition:'difficult or troublesome to carry out or endure',sourceQuestionId:'practice-test-11:rw2-1',difficulty:'advanced'},
+
+  {id:'straightening',word:'straightening',definition:'making something straight or properly aligned',sourceQuestionId:'practice-test-11:rw2-2',difficulty:'easy'},
+  {id:'forgetting-about',word:'forgetting about',definition:'failing to remember or consider something',sourceQuestionId:'practice-test-11:rw2-2',difficulty:'easy'},
+  {id:'relying-on',word:'relying on',definition:'depending on someone or something for support or help',sourceQuestionId:'practice-test-11:rw2-2',difficulty:'easy'},
+  {id:'reducing',word:'reducing',definition:'making smaller in amount, size, or degree',sourceQuestionId:'practice-test-11:rw2-2',difficulty:'easy'},
+
+  {id:'distort',word:'distort',definition:'twist or misrepresent the meaning, shape, or facts of something',sourceQuestionId:'practice-test-11:rw2-3',difficulty:'medium'},
+  {id:'enact',word:'enact',definition:'put a law or policy into effect',sourceQuestionId:'practice-test-11:rw2-3',difficulty:'medium'},
+  {id:'neglect',word:'neglect',definition:'fail to give proper attention to',sourceQuestionId:'practice-test-11:rw2-3',difficulty:'medium'},
+  {id:'supplement',word:'supplement',definition:'add to something in order to improve or complete it',sourceQuestionId:'practice-test-11:rw2-3',difficulty:'medium'},
+
+  {id:'tangential',word:'tangential',definition:'only loosely related to the main subject',sourceQuestionId:'practice-test-11:rw2-4',difficulty:'advanced'},
+  {id:'subsequent',word:'subsequent',definition:'coming after something else in time or order',sourceQuestionId:'practice-test-11:rw2-4',difficulty:'medium'},
+  {id:'analogous',word:'analogous',definition:'similar in a way that allows comparison',sourceQuestionId:'practice-test-11:rw2-4',difficulty:'advanced'},
+  {id:'integral',word:'integral',definition:'essential or necessary to make something complete',sourceQuestionId:'practice-test-11:rw2-4',difficulty:'advanced'},
+
+  {id:'realized',word:'realized',definition:'became aware of or understood clearly',sourceQuestionId:'practice-test-11:rw2-5',difficulty:'easy'},
+  {id:'perceptible',word:'perceptible',definition:'able to be noticed or sensed',sourceQuestionId:'practice-test-11:rw2-5',difficulty:'advanced'},
+  {id:'situated',word:'situated',definition:'located or positioned in a particular place',sourceQuestionId:'practice-test-11:rw2-5',difficulty:'easy'},
+  {id:'dwindling',word:'dwindling',definition:'gradually becoming smaller or less',sourceQuestionId:'practice-test-11:rw2-5',difficulty:'medium'},
 ]
 
 export const VOCABULARY_BANK:VocabularyEntry[]=[
