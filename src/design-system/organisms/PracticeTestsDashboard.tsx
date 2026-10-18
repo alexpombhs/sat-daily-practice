@@ -5,7 +5,6 @@ import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
 import AlexDropdown from '../atoms/AlexDropdown'
 import SessionReviewSelector from '../molecules/SessionReviewSelector'
-import PracticeSettingField from '../molecules/PracticeSettingField'
 import type {PracticeTestFilter} from '../../types'
 
 type TestSummary={
@@ -31,6 +30,7 @@ type LastSessionSummary={
 
 type Props={
   tests:TestSummary[]
+  currentPracticeTest?:PracticeTestFilter
   sessionSummary:string
   activeSession?:ActiveSessionSummary|null
   sessionHistory?:LastSessionSummary[]
@@ -41,9 +41,9 @@ type Props={
   onReviewSession?:(sessionId:string)=>void
 }
 
-export default function PracticeTestsDashboard({tests,sessionSummary,activeSession,sessionHistory=[],onStartTest,onOpenSetup,onResumeSession,onEndSession,onReviewSession}:Props){
+export default function PracticeTestsDashboard({tests,currentPracticeTest='all',sessionSummary,activeSession,sessionHistory=[],onStartTest,onOpenSetup,onResumeSession,onEndSession,onReviewSession}:Props){
   const[selectedReviewSession,setSelectedReviewSession]=useState(sessionHistory[0]?.id??'')
-  const[selectedTest,setSelectedTest]=useState<PracticeTestFilter>(tests[0]?.value??'all')
+  const[selectedTest,setSelectedTest]=useState<PracticeTestFilter>(currentPracticeTest)
   useEffect(()=>{
     if(!sessionHistory.length){
       setSelectedReviewSession('')
@@ -51,19 +51,25 @@ export default function PracticeTestsDashboard({tests,sessionSummary,activeSessi
     }
     if(!sessionHistory.some(session=>session.id===selectedReviewSession))setSelectedReviewSession(sessionHistory[0].id)
   },[sessionHistory,selectedReviewSession])
-  useEffect(()=>{
-    if(tests.length&&!tests.some(test=>test.value===selectedTest))setSelectedTest(tests[0].value)
-  },[tests,selectedTest])
+  useEffect(()=>{setSelectedTest(currentPracticeTest)},[currentPracticeTest])
   const reviewSessionOptions=sessionHistory.map(session=>({
     value:session.id,
     label:`${new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(new Date(session.endedAt))} · ${session.accuracy}% · ${session.total} question${session.total===1?'':'s'}`,
   }))
 
-  const selectedTestSummary=tests.find(test=>test.value===selectedTest)
-  const testOptions=tests.map(test=>({
-    value:test.value,
-    label:`${test.label} · ${test.questionCount} questions`,
-  }))
+  const selectedTestSummary=selectedTest==='all'
+    ?{
+      questionCount:tests.reduce((sum,test)=>sum+test.questionCount,0),
+      practicedCount:tests.reduce((sum,test)=>sum+test.practicedCount,0),
+    }
+    :tests.find(test=>test.value===selectedTest)
+  const testOptions=[
+    {value:'all' as PracticeTestFilter,label:`All available tests · ${tests.reduce((sum,test)=>sum+test.questionCount,0)} questions`},
+    ...tests.map(test=>({
+      value:test.value,
+      label:`${test.label} · ${test.questionCount} questions`,
+    })),
+  ]
 
   return <AlexBox component="section" sx={{width:'100%',px:{xs:.5,sm:1.5,md:2.5,lg:4},py:{xs:2,sm:2.75,lg:4}}}>
     <AlexBox sx={{maxWidth:960,mx:'auto'}}>
