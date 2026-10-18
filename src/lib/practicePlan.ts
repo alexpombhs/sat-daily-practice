@@ -104,7 +104,9 @@ export function buildPracticePlanRecommendation(settings:Settings,questions:Prac
   }else{
     desiredDailyQuestions=Math.max(10,Math.min(20,questionsPerSession))
   }
-  const dailyQuestionGoal=isExamDay||!hasActiveGoal?0:desiredDailyQuestions
+  // Use understandable 10 / 15 / 20 question milestones instead of odd numbers.
+  const roundedDailyQuestions=[10,15,20].reduce((best,value)=>Math.abs(value-desiredDailyQuestions)<Math.abs(best-desiredDailyQuestions)?value:best,10)
+  const dailyQuestionGoal=isExamDay||!hasActiveGoal?0:roundedDailyQuestions
   const recommendedSessionsPerDay=dailyQuestionGoal>0?Math.max(1,Math.ceil(dailyQuestionGoal/questionsPerSession)):0
   const estimatedSessionMinutes=Math.max(1,Math.ceil(questionsPerSession*plannedMinutesPerQuestion))
   const estimatedDailyMinutes=dailyQuestionGoal>0?Math.ceil(dailyQuestionGoal*plannedMinutesPerQuestion):0
