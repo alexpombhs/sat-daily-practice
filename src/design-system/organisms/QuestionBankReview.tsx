@@ -28,10 +28,21 @@ export default function QuestionBankReview({questionsPdf}:Props){
 
   useEffect(()=>{
     let cancelled=false
-    void loadSharedQuestionBank().then(shared=>{
-      if(!cancelled)setBank(mergeQuestionBanks(QUESTION_BANK,shared))
-    }).catch(error=>console.warn('Shared Question Bank load failed; using bundled metadata.',error))
-    return()=>{cancelled=true}
+    const refresh=()=>{
+      void loadSharedQuestionBank().then(shared=>{
+        if(!cancelled)setBank(mergeQuestionBanks(QUESTION_BANK,shared))
+      }).catch(error=>console.warn('Shared Question Bank load failed; using bundled metadata.',error))
+    }
+    refresh()
+    const handleFocus=()=>refresh()
+    const handleUpdated=()=>refresh()
+    window.addEventListener('focus',handleFocus)
+    window.addEventListener('sat-question-content-updated',handleUpdated)
+    return()=>{
+      cancelled=true
+      window.removeEventListener('focus',handleFocus)
+      window.removeEventListener('sat-question-content-updated',handleUpdated)
+    }
   },[])
 
   const questions=useMemo(()=>{

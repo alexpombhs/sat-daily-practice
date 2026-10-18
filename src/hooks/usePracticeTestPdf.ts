@@ -13,7 +13,7 @@ export function usePracticeTestPdfState(question:PracticeQuestion,kind:PdfKind,f
   const testId=question.practiceTestId
   // Newer tests must never display a parent-provided PDF from a different test while
   // their canonical source is loading or unavailable.
-  const requiresCanonical=testId==='practice-test-9'||testId==='practice-test-10'
+  const requiresCanonical=testId==='practice-test-9'||testId==='practice-test-10'||testId==='practice-test-11'
   const trustedFallback=requiresCanonical?null:fallback
   const[source,setSource]=useState<ArrayBuffer|null>(trustedFallback)
   const[loading,setLoading]=useState(enabled)
