@@ -2,6 +2,7 @@ import {useEffect,useState,type ReactNode} from 'react'
 import {BookOpen,Check,Flame,Languages,RotateCcw,Sigma,Star} from 'lucide-react'
 import AlexBox from '../atoms/AlexBox'
 import AlexIconButton from '../atoms/AlexIconButton'
+import AlexDropdown from '../atoms/AlexDropdown'
 import AlexText from '../atoms/AlexText'
 import DashboardCard from '../molecules/DashboardCard'
 import {dashboardTypography} from '../theme'
@@ -22,7 +23,7 @@ type Props={
   onPracticeMath:()=>void
   onPracticeReadingWriting:()=>void
   onPracticeVocabulary:()=>void
-  onReviewFailed:()=>void
+  onReviewFailed:(order:'math-first'|'reading-first'|'mixed')=>void
 }
 
 const DAY_LABELS=['Mo','Tu','We','Th','Fr','Sa','Su']
@@ -44,6 +45,7 @@ export default function DailyPracticeGoals({
   isExamDay=false,examLabel,signedIn,onPracticeMath,onPracticeReadingWriting,onPracticeVocabulary,onReviewFailed,
 }:Props){
   const[vocabularyAttempts,setVocabularyAttempts]=useState<VocabularyAttempt[]>([])
+  const[failedOrder,setFailedOrder]=useState<'math-first'|'reading-first'|'mixed'>('mixed')
 
   useEffect(()=>{
     if(!signedIn){setVocabularyAttempts([]);return}
@@ -132,9 +134,12 @@ export default function DailyPracticeGoals({
           <GoalRow complete={vocabularyDone>=VOCABULARY_DAILY_TARGET} label="Practice vocabulary" value={`${vocabularyDone}/${VOCABULARY_DAILY_TARGET} words`}>
             <AlexIconButton label="Practice vocabulary now" onClick={onPracticeVocabulary} sx={actionSx}><Languages size={15}/></AlexIconButton>
           </GoalRow>
+          <AlexBox sx={{display:'grid',gap:.6}}>
           <GoalRow complete={failedQuestionCount===0||reviewedFailedCount>0} label="Review failed questions" value={failedQuestionCount===0?'Clear':`${Math.min(reviewedFailedCount,1)}/1`}>
-            <AlexIconButton label={failedQuestionCount===0?'No failed questions to review':'Review failed questions now'} disabled={failedQuestionCount===0} onClick={onReviewFailed} sx={actionSx}><RotateCcw size={15}/></AlexIconButton>
+            <AlexIconButton label={failedQuestionCount===0?'No failed questions to review':'Review failed questions now'} disabled={failedQuestionCount===0} onClick={()=>onReviewFailed(failedOrder)} sx={actionSx}><RotateCcw size={15}/></AlexIconButton>
           </GoalRow>
+          {failedQuestionCount>0&&<AlexBox sx={{ml:{xs:'41px',xl:'31px'},maxWidth:230}}><AlexDropdown id="failed-question-order" label="Review order" value={failedOrder} onChange={setFailedOrder} options={[{value:'math-first',label:'Math first'},{value:'reading-first',label:'Reading first'},{value:'mixed',label:'Mixed order'}]}/></AlexBox>}
+          </AlexBox>
         </AlexBox>}
     </DashboardCard>
 
