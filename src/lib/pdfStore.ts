@@ -53,7 +53,7 @@ async function verifiedCanonicalBytes(testId:PracticeTestId,kind:PdfKind,bytes:A
     if(testId==='practice-test-10'){
       return kind==='questions'
         ?text.includes('used car lot')&&text.includes('system of linear equations')
-        :text.includes('question 6')&&text.includes('correct answer is 77')&&text.includes('math')
+        :text.includes('sat answer explanations')&&text.includes('math')&&text.includes('module 1')
     }
     return kind==='questions'
       ?text.includes('triangle')&&text.includes('perimeter')&&text.includes('centimeters')
