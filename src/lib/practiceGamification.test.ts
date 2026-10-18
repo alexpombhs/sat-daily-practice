@@ -177,7 +177,7 @@ describe('choosePracticeQuestions',()=>{
   })
 
   it('prioritizes unseen questions over already attempted questions',()=>{
-    const chosen=choosePracticeQuestions(settings,[attempt('math1-1',false)],()=>0)
+    const chosen=choosePracticeQuestions({...settings,failedOnly:true},[attempt('math1-1',false)],()=>0)
     expect(chosen.map(question=>question.id)).not.toContain('math1-1')
   })
 
