@@ -905,6 +905,7 @@ export default function App(){
 
   return withSidebar('practice-tests',<PracticeTestsDashboard
     tests={practiceTestSummaries}
+    currentPracticeTest={settings.practiceTest??'all'}
     sessionSummary={`${settings.questionsPerSession} questions · ${settings.mode==='both'?'Reading & Writing + Math':settings.mode==='english'?'Reading & Writing':'Math'} · ${practiceSummary}`}
     activeSession={resumableSession?{
       questionCount:resumableSession.questionCount,
