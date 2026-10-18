@@ -64,7 +64,7 @@ async function verifiedCanonicalBytes(testId:PracticeTestId,kind:PdfKind,bytes:A
 const inMemorySources=new Map<string,Promise<ArrayBuffer|null>>()
 
 function openDb():Promise<IDBDatabase>{return new Promise((resolve,reject)=>{const req=indexedDB.open(DB,1);req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains(STORE))req.result.createObjectStore(STORE)};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
-function storageKey(testId:PracticeTestId,kind:PdfKind){return `v${testId==='practice-test-10'?CACHE_VERSION+20:testId==='practice-test-9'?CACHE_VERSION+10:testId==='practice-test-8'?CACHE_VERSION+1:CACHE_VERSION}:${testId}:${kind}`}
+function storageKey(testId:PracticeTestId,kind:PdfKind){return `v${testId==='practice-test-10'?CACHE_VERSION+21:testId==='practice-test-9'?CACHE_VERSION+10:testId==='practice-test-8'?CACHE_VERSION+1:CACHE_VERSION}:${testId}:${kind}`}
 function memoryKey(testId:PracticeTestId,kind:PdfKind){return `${testId}:${kind}`}
 
 async function storeBytes(testId:PracticeTestId,kind:PdfKind,bytes:ArrayBuffer){
@@ -83,7 +83,7 @@ async function readStored(testId:PracticeTestId,kind:PdfKind):Promise<ArrayBuffe
 }
 
 async function fetchPdf(url:string,expectedTestId?:PracticeTestId,expectedKind?:PdfKind){
-  const response=await fetch(url,{cache:expectedTestId==='practice-test-9'||expectedTestId==='practice-test-8'?'reload':'force-cache'})
+  const response=await fetch(url,{cache:expectedTestId==='practice-test-10'||expectedTestId==='practice-test-9'||expectedTestId==='practice-test-8'?'reload':'force-cache'})
   if(!response.ok)throw new Error(`PDF source returned ${response.status}.`)
   const contentType=response.headers.get('content-type')??''
   if(contentType&&!contentType.includes('pdf')&&!contentType.includes('octet-stream'))throw new Error(`Unexpected PDF content type: ${contentType}`)
@@ -97,7 +97,7 @@ async function fetchPdf(url:string,expectedTestId?:PracticeTestId,expectedKind?:
 
 export function sharedSourceCandidates(testId:PracticeTestId,kind:PdfKind){
   const source=OFFICIAL_SOURCES[testId]?.[kind]
-  const proxy=supabaseUrl?`${supabaseUrl.replace(/\/$/,'')}/functions/v1/sat-question-source?kind=${kind}&practiceTestId=${encodeURIComponent(testId)}`:null
+  const proxy=supabaseUrl?`${supabaseUrl.replace(/\/$/,'')}/functions/v1/sat-question-source?kind=${kind}&practiceTestId=${encodeURIComponent(testId)}${testId==='practice-test-10'?'&sourceVersion=2':''}`:null
   // PT10 is intentionally proxy-only in the browser. College Board's PDF host does not
   // consistently allow cross-origin browser fetches, so a direct fallback can turn a useful
   // proxy error into the misleading generic "Failed to fetch".
