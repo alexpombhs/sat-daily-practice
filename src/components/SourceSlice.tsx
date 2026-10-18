@@ -281,22 +281,24 @@ export default function SourceSlice({pdfKey,bytes,page,questionNumber,alt,zoom=1
     void render()
     return()=>{cancelled=true;for(const task of renderTasks){try{task.cancel()}catch{}};if(objectUrl)URL.revokeObjectURL(objectUrl)}
   },[pdfKey,bytes,page,questionNumber,isQuestion,practiceTestId,module,sourceCrop])
-  useEffect(()=>{
+  function resetView(){
     const node=contentRef.current
-    if(!node||!src)return
-    const frame=requestAnimationFrame(()=>{
-      node.scrollTop=0
-      node.scrollLeft=Math.max(0,(node.scrollWidth-node.clientWidth)/2)
-    })
+    if(!node)return
+    node.scrollTop=0
+    node.scrollLeft=Math.max(0,(node.scrollWidth-node.clientWidth)/2)
+  }
+  useEffect(()=>{
+    if(!src)return
+    const frame=requestAnimationFrame(resetView)
     return()=>cancelAnimationFrame(frame)
-  },[zoom,src])
+  },[zoom,src,questionNumber,page])
 
   const zoomWidth=`${Math.round(zoom*10000)/100}%`
   return <div className={`source-slice ${isQuestion?'question-source':''}`} role="img" aria-label={alt}>
     <div className="source-slice-content source-slice-content--zoomable" ref={contentRef}>
       {error?<div className="source-error">{error}</div>:src?
         <div className="source-slice-zoom" style={{width:zoomWidth}}>
-          <img src={src} alt={alt}/>
+          <img src={src} alt={alt} onLoad={()=>requestAnimationFrame(resetView)}/>
         </div>
         :<div className="source-loading">{isQuestion?'Preparing question…':'Preparing explanation…'}</div>}
     </div>
