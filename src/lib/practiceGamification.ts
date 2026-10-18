@@ -74,21 +74,35 @@ export function countFailedPracticeQuestions(settings:Settings,attempts:Attempt[
 export function choosePracticeQuestions(settings:Settings,attempts:Attempt[],random:()=>number=Math.random,questions:PracticeQuestion[]=QUESTION_BANK):PracticeQuestion[]{
   const pool=practiceQuestionPool(settings,attempts,questions)
   const limit=Math.min(settings.questionsPerSession,pool.length)
+  const currentFailedIds=failedQuestionIds(attempts,failedRecoveryTarget(settings))
+  const failedCandidates=settings.failedOnly
+    ?[]
+    :eligibleQuestions(settings,questions).filter(question=>currentFailedIds.has(question.id))
+
+  function includeFailedReview(selected:PracticeQuestion[]){
+    if(!selected.length||settings.failedEverOnly||settings.failedOnly||!failedCandidates.length)return selected
+    if(selected.some(question=>currentFailedIds.has(question.id)))return selected
+    const failed=failedCandidates[Math.floor(random()*failedCandidates.length)]
+    return [...selected.slice(0,-1),failed]
+  }
+
   if(settings.failedEverOnly||(settings.selectionMode??'adaptive')==='random'){
-    return pool.map(question=>({question,score:random()})).sort((a,b)=>a.score-b.score).slice(0,limit).map(item=>item.question)
+    const selected=pool.map(question=>({question,score:random()})).sort((a,b)=>a.score-b.score).slice(0,limit).map(item=>item.question)
+    return includeFailedReview(selected)
   }
   const stats=new Map<string,{attempts:number;correct:number;lastIndex:number}>()
   attempts.forEach((attempt,index)=>{
     const current=stats.get(attempt.questionId)??{attempts:0,correct:0,lastIndex:-1}
     current.attempts++;if(attempt.correct)current.correct++;current.lastIndex=index;stats.set(attempt.questionId,current)
   })
-  return pool.map(question=>{
+  const selected=pool.map(question=>{
     const stat=stats.get(question.id)
     const unseenBonus=stat?0:1000
     const weaknessBonus=stat?(1-stat.correct/stat.attempts)*400:0
     const recencyBonus=stat?Math.min(200,attempts.length-stat.lastIndex):0
     return{question,score:unseenBonus+weaknessBonus+recencyBonus+random()*60}
   }).sort((a,b)=>b.score-a.score).slice(0,limit).map(item=>item.question)
+  return includeFailedReview(selected)
 }
 
 export function summarizePerformance(attempts:Attempt[],sessions:SessionSummary[],totalQuestions:number,questions:PracticeQuestion[]=QUESTION_BANK):PerformanceSummary{return buildPerformanceAnalytics(attempts,sessions,totalQuestions,questions)}

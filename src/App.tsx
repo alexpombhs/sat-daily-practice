@@ -1,5 +1,5 @@
 import {useEffect,useRef,useState,type ReactNode} from 'react'
-import {CalendarDays,Clock3,ListChecks,PenLine,Target} from 'lucide-react'
+import {BookOpen,Layers3,ListChecks,PenLine,Target} from 'lucide-react'
 import AlexBox from './design-system/atoms/AlexBox'
 import AlexButton from './design-system/atoms/AlexButton'
 import AlexConfirmDialog from './design-system/atoms/AlexConfirmDialog'
@@ -29,12 +29,13 @@ import {availablePracticeTests,moduleLabel,practiceTestLabel} from './lib/questi
 import {buildPracticePlanRecommendation,examTargetsFromSettings} from './lib/practicePlan'
 import {rankReviewConcepts} from './lib/conceptReview'
 import {buildNationalMeritOutlook} from './lib/nationalMeritOutlook'
+import {failedQuestionIds} from './lib/questionMastery'
 import {estimateSectionPracticeScore} from './lib/performanceAnalytics'
 import {loadSharedQuestionBank} from './lib/sharedQuestionBank'
 import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
 import {pathForView,viewFromPathname,type AppRouteView} from './lib/appRoutes'
 import {DEFAULT_SETTINGS} from './lib/storage'
-import {abandonActiveSession,createActiveSession,getCurrentAuthUser,loadActiveSession,loadCloudHistory,loadUserSettings,saveActiveSessionProgress,saveUserSettings,subscribeToAuth,syncActiveAttempt,syncSession,type AuthUser} from './lib/supabase'
+import {abandonActiveSession,createActiveSession,getCurrentAuthUser,loadActiveSession,loadCloudHistory,loadUserSettings,saveActiveSessionProgress,saveActiveSessionQuestionOrder,saveUserSettings,subscribeToAuth,syncActiveAttempt,syncSession,type AuthUser} from './lib/supabase'
 import type {ActivePracticeSession,Attempt,PracticeQuestion,SessionSummary,Settings,SubjectMode} from './types'
 
 const uid=()=>crypto.randomUUID()
@@ -72,6 +73,7 @@ export default function App(){
   const[preTestSelected,setPreTestSelected]=useState('')
   const[preTestSubmitted,setPreTestSubmitted]=useState(false)
   const[reviewMode,setReviewMode]=useState(false)
+  const[failedSessionOrder,setFailedSessionOrder]=useState<'math-first'|'reading-first'|'mixed'>('mixed')
   const[preTestGroups,setPreTestGroups]=useState<Array<{concept:string;questionIds:string[]}>>([])
   const[reviewContentTab,setReviewContentTab]=useState<'question'|'explanation'>('question')
   const[performanceTimeRange,setPerformanceTimeRange]=useState<PerformanceTimeRange>('30d')
@@ -275,7 +277,7 @@ export default function App(){
       setPendingPractice({mode:nextMode,test:nextPracticeTest,questionIds:reviewQuestionIds,groups:conceptGroups})
       return
     }
-    const nextSettings={...settings,mode:nextMode,practiceTest:nextPracticeTest}
+    const nextSettings={...settings,mode:nextMode,practiceTest:nextPracticeTest,...(reviewQuestionIds?{failedOnly:false,failedEverOnly:true}: {})}
     const nextQuestions=reviewQuestionIds
       ?reviewQuestionIds.map(id=>questionBank.find(q=>q.id===id)).filter((q):q is PracticeQuestion=>Boolean(q)).slice(0,settings.questionsPerSession)
       :choosePracticeQuestions(nextSettings,attempts,Math.random,questionBank)
@@ -309,6 +311,7 @@ export default function App(){
       }
     }
     setReviewMode(false)
+    setFailedSessionOrder('mixed')
     setPreTestGroups(conceptGroups??[])
     setSettings(nextSettings)
     setQs(nextQuestions)
@@ -335,6 +338,7 @@ export default function App(){
     const currentQuestion=resumedQuestions[nextIndex]
     const priorAttempt=currentQuestion?resumableSession.attempts.find(attempt=>attempt.questionId===currentQuestion.id):undefined
     setReviewMode(false)
+    setFailedSessionOrder('mixed')
     setSettings({...settings,...resumableSession.settings})
     setQs(resumedQuestions)
     setSid(resumableSession.id)
@@ -378,6 +382,71 @@ export default function App(){
       setPendingPractice(null)
     }finally{
       setReplacingSession(false)
+    }
+  }
+
+  function startFailedReview(){
+    const failedIds=failedQuestionIds(attempts,Math.max(1,Math.min(5,settings.failedRecoveryCorrectAnswers??2)))
+    const failedQuestions=questionBank.filter(question=>failedIds.has(question.id))
+    if(!failedQuestions.length){
+      window.alert('No failed questions to review right now.')
+      return
+    }
+    // Dashboard review spans all practice tests and both SAT subjects,
+    // independent of the previous practice session's filters.
+    const shuffle=<T,>(items:T[]):T[]=>{
+      const result=[...items]
+      for(let index=result.length-1;index>0;index--){
+        const swap=Math.floor(Math.random()*(index+1))
+        ;[result[index],result[swap]]=[result[swap],result[index]]
+      }
+      return result
+    }
+    const math=shuffle(failedQuestions.filter(question=>question.subject==='math'))
+    const reading=shuffle(failedQuestions.filter(question=>question.subject==='english'))
+    const ordered:PracticeQuestion[]=[]
+    {
+      // Interleave subjects while randomizing within each subject.
+      while(math.length||reading.length){
+        if(math.length)ordered.push(math.pop()!)
+        if(reading.length)ordered.push(reading.pop()!)
+      }
+    }
+    void beginPractice('both','all',ordered.map(question=>question.id))
+  }
+
+  async function changeFailedReviewOrder(order:'math-first'|'reading-first'|'mixed'){
+    if(!sid||!settings.failedEverOnly||reviewMode)return
+    // Keep answered questions in place; reorder only the unanswered part.
+    const answeredIds=new Set(currentAttempts.map(attempt=>attempt.questionId))
+    const completed=qs.filter(question=>answeredIds.has(question.id))
+    const outstanding=qs.filter(question=>!answeredIds.has(question.id))
+    const math=outstanding.filter(question=>question.subject==='math')
+    const reading=outstanding.filter(question=>question.subject==='english')
+    const shuffle=(items:PracticeQuestion[])=>[...items].sort(()=>Math.random()-.5)
+    const m=shuffle(math),r=shuffle(reading)
+    const remainder:PracticeQuestion[]=[]
+    if(order==='math-first')remainder.push(...m,...r)
+    else if(order==='reading-first')remainder.push(...r,...m)
+    else while(m.length||r.length){
+      if(m.length)remainder.push(m.pop()!)
+      if(r.length)remainder.push(r.pop()!)
+    }
+    const updated=[...completed,...remainder]
+    if(!updated.length)return
+    try{
+      await saveActiveSessionQuestionOrder(sid,updated.map(question=>question.id),completed.length)
+      setQs(updated)
+      setI(completed.length)
+      setSelected('')
+      setSubmitted(false)
+      setFailedSessionOrder(order)
+      setResumableSession(previous=>previous?.id===sid?{
+        ...previous,questionIds:updated.map(question=>question.id),currentIndex:completed.length,draftAnswer:'',
+      }:previous)
+    }catch(error){
+      console.warn('Unable to save failed review order',error)
+      window.alert('Could not save the review order. Try again.')
     }
   }
 
@@ -606,6 +675,10 @@ export default function App(){
       <PracticeSessionHeader
         moduleLabel={moduleLabel(current.module)}
         subjectLabel={current.subject==='math'?'Math':'Reading & Writing'}
+        sourceTestLabel={practiceTestLabel(current.practiceTestId)}
+        failedOrder={!reviewMode&&settings.failedEverOnly?failedSessionOrder:undefined}
+        onFailedOrderChange={order=>void changeFailedReviewOrder(order)}
+        sessionSummary={`${settings.mode==='both'?'Math & Reading':settings.mode==='math'?'Math':'Reading & Writing'} · ${qs.length} questions · ${settings.failedEverOnly?'Failed only':settings.failedOnly?'New only':'All questions'}`}
         current={i+1}
         total={qs.length}
         canGoPrevious={i>0}
@@ -682,6 +755,9 @@ export default function App(){
   }
 
   if(view==='stats')return withSidebar('performance',<main className="shell"><PerformanceDashboard
+    coverageQuestions={questionBank}
+    coverageAttempts={attempts}
+    recoveryCorrectAnswers={settings.failedRecoveryCorrectAnswers??2}
     summary={rangePerformance}
     hasHistory={performanceAttempts.length>0}
     questionsPdf={qpdf}
@@ -746,7 +822,7 @@ export default function App(){
         onChoosePracticeTest={()=>navigateTo('home')}
         onStartPractice={()=>void beginPractice(settings.mode)}
         onStartPreTestReview={startPreTestReview}
-        showPreTestReview={practiceRecommendation.planPhase==='final-review'||practiceRecommendation.planPhase==='exam-day'}
+        showPreTestReview={true}
       />
     </AlexBox>
 
@@ -781,12 +857,16 @@ export default function App(){
               attempts={attempts}
               sessions={sessions}
               dailyQuestions={practiceRecommendation.dailyQuestionGoal}
-              dailyMinutes={practiceRecommendation.estimatedDailyMinutes}
               failedQuestionCount={failedQuestionCount}
               recommendationLabel={performance.recommendation?.label}
               recommendationReason={performance.recommendation?.reason}
               isExamDay={practiceRecommendation.isExamDay}
               examLabel={practiceRecommendation.activeExamLabel}
+              signedIn={Boolean(authUser)}
+              onPracticeMath={()=>void beginPractice('math')}
+              onPracticeReadingWriting={()=>void beginPractice('english')}
+              onPracticeVocabulary={()=>navigateTo('vocabulary')}
+              onReviewFailed={startFailedReview}
             />
           }
         />
@@ -839,10 +919,10 @@ export default function App(){
             rowGap:0,
           }}>
             {[
-              {label:'Daily time',value:`${practiceRecommendation.estimatedDailyMinutes} min`,icon:<Clock3 size={13}/>},
+              {label:'Session size',value:`${settings.questionsPerSession} questions`,icon:<Layers3 size={13}/>},
+              {label:'Subjects',value:settings.mode==='both'?'Math & R&W':settings.mode==='math'?'Math':'R&W',icon:<BookOpen size={13}/>},
               {label:'Focus',value:practiceRecommendation.focusLabel??'Balanced',icon:<Target size={13}/>},
-              {label:'Session size',value:`${settings.questionsPerSession} questions`,icon:<ListChecks size={13}/>},
-              {label:'Daily questions',value:`${practiceRecommendation.dailyQuestionGoal} questions`,icon:<CalendarDays size={13}/>},
+              {label:'Vocabulary',value:'20 words',icon:<ListChecks size={13}/>},
             ].map((item,index)=><AlexBox
               key={item.label}
               sx={{

@@ -49,13 +49,17 @@ describe('DailyPracticeGoals weekly streak',()=>{
         attempts={attempts}
         sessions={sessions}
         dailyQuestions={20}
-        dailyMinutes={20}
-        failedQuestionCount={0}
+        failedQuestionCount={1}
+        signedIn={false}
+        onPracticeMath={()=>{}}
+        onPracticeReadingWriting={()=>{}}
+        onPracticeVocabulary={()=>{}}
+        onReviewFailed={()=>{}}
       />,
     )
 
     expect(screen.getByRole('heading',{name:'2 day streak'})).toBeInTheDocument()
-    expect(screen.getByText('2 items completed · 2 minutes learned')).toBeInTheDocument()
+    expect(screen.getByText('2 questions completed · 2 minutes learned')).toBeInTheDocument()
   })
   it('keeps failed-review credit when correct answers clear questions from the failed pool',()=>{
     const reviewed={...attempt('reviewed','q-reviewed','2026-09-29T16:10:00.000Z'),sessionId:'failed-only-session'}
@@ -74,12 +78,16 @@ describe('DailyPracticeGoals weekly streak',()=>{
         attempts={[reviewed]}
         sessions={[failedOnlySession]}
         dailyQuestions={20}
-        dailyMinutes={20}
-        failedQuestionCount={0}
+        failedQuestionCount={1}
+        signedIn={false}
+        onPracticeMath={()=>{}}
+        onPracticeReadingWriting={()=>{}}
+        onPracticeVocabulary={()=>{}}
+        onReviewFailed={()=>{}}
       />,
     )
 
-    expect(screen.getAllByText('· 1/1')).toHaveLength(1)
+    expect(screen.getByText('· 1/1')).toBeInTheDocument()
   })
 
   it('reconstructs credit for legacy sessions whose failed-only setting was erased',()=>{
@@ -91,8 +99,12 @@ describe('DailyPracticeGoals weekly streak',()=>{
       attempts={[yesterdayFailure,yesterdayRecovery,todayRetry]}
       sessions={[legacySession]}
       dailyQuestions={20}
-      dailyMinutes={20}
-      failedQuestionCount={0}
+      failedQuestionCount={1}
+      signedIn={false}
+      onPracticeMath={()=>{}}
+      onPracticeReadingWriting={()=>{}}
+      onPracticeVocabulary={()=>{}}
+      onReviewFailed={()=>{}}
     />)
     expect(screen.getByText('· 1/1')).toBeInTheDocument()
   })
@@ -109,8 +121,12 @@ describe('DailyPracticeGoals weekly streak',()=>{
         attempts={attemptsToday}
         sessions={[]}
         dailyQuestions={20}
-        dailyMinutes={20}
-        failedQuestionCount={0}
+        failedQuestionCount={1}
+        signedIn={false}
+        onPracticeMath={()=>{}}
+        onPracticeReadingWriting={()=>{}}
+        onPracticeVocabulary={()=>{}}
+        onReviewFailed={()=>{}}
       />,
     )
 

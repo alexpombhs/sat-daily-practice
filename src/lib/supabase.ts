@@ -275,6 +275,22 @@ export async function saveActiveSessionProgress(sessionId:string,currentIndex:nu
   return true
 }
 
+export async function saveActiveSessionQuestionOrder(sessionId:string,questionIds:string[],currentIndex:number){
+  if(!supabase)return false
+  const userId=await currentUserId()
+  if(!userId)return false
+  const now=new Date().toISOString()
+  const {error}=await supabase.from('sat_sessions').update({
+    question_ids:questionIds,
+    current_index:currentIndex,
+    draft_answer:'',
+    last_activity_at:now,
+    updated_at:now,
+  }).eq('id',sessionId).eq('user_id',userId).eq('status','active')
+  if(error)throw error
+  return true
+}
+
 export async function syncActiveAttempt(attempt:Attempt){
   if(!supabase)return false
   const userId=await currentUserId()

@@ -88,24 +88,28 @@ export function buildPracticePlanRecommendation(settings:Settings,questions:Prac
   const scoreGap=targetScore!==null&&estimatedScore!==null?targetScore-estimatedScore:null
   const needsScoreWork=targetScore!==null&&(estimatedScore===null||(scoreGap!==null&&scoreGap>0))
 
-  // The daily target is a stable training prescription, not a deadline catch-up
-  // calculation. Do not increase workload because fewer calendar days remain or
-  // because the learner happened to spend longer on recent questions.
   const hasActiveGoal=remainingQuestions>0||needsScoreWork
-  // Keep the user's configured session size unchanged. Recommend a realistic
-  // daily total based on the remaining preparation window and score gap.
-  // Do not multiply volume just to clear the whole bank before an exam.
   const plannedMinutesPerQuestion=Math.max(.25,settings.fallbackMinutesPerQuestion??2)
-  const urgency=daysRemaining>0&&daysRemaining<=14
-  const significantGap=scoreGap!==null&&scoreGap>=100
-  const desiredDailyQuestions=urgency?10:significantGap?20:15
-  const dailyQuestionCap=Math.max(10,Math.min(30,Math.floor(30/plannedMinutesPerQuestion)))
-  const affordableSessions=Math.max(1,Math.floor(dailyQuestionCap/questionsPerSession))
-  const desiredSessions=Math.max(1,Math.ceil(desiredDailyQuestions/questionsPerSession))
-  const recommendedSessionsPerDay=isExamDay||!hasActiveGoal?0:Math.min(affordableSessions,desiredSessions)
-  const dailyQuestionGoal=recommendedSessionsPerDay*questionsPerSession
+
+  // Keep the daily study-plan target intentionally small and actionable.
+  // When an exam date is known, pace unseen questions across the remaining
+  // preparation days, but never prescribe fewer than 10 or more than 20.
+  // Once new-question coverage is complete, keep a light 10-question mixed
+  // practice target only when score work is still needed.
+  let desiredDailyQuestions=15
+  if(remainingQuestions<=0){
+    desiredDailyQuestions=needsScoreWork?10:0
+  }else if(activeExamDate&&daysRemaining>0){
+    desiredDailyQuestions=Math.max(10,Math.min(20,Math.ceil(remainingQuestions/daysRemaining)))
+  }else{
+    desiredDailyQuestions=Math.max(10,Math.min(20,questionsPerSession))
+  }
+  // Use understandable 10 / 15 / 20 question milestones instead of odd numbers.
+  const roundedDailyQuestions=[10,15,20].reduce((best,value)=>Math.abs(value-desiredDailyQuestions)<Math.abs(best-desiredDailyQuestions)?value:best,10)
+  const dailyQuestionGoal=isExamDay||!hasActiveGoal?0:roundedDailyQuestions
+  const recommendedSessionsPerDay=dailyQuestionGoal>0?Math.max(1,Math.ceil(dailyQuestionGoal/questionsPerSession)):0
   const estimatedSessionMinutes=Math.max(1,Math.ceil(questionsPerSession*plannedMinutesPerQuestion))
-  const estimatedDailyMinutes=dailyQuestionGoal>0?Math.max(10,Math.ceil(dailyQuestionGoal*plannedMinutesPerQuestion)):0
+  const estimatedDailyMinutes=dailyQuestionGoal>0?Math.ceil(dailyQuestionGoal*plannedMinutesPerQuestion):0
 
   const planPhase:PracticePlanPhase=isExamDay?'exam-day':daysRemaining>0&&daysRemaining<=3?'final-review':'steady'
   const practiceGuidance=planPhase==='exam-day'

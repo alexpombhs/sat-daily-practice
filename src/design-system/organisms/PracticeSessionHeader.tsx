@@ -2,12 +2,17 @@ import {ChevronLeft,ChevronRight} from 'lucide-react'
 import AlexBox from '../atoms/AlexBox'
 import AlexButton from '../atoms/AlexButton'
 import AlexIconButton from '../atoms/AlexIconButton'
+import AlexReviewOrderMenu from '../atoms/AlexReviewOrderMenu'
 import AlexText from '../atoms/AlexText'
 import PracticeProgress from '../molecules/PracticeProgress'
 
 type Props={
   moduleLabel:string
   subjectLabel:string
+  sourceTestLabel:string
+  sessionSummary:string
+  failedOrder?:'math-first'|'reading-first'|'mixed'
+  onFailedOrderChange?:(order:'math-first'|'reading-first'|'mixed')=>void
   current:number
   total:number
   canGoPrevious:boolean
@@ -18,13 +23,21 @@ type Props={
   reviewMode?:boolean
 }
 
-export default function PracticeSessionHeader({moduleLabel,subjectLabel,current,total,canGoPrevious,canGoNext,isLast,onPrevious,onNext,reviewMode=false}:Props){
+export default function PracticeSessionHeader({moduleLabel,subjectLabel,sourceTestLabel,sessionSummary,failedOrder,onFailedOrderChange,current,total,canGoPrevious,canGoNext,isLast,onPrevious,onNext,reviewMode=false}:Props){
   return <AlexBox component="header" className="practice-topbar">
     <AlexBox className="practice-title">
       <AlexText component="span">{reviewMode?'SESSION REVIEW':'SAT PRACTICE'}</AlexText>
       <AlexText component="b">{moduleLabel}</AlexText>
+      <AlexText sx={{fontSize:11,color:"#475467"}}>{sourceTestLabel}</AlexText>
     </AlexBox>
-    <AlexBox className="progress-block"><PracticeProgress label={subjectLabel} current={current} total={total}/></AlexBox>
+    <AlexBox className="progress-block" sx={{display:'flex',flexDirection:'column',gap:.15,minWidth:0}}>
+      <PracticeProgress label={subjectLabel} current={current} total={total}/>
+      <AlexBox sx={{display:'flex',alignItems:'center',gap:.9,flexWrap:'wrap'}}>
+        <AlexText sx={{fontSize:11.5,color:'#52627A'}}>{sessionSummary}</AlexText>
+        {failedOrder&&onFailedOrderChange&&<AlexReviewOrderMenu value={failedOrder} onChange={onFailedOrderChange}/>}
+
+      </AlexBox>
+    </AlexBox>
     <AlexBox className="question-nav">
       <AlexIconButton
         label="Previous question"
