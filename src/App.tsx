@@ -577,7 +577,7 @@ export default function App(){
           :'This link points to a practice session, but there is no resumable cloud session for this account.'}</p>
         <div className="hero-actions">
           {resumableSession&&<AlexButton onClick={resumeActiveSession}>Resume session</AlexButton>}
-          <AlexButton tone="secondary" onClick={()=>navigateTo('home')}>Practice tests</AlexButton>
+          <AlexButton tone="secondary" onClick={()=>navigateTo('home')}>Practice</AlexButton>
           <AlexButton tone="quiet" onClick={()=>navigateTo('study')}>Dashboard</AlexButton>
         </div>
       </section>
@@ -658,7 +658,7 @@ export default function App(){
         <div className="hero-actions">
           {completedSession&&<AlexButton onClick={()=>reviewSession(completedSession)}>Review answers</AlexButton>}
           <AlexButton tone="secondary" onClick={start}>Start another session</AlexButton>
-          <AlexButton tone="quiet" onClick={()=>navigateTo('home')}>Back to practice tests</AlexButton>
+          <AlexButton tone="quiet" onClick={()=>navigateTo('home')}>Back to Practice</AlexButton>
         </div>
       </section>
     </main>)
