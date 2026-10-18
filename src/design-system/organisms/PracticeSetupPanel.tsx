@@ -4,6 +4,7 @@ import AlexDropdown from '../atoms/AlexDropdown'
 import AlexNumberField from '../atoms/AlexNumberField'
 import AlexSwitch from '../atoms/AlexSwitch'
 import AlexCheckbox from '../atoms/AlexCheckbox'
+import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
 import PracticeGoalSettings from '../molecules/PracticeGoalSettings'
 import PracticeSettingField from '../molecules/PracticeSettingField'
@@ -26,6 +27,10 @@ type Props={
   recommendation:PracticePlanRecommendation
 }
 
+function labelForTest(value:PracticeTestFilter,options:PracticeTestOption[]){
+  return options.find(option=>option.value===value)?.label??'All available tests'
+}
+
 export default function PracticeSetupPanel({settings,practiceTests,difficultyCounts,newQuestionCount,failedQuestionCount,onChange,onStart,recommendation}:Props){
   const difficultyLevels=settings.difficultyLevels??(settings.difficulty&&settings.difficulty!=='all'?[settings.difficulty]:['easy','medium','advanced'] as QuestionDifficulty[])
   const difficultyAll=difficultyLevels.length===3
@@ -40,15 +45,56 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
   const failedEverOnly=settings.failedEverOnly??false
   const failedRecoveryCorrectAnswers=settings.failedRecoveryCorrectAnswers??2
   const answerFeedbackTiming=settings.answerFeedbackTiming??'end'
-  const dailyLabel=recommendation.estimatedDailyMinutes>0
-    ?`${recommendation.estimatedDailyMinutes} min/day`
-    :'On track'
   const startDisabled=(newOnly&&newQuestionCount===0)||(failedEverOnly&&failedQuestionCount===0)
 
-  return <AlexBox sx={{width:'100%',maxWidth:960,display:'grid',gap:{xs:2.5,md:3}}}>
+  const subjectLabel=settings.mode==='both'?'Reading & Writing + Math':settings.mode==='english'?'Reading & Writing':'Math'
+  const feedbackLabel=answerFeedbackTiming==='end'?'Answers at end':'Immediate feedback'
+  const difficultyLabel=difficultyAll?'All difficulties':difficultyLevels.map(level=>level[0].toUpperCase()+level.slice(1)).join(' + ')||'No difficulty selected'
+  const poolModeLabel=newOnly?'New only':failedEverOnly?'Failed only':'All eligible questions'
+  const dailyLabel=recommendation.isExamDay
+    ?'Exam day'
+    :recommendation.estimatedDailyMinutes>0
+      ?`${recommendation.estimatedDailyMinutes} min/day`
+      :'On track'
+
+  return <AlexBox sx={{width:'100%',maxWidth:960,display:'grid',gap:{xs:1.5,md:2}}}>
+    <AlexSurface sx={{
+      border:'1px solid #D8E3F2',
+      borderRadius:2.5,
+      bgcolor:'#F8FBFF',
+      p:{xs:1.75,sm:2},
+      display:'flex',
+      alignItems:{xs:'stretch',sm:'center'},
+      justifyContent:'space-between',
+      gap:1.5,
+      flexDirection:{xs:'column',sm:'row'},
+    }}>
+      <AlexBox sx={{minWidth:0}}>
+        <AlexText sx={{fontSize:12,fontWeight:850,color:'#667085',textTransform:'uppercase',letterSpacing:'.06em'}}>Ready to practice</AlexText>
+        <AlexText sx={{mt:.35,fontSize:15,fontWeight:800,color:'#08275B',lineHeight:1.4}}>
+          {settings.questionsPerSession} questions · {subjectLabel} · {selectionMode==='adaptive'?'Adaptive':'Random'}
+        </AlexText>
+        <AlexText sx={{mt:.25,fontSize:12.75,color:'#667085',lineHeight:1.4}}>
+          {labelForTest(practiceTest,practiceTests)} · {difficultyLabel}
+        </AlexText>
+      </AlexBox>
+      <AlexButton
+        onClick={onStart}
+        disabled={startDisabled}
+        sx={{width:{xs:'100%',sm:190},flex:'0 0 auto'}}
+      >
+        Start practice
+      </AlexButton>
+    </AlexSurface>
+
+    <AlexText sx={{fontSize:13,color:'#667085',lineHeight:1.45}}>
+      Your saved defaults are ready to use. Open a section only when you want to change something.
+    </AlexText>
+
     <PracticeSetupSection
       title="Session basics"
-      description="Choose the source, subject, length, and when answers are revealed."
+      description="Source, subject, session length, and answer timing."
+      summary={`${labelForTest(practiceTest,practiceTests)} · ${subjectLabel} · ${settings.questionsPerSession} questions · ${feedbackLabel}`}
     >
       <SettingsFieldGroup>
         <PracticeSettingField
@@ -84,7 +130,8 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
 
     <PracticeSetupSection
       title="Question pool"
-      description="Control how questions are selected and which questions are eligible."
+      description="Selection strategy, difficulty, and review filters."
+      summary={`${selectionMode==='adaptive'?'Adaptive':'Random'} · ${difficultyLabel} · ${poolModeLabel}`}
     >
       <SettingsFieldGroup>
         <PracticeSettingField
@@ -145,26 +192,16 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
 
     <PracticeSetupSection
       title="Study plan"
-      description="Set your exam goals and use them to calculate a recommended pace."
-      trailing={<AlexText sx={{fontSize:14,fontWeight:850,color:'#6558F5',whiteSpace:'nowrap'}}>{dailyLabel}</AlexText>}
+      description="Exam goals and recommended pace."
+      summary={recommendation.activeExamLabel
+        ?`${recommendation.activeExamLabel} · Target ${recommendation.targetScore??'not set'}`
+        :`Target ${recommendation.targetScore??'not set'} · No upcoming exam date`}
+      trailing={<AlexText sx={{fontSize:13.5,fontWeight:850,color:'#6558F5',whiteSpace:'nowrap'}}>{dailyLabel}</AlexText>}
     >
       <PracticeGoalSettings settings={settings} onChange={onChange}/>
-      <AlexBox sx={{mt:.25}}>
+      <AlexBox sx={{mt:1.5}}>
         <StudyPlanRecommendation recommendation={recommendation} compact/>
       </AlexBox>
     </PracticeSetupSection>
-
-    <AlexBox sx={{display:'flex',alignItems:{xs:'stretch',sm:'center'},justifyContent:'space-between',gap:1.5,pt:.5,flexDirection:{xs:'column',sm:'row'}}}>
-      <AlexText sx={{fontSize:13,color:'#667085'}}>
-        Settings save automatically and stay synced across devices.
-      </AlexText>
-      <AlexButton
-        onClick={onStart}
-        disabled={startDisabled}
-        sx={{width:{xs:'100%',sm:180}}}
-      >
-        Start practice
-      </AlexButton>
-    </AlexBox>
   </AlexBox>
 }
