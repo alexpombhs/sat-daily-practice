@@ -3,12 +3,11 @@ import {describe,expect,it,vi} from 'vitest'
 import AppSidebarLayout from './AppSidebarLayout'
 
 const baseProps={
-  active:'practice-setup' as const,
+  active:'practice' as const,
   collapsed:false,
   onToggleCollapsed:()=>undefined,
   onDashboard:()=>undefined,
-  onPracticeTests:()=>undefined,
-  onPracticeSetup:()=>undefined,
+  onPractice:()=>undefined,
   onVocabulary:()=>undefined,
   onQuestionBank:()=>undefined,
   onParsingIssues:()=>undefined,
@@ -18,28 +17,30 @@ const baseProps={
 }
 
 describe('AppSidebarLayout',()=>{
-  it('keeps Practice Setup and Question Bank as separate destinations',()=>{
-    const onPracticeSetup=vi.fn()
+  it('uses one Practice destination in the navigation',()=>{
+    const onPractice=vi.fn()
     const onQuestionBank=vi.fn()
 
     render(
       <AppSidebarLayout
         {...baseProps}
-        onPracticeSetup={onPracticeSetup}
+        onPractice={onPractice}
         onQuestionBank={onQuestionBank}
       >
-        <div>Practice setup content</div>
+        <div>Practice content</div>
       </AppSidebarLayout>,
     )
 
-    const practiceSetup=screen.getAllByRole('button',{name:'Practice Setup'})[0]
+    const practice=screen.getAllByRole('button',{name:'Practice'})[0]
     const questionBank=screen.getAllByRole('button',{name:'Question Bank'})[0]
 
-    fireEvent.click(practiceSetup)
+    fireEvent.click(practice)
     fireEvent.click(questionBank)
 
-    expect(onPracticeSetup).toHaveBeenCalledTimes(1)
+    expect(onPractice).toHaveBeenCalledTimes(1)
     expect(onQuestionBank).toHaveBeenCalledTimes(1)
+    expect(screen.queryByRole('button',{name:'Practice Setup'})).not.toBeInTheDocument()
+    expect(screen.queryByRole('button',{name:'Practice Tests'})).not.toBeInTheDocument()
   })
 
   it('renders phone navigation and a viewport-safe content wrapper',()=>{
@@ -52,7 +53,7 @@ describe('AppSidebarLayout',()=>{
     expect(screen.getByTestId('mobile-header')).toBeInTheDocument()
     expect(screen.getByTestId('mobile-bottom-nav')).toBeInTheDocument()
     expect(screen.getAllByRole('button',{name:'Dashboard'}).length).toBeGreaterThan(0)
-    expect(screen.getByRole('button',{name:'Tests'})).toBeInTheDocument()
+    expect(screen.getByRole('button',{name:'Practice'})).toBeInTheDocument()
     expect(screen.getByRole('button',{name:'Stats'})).toBeInTheDocument()
     expect(screen.getByRole('button',{name:'Menu'})).toBeInTheDocument()
 
