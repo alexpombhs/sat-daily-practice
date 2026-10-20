@@ -7,8 +7,7 @@ import AlexSurface from '../atoms/AlexSurface'
 import AlexTabs from '../atoms/AlexTabs'
 import AlexText from '../atoms/AlexText'
 import AlexTextField from '../atoms/AlexTextField'
-import ReadingQuestionLines from './ReadingQuestionLines'
-import StructuredQuestionLines from './StructuredQuestionLines'
+import LiveLatexEditor from './LiveLatexEditor'
 import VisualCropEditor from './VisualCropEditor'
 import {ensureQuestionText,extractQuestionLines} from '../../lib/pdfStructuredImport'
 import {getQuestionContent} from '../../lib/questionContentStore'
@@ -257,7 +256,7 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
           options={[{value:'edit',label:'Editor'},{value:'code',label:'Code'}]}
           onChange={setEditorTab}
         />
-        {editorTab==='edit'&&<AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
+        {editorTab==='code'&&<AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
           <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Text formatting</AlexText>
           <AlexBox sx={{display:'flex',gap:.5,alignItems:'center',flexWrap:'wrap'}}>
             <AlexIconButton label="Power" onClick={()=>applyMathSelection('power')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17,fontWeight:700}}>x<sup>y</sup></span></AlexIconButton>
@@ -283,16 +282,18 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
         <AlexText sx={{fontSize:12.5,color:'#93370D'}}>Missing underline is still unresolved. PDF text re-extraction cannot reliably recover the underline stroke; select the matching source text and apply Underline before saving.</AlexText>
       </AlexSurface>}
 
-      <AlexTextField
-        label={editorTab==='code'?'LaTeX / source code':'Question text'}
-        multiline
-        minRows={editorTab==='code'?10:8}
-        value={questionText}
-        inputRef={questionTextRef}
-        onChange={event=>setQuestionText(event.target.value)}
-        helperText={editorTab==='code'?'Edit raw LaTeX/markup directly. The preview below updates immediately.':'Select text, then use the formatting buttons. The preview below updates immediately.'}
-        sx={editorTab==='code'?{'& textarea':{fontFamily:'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',fontSize:13.5,lineHeight:1.55}}:undefined}
-      />
+      {editorTab==='edit'
+        ?<LiveLatexEditor value={questionText} onChange={setQuestionText}/>
+        :<AlexTextField
+          label="LaTeX / source code"
+          multiline
+          minRows={10}
+          value={questionText}
+          inputRef={questionTextRef}
+          onChange={event=>setQuestionText(event.target.value)}
+          helperText="Edit raw LaTeX or markup. Switch to Editor to see the formatted result."
+          sx={{'& textarea':{fontFamily:'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',fontSize:13.5,lineHeight:1.55}}}
+        />}
 
       <AlexBox sx={{display:'flex',justifyContent:'flex-end',alignItems:'center',mt:-1,color:'#667085'}}>
         <AlexText sx={{fontSize:12}}>LaTeX help</AlexText>
@@ -310,17 +311,6 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
         />
       </AlexBox>
 
-      <AlexSurface sx={{border:'1px solid #D0D5DD',borderRadius:2.5,bgcolor:'#fff',overflow:'hidden'}}>
-        <AlexBox sx={{px:1.5,py:1,bgcolor:'#F9FAFB',borderBottom:'1px solid #EAECF0'}}>
-          <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Live preview</AlexText>
-          <AlexText sx={{fontSize:12,color:'#667085',mt:.15}}>Student view updates as you type.</AlexText>
-        </AlexBox>
-        <AlexBox sx={{fontFamily:'Georgia, serif',fontSize:18,lineHeight:1.55,whiteSpace:'pre-wrap',p:2,minHeight:120}}>
-          {question.subject==='english'
-            ?<ReadingQuestionLines lines={editorLines(question,questionText)} questionId={question.id}/>
-            :<StructuredQuestionLines lines={editorLines(question,questionText)}/>}
-        </AlexBox>
-      </AlexSurface>
 
       <AlexBox sx={{display:'grid',gap:1.25}}>
         <AlexBox>
