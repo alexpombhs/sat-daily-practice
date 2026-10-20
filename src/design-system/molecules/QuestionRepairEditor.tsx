@@ -55,7 +55,6 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
   const[questionText,setQuestionText]=useState('')
   const[editorTab,setEditorTab]=useState<'edit'|'code'>('edit')
   const[activeStyles,setActiveStyles]=useState<string[]>([])
-  const[toolbarGroup,setToolbarGroup]=useState<'text'|'formula'|'symbols'|'layout'>('text')
   const[textOrigin,setTextOrigin]=useState<TextOrigin>('empty')
   const questionTextRef=useRef<HTMLInputElement|HTMLTextAreaElement|null>(null)
   const liveEditorRef=useRef<LiveLatexEditorHandle|null>(null)
@@ -312,36 +311,45 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
           options={[{value:'edit',label:'Live Preview'},{value:'code',label:'LaTeX Editor'}]}
           onChange={setEditorTab}
         />
-        <AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
-          <AlexBox sx={{display:'flex',gap:1,flexWrap:'wrap',alignItems:'center'}}>
-            {([['text','Text formatting'],['formula','Formulas'],['symbols','Symbols'],['layout','Layout']] as const).map(([group,label])=><AlexButton key={group} size="small" tone={toolbarGroup===group?'primary':'secondary'} onClick={()=>setToolbarGroup(group)}>{label}</AlexButton>)}
+        <AlexBox sx={{display:'flex',gap:.85,flexWrap:'wrap',alignItems:'stretch'}}>
+          <AlexBox sx={{display:'flex',flexDirection:'column',gap:.45,p:.85,border:'1px solid #D8DFEC',borderRadius:2,bgcolor:'#fff',minWidth:0}}>
+            <AlexText sx={{fontSize:10.5,fontWeight:700,color:'#667085',letterSpacing:'.025em',px:.35}}>Text formatting</AlexText>
+            <AlexBox sx={{display:'flex',gap:.2,alignItems:'center',flexWrap:'wrap'}}>
+              <AlexIconButton label="Bold" onClick={()=>formatInActiveEditor('bold')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30,bgcolor:activeStyles.includes('strong')?'#DDD6FE':'#fff'}}><strong>B</strong></AlexIconButton>
+              <AlexIconButton label="Italic" onClick={()=>formatInActiveEditor('italic')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30,bgcolor:activeStyles.includes('em')?'#DDD6FE':'#fff'}}><em>I</em></AlexIconButton>
+              <AlexIconButton label="Strikethrough" onClick={()=>formatInActiveEditor('strike')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30,bgcolor:activeStyles.includes('s')?'#DDD6FE':'#fff'}}><s>S</s></AlexIconButton>
+            <AlexIconButton label="Underline" onClick={()=>formatInActiveEditor('underline')} sx={{border:'1px solid transparent',bgcolor:activeStyles.includes('u')?'#DDD6FE':'#fff',borderRadius:1,width:30,height:30}}><span style={{fontFamily:'Georgia, serif',fontSize:16,textDecoration:'underline'}}>U</span></AlexIconButton>
+            </AlexBox>
           </AlexBox>
-            {toolbarGroup==='text'&&<AlexBox sx={{display:'flex',gap:.5,alignItems:'center',flexWrap:'wrap'}}>
-              <AlexIconButton label="Bold" onClick={()=>formatInActiveEditor('bold')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40,bgcolor:activeStyles.includes('strong')?'#DDD6FE':'#fff'}}><strong>B</strong></AlexIconButton>
-              <AlexIconButton label="Italic" onClick={()=>formatInActiveEditor('italic')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40,bgcolor:activeStyles.includes('em')?'#DDD6FE':'#fff'}}><em>I</em></AlexIconButton>
-              <AlexIconButton label="Strikethrough" onClick={()=>formatInActiveEditor('strike')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40,bgcolor:activeStyles.includes('s')?'#DDD6FE':'#fff'}}><s>S</s></AlexIconButton>
-            <AlexIconButton label="Underline" onClick={()=>formatInActiveEditor('underline')} sx={{border:'1px solid #B2CCFF',bgcolor:activeStyles.includes('u')?'#DDD6FE':'#fff',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18,textDecoration:'underline'}}>U</span></AlexIconButton>
-            </AlexBox>}
-            {toolbarGroup==='formula'&&<AlexBox sx={{display:'flex',gap:.5,alignItems:'center',flexWrap:'wrap'}}>
-            <AlexIconButton label="Power" onClick={()=>formatInActiveEditor('power')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17,fontWeight:700}}>x<sup>y</sup></span></AlexIconButton>
-            <AlexIconButton label="Subscript" onClick={()=>formatInActiveEditor('subscript')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17,fontWeight:700}}>x<sub>y</sub></span></AlexIconButton>
-            <AlexIconButton label="Square root" onClick={()=>formatInActiveEditor('sqrt')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:20}}>√x</span></AlexIconButton>
-            <AlexIconButton label="Fraction" onClick={()=>formatInActiveEditor('fraction')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:15,lineHeight:1}}>x⁄y</span></AlexIconButton>
-            <AlexIconButton label="Absolute value" onClick={()=>formatInActiveEditor('absolute')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17}}>|x|</span></AlexIconButton>
-            <AlexIconButton label="Parentheses" onClick={()=>formatInActiveEditor('parentheses')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17}}>(x)</span></AlexIconButton>
-            <AlexIconButton label="Variable" onClick={()=>formatInActiveEditor('variable')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18,fontStyle:'italic'}}>x</span></AlexIconButton>
-            </AlexBox>}
-            {toolbarGroup==='symbols'&&<AlexBox sx={{display:'flex',gap:.5,alignItems:'center',flexWrap:'wrap'}}>
-            <AlexIconButton label="Pi" onClick={()=>formatInActiveEditor('pi')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:19}}>π</span></AlexIconButton>
-            <AlexIconButton label="Less than or equal" onClick={()=>formatInActiveEditor('le')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>≤</span></AlexIconButton>
-            <AlexIconButton label="Greater than or equal" onClick={()=>formatInActiveEditor('ge')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>≥</span></AlexIconButton>
-            <AlexIconButton label="Not equal" onClick={()=>formatInActiveEditor('ne')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>≠</span></AlexIconButton>
-            <AlexIconButton label="Degree" onClick={()=>formatInActiveEditor('degree')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>°</span></AlexIconButton>
-            </AlexBox>}
-            {toolbarGroup==='layout'&&<AlexBox sx={{display:'flex',gap:.5,alignItems:'center',flexWrap:'wrap'}}>
-            <AlexIconButton label="Quote" onClick={()=>formatInActiveEditor('quote')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:22,lineHeight:1}}>❝</span></AlexIconButton>
-            <AlexIconButton label="Table" onClick={()=>formatInActiveEditor('table')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontSize:17}}>▦</span></AlexIconButton>
-            </AlexBox>}
+          <AlexBox sx={{display:'flex',flexDirection:'column',gap:.45,p:.85,border:'1px solid #D8DFEC',borderRadius:2,bgcolor:'#fff',minWidth:0}}>
+            <AlexText sx={{fontSize:10.5,fontWeight:700,color:'#667085',letterSpacing:'.025em',px:.35}}>Formulas</AlexText>
+            <AlexBox sx={{display:'flex',gap:.2,alignItems:'center',flexWrap:'wrap'}}>
+            <AlexIconButton label="Power" onClick={()=>formatInActiveEditor('power')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30}}><span style={{fontFamily:'Georgia, serif',fontSize:15,fontWeight:700}}>x<sup>y</sup></span></AlexIconButton>
+            <AlexIconButton label="Subscript" onClick={()=>formatInActiveEditor('subscript')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30}}><span style={{fontFamily:'Georgia, serif',fontSize:15,fontWeight:700}}>x<sub>y</sub></span></AlexIconButton>
+            <AlexIconButton label="Square root" onClick={()=>formatInActiveEditor('sqrt')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30}}><span style={{fontFamily:'Georgia, serif',fontSize:15}}>√x</span></AlexIconButton>
+            <AlexIconButton label="Fraction" onClick={()=>formatInActiveEditor('fraction')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30}}><span style={{fontFamily:'Georgia, serif',fontSize:15,lineHeight:1}}>x⁄y</span></AlexIconButton>
+            <AlexIconButton label="Absolute value" onClick={()=>formatInActiveEditor('absolute')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30}}><span style={{fontFamily:'Georgia, serif',fontSize:15}}>|x|</span></AlexIconButton>
+            <AlexIconButton label="Parentheses" onClick={()=>formatInActiveEditor('parentheses')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30}}><span style={{fontFamily:'Georgia, serif',fontSize:15}}>(x)</span></AlexIconButton>
+            <AlexIconButton label="Variable" onClick={()=>formatInActiveEditor('variable')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30}}><span style={{fontFamily:'Georgia, serif',fontSize:16,fontStyle:'italic'}}>x</span></AlexIconButton>
+            </AlexBox>
+          </AlexBox>
+          <AlexBox sx={{display:'flex',flexDirection:'column',gap:.45,p:.85,border:'1px solid #D8DFEC',borderRadius:2,bgcolor:'#fff',minWidth:0}}>
+            <AlexText sx={{fontSize:10.5,fontWeight:700,color:'#667085',letterSpacing:'.025em',px:.35}}>Symbols</AlexText>
+            <AlexBox sx={{display:'flex',gap:.2,alignItems:'center',flexWrap:'wrap'}}>
+            <AlexIconButton label="Pi" onClick={()=>formatInActiveEditor('pi')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30}}><span style={{fontFamily:'Georgia, serif',fontSize:16}}>π</span></AlexIconButton>
+            <AlexIconButton label="Less than or equal" onClick={()=>formatInActiveEditor('le')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30}}><span style={{fontFamily:'Georgia, serif',fontSize:16}}>≤</span></AlexIconButton>
+            <AlexIconButton label="Greater than or equal" onClick={()=>formatInActiveEditor('ge')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30}}><span style={{fontFamily:'Georgia, serif',fontSize:16}}>≥</span></AlexIconButton>
+            <AlexIconButton label="Not equal" onClick={()=>formatInActiveEditor('ne')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30}}><span style={{fontFamily:'Georgia, serif',fontSize:16}}>≠</span></AlexIconButton>
+            <AlexIconButton label="Degree" onClick={()=>formatInActiveEditor('degree')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30}}><span style={{fontFamily:'Georgia, serif',fontSize:16}}>°</span></AlexIconButton>
+            </AlexBox>
+          </AlexBox>
+          <AlexBox sx={{display:'flex',flexDirection:'column',gap:.45,p:.85,border:'1px solid #D8DFEC',borderRadius:2,bgcolor:'#fff',minWidth:0}}>
+            <AlexText sx={{fontSize:10.5,fontWeight:700,color:'#667085',letterSpacing:'.025em',px:.35}}>Layout</AlexText>
+            <AlexBox sx={{display:'flex',gap:.2,alignItems:'center',flexWrap:'wrap'}}>
+            <AlexIconButton label="Quote" onClick={()=>formatInActiveEditor('quote')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30}}><span style={{fontFamily:'Georgia, serif',fontSize:16,lineHeight:1}}>❝</span></AlexIconButton>
+            <AlexIconButton label="Table" onClick={()=>formatInActiveEditor('table')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30}}><span style={{fontSize:15}}>▦</span></AlexIconButton>
+            </AlexBox>
+          </AlexBox>
         </AlexBox>
       </AlexBox>
 
