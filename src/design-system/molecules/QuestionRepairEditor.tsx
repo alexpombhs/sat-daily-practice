@@ -306,11 +306,17 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
       </AlexSurface>
 
       <AlexBox sx={{display:'grid',gap:1}}>
-        <AlexTabs
-          value={editorTab}
-          options={[{value:'edit',label:'Live Preview'},{value:'code',label:'LaTeX Editor'}]}
-          onChange={setEditorTab}
-        />
+        <AlexBox sx={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
+          <AlexTabs
+            value={editorTab}
+            options={[{value:'edit',label:'Live Preview'},{value:'code',label:'LaTeX Editor'}]}
+            onChange={setEditorTab}
+          />
+          <AlexBox sx={{display:'flex',alignItems:'center',gap:.5,ml:'auto'}}>
+            <AlexIconButton label="Add source visual" onClick={()=>setVisualSpecs(current=>[...current,{afterLine:-1,crop:{x:.05,y:.05,width:.9,height:.4},exact:true,kind:'figure'}])} sx={{justifySelf:'start',border:'1px solid #B2CCFF',borderRadius:1.5,width:40,height:40}}><ImagePlus size={20}/></AlexIconButton>
+            <AlexIconButton label={saving?'Saving edits…':'Save edits'} disabled={saving} onClick={save} sx={{justifySelf:'start',border:'1px solid #B2CCFF',borderRadius:1.5,width:40,height:40}}><Save size={20}/></AlexIconButton>
+          </AlexBox>
+        </AlexBox>
         <AlexBox sx={{display:'flex',gap:.85,flexWrap:'wrap',alignItems:'stretch'}}>
           <AlexBox sx={{display:'flex',flexDirection:'column',gap:.45,p:.85,border:'1px solid #D8DFEC',borderRadius:2,bgcolor:'#fff',minWidth:0}}>
             <AlexText sx={{fontSize:10.5,fontWeight:700,color:'#667085',letterSpacing:'.025em',px:.35}}>Text formatting</AlexText>
@@ -402,12 +408,10 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
             lineCount={editorLines(question,questionText).length}
           />
         </AlexSurface>)}
-        <AlexIconButton label="Add source visual" onClick={()=>setVisualSpecs(current=>[...current,{afterLine:-1,crop:{x:.05,y:.05,width:.9,height:.4},exact:true,kind:'figure'}])} sx={{justifySelf:'start',border:'1px solid #B2CCFF',borderRadius:1.5,width:40,height:40}}><ImagePlus size={20}/></AlexIconButton>
       </AlexBox>
 
       {error&&<AlexText role="alert" sx={{fontSize:13,color:'#B42318'}}>{error}</AlexText>}
       {message&&<AlexText role="status" sx={{fontSize:13,color:'#067647'}}>{message}</AlexText>}
-      <AlexIconButton label={saving?'Saving edits…':'Save edits'} disabled={saving} onClick={save} sx={{justifySelf:'start',border:'1px solid #B2CCFF',borderRadius:1.5,width:40,height:40}}><Save size={20}/></AlexIconButton>
     </AlexBox>}
   </AlexSurface>
 }
