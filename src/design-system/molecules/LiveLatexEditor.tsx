@@ -72,6 +72,7 @@ const LiveLatexEditor=forwardRef<LiveLatexEditorHandle,Props>(function LiveLatex
       else element.textContent=wrappers[kind]?.(selected)??selected+snippets[kind]
       range.insertNode(element)
       const next=serialize(root)
+      root.innerHTML=render(next)
       last.current=next
       onChange(next)
       selectedRange.current=null
