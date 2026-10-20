@@ -253,7 +253,7 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
       <AlexBox sx={{display:'grid',gap:1}}>
         <AlexTabs
           value={editorTab}
-          options={[{value:'edit',label:'Editor'},{value:'code',label:'Code'}]}
+          options={[{value:'edit',label:'Live Preview'},{value:'code',label:'LaTeX Editor'}]}
           onChange={setEditorTab}
         />
         {editorTab==='code'&&<AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
@@ -291,7 +291,7 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
           value={questionText}
           inputRef={questionTextRef}
           onChange={event=>setQuestionText(event.target.value)}
-          helperText="Edit raw LaTeX or markup. Switch to Editor to see the formatted result."
+          helperText="Edit raw LaTeX or markup. Switch to Live Preview to see the formatted result."
           sx={{'& textarea':{fontFamily:'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',fontSize:13.5,lineHeight:1.55}}}
         />}
 
