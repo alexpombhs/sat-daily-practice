@@ -7,7 +7,7 @@ import AlexSurface from '../atoms/AlexSurface'
 import AlexTabs from '../atoms/AlexTabs'
 import AlexText from '../atoms/AlexText'
 import AlexTextField from '../atoms/AlexTextField'
-import LiveLatexEditor from './LiveLatexEditor'
+import LiveLatexEditor,{type LiveLatexEditorHandle} from './LiveLatexEditor'
 import VisualCropEditor from './VisualCropEditor'
 import {ensureQuestionText,extractQuestionLines} from '../../lib/pdfStructuredImport'
 import {getQuestionContent} from '../../lib/questionContentStore'
@@ -55,6 +55,7 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
   const[editorTab,setEditorTab]=useState<'edit'|'code'>('edit')
   const[textOrigin,setTextOrigin]=useState<TextOrigin>('empty')
   const questionTextRef=useRef<HTMLInputElement|HTMLTextAreaElement|null>(null)
+  const liveEditorRef=useRef<LiveLatexEditorHandle|null>(null)
   const[visualSpecs,setVisualSpecs]=useState<QuestionVisualSpec[]>([])
   const[loading,setLoading]=useState(true)
   const[saving,setSaving]=useState(false)
@@ -213,6 +214,35 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
     })
   }
 
+  function formatInActiveEditor(kind:string){
+    if(editorTab==='edit'){
+      if(!liveEditorRef.current?.formatSelection(kind)){
+        setError('Select text in Live Preview before choosing a formatting button.')
+      }else{setError('');setMessage('')}
+      return
+    }
+    if(kind==='underline'){underlineSelectedText();return}
+    if(kind==='quote'){quoteSelectedText();return}
+    if(kind==='table'){
+      const input=questionTextRef.current
+      if(!input)return
+      const start=input.selectionStart??0,end=input.selectionEnd??start
+      const selected=questionText.slice(start,end)
+      const replacement='[TABLE]\\n'+(selected||'x | y\\n')+'\\n[/TABLE]'
+      setQuestionText(questionText.slice(0,start)+replacement+questionText.slice(end))
+      requestAnimationFrame(()=>input.focus())
+      return
+    }
+    if(['power','sqrt','fraction','variable'].includes(kind)){
+      applyMathSelection(kind as 'power'|'sqrt'|'fraction'|'variable');return
+    }
+    if(['subscript','absolute','parentheses'].includes(kind)){
+      applyAdditionalMathSelection(kind as 'subscript'|'absolute'|'parentheses');return
+    }
+    const snippets:Record<string,string>={pi:'\\pi',le:'\\le',ge:'\\ge',ne:'\\ne',degree:'^{\\circ}'}
+    if(snippets[kind])insertMathSnippet(snippets[kind])
+  }
+
   async function save(){
     const questionLines=stripEmbeddedReadingTableLines(question.id,editorLines(question,questionText).map(normalizeMathEditorLine))
     if(!questionLines.length){setError('Question text cannot be empty.');return}
@@ -256,26 +286,26 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
           options={[{value:'edit',label:'Live Preview'},{value:'code',label:'LaTeX Editor'}]}
           onChange={setEditorTab}
         />
-        {editorTab==='code'&&<AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
+        <AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
           <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Text formatting</AlexText>
           <AlexBox sx={{display:'flex',gap:.5,alignItems:'center',flexWrap:'wrap'}}>
-            <AlexIconButton label="Power" onClick={()=>applyMathSelection('power')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17,fontWeight:700}}>x<sup>y</sup></span></AlexIconButton>
-            <AlexIconButton label="Subscript" onClick={()=>applyAdditionalMathSelection('subscript')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17,fontWeight:700}}>x<sub>y</sub></span></AlexIconButton>
-            <AlexIconButton label="Square root" onClick={()=>applyMathSelection('sqrt')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:20}}>√x</span></AlexIconButton>
-            <AlexIconButton label="Fraction" onClick={()=>applyMathSelection('fraction')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:15,lineHeight:1}}>x⁄y</span></AlexIconButton>
-            <AlexIconButton label="Absolute value" onClick={()=>applyAdditionalMathSelection('absolute')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17}}>|x|</span></AlexIconButton>
-            <AlexIconButton label="Parentheses" onClick={()=>applyAdditionalMathSelection('parentheses')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17}}>(x)</span></AlexIconButton>
-            <AlexIconButton label="Variable" onClick={()=>applyMathSelection('variable')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18,fontStyle:'italic'}}>x</span></AlexIconButton>
-            <AlexIconButton label="Pi" onClick={()=>insertMathSnippet('\\pi')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:19}}>π</span></AlexIconButton>
-            <AlexIconButton label="Less than or equal" onClick={()=>insertMathSnippet('\\le')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>≤</span></AlexIconButton>
-            <AlexIconButton label="Greater than or equal" onClick={()=>insertMathSnippet('\\ge')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>≥</span></AlexIconButton>
-            <AlexIconButton label="Not equal" onClick={()=>insertMathSnippet('\\ne')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>≠</span></AlexIconButton>
-            <AlexIconButton label="Degree" onClick={()=>insertMathSnippet('^{\\circ}')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>°</span></AlexIconButton>
-            <AlexIconButton label="Underline" onClick={underlineSelectedText} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18,textDecoration:'underline'}}>U</span></AlexIconButton>
-            <AlexIconButton label="Quote" onClick={quoteSelectedText} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:22,lineHeight:1}}>❝</span></AlexIconButton>
-            <AlexIconButton label="Table" onClick={()=>{const input=questionTextRef.current;if(!input)return;const start=input.selectionStart??0,end=input.selectionEnd??0;const selected=questionText.slice(start,end);const replacement='[TABLE]\\n'+(selected||'x | y\\n')+'\\n[/TABLE]';setQuestionText(questionText.slice(0,start)+replacement+questionText.slice(end));requestAnimationFrame(()=>input.focus())}} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontSize:17}}>▦</span></AlexIconButton>
+            <AlexIconButton label="Power" onClick={()=>formatInActiveEditor('power')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17,fontWeight:700}}>x<sup>y</sup></span></AlexIconButton>
+            <AlexIconButton label="Subscript" onClick={()=>formatInActiveEditor('subscript')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17,fontWeight:700}}>x<sub>y</sub></span></AlexIconButton>
+            <AlexIconButton label="Square root" onClick={()=>formatInActiveEditor('sqrt')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:20}}>√x</span></AlexIconButton>
+            <AlexIconButton label="Fraction" onClick={()=>formatInActiveEditor('fraction')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:15,lineHeight:1}}>x⁄y</span></AlexIconButton>
+            <AlexIconButton label="Absolute value" onClick={()=>formatInActiveEditor('absolute')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17}}>|x|</span></AlexIconButton>
+            <AlexIconButton label="Parentheses" onClick={()=>formatInActiveEditor('parentheses')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17}}>(x)</span></AlexIconButton>
+            <AlexIconButton label="Variable" onClick={()=>formatInActiveEditor('variable')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18,fontStyle:'italic'}}>x</span></AlexIconButton>
+            <AlexIconButton label="Pi" onClick={()=>formatInActiveEditor('pi')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:19}}>π</span></AlexIconButton>
+            <AlexIconButton label="Less than or equal" onClick={()=>formatInActiveEditor('le')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>≤</span></AlexIconButton>
+            <AlexIconButton label="Greater than or equal" onClick={()=>formatInActiveEditor('ge')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>≥</span></AlexIconButton>
+            <AlexIconButton label="Not equal" onClick={()=>formatInActiveEditor('ne')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>≠</span></AlexIconButton>
+            <AlexIconButton label="Degree" onClick={()=>formatInActiveEditor('degree')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>°</span></AlexIconButton>
+            <AlexIconButton label="Underline" onClick={()=>formatInActiveEditor('underline')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18,textDecoration:'underline'}}>U</span></AlexIconButton>
+            <AlexIconButton label="Quote" onClick={()=>formatInActiveEditor('quote')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:22,lineHeight:1}}>❝</span></AlexIconButton>
+            <AlexIconButton label="Table" onClick={()=>formatInActiveEditor('table')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontSize:17}}>▦</span></AlexIconButton>
           </AlexBox>
-        </AlexBox>}
+        </AlexBox>
       </AlexBox>
 
       {underlineMissing&&<AlexSurface sx={{p:1.25,border:'1px solid #FEC84B',borderRadius:2,bgcolor:'#FFFAEB'}}>
@@ -283,7 +313,7 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
       </AlexSurface>}
 
       {editorTab==='edit'
-        ?<LiveLatexEditor value={questionText} onChange={setQuestionText}/>
+        ?<LiveLatexEditor ref={liveEditorRef} value={questionText} onChange={setQuestionText}/>
         :<AlexTextField
           label="LaTeX / source code"
           multiline
