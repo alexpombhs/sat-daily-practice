@@ -339,7 +339,6 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
               <AlexIconButton label="Italic" onClick={()=>formatInActiveEditor('italic')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30,bgcolor:activeStyles.includes('em')?'#DDD6FE':'#fff'}}><em>I</em></AlexIconButton>
               <AlexIconButton label="Strikethrough" onClick={()=>formatInActiveEditor('strike')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30,bgcolor:activeStyles.includes('s')?'#DDD6FE':'#fff'}}><s>S</s></AlexIconButton>
             <AlexIconButton label="Underline" onClick={()=>formatInActiveEditor('underline')} sx={{border:'1px solid transparent',bgcolor:activeStyles.includes('u')?'#DDD6FE':'#fff',borderRadius:1,width:30,height:30}}><span style={{fontFamily:'Georgia, serif',fontSize:16,textDecoration:'underline'}}>U</span></AlexIconButton>
-              <AlexIconButton label="Bulleted list" onClick={()=>formatInActiveEditor('bullets')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30}}><List size={17}/></AlexIconButton>
             </AlexBox>
           </AlexBox>
           <AlexBox sx={{display:'flex',flexDirection:'column',gap:.45,p:.85,border:'1px solid #D8DFEC',borderRadius:2,bgcolor:'#fff',minWidth:0}}>
@@ -367,6 +366,7 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
           <AlexBox sx={{display:'flex',flexDirection:'column',gap:.45,p:.85,border:'1px solid #D8DFEC',borderRadius:2,bgcolor:'#fff',minWidth:0}}>
             <AlexText sx={{fontSize:10.5,fontWeight:700,color:'#667085',letterSpacing:'.025em',px:.35}}>Layout</AlexText>
             <AlexBox sx={{display:'flex',gap:.2,alignItems:'center',flexWrap:'wrap'}}>
+              <AlexIconButton label="Bulleted list" onClick={()=>formatInActiveEditor('bullets')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30}}><List size={17}/></AlexIconButton>
             <AlexIconButton label="Quote" onClick={()=>formatInActiveEditor('quote')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30}}><span style={{fontFamily:'Georgia, serif',fontSize:16,lineHeight:1}}>❝</span></AlexIconButton>
             <AlexIconButton label="Table" onClick={()=>formatInActiveEditor('table')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30}}><span style={{fontSize:15}}>▦</span></AlexIconButton>
             </AlexBox>
