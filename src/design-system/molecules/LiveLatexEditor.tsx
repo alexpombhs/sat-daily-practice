@@ -6,7 +6,7 @@ type Props={value:string;onChange:(value:string)=>void;onSelectionFormatsChange?
 
 const escapeHtml=(value:string)=>value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
 
-function render(value:string){
+function render(value:string):string{
   return value.split(/(<(?:u|strong|em|s)>[\s\S]*?<\/(?:u|strong|em|s)>|\$\$[\s\S]+?\$\$|\$[^$\n]+\$)/gi).map(part=>{
     const format=part.match(/^<(u|strong|em|s)>([\s\S]*)<\/\1>$/i)
     if(format)return '<'+format[1]+'>'+render(format[2])+'</'+format[1]+'>'
