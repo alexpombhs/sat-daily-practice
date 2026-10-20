@@ -61,7 +61,10 @@ export default function ParsingIssueReporter({question,context,compact=false}:Pr
     </AlexBox>
   </AlexSurface>
 
-  const useViewportOverlay=open&&compact&&context==='practice'&&typeof document!=='undefined'
+  // Compact reporters can live inside clipped/scrolling review cards. Always portal
+  // their dialog to the viewport so session review, practice, and other compact
+  // contexts render above the entire app layout instead of inside the card.
+  const useViewportOverlay=open&&compact&&typeof document!=='undefined'
 
   return <AlexBox sx={compact?{position:'relative',display:'inline-flex',alignItems:'center',gap:.75,flex:'0 0 auto'}:{display:'grid',gap:1}}>
     {!open&&<AlexTooltip title="Report parsing issue" placement="top"><AlexButtonBase aria-label="Report parsing issue" onClick={()=>{setOpen(true);setStatus('')}} sx={{justifySelf:'start',width:32,height:32,borderRadius:'50%',border:'1px solid #E6E2DB',bgcolor:'#fff',color:'#667085','&:hover':{bgcolor:'#F7F5FF',borderColor:'#D7CFFF',color:'#4B3FCE'}}}><Flag size={16}/></AlexButtonBase></AlexTooltip>}
