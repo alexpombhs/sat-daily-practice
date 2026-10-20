@@ -1,16 +1,17 @@
 import {useEffect,useMemo,useState} from 'react'
 import AlexBox from '../atoms/AlexBox'
-import AlexButton from '../atoms/AlexButton'
+import AlexIconButton from '../atoms/AlexIconButton'
 import AlexButtonBase from '../atoms/AlexButtonBase'
 import AlexDropdown from '../atoms/AlexDropdown'
 import AlexStatusChip from '../atoms/AlexStatusChip'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
+import {CheckCheck,RotateCcw} from 'lucide-react'
 import QuestionRepairEditor from '../molecules/QuestionRepairEditor'
 import QuestionSourceReview from '../molecules/QuestionSourceReview'
 import {availablePracticeTests,moduleLabel,practiceTestLabel,QUESTION_BANK} from '../../lib/questionBank'
 import {loadSharedQuestionBank,mergeQuestionBanks} from '../../lib/sharedQuestionBank'
-import {deleteParsingIssueReport,loadParsingIssueReports,setParsingIssueStatus,type ParsingIssueReport,type ParsingIssueStatus} from '../../lib/parsingIssueReports'
+import {loadParsingIssueReports,setParsingIssueStatus,type ParsingIssueReport,type ParsingIssueStatus} from '../../lib/parsingIssueReports'
 import type {PracticeQuestion,PracticeTestFilter} from '../../types'
 
 type StatusFilter='all'|ParsingIssueStatus
@@ -54,15 +55,6 @@ export default function ParsingIssuesDashboard({questionsPdf,answersPdf}:Props){
       await setParsingIssueStatus(report.id,status)
       setReports(items=>items.map(item=>item.id===report.id?{...item,status,updatedAt:new Date().toISOString()}:item))
     }catch(reason){setError(reason instanceof Error?reason.message:'Unable to update report.')}
-  }
-
-  async function remove(report:ParsingIssueReport){
-    if(!window.confirm('Delete this parsing issue report?'))return
-    try{
-      await deleteParsingIssueReport(report.id)
-      setReports(items=>items.filter(item=>item.id!==report.id))
-      if(selectedId===report.id)setSelectedId(null)
-    }catch(reason){setError(reason instanceof Error?reason.message:'Unable to delete report.')}
   }
 
   return <main className="shell">
@@ -118,8 +110,11 @@ export default function ParsingIssuesDashboard({questionsPdf,answersPdf}:Props){
                 <AlexText sx={{fontSize:12,color:'#667085',mt:.35}}>Question ID: {selected.questionId} · Reported {new Date(selected.createdAt).toLocaleString()}</AlexText>
               </AlexBox>
               <AlexBox sx={{display:'flex',gap:.75,flexWrap:'wrap'}}>
-                <AlexButton size="small" tone="secondary" onClick={()=>changeStatus(selected,selected.status==='open'?'resolved':'open')}>{selected.status==='open'?'Mark resolved':'Reopen'}</AlexButton>
-                <AlexButton size="small" tone="quiet" onClick={()=>remove(selected)}>Delete</AlexButton>
+                <AlexIconButton
+                  label={selected.status==='open'?'Mark issue resolved':'Reopen issue'}
+                  onClick={()=>changeStatus(selected,selected.status==='open'?'resolved':'open')}
+                  sx={{border:'1px solid #D0D5DD',borderRadius:1.5,color:selected.status==='open'?'#067647':'#475467'}}
+                >{selected.status==='open'?<CheckCheck size={18}/>:<RotateCcw size={18}/>}</AlexIconButton>
               </AlexBox>
             </AlexBox>
             <AlexSurface sx={{mt:1.5,p:1.5,borderRadius:1.5,bgcolor:'#F7F6F2'}}>

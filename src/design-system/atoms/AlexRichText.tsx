@@ -14,7 +14,7 @@ function renderMath(math:string,displayMode:boolean,key:string){
 
 const NATURAL_LANGUAGE_WORD=/\b(?:a|an|and|at|by|each|for|from|in|is|of|on|or|per|purchase|than|that|the|to|was|were|with)\b/i
 const CURRENCY_AT_START=/^\$(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{1,2})?(?=$|[\s.,;:!?)\]}])/
-const UNDERLINE_MARKUP=/<u>([\s\S]*?)<\/u>/gi
+const FORMAT_MARKUP=/<\/?(?:u|strong|em|s)>/gi
 
 export function isLikelyMathToken(math:string,displayMode=false){
   if(displayMode)return true
@@ -81,18 +81,31 @@ export default function AlexRichText({text,className}:Props){
   const nodes:ReactNode[]=[]
   let cursor=0
   let index=0
-  UNDERLINE_MARKUP.lastIndex=0
+  const stack:{tag:string;children:ReactNode[];key:string}[]=[]
+  const append=(node:ReactNode)=>{if(stack.length)stack[stack.length-1].children.push(node);else nodes.push(node)}
   let match:RegExpExecArray|null
-  while((match=UNDERLINE_MARKUP.exec(text))!==null){
-    if(match.index>cursor){
-      nodes.push(<Fragment key={`text-${index}`}>{renderMathAwareText(text.slice(cursor,match.index),`text-${index}`)}</Fragment>)
-    }
-    nodes.push(<u className="rich-underline" key={`underline-${index}`}>{renderMathAwareText(match[1],`underline-${index}`)}</u>)
+  FORMAT_MARKUP.lastIndex=0
+  while((match=FORMAT_MARKUP.exec(text))!==null){
+    if(match.index>cursor)append(<Fragment key={`text-${index++}`}>{renderMathAwareText(text.slice(cursor,match.index),`text-${index}`)}</Fragment>)
+    const closing=match[0].startsWith('</')
+    const tag=match[0].replace(/<\/?|>/g,'').toLowerCase()
+    if(closing){
+      if(stack.length&&stack[stack.length-1].tag===tag){
+        const frame=stack.pop()!
+        const children=frame.children
+        append(tag==='u'?<u className="rich-underline" key={frame.key}>{children}</u>
+          :tag==='strong'?<strong key={frame.key}>{children}</strong>
+          :tag==='em'?<em key={frame.key}>{children}</em>
+          :<s key={frame.key}>{children}</s>)
+      }else append(match[0])
+    }else stack.push({tag,children:[],key:`format-${index++}`})
     cursor=match.index+match[0].length
-    index++
   }
-  if(cursor<text.length){
-    nodes.push(<Fragment key={`text-${index}`}>{renderMathAwareText(text.slice(cursor),`text-${index}`)}</Fragment>)
+  if(cursor<text.length)append(<Fragment key={`text-${index++}`}>{renderMathAwareText(text.slice(cursor),`text-${index}`)}</Fragment>)
+  while(stack.length){
+    const frame=stack.pop()!
+    append('<'+frame.tag+'>')
+    frame.children.forEach(append)
   }
   return <span className={className}>{nodes.length?nodes:renderMathAwareText(text,'text')}</span>
 }
