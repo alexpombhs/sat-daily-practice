@@ -84,8 +84,6 @@ const LiveLatexEditor=forwardRef<LiveLatexEditorHandle,Props>(function LiveLatex
       }
       const tags:Record<string,string>={underline:'u',bold:'strong',italic:'em',strike:'s'}
       const tag=tags[kind]
-      const tags:Record<string,string>={underline:'u',bold:'strong',italic:'em',strike:'s'}
-      const tag=tags[kind]
       const enclosing=(()=>{
         let node:Node|null=range.commonAncestorContainer
         while(node&&node!==root){
