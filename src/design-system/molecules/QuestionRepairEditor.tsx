@@ -179,7 +179,792 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
     const start=input.selectionStart??0,end=input.selectionEnd??0
     const selected=questionText.slice(start,end).trim()
     if(!selected){setError('Select the exponent or radicand in the question text first.');input.focus();return}
-    const replacement=kind==='power'?'^{'+selected+'}':kind==='sqrt'?'\\sqrt{'+selected+'}':kind==='fraction'?'\\frac{'+selected+'}{}':kind==='subscript'?'_{'+selected+'}':kind==='absolute'?'\\left|'+selected+'\\right|':kind==='parentheses'?'\\left('+selected+'\\right)':'    setError('');setMessage('');setQuestionText(questionText.slice(0,start)+replacement+questionText.slice(end))
+    const replacement=kind==='power'?'^{'+selected+'}':kind==='sqrt'?'\\sqrt{'+selected+'}':kind==='fraction'?'\\frac{'+selected+'}{}':kind==='subscript'?'_{'+selected+'}':kind==='absolute'?'\\left|'+selected+'\\right|':kind==='parentheses'?'\\left('+selected+'\\right)':'
+    requestAnimationFrame(()=>{input.focus();input.setSelectionRange(start,start+replacement.length)})
+  }
+
+  function insertMathSnippet(snippet:string,cursorOffset?:number){
+    const input=questionTextRef.current
+    if(!input)return
+    const start=input.selectionStart??questionText.length
+    const end=input.selectionEnd??start
+    setError('');setMessage('')
+    const next=questionText.slice(0,start)+snippet+questionText.slice(end)
+    setQuestionText(next)
+    requestAnimationFrame(()=>{
+      input.focus()
+      const caret=start+(cursorOffset??snippet.length)
+      input.setSelectionRange(caret,caret)
+    })
+  }
+
+  async function save(){
+    const questionLines=stripEmbeddedReadingTableLines(question.id,editorLines(question,questionText).map(normalizeMathEditorLine))
+    if(!questionLines.length){setError('Question text cannot be empty.');return}
+    if(underlineMissing){
+      setError('This report still has a missing underline. Select the source text and apply Underline before saving the repair.')
+      return
+    }
+    setSaving(true);setError('');setMessage('')
+    try{
+      await saveSharedQuestionRepair({questionId:question.id,questionLines,visualSpecs})
+      setTextOrigin('shared')
+      setMessage('Fix saved to the shared Question Bank.')
+      onSaved?.()
+    }catch(reason){
+      setError(reason instanceof Error?reason.message:'Unable to save the shared question repair.')
+    }finally{setSaving(false)}
+  }
+
+  return <AlexSurface sx={{p:{xs:2,md:2.5},border:'1px solid #D8D2FF',borderRadius:3,bgcolor:'#FCFBFF'}}>
+    <AlexText component="h2" sx={{fontSize:19,fontWeight:850,color:'#08275B'}}>Fix parsed question</AlexText>
+    <AlexText sx={{fontSize:13,color:'#667085',mt:.4,mb:1.75}}>Edit only the reconstructed question text and source visual. The explanation always stays in its original PDF format.</AlexText>
+    {loading?<AlexText sx={{color:'#667085'}}>Preparing editable content…</AlexText>:<AlexBox sx={{display:'grid',gap:1.5}}>
+      {readingTableSpec(question.id)&&<AlexSurface sx={{p:1.4,border:'1px solid #B2CCFF',borderRadius:2,bgcolor:'#F5F8FF'}}>
+        <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#1849A9'}}>Structured table preserved separately</AlexText>
+        <AlexText sx={{fontSize:12,color:'#475467',mt:.2}}>The table is not part of the editable prose. Editing and saving this text will preserve the structured table without duplicating it into the question body.</AlexText>
+      </AlexSurface>}
+
+      <AlexSurface sx={{p:1.4,border:'1px solid #B2CCFF',borderRadius:2,bgcolor:'#F5F8FF'}}>
+        <AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
+          <AlexBox>
+            <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#1849A9'}}>{textOrigin==='shared'?'Shared parsed text':'Not stored as shared parsed text yet'}</AlexText>
+            <AlexText sx={{fontSize:12,color:'#475467',mt:.2}}>{textOrigin==='shared'?'This question has a saved shared repair. You can still re-extract from the original source while the parsing issue is open.':textOrigin==='source'?'Freshly extracted from the source PDF.':textOrigin==='verified'?'Loaded from bundled verified text.':textOrigin==='browser'?'Loaded from this browser’s extracted cache.':'No parsed text is available yet.'} {textOrigin!=='shared'&&'Saving a repair will persist the edited text to the shared Question Bank.'}</AlexText>
+          </AlexBox>
+          <AlexButton size="small" tone="secondary" disabled={extracting||!resolvedQuestionsPdf} onClick={reloadFromSource}>{extracting?'Extracting…':'Re-extract from source'}</AlexButton>
+        </AlexBox>
+      </AlexSurface>
+
+      <AlexBox sx={{display:'grid',gap:1}}>
+        <AlexTabs
+          value={editorTab}
+          options={[{value:'edit',label:'Editor'},{value:'code',label:'Code'}]}
+          onChange={setEditorTab}
+        />
+        {editorTab==='edit'&&<AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
+          <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Text formatting</AlexText>
+          <AlexBox sx={{display:'flex',gap:.5,alignItems:'center',flexWrap:'wrap'}}>
+            <AlexIconButton label="Power" onClick={()=>applyMathSelection('power')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17,fontWeight:700}}>x<sup>y</sup></span></AlexIconButton>
+            <AlexIconButton label="Subscript" onClick={()=>applyMathSelection('subscript')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17,fontWeight:700}}>x<sub>y</sub></span></AlexIconButton>
+            <AlexIconButton label="Square root" onClick={()=>applyMathSelection('sqrt')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:20}}>√x</span></AlexIconButton>
+            <AlexIconButton label="Fraction" onClick={()=>applyMathSelection('fraction')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:15,lineHeight:1}}>x⁄y</span></AlexIconButton>
+            <AlexIconButton label="Absolute value" onClick={()=>applyMathSelection('absolute')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17}}>|x|</span></AlexIconButton>
+            <AlexIconButton label="Parentheses" onClick={()=>applyMathSelection('parentheses')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17}}>(x)</span></AlexIconButton>
+            <AlexIconButton label="Variable" onClick={()=>applyMathSelection('variable')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18,fontStyle:'italic'}}>x</span></AlexIconButton>
+            <AlexIconButton label="Pi" onClick={()=>insertMathSnippet('\\pi')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:19}}>π</span></AlexIconButton>
+            <AlexIconButton label="Less than or equal" onClick={()=>insertMathSnippet('\\le')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>≤</span></AlexIconButton>
+            <AlexIconButton label="Greater than or equal" onClick={()=>insertMathSnippet('\\ge')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>≥</span></AlexIconButton>
+            <AlexIconButton label="Not equal" onClick={()=>insertMathSnippet('\\ne')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>≠</span></AlexIconButton>
+            <AlexIconButton label="Degree" onClick={()=>insertMathSnippet('^{\\circ}')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>°</span></AlexIconButton>
+            <AlexIconButton label="Underline" onClick={underlineSelectedText} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18,textDecoration:'underline'}}>U</span></AlexIconButton>
+            <AlexIconButton label="Quote" onClick={quoteSelectedText} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:22,lineHeight:1}}>❝</span></AlexIconButton>
+            <AlexIconButton label="Table" onClick={()=>{const input=questionTextRef.current;if(!input)return;const start=input.selectionStart??0,end=input.selectionEnd??0;const selected=questionText.slice(start,end);const replacement='[TABLE]\\n'+(selected||'x | y\\n')+'\\n[/TABLE]';setQuestionText(questionText.slice(0,start)+replacement+questionText.slice(end));requestAnimationFrame(()=>input.focus())}} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontSize:17}}>▦</span></AlexIconButton>
+          </AlexBox>
+        </AlexBox>}
+      </AlexBox>
+
+      {underlineMissing&&<AlexSurface sx={{p:1.25,border:'1px solid #FEC84B',borderRadius:2,bgcolor:'#FFFAEB'}}>
+        <AlexText sx={{fontSize:12.5,color:'#93370D'}}>Missing underline is still unresolved. PDF text re-extraction cannot reliably recover the underline stroke; select the matching source text and apply Underline before saving.</AlexText>
+      </AlexSurface>}
+
+      <AlexTextField
+        label={editorTab==='code'?'LaTeX / source code':'Question text'}
+        multiline
+        minRows={editorTab==='code'?10:8}
+        value={questionText}
+        inputRef={questionTextRef}
+        onChange={event=>setQuestionText(event.target.value)}
+        helperText={editorTab==='code'?'Edit the raw stored markup directly. Changes update the preview immediately.':'Select text, then use the formatting buttons above. Changes update the preview immediately.'}
+        sx={editorTab==='code'?{'& textarea':{fontFamily:'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',fontSize:13.5,lineHeight:1.55}}:undefined}
+      />
+
+      <AlexBox sx={{display:'flex',justifyContent:'flex-end',alignItems:'center',mt:-1,color:'#667085'}}>
+        <AlexText sx={{fontSize:12}}>LaTeX help</AlexText>
+        <AlexInfoTooltipButton
+          label="LaTeX formatting help"
+          title={<AlexBox sx={{lineHeight:1.6}}>
+            <div><b>LaTeX formatting</b></div>
+            <div>Variable: $x$</div><div>Power: $x^2$ or $x^&#123;2&#125;$</div>
+            <div>Square root: $\\sqrt&#123;37&#125;$</div><div>Fraction: $\\frac&#123;12&#125;&#123;35&#125;$</div>
+            <div>Quote block: \\begin&#123;quote&#125; ... \\end&#123;quote&#125;</div>
+            <div>Use the Quote tool on only the quoted passage; keep the author/source line outside the quote block.</div>
+            <div>Table: wrap rows in [TABLE] and [/TABLE], with columns separated by |.</div>
+            <div>[TABLE]<br/>x | y<br/>2 | 5<br/>[/TABLE]</div>
+          </AlexBox>}
+        />
+      </AlexBox>
+
+      <AlexSurface sx={{border:'1px solid #D0D5DD',borderRadius:2.5,bgcolor:'#fff',overflow:'hidden'}}>
+        <AlexBox sx={{px:1.5,py:1,bgcolor:'#F9FAFB',borderBottom:'1px solid #EAECF0'}}>
+          <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Live preview</AlexText>
+          <AlexText sx={{fontSize:12,color:'#667085',mt:.15}}>Student view updates as you type.</AlexText>
+        </AlexBox>
+        <AlexBox sx={{fontFamily:'Georgia, serif',fontSize:18,lineHeight:1.55,whiteSpace:'pre-wrap',p:2,minHeight:120}}>
+          {question.subject==='english'
+            ?<ReadingQuestionLines lines={editorLines(question,questionText)} questionId={question.id}/>
+            :<StructuredQuestionLines lines={editorLines(question,questionText)}/>}
+        </AlexBox>
+      </AlexSurface>
+
+      <AlexBox sx={{display:'grid',gap:1.25}}>
+        <AlexBox>
+          <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Source visuals</AlexText>
+          <AlexText sx={{fontSize:12,color:'#667085',mt:.2}}>Each visual has its own crop and placement. Adjust every figure or graphical answer group independently; placement is relative to the parsed text lines above.</AlexText>
+        </AlexBox>
+        {visualSpecs.map((visual,index)=><AlexSurface key={index} sx={{p:1.25,border:'1px solid #D8D2FF',borderRadius:2.5,bgcolor:'#fff'}}>
+          <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#344054',mb:.75}}>{`Visual ${index+1} · ${visual.kind==='choice-grid'?'Graphical answer choices':'Figure'}`}</AlexText>
+          <VisualCropEditor
+            question={question}
+            bytes={resolvedQuestionsPdf}
+            value={visual}
+            onChange={next=>setVisualSpecs(current=>next?current.map((item,itemIndex)=>itemIndex===index?{...next,kind:item.kind}:item):current.filter((_,itemIndex)=>itemIndex!==index))}
+            lineCount={editorLines(question,questionText).length}
+          />
+        </AlexSurface>)}
+        <AlexButton size="small" tone="secondary" onClick={()=>setVisualSpecs(current=>[...current,{afterLine:-1,crop:{x:.05,y:.05,width:.9,height:.4},exact:true,kind:'figure'}])} sx={{justifySelf:'start'}}>Add source visual</AlexButton>
+      </AlexBox>
+
+      {error&&<AlexText role="alert" sx={{fontSize:13,color:'#B42318'}}>{error}</AlexText>}
+      {message&&<AlexText role="status" sx={{fontSize:13,color:'#067647'}}>{message}</AlexText>}
+      <AlexButton disabled={saving} onClick={save} sx={{justifySelf:'start'}}>{saving?'Saving fix…':'Save shared fix'}</AlexButton>
+    </AlexBox>}
+  </AlexSurface>
+}
++selected+'    setError('');setMessage('');setQuestionText(questionText.slice(0,start)+replacement+questionText.slice(end))
+    requestAnimationFrame(()=>{input.focus();input.setSelectionRange(start,start+replacement.length)})
+  }
+
+  async function save(){
+    const questionLines=stripEmbeddedReadingTableLines(question.id,editorLines(question,questionText).map(normalizeMathEditorLine))
+    if(!questionLines.length){setError('Question text cannot be empty.');return}
+    if(underlineMissing){
+      setError('This report still has a missing underline. Select the source text and apply Underline before saving the repair.')
+      return
+    }
+    setSaving(true);setError('');setMessage('')
+    try{
+      await saveSharedQuestionRepair({questionId:question.id,questionLines,visualSpecs})
+      setTextOrigin('shared')
+      setMessage('Fix saved to the shared Question Bank.')
+      onSaved?.()
+    }catch(reason){
+      setError(reason instanceof Error?reason.message:'Unable to save the shared question repair.')
+    }finally{setSaving(false)}
+  }
+
+  return <AlexSurface sx={{p:{xs:2,md:2.5},border:'1px solid #D8D2FF',borderRadius:3,bgcolor:'#FCFBFF'}}>
+    <AlexText component="h2" sx={{fontSize:19,fontWeight:850,color:'#08275B'}}>Fix parsed question</AlexText>
+    <AlexText sx={{fontSize:13,color:'#667085',mt:.4,mb:1.75}}>Edit only the reconstructed question text and source visual. The explanation always stays in its original PDF format.</AlexText>
+    {loading?<AlexText sx={{color:'#667085'}}>Preparing editable content…</AlexText>:<AlexBox sx={{display:'grid',gap:1.5}}>
+      {readingTableSpec(question.id)&&<AlexSurface sx={{p:1.4,border:'1px solid #B2CCFF',borderRadius:2,bgcolor:'#F5F8FF'}}>
+        <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#1849A9'}}>Structured table preserved separately</AlexText>
+        <AlexText sx={{fontSize:12,color:'#475467',mt:.2}}>The table is not part of the editable prose. Editing and saving this text will preserve the structured table without duplicating it into the question body.</AlexText>
+      </AlexSurface>}
+
+      <AlexSurface sx={{p:1.4,border:'1px solid #B2CCFF',borderRadius:2,bgcolor:'#F5F8FF'}}>
+        <AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
+          <AlexBox>
+            <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#1849A9'}}>{textOrigin==='shared'?'Shared parsed text':'Not stored as shared parsed text yet'}</AlexText>
+            <AlexText sx={{fontSize:12,color:'#475467',mt:.2}}>{textOrigin==='shared'?'This question has a saved shared repair. You can still re-extract from the original source while the parsing issue is open.':textOrigin==='source'?'Freshly extracted from the source PDF.':textOrigin==='verified'?'Loaded from bundled verified text.':textOrigin==='browser'?'Loaded from this browser’s extracted cache.':'No parsed text is available yet.'} {textOrigin!=='shared'&&'Saving a repair will persist the edited text to the shared Question Bank.'}</AlexText>
+          </AlexBox>
+          <AlexButton size="small" tone="secondary" disabled={extracting||!resolvedQuestionsPdf} onClick={reloadFromSource}>{extracting?'Extracting…':'Re-extract from source'}</AlexButton>
+        </AlexBox>
+      </AlexSurface>
+
+      <AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
+        <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Text formatting</AlexText>
+        <AlexBox sx={{display:'flex',gap:.5,alignItems:'center',flexWrap:'wrap'}}>
+          <AlexIconButton label="Power" onClick={()=>applyMathSelection('power')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17,fontWeight:700}}>x<sup>y</sup></span></AlexIconButton>
+          <AlexIconButton label="Square root" onClick={()=>applyMathSelection('sqrt')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:20}}>√x</span></AlexIconButton>
+          <AlexIconButton label="Fraction" onClick={()=>applyMathSelection('fraction')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:15,lineHeight:1}}>x⁄y</span></AlexIconButton>
+          <AlexIconButton label="Variable" onClick={()=>applyMathSelection('variable')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18,fontStyle:'italic'}}>x</span></AlexIconButton>
+          <AlexIconButton label="Underline" onClick={underlineSelectedText} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18,textDecoration:'underline'}}>U</span></AlexIconButton>
+          <AlexIconButton label="Quote" onClick={quoteSelectedText} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:22,lineHeight:1}}>❝</span></AlexIconButton>
+          <AlexIconButton label="Table" onClick={()=>{const input=questionTextRef.current;if(!input)return;const start=input.selectionStart??0,end=input.selectionEnd??0;const selected=questionText.slice(start,end);const replacement='[TABLE]\\n'+(selected||'x | y\\n')+'\\n[/TABLE]';setQuestionText(questionText.slice(0,start)+replacement+questionText.slice(end));requestAnimationFrame(()=>input.focus())}} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontSize:17}}>▦</span></AlexIconButton>
+        </AlexBox>
+      </AlexBox>
+
+      {underlineMissing&&<AlexSurface sx={{p:1.25,border:'1px solid #FEC84B',borderRadius:2,bgcolor:'#FFFAEB'}}>
+        <AlexText sx={{fontSize:12.5,color:'#93370D'}}>Missing underline is still unresolved. PDF text re-extraction cannot reliably recover the underline stroke; select the matching source text and apply Underline before saving.</AlexText>
+      </AlexSurface>}
+
+      <AlexTextField
+        label="Question text"
+        multiline
+        minRows={8}
+        value={questionText}
+        inputRef={questionTextRef}
+        onChange={event=>setQuestionText(event.target.value)}
+      />
+
+      <AlexBox sx={{display:'flex',justifyContent:'flex-end',alignItems:'center',mt:-1,color:'#667085'}}>
+        <AlexText sx={{fontSize:12}}>LaTeX help</AlexText>
+        <AlexInfoTooltipButton
+          label="LaTeX formatting help"
+          title={<AlexBox sx={{lineHeight:1.6}}>
+            <div><b>LaTeX formatting</b></div>
+            <div>Variable: $x$</div><div>Power: $x^2$ or $x^&#123;2&#125;$</div>
+            <div>Square root: $\\sqrt&#123;37&#125;$</div><div>Fraction: $\\frac&#123;12&#125;&#123;35&#125;$</div>
+            <div>Quote block: \\begin&#123;quote&#125; ... \\end&#123;quote&#125;</div>
+            <div>Use the Quote tool on only the quoted passage; keep the author/source line outside the quote block.</div>
+            <div>Table: wrap rows in [TABLE] and [/TABLE], with columns separated by |.</div>
+            <div>[TABLE]<br/>x | y<br/>2 | 5<br/>[/TABLE]</div>
+          </AlexBox>}
+        />
+      </AlexBox>
+
+      <AlexAccordion
+        summary={<AlexBox>
+          <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Live preview</AlexText>
+          <AlexText sx={{fontSize:12,color:'#667085',mt:.15}}>Expand to see how formatting will appear to students.</AlexText>
+        </AlexBox>}
+      >
+        <AlexBox sx={{fontFamily:'Georgia, serif',fontSize:18,lineHeight:1.55,whiteSpace:'pre-wrap',pt:.5}}>
+          {question.subject==='english'
+            ?<ReadingQuestionLines lines={editorLines(question,questionText)} questionId={question.id}/>
+            :<StructuredQuestionLines lines={editorLines(question,questionText)}/>}
+        </AlexBox>
+      </AlexAccordion>
+
+      <AlexBox sx={{display:'grid',gap:1.25}}>
+        <AlexBox>
+          <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Source visuals</AlexText>
+          <AlexText sx={{fontSize:12,color:'#667085',mt:.2}}>Each visual has its own crop and placement. Adjust every figure or graphical answer group independently; placement is relative to the parsed text lines above.</AlexText>
+        </AlexBox>
+        {visualSpecs.map((visual,index)=><AlexSurface key={index} sx={{p:1.25,border:'1px solid #D8D2FF',borderRadius:2.5,bgcolor:'#fff'}}>
+          <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#344054',mb:.75}}>{`Visual ${index+1} · ${visual.kind==='choice-grid'?'Graphical answer choices':'Figure'}`}</AlexText>
+          <VisualCropEditor
+            question={question}
+            bytes={resolvedQuestionsPdf}
+            value={visual}
+            onChange={next=>setVisualSpecs(current=>next?current.map((item,itemIndex)=>itemIndex===index?{...next,kind:item.kind}:item):current.filter((_,itemIndex)=>itemIndex!==index))}
+            lineCount={editorLines(question,questionText).length}
+          />
+        </AlexSurface>)}
+        <AlexButton size="small" tone="secondary" onClick={()=>setVisualSpecs(current=>[...current,{afterLine:-1,crop:{x:.05,y:.05,width:.9,height:.4},exact:true,kind:'figure'}])} sx={{justifySelf:'start'}}>Add source visual</AlexButton>
+      </AlexBox>
+
+      {error&&<AlexText role="alert" sx={{fontSize:13,color:'#B42318'}}>{error}</AlexText>}
+      {message&&<AlexText role="status" sx={{fontSize:13,color:'#067647'}}>{message}</AlexText>}
+      <AlexButton disabled={saving} onClick={save} sx={{justifySelf:'start'}}>{saving?'Saving fix…':'Save shared fix'}</AlexButton>
+    </AlexBox>}
+  </AlexSurface>
+}
+
+    setError('');setMessage('');setQuestionText(questionText.slice(0,start)+replacement+questionText.slice(end))
+    requestAnimationFrame(()=>{input.focus();input.setSelectionRange(start,start+replacement.length)})
+  }
+
+  async function save(){
+    const questionLines=stripEmbeddedReadingTableLines(question.id,editorLines(question,questionText).map(normalizeMathEditorLine))
+    if(!questionLines.length){setError('Question text cannot be empty.');return}
+    if(underlineMissing){
+      setError('This report still has a missing underline. Select the source text and apply Underline before saving the repair.')
+      return
+    }
+    setSaving(true);setError('');setMessage('')
+    try{
+      await saveSharedQuestionRepair({questionId:question.id,questionLines,visualSpecs})
+      setTextOrigin('shared')
+      setMessage('Fix saved to the shared Question Bank.')
+      onSaved?.()
+    }catch(reason){
+      setError(reason instanceof Error?reason.message:'Unable to save the shared question repair.')
+    }finally{setSaving(false)}
+  }
+
+  return <AlexSurface sx={{p:{xs:2,md:2.5},border:'1px solid #D8D2FF',borderRadius:3,bgcolor:'#FCFBFF'}}>
+    <AlexText component="h2" sx={{fontSize:19,fontWeight:850,color:'#08275B'}}>Fix parsed question</AlexText>
+    <AlexText sx={{fontSize:13,color:'#667085',mt:.4,mb:1.75}}>Edit only the reconstructed question text and source visual. The explanation always stays in its original PDF format.</AlexText>
+    {loading?<AlexText sx={{color:'#667085'}}>Preparing editable content…</AlexText>:<AlexBox sx={{display:'grid',gap:1.5}}>
+      {readingTableSpec(question.id)&&<AlexSurface sx={{p:1.4,border:'1px solid #B2CCFF',borderRadius:2,bgcolor:'#F5F8FF'}}>
+        <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#1849A9'}}>Structured table preserved separately</AlexText>
+        <AlexText sx={{fontSize:12,color:'#475467',mt:.2}}>The table is not part of the editable prose. Editing and saving this text will preserve the structured table without duplicating it into the question body.</AlexText>
+      </AlexSurface>}
+
+      <AlexSurface sx={{p:1.4,border:'1px solid #B2CCFF',borderRadius:2,bgcolor:'#F5F8FF'}}>
+        <AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
+          <AlexBox>
+            <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#1849A9'}}>{textOrigin==='shared'?'Shared parsed text':'Not stored as shared parsed text yet'}</AlexText>
+            <AlexText sx={{fontSize:12,color:'#475467',mt:.2}}>{textOrigin==='shared'?'This question has a saved shared repair. You can still re-extract from the original source while the parsing issue is open.':textOrigin==='source'?'Freshly extracted from the source PDF.':textOrigin==='verified'?'Loaded from bundled verified text.':textOrigin==='browser'?'Loaded from this browser’s extracted cache.':'No parsed text is available yet.'} {textOrigin!=='shared'&&'Saving a repair will persist the edited text to the shared Question Bank.'}</AlexText>
+          </AlexBox>
+          <AlexButton size="small" tone="secondary" disabled={extracting||!resolvedQuestionsPdf} onClick={reloadFromSource}>{extracting?'Extracting…':'Re-extract from source'}</AlexButton>
+        </AlexBox>
+      </AlexSurface>
+
+      <AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
+        <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Text formatting</AlexText>
+        <AlexBox sx={{display:'flex',gap:.5,alignItems:'center',flexWrap:'wrap'}}>
+          <AlexIconButton label="Power" onClick={()=>applyMathSelection('power')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17,fontWeight:700}}>x<sup>y</sup></span></AlexIconButton>
+          <AlexIconButton label="Square root" onClick={()=>applyMathSelection('sqrt')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:20}}>√x</span></AlexIconButton>
+          <AlexIconButton label="Fraction" onClick={()=>applyMathSelection('fraction')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:15,lineHeight:1}}>x⁄y</span></AlexIconButton>
+          <AlexIconButton label="Variable" onClick={()=>applyMathSelection('variable')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18,fontStyle:'italic'}}>x</span></AlexIconButton>
+          <AlexIconButton label="Underline" onClick={underlineSelectedText} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18,textDecoration:'underline'}}>U</span></AlexIconButton>
+          <AlexIconButton label="Quote" onClick={quoteSelectedText} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:22,lineHeight:1}}>❝</span></AlexIconButton>
+          <AlexIconButton label="Table" onClick={()=>{const input=questionTextRef.current;if(!input)return;const start=input.selectionStart??0,end=input.selectionEnd??0;const selected=questionText.slice(start,end);const replacement='[TABLE]\\n'+(selected||'x | y\\n')+'\\n[/TABLE]';setQuestionText(questionText.slice(0,start)+replacement+questionText.slice(end));requestAnimationFrame(()=>input.focus())}} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontSize:17}}>▦</span></AlexIconButton>
+        </AlexBox>
+      </AlexBox>
+
+      {underlineMissing&&<AlexSurface sx={{p:1.25,border:'1px solid #FEC84B',borderRadius:2,bgcolor:'#FFFAEB'}}>
+        <AlexText sx={{fontSize:12.5,color:'#93370D'}}>Missing underline is still unresolved. PDF text re-extraction cannot reliably recover the underline stroke; select the matching source text and apply Underline before saving.</AlexText>
+      </AlexSurface>}
+
+      <AlexTextField
+        label="Question text"
+        multiline
+        minRows={8}
+        value={questionText}
+        inputRef={questionTextRef}
+        onChange={event=>setQuestionText(event.target.value)}
+      />
+
+      <AlexBox sx={{display:'flex',justifyContent:'flex-end',alignItems:'center',mt:-1,color:'#667085'}}>
+        <AlexText sx={{fontSize:12}}>LaTeX help</AlexText>
+        <AlexInfoTooltipButton
+          label="LaTeX formatting help"
+          title={<AlexBox sx={{lineHeight:1.6}}>
+            <div><b>LaTeX formatting</b></div>
+            <div>Variable: $x$</div><div>Power: $x^2$ or $x^&#123;2&#125;$</div>
+            <div>Square root: $\\sqrt&#123;37&#125;$</div><div>Fraction: $\\frac&#123;12&#125;&#123;35&#125;$</div>
+            <div>Quote block: \\begin&#123;quote&#125; ... \\end&#123;quote&#125;</div>
+            <div>Use the Quote tool on only the quoted passage; keep the author/source line outside the quote block.</div>
+            <div>Table: wrap rows in [TABLE] and [/TABLE], with columns separated by |.</div>
+            <div>[TABLE]<br/>x | y<br/>2 | 5<br/>[/TABLE]</div>
+          </AlexBox>}
+        />
+      </AlexBox>
+
+      <AlexAccordion
+        summary={<AlexBox>
+          <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Live preview</AlexText>
+          <AlexText sx={{fontSize:12,color:'#667085',mt:.15}}>Expand to see how formatting will appear to students.</AlexText>
+        </AlexBox>}
+      >
+        <AlexBox sx={{fontFamily:'Georgia, serif',fontSize:18,lineHeight:1.55,whiteSpace:'pre-wrap',pt:.5}}>
+          {question.subject==='english'
+            ?<ReadingQuestionLines lines={editorLines(question,questionText)} questionId={question.id}/>
+            :<StructuredQuestionLines lines={editorLines(question,questionText)}/>}
+        </AlexBox>
+      </AlexAccordion>
+
+      <AlexBox sx={{display:'grid',gap:1.25}}>
+        <AlexBox>
+          <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Source visuals</AlexText>
+          <AlexText sx={{fontSize:12,color:'#667085',mt:.2}}>Each visual has its own crop and placement. Adjust every figure or graphical answer group independently; placement is relative to the parsed text lines above.</AlexText>
+        </AlexBox>
+        {visualSpecs.map((visual,index)=><AlexSurface key={index} sx={{p:1.25,border:'1px solid #D8D2FF',borderRadius:2.5,bgcolor:'#fff'}}>
+          <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#344054',mb:.75}}>{`Visual ${index+1} · ${visual.kind==='choice-grid'?'Graphical answer choices':'Figure'}`}</AlexText>
+          <VisualCropEditor
+            question={question}
+            bytes={resolvedQuestionsPdf}
+            value={visual}
+            onChange={next=>setVisualSpecs(current=>next?current.map((item,itemIndex)=>itemIndex===index?{...next,kind:item.kind}:item):current.filter((_,itemIndex)=>itemIndex!==index))}
+            lineCount={editorLines(question,questionText).length}
+          />
+        </AlexSurface>)}
+        <AlexButton size="small" tone="secondary" onClick={()=>setVisualSpecs(current=>[...current,{afterLine:-1,crop:{x:.05,y:.05,width:.9,height:.4},exact:true,kind:'figure'}])} sx={{justifySelf:'start'}}>Add source visual</AlexButton>
+      </AlexBox>
+
+      {error&&<AlexText role="alert" sx={{fontSize:13,color:'#B42318'}}>{error}</AlexText>}
+      {message&&<AlexText role="status" sx={{fontSize:13,color:'#067647'}}>{message}</AlexText>}
+      <AlexButton disabled={saving} onClick={save} sx={{justifySelf:'start'}}>{saving?'Saving fix…':'Save shared fix'}</AlexButton>
+    </AlexBox>}
+  </AlexSurface>
+}
++selected+'
+    requestAnimationFrame(()=>{input.focus();input.setSelectionRange(start,start+replacement.length)})
+  }
+
+  function insertMathSnippet(snippet:string,cursorOffset?:number){
+    const input=questionTextRef.current
+    if(!input)return
+    const start=input.selectionStart??questionText.length
+    const end=input.selectionEnd??start
+    setError('');setMessage('')
+    const next=questionText.slice(0,start)+snippet+questionText.slice(end)
+    setQuestionText(next)
+    requestAnimationFrame(()=>{
+      input.focus()
+      const caret=start+(cursorOffset??snippet.length)
+      input.setSelectionRange(caret,caret)
+    })
+  }
+
+  async function save(){
+    const questionLines=stripEmbeddedReadingTableLines(question.id,editorLines(question,questionText).map(normalizeMathEditorLine))
+    if(!questionLines.length){setError('Question text cannot be empty.');return}
+    if(underlineMissing){
+      setError('This report still has a missing underline. Select the source text and apply Underline before saving the repair.')
+      return
+    }
+    setSaving(true);setError('');setMessage('')
+    try{
+      await saveSharedQuestionRepair({questionId:question.id,questionLines,visualSpecs})
+      setTextOrigin('shared')
+      setMessage('Fix saved to the shared Question Bank.')
+      onSaved?.()
+    }catch(reason){
+      setError(reason instanceof Error?reason.message:'Unable to save the shared question repair.')
+    }finally{setSaving(false)}
+  }
+
+  return <AlexSurface sx={{p:{xs:2,md:2.5},border:'1px solid #D8D2FF',borderRadius:3,bgcolor:'#FCFBFF'}}>
+    <AlexText component="h2" sx={{fontSize:19,fontWeight:850,color:'#08275B'}}>Fix parsed question</AlexText>
+    <AlexText sx={{fontSize:13,color:'#667085',mt:.4,mb:1.75}}>Edit only the reconstructed question text and source visual. The explanation always stays in its original PDF format.</AlexText>
+    {loading?<AlexText sx={{color:'#667085'}}>Preparing editable content…</AlexText>:<AlexBox sx={{display:'grid',gap:1.5}}>
+      {readingTableSpec(question.id)&&<AlexSurface sx={{p:1.4,border:'1px solid #B2CCFF',borderRadius:2,bgcolor:'#F5F8FF'}}>
+        <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#1849A9'}}>Structured table preserved separately</AlexText>
+        <AlexText sx={{fontSize:12,color:'#475467',mt:.2}}>The table is not part of the editable prose. Editing and saving this text will preserve the structured table without duplicating it into the question body.</AlexText>
+      </AlexSurface>}
+
+      <AlexSurface sx={{p:1.4,border:'1px solid #B2CCFF',borderRadius:2,bgcolor:'#F5F8FF'}}>
+        <AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
+          <AlexBox>
+            <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#1849A9'}}>{textOrigin==='shared'?'Shared parsed text':'Not stored as shared parsed text yet'}</AlexText>
+            <AlexText sx={{fontSize:12,color:'#475467',mt:.2}}>{textOrigin==='shared'?'This question has a saved shared repair. You can still re-extract from the original source while the parsing issue is open.':textOrigin==='source'?'Freshly extracted from the source PDF.':textOrigin==='verified'?'Loaded from bundled verified text.':textOrigin==='browser'?'Loaded from this browser’s extracted cache.':'No parsed text is available yet.'} {textOrigin!=='shared'&&'Saving a repair will persist the edited text to the shared Question Bank.'}</AlexText>
+          </AlexBox>
+          <AlexButton size="small" tone="secondary" disabled={extracting||!resolvedQuestionsPdf} onClick={reloadFromSource}>{extracting?'Extracting…':'Re-extract from source'}</AlexButton>
+        </AlexBox>
+      </AlexSurface>
+
+      <AlexBox sx={{display:'grid',gap:1}}>
+        <AlexTabs
+          value={editorTab}
+          options={[{value:'edit',label:'Editor'},{value:'code',label:'Code'}]}
+          onChange={setEditorTab}
+        />
+        {editorTab==='edit'&&<AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
+          <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Text formatting</AlexText>
+          <AlexBox sx={{display:'flex',gap:.5,alignItems:'center',flexWrap:'wrap'}}>
+            <AlexIconButton label="Power" onClick={()=>applyMathSelection('power')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17,fontWeight:700}}>x<sup>y</sup></span></AlexIconButton>
+            <AlexIconButton label="Subscript" onClick={()=>applyMathSelection('subscript')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17,fontWeight:700}}>x<sub>y</sub></span></AlexIconButton>
+            <AlexIconButton label="Square root" onClick={()=>applyMathSelection('sqrt')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:20}}>√x</span></AlexIconButton>
+            <AlexIconButton label="Fraction" onClick={()=>applyMathSelection('fraction')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:15,lineHeight:1}}>x⁄y</span></AlexIconButton>
+            <AlexIconButton label="Absolute value" onClick={()=>applyMathSelection('absolute')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17}}>|x|</span></AlexIconButton>
+            <AlexIconButton label="Parentheses" onClick={()=>applyMathSelection('parentheses')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17}}>(x)</span></AlexIconButton>
+            <AlexIconButton label="Variable" onClick={()=>applyMathSelection('variable')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18,fontStyle:'italic'}}>x</span></AlexIconButton>
+            <AlexIconButton label="Pi" onClick={()=>insertMathSnippet('\\pi')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:19}}>π</span></AlexIconButton>
+            <AlexIconButton label="Less than or equal" onClick={()=>insertMathSnippet('\\le')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>≤</span></AlexIconButton>
+            <AlexIconButton label="Greater than or equal" onClick={()=>insertMathSnippet('\\ge')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>≥</span></AlexIconButton>
+            <AlexIconButton label="Not equal" onClick={()=>insertMathSnippet('\\ne')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>≠</span></AlexIconButton>
+            <AlexIconButton label="Degree" onClick={()=>insertMathSnippet('^{\\circ}')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18}}>°</span></AlexIconButton>
+            <AlexIconButton label="Underline" onClick={underlineSelectedText} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18,textDecoration:'underline'}}>U</span></AlexIconButton>
+            <AlexIconButton label="Quote" onClick={quoteSelectedText} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:22,lineHeight:1}}>❝</span></AlexIconButton>
+            <AlexIconButton label="Table" onClick={()=>{const input=questionTextRef.current;if(!input)return;const start=input.selectionStart??0,end=input.selectionEnd??0;const selected=questionText.slice(start,end);const replacement='[TABLE]\\n'+(selected||'x | y\\n')+'\\n[/TABLE]';setQuestionText(questionText.slice(0,start)+replacement+questionText.slice(end));requestAnimationFrame(()=>input.focus())}} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontSize:17}}>▦</span></AlexIconButton>
+          </AlexBox>
+        </AlexBox>}
+      </AlexBox>
+
+      {underlineMissing&&      {underlineMissing&&<AlexSurface sx={{p:1.25,border:'1px solid #FEC84B',borderRadius:2,bgcolor:'#FFFAEB'}}>
+        <AlexText sx={{fontSize:12.5,color:'#93370D'}}>Missing underline is still unresolved. PDF text re-extraction cannot reliably recover the underline stroke; select the matching source text and apply Underline before saving.</AlexText>
+      </AlexSurface>}
+
+      <AlexTextField
+        label={editorTab==='code'?'LaTeX / source code':'Question text'}
+        multiline
+        minRows={editorTab==='code'?10:8}
+        value={questionText}
+        inputRef={questionTextRef}
+        onChange={event=>setQuestionText(event.target.value)}
+        helperText={editorTab==='code'?'Edit the raw stored markup directly. Changes update the preview immediately.':'Select text, then use the formatting buttons above. Changes update the preview immediately.'}
+        sx={editorTab==='code'?{'& textarea':{fontFamily:'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',fontSize:13.5,lineHeight:1.55}}:undefined}
+      />
+
+      <AlexBox sx={{display:'flex',justifyContent:'flex-end',alignItems:'center',mt:-1,color:'#667085'}}>
+        <AlexText sx={{fontSize:12}}>LaTeX help</AlexText>
+        <AlexInfoTooltipButton
+          label="LaTeX formatting help"
+          title={<AlexBox sx={{lineHeight:1.6}}>
+            <div><b>LaTeX formatting</b></div>
+            <div>Variable: $x$</div><div>Power: $x^2$ or $x^&#123;2&#125;$</div>
+            <div>Square root: $\\sqrt&#123;37&#125;$</div><div>Fraction: $\\frac&#123;12&#125;&#123;35&#125;$</div>
+            <div>Quote block: \\begin&#123;quote&#125; ... \\end&#123;quote&#125;</div>
+            <div>Use the Quote tool on only the quoted passage; keep the author/source line outside the quote block.</div>
+            <div>Table: wrap rows in [TABLE] and [/TABLE], with columns separated by |.</div>
+            <div>[TABLE]<br/>x | y<br/>2 | 5<br/>[/TABLE]</div>
+          </AlexBox>}
+        />
+      </AlexBox>
+
+      <AlexSurface sx={{border:'1px solid #D0D5DD',borderRadius:2.5,bgcolor:'#fff',overflow:'hidden'}}>
+        <AlexBox sx={{px:1.5,py:1,bgcolor:'#F9FAFB',borderBottom:'1px solid #EAECF0'}}>
+          <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Live preview</AlexText>
+          <AlexText sx={{fontSize:12,color:'#667085',mt:.15}}>Student view updates as you type.</AlexText>
+        </AlexBox>
+        <AlexBox sx={{fontFamily:'Georgia, serif',fontSize:18,lineHeight:1.55,whiteSpace:'pre-wrap',p:2,minHeight:120}}>
+          {question.subject==='english'
+            ?<ReadingQuestionLines lines={editorLines(question,questionText)} questionId={question.id}/>
+            :<StructuredQuestionLines lines={editorLines(question,questionText)}/>}
+        </AlexBox>
+      </AlexSurface>
+
+      <AlexBox sx={{display:'grid',gap:1.25}}>
+        <AlexBox>
+          <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Source visuals</AlexText>
+          <AlexText sx={{fontSize:12,color:'#667085',mt:.2}}>Each visual has its own crop and placement. Adjust every figure or graphical answer group independently; placement is relative to the parsed text lines above.</AlexText>
+        </AlexBox>
+        {visualSpecs.map((visual,index)=><AlexSurface key={index} sx={{p:1.25,border:'1px solid #D8D2FF',borderRadius:2.5,bgcolor:'#fff'}}>
+          <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#344054',mb:.75}}>{`Visual ${index+1} · ${visual.kind==='choice-grid'?'Graphical answer choices':'Figure'}`}</AlexText>
+          <VisualCropEditor
+            question={question}
+            bytes={resolvedQuestionsPdf}
+            value={visual}
+            onChange={next=>setVisualSpecs(current=>next?current.map((item,itemIndex)=>itemIndex===index?{...next,kind:item.kind}:item):current.filter((_,itemIndex)=>itemIndex!==index))}
+            lineCount={editorLines(question,questionText).length}
+          />
+        </AlexSurface>)}
+        <AlexButton size="small" tone="secondary" onClick={()=>setVisualSpecs(current=>[...current,{afterLine:-1,crop:{x:.05,y:.05,width:.9,height:.4},exact:true,kind:'figure'}])} sx={{justifySelf:'start'}}>Add source visual</AlexButton>
+      </AlexBox>
+
+      {error&&<AlexText role="alert" sx={{fontSize:13,color:'#B42318'}}>{error}</AlexText>}
+      {message&&<AlexText role="status" sx={{fontSize:13,color:'#067647'}}>{message}</AlexText>}
+      <AlexButton disabled={saving} onClick={save} sx={{justifySelf:'start'}}>{saving?'Saving fix…':'Save shared fix'}</AlexButton>
+    </AlexBox>}
+  </AlexSurface>
+}
++selected+'    setError('');setMessage('');setQuestionText(questionText.slice(0,start)+replacement+questionText.slice(end))
+    requestAnimationFrame(()=>{input.focus();input.setSelectionRange(start,start+replacement.length)})
+  }
+
+  async function save(){
+    const questionLines=stripEmbeddedReadingTableLines(question.id,editorLines(question,questionText).map(normalizeMathEditorLine))
+    if(!questionLines.length){setError('Question text cannot be empty.');return}
+    if(underlineMissing){
+      setError('This report still has a missing underline. Select the source text and apply Underline before saving the repair.')
+      return
+    }
+    setSaving(true);setError('');setMessage('')
+    try{
+      await saveSharedQuestionRepair({questionId:question.id,questionLines,visualSpecs})
+      setTextOrigin('shared')
+      setMessage('Fix saved to the shared Question Bank.')
+      onSaved?.()
+    }catch(reason){
+      setError(reason instanceof Error?reason.message:'Unable to save the shared question repair.')
+    }finally{setSaving(false)}
+  }
+
+  return <AlexSurface sx={{p:{xs:2,md:2.5},border:'1px solid #D8D2FF',borderRadius:3,bgcolor:'#FCFBFF'}}>
+    <AlexText component="h2" sx={{fontSize:19,fontWeight:850,color:'#08275B'}}>Fix parsed question</AlexText>
+    <AlexText sx={{fontSize:13,color:'#667085',mt:.4,mb:1.75}}>Edit only the reconstructed question text and source visual. The explanation always stays in its original PDF format.</AlexText>
+    {loading?<AlexText sx={{color:'#667085'}}>Preparing editable content…</AlexText>:<AlexBox sx={{display:'grid',gap:1.5}}>
+      {readingTableSpec(question.id)&&<AlexSurface sx={{p:1.4,border:'1px solid #B2CCFF',borderRadius:2,bgcolor:'#F5F8FF'}}>
+        <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#1849A9'}}>Structured table preserved separately</AlexText>
+        <AlexText sx={{fontSize:12,color:'#475467',mt:.2}}>The table is not part of the editable prose. Editing and saving this text will preserve the structured table without duplicating it into the question body.</AlexText>
+      </AlexSurface>}
+
+      <AlexSurface sx={{p:1.4,border:'1px solid #B2CCFF',borderRadius:2,bgcolor:'#F5F8FF'}}>
+        <AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
+          <AlexBox>
+            <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#1849A9'}}>{textOrigin==='shared'?'Shared parsed text':'Not stored as shared parsed text yet'}</AlexText>
+            <AlexText sx={{fontSize:12,color:'#475467',mt:.2}}>{textOrigin==='shared'?'This question has a saved shared repair. You can still re-extract from the original source while the parsing issue is open.':textOrigin==='source'?'Freshly extracted from the source PDF.':textOrigin==='verified'?'Loaded from bundled verified text.':textOrigin==='browser'?'Loaded from this browser’s extracted cache.':'No parsed text is available yet.'} {textOrigin!=='shared'&&'Saving a repair will persist the edited text to the shared Question Bank.'}</AlexText>
+          </AlexBox>
+          <AlexButton size="small" tone="secondary" disabled={extracting||!resolvedQuestionsPdf} onClick={reloadFromSource}>{extracting?'Extracting…':'Re-extract from source'}</AlexButton>
+        </AlexBox>
+      </AlexSurface>
+
+      <AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
+        <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Text formatting</AlexText>
+        <AlexBox sx={{display:'flex',gap:.5,alignItems:'center',flexWrap:'wrap'}}>
+          <AlexIconButton label="Power" onClick={()=>applyMathSelection('power')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17,fontWeight:700}}>x<sup>y</sup></span></AlexIconButton>
+          <AlexIconButton label="Square root" onClick={()=>applyMathSelection('sqrt')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:20}}>√x</span></AlexIconButton>
+          <AlexIconButton label="Fraction" onClick={()=>applyMathSelection('fraction')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:15,lineHeight:1}}>x⁄y</span></AlexIconButton>
+          <AlexIconButton label="Variable" onClick={()=>applyMathSelection('variable')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18,fontStyle:'italic'}}>x</span></AlexIconButton>
+          <AlexIconButton label="Underline" onClick={underlineSelectedText} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18,textDecoration:'underline'}}>U</span></AlexIconButton>
+          <AlexIconButton label="Quote" onClick={quoteSelectedText} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:22,lineHeight:1}}>❝</span></AlexIconButton>
+          <AlexIconButton label="Table" onClick={()=>{const input=questionTextRef.current;if(!input)return;const start=input.selectionStart??0,end=input.selectionEnd??0;const selected=questionText.slice(start,end);const replacement='[TABLE]\\n'+(selected||'x | y\\n')+'\\n[/TABLE]';setQuestionText(questionText.slice(0,start)+replacement+questionText.slice(end));requestAnimationFrame(()=>input.focus())}} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontSize:17}}>▦</span></AlexIconButton>
+        </AlexBox>
+      </AlexBox>
+
+      {underlineMissing&&<AlexSurface sx={{p:1.25,border:'1px solid #FEC84B',borderRadius:2,bgcolor:'#FFFAEB'}}>
+        <AlexText sx={{fontSize:12.5,color:'#93370D'}}>Missing underline is still unresolved. PDF text re-extraction cannot reliably recover the underline stroke; select the matching source text and apply Underline before saving.</AlexText>
+      </AlexSurface>}
+
+      <AlexTextField
+        label="Question text"
+        multiline
+        minRows={8}
+        value={questionText}
+        inputRef={questionTextRef}
+        onChange={event=>setQuestionText(event.target.value)}
+      />
+
+      <AlexBox sx={{display:'flex',justifyContent:'flex-end',alignItems:'center',mt:-1,color:'#667085'}}>
+        <AlexText sx={{fontSize:12}}>LaTeX help</AlexText>
+        <AlexInfoTooltipButton
+          label="LaTeX formatting help"
+          title={<AlexBox sx={{lineHeight:1.6}}>
+            <div><b>LaTeX formatting</b></div>
+            <div>Variable: $x$</div><div>Power: $x^2$ or $x^&#123;2&#125;$</div>
+            <div>Square root: $\\sqrt&#123;37&#125;$</div><div>Fraction: $\\frac&#123;12&#125;&#123;35&#125;$</div>
+            <div>Quote block: \\begin&#123;quote&#125; ... \\end&#123;quote&#125;</div>
+            <div>Use the Quote tool on only the quoted passage; keep the author/source line outside the quote block.</div>
+            <div>Table: wrap rows in [TABLE] and [/TABLE], with columns separated by |.</div>
+            <div>[TABLE]<br/>x | y<br/>2 | 5<br/>[/TABLE]</div>
+          </AlexBox>}
+        />
+      </AlexBox>
+
+      <AlexAccordion
+        summary={<AlexBox>
+          <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Live preview</AlexText>
+          <AlexText sx={{fontSize:12,color:'#667085',mt:.15}}>Expand to see how formatting will appear to students.</AlexText>
+        </AlexBox>}
+      >
+        <AlexBox sx={{fontFamily:'Georgia, serif',fontSize:18,lineHeight:1.55,whiteSpace:'pre-wrap',pt:.5}}>
+          {question.subject==='english'
+            ?<ReadingQuestionLines lines={editorLines(question,questionText)} questionId={question.id}/>
+            :<StructuredQuestionLines lines={editorLines(question,questionText)}/>}
+        </AlexBox>
+      </AlexAccordion>
+
+      <AlexBox sx={{display:'grid',gap:1.25}}>
+        <AlexBox>
+          <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Source visuals</AlexText>
+          <AlexText sx={{fontSize:12,color:'#667085',mt:.2}}>Each visual has its own crop and placement. Adjust every figure or graphical answer group independently; placement is relative to the parsed text lines above.</AlexText>
+        </AlexBox>
+        {visualSpecs.map((visual,index)=><AlexSurface key={index} sx={{p:1.25,border:'1px solid #D8D2FF',borderRadius:2.5,bgcolor:'#fff'}}>
+          <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#344054',mb:.75}}>{`Visual ${index+1} · ${visual.kind==='choice-grid'?'Graphical answer choices':'Figure'}`}</AlexText>
+          <VisualCropEditor
+            question={question}
+            bytes={resolvedQuestionsPdf}
+            value={visual}
+            onChange={next=>setVisualSpecs(current=>next?current.map((item,itemIndex)=>itemIndex===index?{...next,kind:item.kind}:item):current.filter((_,itemIndex)=>itemIndex!==index))}
+            lineCount={editorLines(question,questionText).length}
+          />
+        </AlexSurface>)}
+        <AlexButton size="small" tone="secondary" onClick={()=>setVisualSpecs(current=>[...current,{afterLine:-1,crop:{x:.05,y:.05,width:.9,height:.4},exact:true,kind:'figure'}])} sx={{justifySelf:'start'}}>Add source visual</AlexButton>
+      </AlexBox>
+
+      {error&&<AlexText role="alert" sx={{fontSize:13,color:'#B42318'}}>{error}</AlexText>}
+      {message&&<AlexText role="status" sx={{fontSize:13,color:'#067647'}}>{message}</AlexText>}
+      <AlexButton disabled={saving} onClick={save} sx={{justifySelf:'start'}}>{saving?'Saving fix…':'Save shared fix'}</AlexButton>
+    </AlexBox>}
+  </AlexSurface>
+}
+
+    setError('');setMessage('');setQuestionText(questionText.slice(0,start)+replacement+questionText.slice(end))
+    requestAnimationFrame(()=>{input.focus();input.setSelectionRange(start,start+replacement.length)})
+  }
+
+  async function save(){
+    const questionLines=stripEmbeddedReadingTableLines(question.id,editorLines(question,questionText).map(normalizeMathEditorLine))
+    if(!questionLines.length){setError('Question text cannot be empty.');return}
+    if(underlineMissing){
+      setError('This report still has a missing underline. Select the source text and apply Underline before saving the repair.')
+      return
+    }
+    setSaving(true);setError('');setMessage('')
+    try{
+      await saveSharedQuestionRepair({questionId:question.id,questionLines,visualSpecs})
+      setTextOrigin('shared')
+      setMessage('Fix saved to the shared Question Bank.')
+      onSaved?.()
+    }catch(reason){
+      setError(reason instanceof Error?reason.message:'Unable to save the shared question repair.')
+    }finally{setSaving(false)}
+  }
+
+  return <AlexSurface sx={{p:{xs:2,md:2.5},border:'1px solid #D8D2FF',borderRadius:3,bgcolor:'#FCFBFF'}}>
+    <AlexText component="h2" sx={{fontSize:19,fontWeight:850,color:'#08275B'}}>Fix parsed question</AlexText>
+    <AlexText sx={{fontSize:13,color:'#667085',mt:.4,mb:1.75}}>Edit only the reconstructed question text and source visual. The explanation always stays in its original PDF format.</AlexText>
+    {loading?<AlexText sx={{color:'#667085'}}>Preparing editable content…</AlexText>:<AlexBox sx={{display:'grid',gap:1.5}}>
+      {readingTableSpec(question.id)&&<AlexSurface sx={{p:1.4,border:'1px solid #B2CCFF',borderRadius:2,bgcolor:'#F5F8FF'}}>
+        <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#1849A9'}}>Structured table preserved separately</AlexText>
+        <AlexText sx={{fontSize:12,color:'#475467',mt:.2}}>The table is not part of the editable prose. Editing and saving this text will preserve the structured table without duplicating it into the question body.</AlexText>
+      </AlexSurface>}
+
+      <AlexSurface sx={{p:1.4,border:'1px solid #B2CCFF',borderRadius:2,bgcolor:'#F5F8FF'}}>
+        <AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
+          <AlexBox>
+            <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#1849A9'}}>{textOrigin==='shared'?'Shared parsed text':'Not stored as shared parsed text yet'}</AlexText>
+            <AlexText sx={{fontSize:12,color:'#475467',mt:.2}}>{textOrigin==='shared'?'This question has a saved shared repair. You can still re-extract from the original source while the parsing issue is open.':textOrigin==='source'?'Freshly extracted from the source PDF.':textOrigin==='verified'?'Loaded from bundled verified text.':textOrigin==='browser'?'Loaded from this browser’s extracted cache.':'No parsed text is available yet.'} {textOrigin!=='shared'&&'Saving a repair will persist the edited text to the shared Question Bank.'}</AlexText>
+          </AlexBox>
+          <AlexButton size="small" tone="secondary" disabled={extracting||!resolvedQuestionsPdf} onClick={reloadFromSource}>{extracting?'Extracting…':'Re-extract from source'}</AlexButton>
+        </AlexBox>
+      </AlexSurface>
+
+      <AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
+        <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Text formatting</AlexText>
+        <AlexBox sx={{display:'flex',gap:.5,alignItems:'center',flexWrap:'wrap'}}>
+          <AlexIconButton label="Power" onClick={()=>applyMathSelection('power')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:17,fontWeight:700}}>x<sup>y</sup></span></AlexIconButton>
+          <AlexIconButton label="Square root" onClick={()=>applyMathSelection('sqrt')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:20}}>√x</span></AlexIconButton>
+          <AlexIconButton label="Fraction" onClick={()=>applyMathSelection('fraction')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:15,lineHeight:1}}>x⁄y</span></AlexIconButton>
+          <AlexIconButton label="Variable" onClick={()=>applyMathSelection('variable')} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18,fontStyle:'italic'}}>x</span></AlexIconButton>
+          <AlexIconButton label="Underline" onClick={underlineSelectedText} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:18,textDecoration:'underline'}}>U</span></AlexIconButton>
+          <AlexIconButton label="Quote" onClick={quoteSelectedText} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontFamily:'Georgia, serif',fontSize:22,lineHeight:1}}>❝</span></AlexIconButton>
+          <AlexIconButton label="Table" onClick={()=>{const input=questionTextRef.current;if(!input)return;const start=input.selectionStart??0,end=input.selectionEnd??0;const selected=questionText.slice(start,end);const replacement='[TABLE]\\n'+(selected||'x | y\\n')+'\\n[/TABLE]';setQuestionText(questionText.slice(0,start)+replacement+questionText.slice(end));requestAnimationFrame(()=>input.focus())}} sx={{border:'1px solid #B2CCFF',borderRadius:1,width:40,height:40}}><span style={{fontSize:17}}>▦</span></AlexIconButton>
+        </AlexBox>
+      </AlexBox>
+
+      {underlineMissing&&<AlexSurface sx={{p:1.25,border:'1px solid #FEC84B',borderRadius:2,bgcolor:'#FFFAEB'}}>
+        <AlexText sx={{fontSize:12.5,color:'#93370D'}}>Missing underline is still unresolved. PDF text re-extraction cannot reliably recover the underline stroke; select the matching source text and apply Underline before saving.</AlexText>
+      </AlexSurface>}
+
+      <AlexTextField
+        label="Question text"
+        multiline
+        minRows={8}
+        value={questionText}
+        inputRef={questionTextRef}
+        onChange={event=>setQuestionText(event.target.value)}
+      />
+
+      <AlexBox sx={{display:'flex',justifyContent:'flex-end',alignItems:'center',mt:-1,color:'#667085'}}>
+        <AlexText sx={{fontSize:12}}>LaTeX help</AlexText>
+        <AlexInfoTooltipButton
+          label="LaTeX formatting help"
+          title={<AlexBox sx={{lineHeight:1.6}}>
+            <div><b>LaTeX formatting</b></div>
+            <div>Variable: $x$</div><div>Power: $x^2$ or $x^&#123;2&#125;$</div>
+            <div>Square root: $\\sqrt&#123;37&#125;$</div><div>Fraction: $\\frac&#123;12&#125;&#123;35&#125;$</div>
+            <div>Quote block: \\begin&#123;quote&#125; ... \\end&#123;quote&#125;</div>
+            <div>Use the Quote tool on only the quoted passage; keep the author/source line outside the quote block.</div>
+            <div>Table: wrap rows in [TABLE] and [/TABLE], with columns separated by |.</div>
+            <div>[TABLE]<br/>x | y<br/>2 | 5<br/>[/TABLE]</div>
+          </AlexBox>}
+        />
+      </AlexBox>
+
+      <AlexAccordion
+        summary={<AlexBox>
+          <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Live preview</AlexText>
+          <AlexText sx={{fontSize:12,color:'#667085',mt:.15}}>Expand to see how formatting will appear to students.</AlexText>
+        </AlexBox>}
+      >
+        <AlexBox sx={{fontFamily:'Georgia, serif',fontSize:18,lineHeight:1.55,whiteSpace:'pre-wrap',pt:.5}}>
+          {question.subject==='english'
+            ?<ReadingQuestionLines lines={editorLines(question,questionText)} questionId={question.id}/>
+            :<StructuredQuestionLines lines={editorLines(question,questionText)}/>}
+        </AlexBox>
+      </AlexAccordion>
+
+      <AlexBox sx={{display:'grid',gap:1.25}}>
+        <AlexBox>
+          <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Source visuals</AlexText>
+          <AlexText sx={{fontSize:12,color:'#667085',mt:.2}}>Each visual has its own crop and placement. Adjust every figure or graphical answer group independently; placement is relative to the parsed text lines above.</AlexText>
+        </AlexBox>
+        {visualSpecs.map((visual,index)=><AlexSurface key={index} sx={{p:1.25,border:'1px solid #D8D2FF',borderRadius:2.5,bgcolor:'#fff'}}>
+          <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#344054',mb:.75}}>{`Visual ${index+1} · ${visual.kind==='choice-grid'?'Graphical answer choices':'Figure'}`}</AlexText>
+          <VisualCropEditor
+            question={question}
+            bytes={resolvedQuestionsPdf}
+            value={visual}
+            onChange={next=>setVisualSpecs(current=>next?current.map((item,itemIndex)=>itemIndex===index?{...next,kind:item.kind}:item):current.filter((_,itemIndex)=>itemIndex!==index))}
+            lineCount={editorLines(question,questionText).length}
+          />
+        </AlexSurface>)}
+        <AlexButton size="small" tone="secondary" onClick={()=>setVisualSpecs(current=>[...current,{afterLine:-1,crop:{x:.05,y:.05,width:.9,height:.4},exact:true,kind:'figure'}])} sx={{justifySelf:'start'}}>Add source visual</AlexButton>
+      </AlexBox>
+
+      {error&&<AlexText role="alert" sx={{fontSize:13,color:'#B42318'}}>{error}</AlexText>}
+      {message&&<AlexText role="status" sx={{fontSize:13,color:'#067647'}}>{message}</AlexText>}
+      <AlexButton disabled={saving} onClick={save} sx={{justifySelf:'start'}}>{saving?'Saving fix…':'Save shared fix'}</AlexButton>
+    </AlexBox>}
+  </AlexSurface>
+}
+
+    setError('');setMessage('');setQuestionText(questionText.slice(0,start)+replacement+questionText.slice(end))
     requestAnimationFrame(()=>{input.focus();input.setSelectionRange(start,start+replacement.length)})
   }
 
