@@ -84,39 +84,39 @@ const LiveLatexEditor=forwardRef<LiveLatexEditorHandle,Props>(function LiveLatex
       }
       const tags:Record<string,string>={underline:'u',bold:'strong',italic:'em',strike:'s'}
       const tag=tags[kind]
-      const fragment=range.extractContents()
-      if(tag){
-        const existing=fragment.querySelector?.(tag)
-        const wrappingAncestor=(()=>{
-          let node:Node|null=range.startContainer
-          while(node&&node!==root){
-            if(node instanceof HTMLElement&&node.tagName.toLowerCase()===tag)return node
-            node=node.parentNode
-          }
-          return null
-        })()
-        const container=document.createElement('span')
-        container.appendChild(fragment)
-        const clean=(node:HTMLElement)=>{
-          for(const nested of Array.from(node.querySelectorAll(tag))){
-            nested.replaceWith(...Array.from(nested.childNodes))
-          }
+      const tags:Record<string,string>={underline:'u',bold:'strong',italic:'em',strike:'s'}
+      const tag=tags[kind]
+      const enclosing=(()=>{
+        let node:Node|null=range.commonAncestorContainer
+        while(node&&node!==root){
+          if(node instanceof HTMLElement&&node.tagName.toLowerCase()===tag)return node
+          node=node.parentNode
         }
-        if(existing||wrappingAncestor||activeFormats.current.includes(tag)){
-          clean(container)
-          range.insertNode(container)
-          if(wrappingAncestor&&wrappingAncestor.textContent===selected){
-            wrappingAncestor.replaceWith(...Array.from(wrappingAncestor.childNodes))
+        return null
+      })()
+      if(tag&&enclosing&&enclosing.textContent===selected){
+        enclosing.replaceWith(...Array.from(enclosing.childNodes))
+      }else{
+        const fragment=range.extractContents()
+        if(tag){
+          const container=document.createElement('span')
+          container.appendChild(fragment)
+          const existing=container.querySelectorAll(tag)
+          if(existing.length){
+            for(const nested of Array.from(existing)){
+              nested.replaceWith(...Array.from(nested.childNodes))
+            }
+            range.insertNode(container)
+          }else{
+            const element=document.createElement(tag)
+            element.append(...Array.from(container.childNodes))
+            range.insertNode(element)
           }
         }else{
-          const element=document.createElement(tag)
-          element.append(...Array.from(container.childNodes))
+          const element=document.createElement('span')
+          element.textContent=wrappers[kind]?.(selected)??selected+(snippets[kind]??'')
           range.insertNode(element)
         }
-      }else{
-        const element=document.createElement('span')
-        element.textContent=wrappers[kind]?.(selected)??selected+(snippets[kind]??'')
-        range.insertNode(element)
       }
       const next=serialize(root)
       root.innerHTML=render(next)
