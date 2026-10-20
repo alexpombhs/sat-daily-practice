@@ -5,7 +5,7 @@ import AlexInfoTooltipButton from '../atoms/AlexInfoTooltipButton'
 import AlexIconButton from '../atoms/AlexIconButton'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexTabs from '../atoms/AlexTabs'
-import {ImagePlus,Save} from 'lucide-react'
+import {ImagePlus,Save,RefreshCw} from 'lucide-react'
 import AlexText from '../atoms/AlexText'
 import AlexTextField from '../atoms/AlexTextField'
 import LiveLatexEditor,{type LiveLatexEditorHandle} from './LiveLatexEditor'
@@ -301,7 +301,6 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
             <AlexText sx={{fontSize:12.5,fontWeight:800,color:'#1849A9'}}>{textOrigin==='shared'?'Shared parsed text':'Not stored as shared parsed text yet'}</AlexText>
             <AlexText sx={{fontSize:12,color:'#475467',mt:.2}}>{textOrigin==='shared'?'This question has a saved shared repair. You can still re-extract from the original source while the parsing issue is open.':textOrigin==='source'?'Freshly extracted from the source PDF.':textOrigin==='verified'?'Loaded from bundled verified text.':textOrigin==='browser'?'Loaded from this browser’s extracted cache.':'No parsed text is available yet.'} {textOrigin!=='shared'&&'Saving a repair will persist the edited text to the shared Question Bank.'}</AlexText>
           </AlexBox>
-          <AlexButton size="small" tone="secondary" disabled={extracting||!resolvedQuestionsPdf} onClick={reloadFromSource}>{extracting?'Extracting…':'Re-extract from source'}</AlexButton>
         </AlexBox>
       </AlexSurface>
 
@@ -313,6 +312,7 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
             onChange={setEditorTab}
           />
           <AlexBox sx={{display:'flex',alignItems:'center',gap:.5,ml:'auto'}}>
+            <AlexIconButton label={extracting?'Re-extracting from source…':'Re-extract from source'} disabled={extracting||!resolvedQuestionsPdf} onClick={reloadFromSource} sx={{border:'1px solid #B2CCFF',borderRadius:1.5,width:40,height:40}}><RefreshCw size={20}/></AlexIconButton>
             <AlexIconButton label="Add source visual" onClick={()=>setVisualSpecs(current=>[...current,{afterLine:-1,crop:{x:.05,y:.05,width:.9,height:.4},exact:true,kind:'figure'}])} sx={{justifySelf:'start',border:'1px solid #B2CCFF',borderRadius:1.5,width:40,height:40}}><ImagePlus size={20}/></AlexIconButton>
             <AlexIconButton label={saving?'Saving edits…':'Save edits'} disabled={saving} onClick={save} sx={{justifySelf:'start',border:'1px solid #B2CCFF',borderRadius:1.5,width:40,height:40}}><Save size={20}/></AlexIconButton>
           </AlexBox>
