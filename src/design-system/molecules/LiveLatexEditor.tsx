@@ -82,6 +82,23 @@ const LiveLatexEditor=forwardRef<LiveLatexEditorHandle,Props>(function LiveLatex
       const snippets:Record<string,string>={
         pi:'\\pi',le:'\\le',ge:'\\ge',ne:'\\ne',degree:'^{\\circ}'
       }
+      if(kind==='bullets'){
+        const fragment=range.extractContents()
+        const content=fragment.textContent??selected
+        const bulletLines=content.split('\n').map(line=>line.trim()?line.replace(/^•\s*/,'• '):line)
+        const allBulleted=content.split('\n').filter(line=>line.trim()).every(line=>/^•\s/.test(line))
+        const replacement=allBulleted
+          ?content.split('\n').map(line=>line.replace(/^•\s*/, '')).join('\n')
+          :bulletLines.join('\n')
+        range.insertNode(document.createTextNode(replacement))
+        const next=serialize(root)
+        root.innerHTML=render(next)
+        last.current=next
+        onChange(next)
+        selectedRange.current=null
+        root.focus()
+        return true
+      }
       const tags:Record<string,string>={underline:'u',bold:'strong',italic:'em',strike:'s'}
       const tag=tags[kind]
       const enclosing=(()=>{
