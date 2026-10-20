@@ -5,7 +5,7 @@ import AlexInfoTooltipButton from '../atoms/AlexInfoTooltipButton'
 import AlexIconButton from '../atoms/AlexIconButton'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexTabs from '../atoms/AlexTabs'
-import {ImagePlus,Save,RefreshCw} from 'lucide-react'
+import {ImagePlus,Save,RefreshCw,List} from 'lucide-react'
 import AlexText from '../atoms/AlexText'
 import AlexTextField from '../atoms/AlexTextField'
 import LiveLatexEditor,{type LiveLatexEditorHandle} from './LiveLatexEditor'
@@ -244,6 +244,20 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
       }else{setError('');setMessage('')}
       return
     }
+    if(kind==='bullets'){
+      const input=questionTextRef.current
+      if(!input)return
+      const start=input.selectionStart??0,end=input.selectionEnd??start
+      const lineStart=questionText.lastIndexOf('\n',Math.max(0,start-1))+1
+      const nextBreak=questionText.indexOf('\n',end)
+      const lineEnd=nextBreak<0?questionText.length:nextBreak
+      const lines=questionText.slice(lineStart,lineEnd).split('\n')
+      const allBulleted=lines.filter(line=>line.trim()).every(line=>/^•\s/.test(line))
+      const updated=lines.map(line=>!line.trim()?line:allBulleted?line.replace(/^•\s/,''):'• '+line.replace(/^•\s*/,'')).join('\n')
+      setQuestionText(questionText.slice(0,lineStart)+updated+questionText.slice(lineEnd))
+      requestAnimationFrame(()=>{input.focus();input.setSelectionRange(lineStart,lineStart+updated.length)})
+      return
+    }
     if(['underline','bold','italic','strike'].includes(kind)){
       toggleCodeStyle(kind as 'underline'|'bold'|'italic'|'strike');return
     }
@@ -325,6 +339,7 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
               <AlexIconButton label="Italic" onClick={()=>formatInActiveEditor('italic')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30,bgcolor:activeStyles.includes('em')?'#DDD6FE':'#fff'}}><em>I</em></AlexIconButton>
               <AlexIconButton label="Strikethrough" onClick={()=>formatInActiveEditor('strike')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30,bgcolor:activeStyles.includes('s')?'#DDD6FE':'#fff'}}><s>S</s></AlexIconButton>
             <AlexIconButton label="Underline" onClick={()=>formatInActiveEditor('underline')} sx={{border:'1px solid transparent',bgcolor:activeStyles.includes('u')?'#DDD6FE':'#fff',borderRadius:1,width:30,height:30}}><span style={{fontFamily:'Georgia, serif',fontSize:16,textDecoration:'underline'}}>U</span></AlexIconButton>
+              <AlexIconButton label="Bulleted list" onClick={()=>formatInActiveEditor('bullets')} sx={{border:'1px solid transparent',borderRadius:1,width:30,height:30}}><List size={17}/></AlexIconButton>
             </AlexBox>
           </AlexBox>
           <AlexBox sx={{display:'flex',flexDirection:'column',gap:.45,p:.85,border:'1px solid #D8DFEC',borderRadius:2,bgcolor:'#fff',minWidth:0}}>
