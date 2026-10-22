@@ -37,6 +37,7 @@ import type {VocabularyPreferences} from '../../types'
 
 type Props={signedIn:boolean;onSignIn:()=>void;preferences?:VocabularyPreferences;onPreferencesChange:(preferences:VocabularyPreferences)=>void}
 const uid=()=>crypto.randomUUID()
+const localDayKey=(date:Date)=>`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`
 
 export default function VocabularyPractice({signedIn,onSignIn,preferences,onPreferencesChange}:Props){
   const settings:VocabularyPracticeSettings={...DEFAULT_VOCABULARY_SETTINGS,...(preferences??{})}
@@ -85,6 +86,11 @@ export default function VocabularyPractice({signedIn,onSignIn,preferences,onPref
   const practicedCount=practicedIds.size
   const accuracy=scopeAttempts.length?Math.round(scopeAttempts.filter(attempt=>attempt.correct).length/scopeAttempts.length*100):null
   const masteredCount=masteredEntries.length
+  const todayKey=localDayKey(new Date())
+  // Use completed attempts (including retries), matching the dashboard's vocabulary daily goal.
+  const wordsDoneToday=attempts.filter(attempt=>localDayKey(new Date(attempt.createdAt))===todayKey).length
+  const dailyGoal=Math.max(1,settings.dailyGoal)
+  const dailyProgress=Math.min(100,Math.round(wordsDoneToday/dailyGoal*100))
   const newCount=scopeBank.filter(entry=>!practicedIds.has(entry.id)&&!masteredIds.has(entry.id)).length
 
   const answered=Boolean(selected)
@@ -189,6 +195,20 @@ export default function VocabularyPractice({signedIn,onSignIn,preferences,onPref
 
   return <PageShell>
     <PageHeading subtitle="Continuous vocabulary practice based on your selected word pool."/>
+    <AlexSurface sx={{mt:1.5,p:{xs:1.5,sm:1.75},border:'1px solid #D8E3F1',borderRadius:2,bgcolor:'#F8FAFD'}}>
+      <AlexBox sx={{display:'flex',alignItems:'baseline',justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
+        <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Words practiced today</AlexText>
+        <AlexText role="status" aria-live="polite" sx={{fontSize:18,fontWeight:850,color:'#08275B',fontVariantNumeric:'tabular-nums'}}>
+          {loadingHistory?'Loading…':`${wordsDoneToday}/${dailyGoal}`}
+        </AlexText>
+      </AlexBox>
+      <AlexBox role="progressbar" aria-label="Today's vocabulary goal" aria-valuenow={Math.min(wordsDoneToday,dailyGoal)} aria-valuemin={0} aria-valuemax={dailyGoal} sx={{height:7,bgcolor:'#E4E7EC',borderRadius:999,mt:1,overflow:'hidden'}}>
+        <AlexBox sx={{height:'100%',width:`${loadingHistory?0:dailyProgress}%`,bgcolor:wordsDoneToday>=dailyGoal?'#067647':'#6558F5',borderRadius:999,transition:'width 180ms ease'}}/>
+      </AlexBox>
+      <AlexText sx={{fontSize:12,color:'#667085',mt:.65}}>
+        {loadingHistory?'Loading saved vocabulary history…':wordsDoneToday>=dailyGoal?'Daily goal reached! Keep practicing if you like.':'Updates as you answer each word, including retries.'}
+      </AlexText>
+    </AlexSurface>
 
     <AlexAccordion
       sx={{mt:1.75}}
