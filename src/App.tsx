@@ -65,6 +65,7 @@ export default function App(){
   const settingsSaveQueue=useRef<Promise<unknown>>(Promise.resolve())
   const[questionBank,setQuestionBank]=useState<PracticeQuestion[]>([])
   const[questionBankLoadState,setQuestionBankLoadState]=useState<'loading'|'ready'|'error'>('loading')
+  const questionBankRetryUser=useRef<string|null>(null)
   const[resumableSession,setResumableSession]=useState<ActivePracticeSession|null>(null)
   const[pendingPractice,setPendingPractice]=useState<{mode:SubjectMode;test:Settings['practiceTest'];questionIds?:string[];groups?:Array<{concept:string;questionIds:string[]}>;sessionOverrides?:Partial<Settings>}|null>(null)
   const[sessionSettings,setSessionSettings]=useState<Settings|null>(null)
@@ -114,6 +115,31 @@ export default function App(){
       setApdf(answersPdf)
     })
   },[])
+  // The first question-bank request may fail before the browser restores auth.
+  // Retry it once after sign-in so the dashboard becomes available without a reload.
+  useEffect(()=>{
+    if(!authUser){
+      questionBankRetryUser.current=null
+      return
+    }
+    if(questionBankLoadState!=='error'||questionBankRetryUser.current===authUser.id)return
+    const retryUserId=authUser.id
+    questionBankRetryUser.current=retryUserId
+    setQuestionBankLoadState('loading')
+    void loadSharedQuestionBank()
+      .then(shared=>{
+        if(questionBankRetryUser.current!==retryUserId)return
+        if(!shared?.length)throw new Error('Canonical Question Bank returned no questions.')
+        setQuestionBank(shared)
+        setQuestionBankLoadState('ready')
+      })
+      .catch(error=>{
+        if(questionBankRetryUser.current!==retryUserId)return
+        console.error('Canonical Question Bank retry after sign-in failed.',error)
+        setQuestionBankLoadState('error')
+      })
+  },[authUser?.id,questionBankLoadState])
+
   useEffect(()=>{
     let cancelled=false
     void getCurrentAuthUser()
