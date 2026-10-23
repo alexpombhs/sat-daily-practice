@@ -123,22 +123,21 @@ export default function App(){
       return
     }
     if(questionBankLoadState!=='error'||questionBankRetryUser.current===authUser.id)return
-    questionBankRetryUser.current=authUser.id
-    let cancelled=false
+    const retryUserId=authUser.id
+    questionBankRetryUser.current=retryUserId
     setQuestionBankLoadState('loading')
     void loadSharedQuestionBank()
       .then(shared=>{
-        if(cancelled)return
+        if(questionBankRetryUser.current!==retryUserId)return
         if(!shared?.length)throw new Error('Canonical Question Bank returned no questions.')
         setQuestionBank(shared)
         setQuestionBankLoadState('ready')
       })
       .catch(error=>{
-        if(cancelled)return
+        if(questionBankRetryUser.current!==retryUserId)return
         console.error('Canonical Question Bank retry after sign-in failed.',error)
         setQuestionBankLoadState('error')
       })
-    return()=>{cancelled=true}
   },[authUser?.id,questionBankLoadState])
 
   useEffect(()=>{
