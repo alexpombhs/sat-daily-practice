@@ -23,12 +23,14 @@ type Props={
   onSettings:()=>void
   children:ReactNode
   contentBackground?:string
+  showSignInPrompt?:boolean
 }
 
-export default function AppSidebarLayout({active,collapsed,onToggleCollapsed,onDashboard,onPractice,onVocabulary,onQuestionBank,onParsingIssues,onPerformance,onResources,onSettings,children,contentBackground='#FFFFFF'}:Props){
+export default function AppSidebarLayout({active,collapsed,onToggleCollapsed,onDashboard,onPractice,onVocabulary,onQuestionBank,onParsingIssues,onPerformance,onResources,onSettings,children,contentBackground='#FFFFFF',showSignInPrompt=true}:Props){
   const[user,setUser]=useState<AuthUser|null>(null)
   const[profile,setProfile]=useState<UserProfile|null>(null)
   const[mobileMenuOpen,setMobileMenuOpen]=useState(false)
+  const[authReady,setAuthReady]=useState(false)
 
   useEffect(()=>{
     let cancelled=false
@@ -36,6 +38,7 @@ export default function AppSidebarLayout({active,collapsed,onToggleCollapsed,onD
       const resolved=nextUser===undefined?await getCurrentAuthUser():nextUser
       if(cancelled)return
       setUser(resolved)
+      setAuthReady(true)
       if(!resolved){setProfile(null);return}
       try{
         const nextProfile=await loadUserProfile()
@@ -46,7 +49,18 @@ export default function AppSidebarLayout({active,collapsed,onToggleCollapsed,onD
       }
     }
     void refresh()
-    const unsubscribe=subscribeToAuth(nextUser=>void refresh(nextUser))
+    const unsubscribe=subscribeToAuth(nextUser=>{
+      if(cancelled)return
+      // Supabase auth callbacks must stay synchronous. Starting another auth/database
+      // request from inside onAuthStateChange can stall sign-in on mobile browsers.
+      setUser(nextUser)
+      setAuthReady(true)
+      if(!nextUser){
+        setProfile(null)
+        return
+      }
+      window.setTimeout(()=>{if(!cancelled)void refresh(nextUser)},0)
+    })
     const handleProfileUpdated=()=>void refresh()
     window.addEventListener('sat-profile-updated',handleProfileUpdated)
     return()=>{cancelled=true;unsubscribe();window.removeEventListener('sat-profile-updated',handleProfileUpdated)}
@@ -214,6 +228,13 @@ export default function AppSidebarLayout({active,collapsed,onToggleCollapsed,onD
         overflowX:'clip',
         '& > *':{width:'100%',maxWidth:'100%',minWidth:0,overflowX:'hidden'},
       }}>
+        {showSignInPrompt&&authReady&&!user&&<AlexBox
+          role="status"
+          sx={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:1.5,py:1.25,px:1.75,mt:1.5,mb:1.5,border:'1px solid #D9E7F8',borderRadius:2,bgcolor:'#F0F6FF'}}
+        >
+          <AlexText sx={{fontSize:14,fontWeight:650,color:'#08275B'}}>Sign in to save your SAT practice progress and sync it across devices.</AlexText>
+          <AlexButtonBase onClick={onSettings} aria-label="Sign in to your account" sx={{px:2,py:1,minHeight:42,borderRadius:2,bgcolor:'#08275B',color:'#fff',fontWeight:800,'&:hover':{bgcolor:'#12477F'}}}>Sign in</AlexButtonBase>
+        </AlexBox>}
         {children}
       </AlexBox>
     </AlexBox>
