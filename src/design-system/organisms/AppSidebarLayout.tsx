@@ -46,7 +46,17 @@ export default function AppSidebarLayout({active,collapsed,onToggleCollapsed,onD
       }
     }
     void refresh()
-    const unsubscribe=subscribeToAuth(nextUser=>void refresh(nextUser))
+    const unsubscribe=subscribeToAuth(nextUser=>{
+      if(cancelled)return
+      // Supabase auth callbacks must stay synchronous. Starting another auth/database
+      // request from inside onAuthStateChange can stall sign-in on mobile browsers.
+      setUser(nextUser)
+      if(!nextUser){
+        setProfile(null)
+        return
+      }
+      window.setTimeout(()=>{if(!cancelled)void refresh(nextUser)},0)
+    })
     const handleProfileUpdated=()=>void refresh()
     window.addEventListener('sat-profile-updated',handleProfileUpdated)
     return()=>{cancelled=true;unsubscribe();window.removeEventListener('sat-profile-updated',handleProfileUpdated)}
