@@ -580,6 +580,7 @@ export default function App(){
       onResources={()=>navigateTo('sources')}
       onSettings={()=>navigateTo('account')}
       contentBackground={background}
+      showSignInPrompt={view!=='account'}
     >{content}</AppSidebarLayout>
       <AlexConfirmDialog
         open={confirmEndSession}
