@@ -126,7 +126,9 @@ function estimateOverallScore(sections:SectionPerformance[],observedAttempts:Att
 // Historical retries of each selected question still inform its probability.
 export const SCORE_RECENT_DISTINCT_QUESTIONS=120
 const SUBJECT_SAMPLE_SIZE:Record<Subject,number>={english:60,math:60}
-const OLDER_ATTEMPT_WEIGHT=.6
+// Each independent session provides new evidence. Re-answering the same
+// question repeatedly within one session must not manufacture mastery.
+const RECOVERY_DECAY=.55
 const PRIOR_STRENGTH=.1
 
 function recentQuestionSample(historyAttempts:Attempt[],questionBank:PracticeQuestion[]){
@@ -155,13 +157,23 @@ function buildScoreSections(historyAttempts:Attempt[],questionBank:PracticeQuest
   return (['english','math'] as Subject[]).map(subject=>{
     const selected=sample.filter(a=>a.subject===subject)
     const rates=selected.map(({questionId})=>{
-      const rows=[...(grouped.get(questionId)??[])].sort((a,b)=>a.createdAt.localeCompare(b.createdAt))
-      // Recency-weighted probability with a small neutral prior. Earlier
-      // failures matter less after additional correct reviews.
+      const rows=[...(grouped.get(questionId)??[])].sort((a,b)=>a.createdAt.localeCompare(b.createdAt)||a.id.localeCompare(b.id))
+      // Count only the first response per session. This is the best available
+      // indication of independent recall; later same-session retries can
+      // reflect remembering the answer rather than learning the concept.
+      const sessions=new Set<string>()
+      const independent=rows.filter(a=>{
+        if(sessions.has(a.sessionId))return false
+        sessions.add(a.sessionId)
+        return true
+      })
+      // Exponentially discount older evidence. A failure followed by several
+      // independent successful reviews improves the estimate, but one
+      // immediate correction does not instantly erase the original miss.
       let weight=0,weightedCorrect=0
-      rows.forEach(a=>{
-        weight=weight*OLDER_ATTEMPT_WEIGHT+1
-        weightedCorrect=weightedCorrect*OLDER_ATTEMPT_WEIGHT+(a.correct?1:0)
+      independent.forEach(a=>{
+        weight=weight*RECOVERY_DECAY+1
+        weightedCorrect=weightedCorrect*RECOVERY_DECAY+(a.correct?1:0)
       })
       return (PRIOR_STRENGTH*.5+weightedCorrect)/(PRIOR_STRENGTH+weight)
     })
