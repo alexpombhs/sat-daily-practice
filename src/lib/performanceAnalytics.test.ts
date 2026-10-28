@@ -66,6 +66,34 @@ describe('recent 120-question score prediction',()=>{
     expect(result.scoreTrend.at(-1)!.score).toBeGreaterThanOrEqual(result.scoreTrend[0].score)
   })
 
+  it('does not inflate score from repeated attempts inside one session',()=>{
+    const first=sample.map((q,i)=>makeAttempt(q,'s1',i,false))
+    const sameSessionRetries=sample.map((q,i)=>({
+      ...makeAttempt(q,'s1',i+10,true),
+      createdAt:`2026-09-01T12:01:${String(i).padStart(2,'0')}.000Z`,
+    }))
+    const baseline=analytics(first,[session('s1',first)]).latestScoreEstimate
+    const withRetries=analytics([...first,...sameSessionRetries],[session('s1',[...first,...sameSessionRetries])])
+    expect(withRetries.latestScoreEstimate).toBe(baseline)
+  })
+
+  it('rewards independent recovery over multiple sessions without granting instant mastery',()=>{
+    const misses=sample.map((q,i)=>makeAttempt(q,'s1',i,false))
+    const oneRecovery=sample.map((q,i)=>makeAttempt(q,'s2',i,true))
+    const twoRecoveries=sample.map((q,i)=>makeAttempt(q,'s3',i,true))
+    const threeRecoveries=sample.map((q,i)=>({
+      ...makeAttempt(q,'s3',i,true),
+      sessionId:'s4',id:`s4-${i}`,createdAt:`2026-09-04T12:00:${String(i).padStart(2,'0')}.000Z`,
+    }))
+    const score=(groups:Attempt[][])=>analytics(groups.flat(),groups.map((rows,i)=>session(`s${i+1}`,rows))).latestScoreEstimate!
+    const afterOne=score([misses,oneRecovery])
+    const afterTwo=score([misses,oneRecovery,twoRecoveries])
+    const afterThree=score([misses,oneRecovery,twoRecoveries,threeRecoveries])
+    expect(afterOne).toBeLessThan(1600)
+    expect(afterTwo).toBeGreaterThan(afterOne)
+    expect(afterThree).toBeGreaterThanOrEqual(afterTwo)
+  })
+
   it('retains question-level success summaries',()=>{
     const rows=[makeAttempt(sample[0],'s1',0,false),makeAttempt(sample[0],'s2',0,true)]
     const result=analytics(rows,[session('s1',[rows[0]]),session('s2',[rows[1]])])
