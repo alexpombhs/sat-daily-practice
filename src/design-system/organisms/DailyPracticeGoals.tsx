@@ -131,7 +131,7 @@ export default function DailyPracticeGoals({
           <GoalRow complete={vocabularyDone>=vocabularyDailyTarget} label="Practice vocabulary" value={`${vocabularyDone}/${vocabularyDailyTarget} words`}>
             <AlexIconButton label="Practice vocabulary now" onClick={onPracticeVocabulary} sx={actionSx}><Languages size={15}/></AlexIconButton>
           </GoalRow>
-          <GoalRow complete={failedQuestionCount===0||reviewedFailedCount>0} label="Review failed questions" value={failedQuestionCount===0?'Clear':`${Math.min(reviewedFailedCount,1)}/1`}>
+          <GoalRow complete={failedQuestionCount===0||reviewedFailedCount>0} label="Review failed questions" value={failedQuestionCount===0?'Clear':`${reviewedFailedCount}/${failedQuestionCount}`}>
             <AlexIconButton label={failedQuestionCount===0?'No failed questions to review':'Review failed questions now'} disabled={failedQuestionCount===0} onClick={onReviewFailed} sx={actionSx}><RotateCcw size={15}/></AlexIconButton>
           </GoalRow>
         </AlexBox>}
