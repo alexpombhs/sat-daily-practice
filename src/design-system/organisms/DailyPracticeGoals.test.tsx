@@ -133,4 +133,27 @@ describe('DailyPracticeGoals weekly streak',()=>{
     expect(screen.getByText('· 28/20')).toBeInTheDocument()
   })
 
+  it('shows seven distinct failed questions reviewed out of thirteen in the pool',()=>{
+    const yesterday='2026-09-28T16:00:00.000Z'
+    const today='2026-09-29T16:00:00.000Z'
+    const failures=Array.from({length:13},(_,index)=>({
+      ...attempt(`failure-${index}`,`failed-${index}`,yesterday),correct:false,
+    }))
+    const reviews=Array.from({length:7},(_,index)=>attempt(`review-${index}`,`failed-${index}`,today))
+    render(<DailyPracticeGoals
+      attempts={[...failures,...reviews]}
+      sessions={[]}
+      dailyQuestions={20}
+      failedQuestionCount={13}
+      signedIn={false}
+      onPracticeMath={()=>{}}
+      onPracticeReadingWriting={()=>{}}
+      onPracticeVocabulary={()=>{}}
+      onReviewFailed={()=>{}}
+    />)
+    expect(screen.getByText('· 7/13')).toBeInTheDocument()
+    expect(screen.queryByText('· 1/1')).not.toBeInTheDocument()
+  })
+
+
 })
