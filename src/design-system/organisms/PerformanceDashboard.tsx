@@ -16,6 +16,7 @@ import DashboardCard from '../molecules/DashboardCard'
 import PerformanceChartCard from '../molecules/PerformanceChartCard'
 import QuestionStatsTable from '../molecules/QuestionStatsTable'
 import QuestionCoverageCharts from './QuestionCoverageCharts'
+import PsatCategoryTrends from './PsatCategoryTrends'
 import PsatResultsPanel from './PsatResultsPanel'
 import type {PsatDomainId,PsatScoreReport} from '../../lib/psatDomains'
 import type {Attempt,PracticeQuestion} from '../../types'
@@ -190,7 +191,7 @@ export default function PerformanceDashboard({
 
   return <AlexBox>
     {!compact&&<AlexBox>
-      <AlexText sx={{fontSize:12,textTransform:'uppercase',letterSpacing:'.12em',fontWeight:800,color:'#6558F5'}}>Performance</AlexText>
+      <AlexText sx={{fontSize:12,textTransform:'uppercase',letterSpacing:'.12em',fontWeight:600,color:'#6558F5'}}>Performance</AlexText>
       <AlexText component="h1" sx={{fontFamily:'Georgia, "Times New Roman", serif',fontSize:{xs:32,md:46},lineHeight:1.08,my:1,color:'#08275B'}}>Your practice trends</AlexText>
       <AlexText sx={{color:'#667085',maxWidth:720}}>See your current performance first, then expand deeper breakdowns only when you need them.</AlexText>
     </AlexBox>}
@@ -240,14 +241,14 @@ export default function PerformanceDashboard({
           {label:'Avg. time',value:hasHistory?formatMs(summary.averageMs):'—'},
           {label:'Questions answered',value:String(answeredInRange)},
         ].map(item=><AlexBox key={item.label} sx={{p:{xs:1.5,sm:1.75},border:'1px solid #EAECF0',borderRadius:2,bgcolor:'#FAFBFC',minWidth:0}}>
-          <AlexText sx={{fontSize:12,color:'#667085',fontWeight:750}}>{item.label}</AlexText>
-          <AlexText sx={{mt:.35,fontSize:{xs:22,sm:26},lineHeight:1.1,fontWeight:850,color:'#08275B'}}>{item.value}</AlexText>
+          <AlexText sx={{fontSize:12,color:'#667085',fontWeight:600}}>{item.label}</AlexText>
+          <AlexText sx={{mt:.35,fontSize:{xs:22,sm:26},lineHeight:1.1,fontWeight:600,color:'#08275B'}}>{item.value}</AlexText>
         </AlexBox>)}
       </AlexBox>
       {hasHistory&&summary.recommendation&&<AlexBox sx={{mt:1.5,p:{xs:1.5,sm:1.75},borderRadius:2,bgcolor:'#F7F5FF',border:'1px solid #E5E0FF',display:'grid',gridTemplateColumns:{xs:'1fr',sm:'auto minmax(0,1fr)'},gap:{xs:.4,sm:1.25},alignItems:'baseline'}}>
-        <AlexText sx={{fontSize:12,fontWeight:850,textTransform:'uppercase',letterSpacing:'.06em',color:'#6558F5'}}>Focus</AlexText>
+        <AlexText sx={{fontSize:12,fontWeight:600,textTransform:'uppercase',letterSpacing:'.06em',color:'#6558F5'}}>Focus</AlexText>
         <AlexBox sx={{minWidth:0}}>
-          <AlexText sx={{fontSize:14,fontWeight:800,color:'#08275B'}}>{summary.recommendation.label}</AlexText>
+          <AlexText sx={{fontSize:14,fontWeight:600,color:'#08275B'}}>{summary.recommendation.label}</AlexText>
           <AlexText sx={{fontSize:12.5,color:'#667085',mt:.25,lineHeight:1.45}}>{summary.recommendation.reason}</AlexText>
         </AlexBox>
       </AlexBox>}
@@ -256,9 +257,10 @@ export default function PerformanceDashboard({
     {onPsatResultsChange&&<AlexBox sx={{mt:2.5}}><PsatResultsPanel results={psatResults} onChange={onPsatResultsChange} onPracticeDomain={onPracticeDomain}/></AlexBox>}
 
     <AlexBox sx={{mt:2.5}}><QuestionCoverageCharts questions={coverageQuestions} attempts={coverageAttempts} recoveryCorrectAnswers={recoveryCorrectAnswers}/></AlexBox>
+    <AlexBox sx={{mt:2.5}}><PsatCategoryTrends questions={coverageQuestions} attempts={coverageAttempts} sessions={sessionHistory}/></AlexBox>
 
     {!hasHistory&&!compact&&<AlexSurface sx={{p:3.5,mt:2.5,border:'1px solid #E6E2DB'}}>
-      <AlexText component="h2" sx={{fontSize:22,fontWeight:750,mb:1}}>No sessions in this range</AlexText>
+      <AlexText component="h2" sx={{fontSize:22,fontWeight:600,mb:1}}>No sessions in this range</AlexText>
       <AlexText sx={{color:'#667085'}}>Choose a wider time frame or complete another practice session.</AlexText>
     </AlexSurface>}
 
@@ -308,7 +310,7 @@ export default function PerformanceDashboard({
       {scoreBasis&&<AlexAccordion
         sx={{mt:1.5}}
         summary={<AlexBox>
-          <AlexText sx={{fontSize:14,fontWeight:850,color:'#08275B'}}>Score prediction details</AlexText>
+          <AlexText sx={{fontSize:14,fontWeight:600,color:'#08275B'}}>Score prediction details</AlexText>
           <AlexText sx={{fontSize:12.5,color:'#667085',mt:.15}}>How the rolling practice estimate is calculated</AlexText>
         </AlexBox>}
       >
@@ -320,7 +322,7 @@ export default function PerformanceDashboard({
       <AlexAccordion
         sx={{mt:1.5}}
         summary={<AlexBox>
-          <AlexText sx={{fontSize:14,fontWeight:850,color:'#08275B'}}>Section breakdown</AlexText>
+          <AlexText sx={{fontSize:14,fontWeight:600,color:'#08275B'}}>Section breakdown</AlexText>
           <AlexText sx={{fontSize:12.5,color:'#667085',mt:.15}}>Accuracy and response time by section</AlexText>
         </AlexBox>}
       >
@@ -369,7 +371,7 @@ export default function PerformanceDashboard({
       <AlexAccordion
         sx={{mt:1.5}}
         summary={<AlexBox>
-          <AlexText sx={{fontSize:14,fontWeight:850,color:'#08275B'}}>Question details</AlexText>
+          <AlexText sx={{fontSize:14,fontWeight:600,color:'#08275B'}}>Question details</AlexText>
           <AlexText sx={{fontSize:12.5,color:'#667085',mt:.15}}>Weakest questions, time per question, and detailed history</AlexText>
         </AlexBox>}
       >
@@ -420,7 +422,7 @@ export default function PerformanceDashboard({
       {sessionHistory.length>0&&<AlexAccordion
         sx={{mt:1.5}}
         summary={<AlexBox>
-          <AlexText sx={{fontSize:14,fontWeight:850,color:'#08275B'}}>Session review</AlexText>
+          <AlexText sx={{fontSize:14,fontWeight:600,color:'#08275B'}}>Session review</AlexText>
           <AlexText sx={{fontSize:12.5,color:'#667085',mt:.15}}>Open any completed session in read-only review</AlexText>
         </AlexBox>}
       >
