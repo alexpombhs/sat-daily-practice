@@ -5,6 +5,7 @@ import {describe,expect,it,vi} from 'vitest'
 import {rankReviewConcepts} from '../../lib/conceptReview'
 import type {Attempt,PracticeQuestion} from '../../types'
 import PreTestConceptReview from './PreTestConceptReview'
+import type {PreTestCoachingSnapshot} from '../../lib/preTestCoaching'
 
 const math:PracticeQuestion={
   id:'algebra-1',subject:'math',psatDomain:'advanced-math',difficulty:'advanced',
@@ -18,7 +19,7 @@ const attempt:Attempt={
   elapsedMs:45000,createdAt:'2026-11-01T12:00:00Z',
 }
 
-function setup(){
+function setup(coaching:PreTestCoachingSnapshot|null=null){
   const onPractice=vi.fn()
   const onReview=vi.fn()
   const onStartGroup=vi.fn()
@@ -27,7 +28,7 @@ function setup(){
     concepts={rankReviewConcepts(questions,[attempt])}
     questions={questions}
     attempts={[attempt]}
-    coaching={null}
+    coaching={coaching}
     psatResults={[]}
     onPractice={onPractice}
     onReview={onReview}
@@ -43,7 +44,7 @@ describe('Pre-test Review navigation',()=>{
     expect(screen.getByRole('navigation',{name:'Pre-test review groups'})).toBeTruthy()
     expect(screen.getAllByText('Quadratics & Nonlinear Functions').length).toBeGreaterThan(0)
     expect(screen.getByRole('heading',{name:'Individual questions'})).toBeTruthy()
-    await user.click(screen.getByRole('button',{name:'SAT categories'}))
+    await user.click(screen.getByRole('switch',{name:'SAT categories'}))
     const nav=screen.getByRole('navigation',{name:'Pre-test review groups'})
     expect(within(nav).getByText('Advanced Math')).toBeTruthy()
     expect(screen.getByRole('heading',{name:'Individual questions'})).toBeTruthy()
@@ -56,7 +57,7 @@ describe('Pre-test Review navigation',()=>{
     const {onStartGroup}=setup()
     await user.click(screen.getByRole('button',{name:'Start session'}))
     expect(onStartGroup).toHaveBeenLastCalledWith('math','Quadratics & Nonlinear Functions',[unseen.id,math.id])
-    await user.click(screen.getByRole('button',{name:'SAT categories'}))
+    await user.click(screen.getByRole('switch',{name:'SAT categories'}))
     await user.click(within(screen.getByRole('navigation',{name:'Pre-test review groups'})).getByText('Advanced Math'))
     await user.click(screen.getByRole('button',{name:'Start session'}))
     expect(onStartGroup).toHaveBeenLastCalledWith('math','Advanced Math',[unseen.id,math.id])
@@ -69,7 +70,7 @@ describe('Pre-test Review navigation',()=>{
     expect(questionList).toBeTruthy()
     await user.click(screen.getByRole('button',{name:'Review'}))
     expect(onReview).toHaveBeenCalledWith(math)
-    await user.click(screen.getByRole('button',{name:'SAT categories'}))
+    await user.click(screen.getByRole('switch',{name:'SAT categories'}))
     await user.click(within(screen.getByRole('navigation',{name:'Pre-test review groups'})).getByText('Advanced Math'))
     await user.click(screen.getByRole('tab',{name:'Unseen'}))
     expect(screen.getByText(/Not attempted/)).toBeTruthy()
@@ -81,11 +82,46 @@ describe('Pre-test Review navigation',()=>{
     const user=userEvent.setup()
     setup()
     await user.click(screen.getByRole('tab',{name:'Reading & Writing'}))
-    await user.click(screen.getByRole('button',{name:'SAT categories'}))
+    await user.click(screen.getByRole('switch',{name:'SAT categories'}))
     const nav=screen.getByRole('navigation',{name:'Pre-test review groups'})
     expect(within(nav).getByText('Craft and Structure')).toBeTruthy()
     expect(within(nav).queryByText('Advanced Math')).toBeNull()
     await user.click(screen.getByRole('button',{name:'Concepts'}))
     expect(screen.getByRole('tab',{name:'Reading & Writing','selected':true})).toBeTruthy()
   })
+  it('shows individually reviewed strategies in both views while keeping real examples in a closed drawer',async()=>{
+    const user=userEvent.setup()
+    const insight={
+      summary:'The first answer missed the exact relationship in the question.',
+      strength:'Other recent questions are improving.',
+      focus:[{
+        title:'Check the requested condition',
+        observation:'The tempting answer used an incomplete condition.',
+        strategy:'Underline the target and verify the final expression against the question.',
+        examples:[{questionId:math.id,note:'The original choice did not meet the requested condition.'}],
+      }],
+    }
+    const coaching:PreTestCoachingSnapshot={
+      reviewedAt:'2026-11-06T12:00:00Z',basedOnAttemptAt:'2026-11-01T12:00:00Z',
+      analysis:{schemaVersion:2,authoring:'Reviewed first attempts',headline:'Target hard problems',
+        domains:{'advanced-math':insight},concepts:{'Quadratics & Nonlinear Functions':insight}},
+    }
+    const {onReview}=setup(coaching)
+    expect(screen.queryByRole('heading',{name:'Examples from your answers'})).toBeNull()
+    await user.click(screen.getByText('Personalized coaching'))
+    expect(screen.getByText('Check the requested condition')).toBeTruthy()
+    expect(screen.queryByRole('heading',{name:'Examples from your answers'})).toBeNull()
+    await user.click(screen.getByRole('button',{name:'Review 1 example'}))
+    expect(screen.getByRole('heading',{name:'Examples from your answers'})).toBeTruthy()
+    await user.click(screen.getByRole('button',{name:'Review question and explanation'}))
+    expect(onReview).toHaveBeenCalledWith(math)
+    await user.click(screen.getByRole('switch',{name:'SAT categories'}))
+    await user.click(within(screen.getByRole('navigation',{name:'Pre-test review groups'})).getByText('Advanced Math'))
+    expect(screen.queryByRole('heading',{name:'Examples from your answers'})).toBeNull()
+    await user.click(screen.getByText('Personalized coaching'))
+    expect(screen.getByText('Check the requested condition')).toBeTruthy()
+    await user.click(screen.getByRole('button',{name:'Review 1 example'}))
+    expect(screen.getByRole('heading',{name:'Examples from your answers'})).toBeTruthy()
+  })
+
 })
