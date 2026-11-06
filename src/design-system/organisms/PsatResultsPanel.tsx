@@ -66,7 +66,7 @@ export default function PsatResultsPanel({results,onChange,onPracticeDomain}:Pro
         const total=reportTotal(report)
         return <AlexAccordion key={index} defaultExpanded={results.length===1} summary={<AlexBox sx={{width:'100%',display:'flex',alignItems:'center',gap:1,justifyContent:'space-between',pr:1,flexWrap:'wrap'}}>
           <AlexText sx={{color:'#08275B',fontWeight:850}}>PSAT {report.year}</AlexText>
-          <AlexText sx={{fontWeight:800,color:'#08275B'}}>{total??'—'} <AlexText inline sx={{fontSize:12,color:'#667085'}}> / 1520</AlexText></AlexText>
+          <AlexText sx={{fontWeight:800,color:'#08275B'}}>{total??'—'} <AlexText component="span" sx={{fontSize:12,color:'#667085'}}> / 1520</AlexText></AlexText>
           <AlexText sx={{fontSize:12.5,color:'#667085'}}>R&W {report.readingWriting??'—'} · Math {report.math??'—'}{report.percentile!==null?` · ${report.percentile}th percentile`:''}</AlexText>
         </AlexBox>}>
           <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'repeat(2,minmax(0,1fr))',md:'repeat(4,minmax(0,1fr))'},gap:1,mb:1.5}}>
