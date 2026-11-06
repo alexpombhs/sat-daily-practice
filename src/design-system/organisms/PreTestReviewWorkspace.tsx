@@ -40,16 +40,27 @@ export default function PreTestReviewWorkspace({groups,selectedId,onSelect,title
         const selected=group.id===selectedId
         return <AlexButtonBase key={group.id} onClick={()=>{onSelect(group.id);setFilter('all');setShowAll(false)}}
           aria-current={selected?'true':undefined}
-          sx={{display:'grid',gridTemplateRows:'minmax(48px,1fr) auto',rowGap:.7,
-            p:1.15,textAlign:'left',width:'100%',minWidth:0,minHeight:116,borderRadius:1.5,
+          sx={{
+            display:'block',width:'100%',minWidth:0,height:'auto',
+            p:.85,textAlign:'left',justifyContent:'flex-start',alignItems:'stretch',
+            borderRadius:1.25,
             border:selected?'1px solid #96B6DC':'1px solid transparent',
             borderBottom:selected?'1px solid #96B6DC':'1px solid #EEF0F3',
-            bgcolor:selected?'#EFF6FF':'#fff','&:hover':{bgcolor:'#F5F9FE'}}}>
-          <AlexBox sx={{display:'grid',gridTemplateColumns:'minmax(0,1fr) 52px',alignItems:'start',columnGap:1,minWidth:0}}>
-            <AlexText sx={{fontWeight:600,fontSize:13,lineHeight:1.4,color:selected?'#0D477F':'#344054',overflowWrap:'break-word'}}>{group.label}</AlexText>
-            <AlexText sx={{fontWeight:600,fontSize:12.5,lineHeight:1.4,color:'#48647E',whiteSpace:'nowrap',textAlign:'right',fontVariantNumeric:'tabular-nums'}}>{group.score}</AlexText>
+            bgcolor:selected?'#EFF6FF':'#fff',
+            '&:hover':{bgcolor:'#F5F9FE'},
+            '&:focus-visible':{outline:'2px solid #7799CE',outlineOffset:1},
+          }}>
+          <AlexBox sx={{width:'100%',minWidth:0,display:'grid',gridTemplateColumns:'minmax(0,1fr) 44px',columnGap:1,alignItems:'start',justifyItems:'stretch'}}>
+            <AlexText sx={{display:'block',width:'100%',minWidth:0,fontWeight:600,fontSize:12.5,lineHeight:1.35,textAlign:'left',color:selected?'#0D477F':'#344054'}}>
+              {group.label}
+            </AlexText>
+            <AlexText sx={{display:'block',fontWeight:600,fontSize:12,lineHeight:1.35,color:'#48647E',whiteSpace:'nowrap',textAlign:'right',fontVariantNumeric:'tabular-nums'}}>
+              {group.score}
+            </AlexText>
           </AlexBox>
-          <AlexText sx={{fontSize:11.25,lineHeight:1.4,color:'#667085',minHeight:30}}>{group.detail}</AlexText>
+          <AlexText sx={{display:'block',width:'100%',minWidth:0,fontSize:11,lineHeight:1.3,color:'#667085',mt:.35,textAlign:'left'}}>
+            {group.detail}
+          </AlexText>
         </AlexButtonBase>
       })}
     </AlexBox>
