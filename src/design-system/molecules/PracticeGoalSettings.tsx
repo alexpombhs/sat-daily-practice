@@ -42,7 +42,7 @@ export default function PracticeGoalSettings({settings,onChange}:Props){
 
     <AlexAccordion
       summary={<AlexBox>
-        <AlexText sx={{fontSize:14,fontWeight:800,color:'#08275B'}}>Advanced planning settings</AlexText>
+        <AlexText sx={{fontSize:14,fontWeight:600,color:'#08275B'}}>Advanced planning settings</AlexText>
         <AlexText sx={{fontSize:12.5,color:'#667085',mt:.15}}>Optional controls for coverage and pace estimates</AlexText>
       </AlexBox>}
     >

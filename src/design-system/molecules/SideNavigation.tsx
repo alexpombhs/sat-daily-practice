@@ -55,7 +55,7 @@ function NavItem({item,collapsed}:{item:Item;collapsed:boolean}){
       }}
     >
       {item.icon??defaultIcon(item.label)}
-      {!collapsed&&<AlexText component="span" sx={{fontSize:14,fontWeight:650}}>{item.label}</AlexText>}
+      {!collapsed&&<AlexText component="span" sx={{fontSize:14,fontWeight:600}}>{item.label}</AlexText>}
     </AlexButtonBase>
   )
   return collapsed?<AlexTooltip title={item.label} placement="right">{button}</AlexTooltip>:button
@@ -95,10 +95,10 @@ export default function SideNavigation({brand='SAT',primary,secondary=[],footerL
       <AlexButtonBase
         onClick={primary[0]?.onClick}
         aria-label={brand}
-        sx={{justifyContent:effectiveCollapsed?'center':'flex-start',gap:1.1,color:'#fff',fontWeight:850,px:effectiveCollapsed?.8:1.2,py:1.1,borderRadius:1.5,flex:1,minWidth:0}}
+        sx={{justifyContent:effectiveCollapsed?'center':'flex-start',gap:1.1,color:'#fff',fontWeight:600,px:effectiveCollapsed?.8:1.2,py:1.1,borderRadius:1.5,flex:1,minWidth:0}}
       >
         <Sparkles size={18} color="#C9FF98"/>
-        {!effectiveCollapsed&&<AlexText component="span" sx={{fontWeight:850}}>{brand}</AlexText>}
+        {!effectiveCollapsed&&<AlexText component="span" sx={{fontWeight:600}}>{brand}</AlexText>}
       </AlexButtonBase>
 
       {variant==='desktop'&&onToggleCollapsed&&<AlexTooltip title={effectiveCollapsed?'Expand menu':'Collapse menu'} placement="right">
@@ -140,9 +140,9 @@ export default function SideNavigation({brand='SAT',primary,secondary=[],footerL
             color:'#fff',
           }}
         >
-          {signedIn?<AlexBox sx={{width:32,height:32,borderRadius:'50%',bgcolor:'#BDF3B0',display:'grid',placeItems:'center',color:'#08275B',fontWeight:850,flex:'0 0 auto'}}>{footerLabel.slice(0,1).toUpperCase()}</AlexBox>:<AlexBox sx={{width:32,height:32,borderRadius:'50%',bgcolor:'#12477F',display:'grid',placeItems:'center',color:'#fff',flex:'0 0 auto'}}><LogIn size={17}/></AlexBox>}
+          {signedIn?<AlexBox sx={{width:32,height:32,borderRadius:'50%',bgcolor:'#BDF3B0',display:'grid',placeItems:'center',color:'#08275B',fontWeight:600,flex:'0 0 auto'}}>{footerLabel.slice(0,1).toUpperCase()}</AlexBox>:<AlexBox sx={{width:32,height:32,borderRadius:'50%',bgcolor:'#12477F',display:'grid',placeItems:'center',color:'#fff',flex:'0 0 auto'}}><LogIn size={17}/></AlexBox>}
           {!effectiveCollapsed&&<AlexBox sx={{minWidth:0,flex:1,textAlign:'left'}}>
-            <AlexText sx={{fontSize:13.5,fontWeight:700,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{signedIn?footerLabel:'Sign in'}</AlexText>
+            <AlexText sx={{fontSize:13.5,fontWeight:600,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{signedIn?footerLabel:'Sign in'}</AlexText>
             {signedIn&&footerDetail&&<AlexText sx={{fontSize:10.5,color:'#C9D7EA',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{footerDetail}</AlexText>}
           </AlexBox>}
           {!effectiveCollapsed&&signedIn&&<Settings size={17}/>}

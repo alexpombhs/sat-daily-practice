@@ -29,6 +29,7 @@ import {availablePracticeTests,moduleLabel,practiceTestLabel} from './lib/questi
 import {buildPracticePlanRecommendation,examTargetsFromSettings} from './lib/practicePlan'
 import {rankReviewConcepts} from './lib/conceptReview'
 import {buildNationalMeritOutlook} from './lib/nationalMeritOutlook'
+import {domainForId,type PsatDomainId} from './lib/psatDomains'
 import {failedQuestionIds} from './lib/questionMastery'
 import {estimateSectionPracticeScore} from './lib/performanceAnalytics'
 import {loadSharedQuestionBank} from './lib/sharedQuestionBank'
@@ -807,6 +808,9 @@ export default function App(){
     onCustomEndDateChange={setPerformanceCustomEnd}
     sessionHistory={completedSessionHistory}
     onReviewSession={reviewPastSession}
+    psatResults={settings.psatResults??[]}
+    onPsatResultsChange={psatResults=>setSettings(previous=>({...previous,psatResults}))}
+    onPracticeDomain={(domain:PsatDomainId)=>void beginPractice(domainForId(domain).subject,'all',undefined,undefined,false,{psatDomain:domain,failedOnly:false,failedEverOnly:false})}
   /></main>)
 
   if(view==='vocabulary')return withSidebar('vocabulary',<VocabularyPractice
@@ -843,10 +847,12 @@ export default function App(){
         projectedSelectionIndex={nationalMeritOutlook?.projectedSelectionIndex??null}
         estimateConfidence={performance.scoreEstimateConfidence}
         targetScore={practiceRecommendation.targetScore}
-        previousExam={examTargetsFromSettings(settings)
-          .filter(exam=>exam.readingWritingScore!==undefined&&exam.mathScore!==undefined&&exam.date<new Date().toLocaleDateString('en-CA'))
-          .sort((a,b)=>b.date.localeCompare(a.date))
-          .map(exam=>({label:exam.label,year:exam.date.slice(0,4),total:exam.readingWritingScore!+exam.mathScore!}))[0]??null}
+        previousExam={[
+          ...examTargetsFromSettings(settings)
+            .filter(exam=>exam.readingWritingScore!==undefined&&exam.mathScore!==undefined&&exam.date<new Date().toLocaleDateString('en-CA'))
+            .map(exam=>({label:exam.label,year:exam.date.slice(0,4),total:exam.readingWritingScore!+exam.mathScore!})),
+          ...(settings.psatResults??[]).filter(report=>report.readingWriting!==null&&report.math!==null).map(report=>({label:'PSAT',year:String(report.year),total:report.readingWriting!+report.math!})),
+        ].sort((a,b)=>b.year.localeCompare(a.year))[0]??null}
         daysRemaining={practiceRecommendation.daysRemaining}
         activeExamLabel={practiceRecommendation.activeExamLabel}
         isExamDay={practiceRecommendation.isExamDay}
@@ -896,8 +902,8 @@ export default function App(){
               examLabel={practiceRecommendation.activeExamLabel}
               signedIn={Boolean(authUser)}
               vocabularyDailyTarget={settings.vocabulary?.dailyGoal??20}
-              onPracticeMath={()=>void beginPractice('math',settings.practiceTest??'all',undefined,undefined,false,{failedOnly:true,failedEverOnly:false})}
-              onPracticeReadingWriting={()=>void beginPractice('english',settings.practiceTest??'all',undefined,undefined,false,{failedOnly:true,failedEverOnly:false})}
+              onPracticeMath={()=>void beginPractice('math',settings.practiceTest??'all',undefined,undefined,false,{psatDomain:'all',failedOnly:true,failedEverOnly:false})}
+              onPracticeReadingWriting={()=>void beginPractice('english',settings.practiceTest??'all',undefined,undefined,false,{psatDomain:'all',failedOnly:true,failedEverOnly:false})}
               onPracticeVocabulary={()=>navigateTo('vocabulary')}
               onReviewFailed={startFailedReview}
             />

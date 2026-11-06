@@ -5,10 +5,11 @@ import AlexDropdown from '../atoms/AlexDropdown'
 import SectionPanel from '../molecules/SectionPanel'
 import {buildQuestionMastery} from '../../lib/questionMastery'
 import {reviewConceptGroup} from '../../lib/conceptReview'
+import {PSAT_DOMAINS,questionPsatDomain} from '../../lib/psatDomains'
 import {practiceTestLabel} from '../../lib/questionBank'
 import type {Attempt,PracticeQuestion} from '../../types'
 
-export type Breakdown='status'|'difficulty'|'subject'|'concept'
+export type Breakdown='status'|'difficulty'|'subject'|'concept'|'psat-domain'
 export type CoverageSlice={label:string;count:number;color:string}
 export type CoverageGroup={id:string;label:string;total:number;practiced:number;slices:CoverageSlice[]}
 
@@ -21,6 +22,7 @@ const DESCRIPTION:Record<Breakdown,string>={
   difficulty:'Distribution by Easy, Medium, and Advanced. Questions without an assigned level appear as Unrated.',
   subject:'How questions are divided between Math and Reading & Writing.',
   concept:'Related question concepts are grouped into broader SAT skills. Each question counts once; questions without concept tags appear as Untagged.',
+  'psat-domain':'Distribution by the eight SAT content areas for every practice test.',
 }
 
 function labelFor(question:PracticeQuestion,breakdown:Breakdown,mastery:ReturnType<typeof buildQuestionMastery>):string{
@@ -34,6 +36,7 @@ function labelFor(question:PracticeQuestion,breakdown:Breakdown,mastery:ReturnTy
     return question.difficulty==='easy'?'Easy':question.difficulty==='medium'?'Medium':question.difficulty==='advanced'?'Advanced':'Unrated'
   }
   if(breakdown==='subject')return question.subject==='math'?'Math':'Reading & Writing'
+  if(breakdown==='psat-domain')return PSAT_DOMAINS.find(domain=>domain.id===questionPsatDomain(question))?.label??'Not categorized'
   return question.concepts?.some(tag=>tag.trim())?reviewConceptGroup(question.concepts,question.subject):'Untagged'
 }
 
@@ -44,12 +47,14 @@ export function buildCoverageGroups(questions:PracticeQuestion[],attempts:Attemp
   const preferred=breakdown==='status'?['Successful','Reviewed','Failed','New']
     :breakdown==='difficulty'?['Easy','Medium','Advanced','Unrated']
     :breakdown==='subject'?['Math','Reading & Writing']
+    :breakdown==='psat-domain'?[...PSAT_DOMAINS.map(domain=>domain.label),'Not categorized']
     :allLabels.filter(label=>label!=='Untagged').concat(allLabels.includes('Untagged')?['Untagged']:[])
   const labels=preferred.filter(label=>allLabels.includes(label))
   const colorFor=(label:string,index:number)=>{
     if(breakdown==='status')return STATUS_COLORS[label as keyof typeof STATUS_COLORS]
     if(breakdown==='difficulty')return DIFFICULTY_COLORS[label as keyof typeof DIFFICULTY_COLORS]
     if(breakdown==='subject')return SUBJECT_COLORS[label as keyof typeof SUBJECT_COLORS]
+    if(breakdown==='psat-domain')return label==='Not categorized'?'#DDE3EB':palette[PSAT_DOMAINS.findIndex(d=>d.label===label)%palette.length]
     return label==='Untagged'?'#DDE3EB':palette[index%palette.length]
   }
   const make=(id:string,label:string,items:PracticeQuestion[]):CoverageGroup=>{
@@ -80,10 +85,10 @@ function CoverageDonut({group,large=false}:{group:CoverageGroup;large?:boolean})
   })
   const background=stops.length?`conic-gradient(${stops.join(',')})`:'#DDE3EB'
   return <AlexBox sx={{border:'1px solid #EAECF0',borderRadius:2,p:large?2:1,display:'flex',flexDirection:'column',alignItems:'center',gap:large?1.5:.65,minWidth:0,justifyContent:'center',height:'100%',boxSizing:'border-box'}}>
-    <AlexText sx={{fontSize:large?16:12.5,fontWeight:800,color:'#08275B',textAlign:'center'}}>{group.label}</AlexText>
+    <AlexText sx={{fontSize:large?16:12.5,fontWeight:600,color:'#08275B',textAlign:'center'}}>{group.label}</AlexText>
     <AlexBox role="img" aria-label={`${group.label}: ${group.total} questions. ${group.slices.map(slice=>`${slice.label} ${slice.count}`).join(', ')}`} sx={{width:large?220:104,height:large?220:104,borderRadius:'50%',background,display:'grid',placeItems:'center',flexShrink:0}}>
       <AlexBox sx={{width:large?148:72,height:large?148:72,borderRadius:'50%',bgcolor:'#fff',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
-        <AlexText sx={{fontSize:large?34:20,fontWeight:850,lineHeight:1,color:'#08275B'}}>{group.total}</AlexText>
+        <AlexText sx={{fontSize:large?34:20,fontWeight:600,lineHeight:1,color:'#08275B'}}>{group.total}</AlexText>
         <AlexText sx={{fontSize:large?12:10,color:'#667085'}}>questions</AlexText>
       </AlexBox>
     </AlexBox>
@@ -91,7 +96,7 @@ function CoverageDonut({group,large=false}:{group:CoverageGroup;large?:boolean})
     {large&&<AlexBox sx={{display:'grid',gridTemplateColumns:'repeat(2,minmax(0,1fr))',gap:.75,width:'100%'}}>
       {group.slices.map(slice=><AlexBox key={slice.label} title={slice.label} sx={{display:'flex',alignItems:'center',gap:.65,minWidth:0}}>
         <AlexBox sx={{width:9,height:9,borderRadius:'50%',bgcolor:slice.color,flexShrink:0}}/>
-        <AlexText sx={{fontSize:large?11.5:10,color:'#475467',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{slice.label} <b>{slice.count}</b></AlexText>
+        <AlexText sx={{fontSize:large?11.5:10,color:'#475467',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{slice.label} <AlexText component="span" sx={{fontSize:'inherit',fontWeight:600}}>{slice.count}</AlexText></AlexText>
       </AlexBox>)}
     </AlexBox>}
   </AlexBox>
@@ -107,6 +112,7 @@ export default function QuestionCoverageCharts({questions,attempts,recoveryCorre
         {value:'difficulty',label:'Difficulty level'},
         {value:'subject',label:'Subject'},
         {value:'concept',label:'Primary concept'},
+        {value:'psat-domain',label:'SAT content areas'},
       ]}/>
     </AlexBox>
     <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'minmax(0,1fr)',lg:'minmax(0,1fr) minmax(0,3fr)'},gap:1.5,alignItems:'stretch'}}>

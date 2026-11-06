@@ -24,7 +24,7 @@ export default function SessionReviewSelector({value,options,onChange,onReview}:
     }}
   >
     <AlexBox sx={{minWidth:0}}>
-      <AlexText component="div" sx={{fontWeight:800,color:'#08275B',fontSize:15}}>
+      <AlexText component="div" sx={{fontWeight:600,color:'#08275B',fontSize:15}}>
         Review a past session
       </AlexText>
       <AlexText component="div" sx={{mt:.5,color:'#667085',fontSize:13,lineHeight:1.5}}>

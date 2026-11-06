@@ -1,6 +1,7 @@
 import AlexButton from '../atoms/AlexButton'
 import AlexBox from '../atoms/AlexBox'
 import AlexDropdown from '../atoms/AlexDropdown'
+import AlexMultiDropdown from '../atoms/AlexMultiDropdown'
 import AlexNumberField from '../atoms/AlexNumberField'
 import AlexSwitch from '../atoms/AlexSwitch'
 import AlexCheckbox from '../atoms/AlexCheckbox'
@@ -12,6 +13,7 @@ import PracticeSetupSection from '../molecules/PracticeSetupSection'
 import SettingsFieldGroup from '../molecules/SettingsFieldGroup'
 import StudyPlanRecommendation from './StudyPlanRecommendation'
 import {DEFAULT_VOCABULARY_SETTINGS} from '../../lib/vocabulary'
+import {domainForId,PSAT_DOMAINS,selectedPsatCategories,type PsatSelectableCategory} from '../../lib/psatDomains'
 import type {PracticePlanRecommendation} from '../../lib/practicePlan'
 import type {PracticeTestFilter,QuestionDifficulty,Settings} from '../../types'
 
@@ -57,8 +59,24 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
     dailyGoal,
     masteredIds:vocabularySettings.masteredIds??[],
   }})
-  const startDisabled=(newOnly&&newQuestionCount===0)||(failedEverOnly&&failedQuestionCount===0)
-
+  const startDisabled=filteredDifficultyCount===0||(newOnly&&newQuestionCount===0)||(failedEverOnly&&failedQuestionCount===0)
+  const categoryOptions:Array<{value:PsatSelectableCategory;label:string}>=[
+    ...PSAT_DOMAINS.filter(domain=>settings.mode==='both'||domain.subject===settings.mode).map(domain=>({value:domain.id,label:domain.label})),
+    {value:'uncategorized',label:'Not yet categorized'},
+  ]
+  const selectedCategories=selectedPsatCategories(settings.psatDomain)
+  const visibleCategories=selectedCategories.filter(value=>value==='uncategorized'||settings.mode==='both'||domainForId(value).subject===settings.mode)
+  const selectedLabels=visibleCategories.map(value=>value==='uncategorized'?'Not yet categorized':domainForId(value).label)
+  const categoryLabel=selectedLabels.length===0?'All SAT content areas':selectedLabels.length<=2?selectedLabels.join(' + '):`${selectedLabels.length} categories`
+  const setCategories=(values:PsatSelectableCategory[])=>{
+    // Keep Subject independent: when both subjects are selected the user can
+    // combine R&W and Math categories without switching filters repeatedly.
+    onChange({...settings,psatDomain:values.length?values:'all'})
+  }
+  const setSubject=(mode:Settings['mode'])=>{
+    const allowed=selectedCategories.filter(value=>value==='uncategorized'||mode==='both'||domainForId(value).subject===mode)
+    onChange({...settings,mode,psatDomain:allowed.length?allowed:'all'})
+  }
   const subjectLabel=settings.mode==='both'?'Reading & Writing + Math':settings.mode==='english'?'Reading & Writing':'Math'
   const feedbackLabel=answerFeedbackTiming==='end'?'Answers at end':'Immediate feedback'
   const difficultyLabel=difficultyAll?'All difficulties':difficultyLevels.map(level=>level[0].toUpperCase()+level.slice(1)).join(' + ')||'No difficulty selected'
@@ -82,12 +100,12 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
       flexDirection:{xs:'column',sm:'row'},
     }}>
       <AlexBox sx={{minWidth:0}}>
-        <AlexText sx={{fontSize:12,fontWeight:850,color:'#667085',textTransform:'uppercase',letterSpacing:'.06em'}}>Ready to practice</AlexText>
-        <AlexText sx={{mt:.35,fontSize:15,fontWeight:800,color:'#08275B',lineHeight:1.4}}>
+        <AlexText sx={{fontSize:12,fontWeight:600,color:'#667085',textTransform:'uppercase',letterSpacing:'.06em'}}>Ready to practice</AlexText>
+        <AlexText sx={{mt:.35,fontSize:15,fontWeight:600,color:'#08275B',lineHeight:1.4}}>
           {settings.questionsPerSession} questions · {subjectLabel} · {selectionMode==='adaptive'?'Adaptive':'Random'}
         </AlexText>
         <AlexText sx={{mt:.25,fontSize:12.75,color:'#667085',lineHeight:1.4}}>
-          {labelForTest(practiceTest,practiceTests)} · {difficultyLabel}
+          {labelForTest(practiceTest,practiceTests)} · {categoryLabel} · {difficultyLabel}
         </AlexText>
       </AlexBox>
       <AlexButton
@@ -117,7 +135,7 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
         <PracticeSettingField
           label="Subject"
           helperText="Practice both sections or focus on one."
-          control={<AlexDropdown id="practice-subject" label="Subject" value={settings.mode} options={[{value:'both',label:'Reading & Writing + Math'},{value:'english',label:'Reading & Writing'},{value:'math',label:'Math'}]} onChange={mode=>onChange({...settings,mode})}/>}
+          control={<AlexDropdown id="practice-subject" label="Subject" value={settings.mode} options={[{value:'both',label:'Reading & Writing + Math'},{value:'english',label:'Reading & Writing'},{value:'math',label:'Math'}]} onChange={setSubject}/>}
         />
         <PracticeSettingField
           label="Questions per session"
@@ -143,9 +161,14 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
     <PracticeSetupSection
       title="Question pool"
       description="Selection strategy, difficulty, and review filters."
-      summary={`${selectionMode==='adaptive'?'Adaptive':'Random'} · ${difficultyLabel} · ${poolModeLabel}`}
+      summary={`${categoryLabel} · ${selectionMode==='adaptive'?'Adaptive':'Random'} · ${difficultyLabel} · ${poolModeLabel}`}
     >
       <SettingsFieldGroup>
+        <PracticeSettingField
+          label="SAT content areas"
+          helperText="Choose one or more SAT content areas."
+          control={<AlexMultiDropdown id="practice-psat-domain" label="SAT content areas" allLabel="All SAT content areas" value={visibleCategories} options={categoryOptions} onChange={setCategories}/>}
+        />
         <PracticeSettingField
           label="Question selection"
           helperText="Adaptive prioritizes unseen and weaker questions."
@@ -231,7 +254,7 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
       summary={recommendation.activeExamLabel
         ?`${recommendation.activeExamLabel} · Target ${recommendation.targetScore??'not set'}`
         :`Target ${recommendation.targetScore??'not set'} · No upcoming exam date`}
-      trailing={<AlexText sx={{fontSize:13.5,fontWeight:850,color:'#6558F5',whiteSpace:'nowrap'}}>{dailyLabel}</AlexText>}
+      trailing={<AlexText sx={{fontSize:13.5,fontWeight:600,color:'#6558F5',whiteSpace:'nowrap'}}>{dailyLabel}</AlexText>}
     >
       <PracticeGoalSettings settings={settings} onChange={onChange}/>
       <AlexBox sx={{mt:1.5}}>

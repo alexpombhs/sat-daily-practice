@@ -39,7 +39,7 @@ export default function StudyPlanHero({
     }}
   >
     <AlexBox sx={{position:'relative',zIndex:1,p:{xs:1.1,sm:1.3,md:1.45,lg:1.6},display:'flex',flexDirection:'column',justifyContent:'center',minWidth:0,maxWidth:'100%',overflow:'hidden'}}>
-      <AlexText sx={{fontSize:dashboardTypography.eyebrow,textTransform:'uppercase',letterSpacing:'.12em',fontWeight:850,color:'#245F9E'}}>Study plan</AlexText>
+      <AlexText sx={{fontSize:dashboardTypography.eyebrow,textTransform:'uppercase',letterSpacing:'.12em',fontWeight:600,color:'#245F9E'}}>Study plan</AlexText>
       <AlexText component="h1" sx={{fontFamily:'Georgia, "Times New Roman", serif',fontSize:dashboardTypography.heroTitle,lineHeight:1.04,letterSpacing:'-.035em',mt:1,mb:1.5,color:'#08275B'}}>
         Your SAT & PSAT practice plan
       </AlexText>
@@ -76,36 +76,36 @@ export default function StudyPlanHero({
           <AlexInfoTooltipButton
             label="Score estimate information"
             title={<>
-              <b>Score calculation</b><br/>
+              <AlexText component="span" sx={{fontWeight:600}}>Score calculation</AlexText><br/>
               {scoreBreakdown?.english&&scoreBreakdown.math?<>
                 Reading &amp; Writing: {scoreBreakdown.english.score} ({scoreBreakdown.english.probability}% estimated correct across {scoreBreakdown.english.questions} recent distinct questions).<br/>
                 Math: {scoreBreakdown.math.score} ({scoreBreakdown.math.probability}% estimated correct across {scoreBreakdown.math.questions} recent distinct questions).<br/>
                 Total: {estimatedScore}. Each question’s probability incorporates its earlier answers, weighted toward more recent attempts.<br/>
                 {scoreBreakdown.change!==null&&<>Change since previous completed session: {scoreBreakdown.change>0?'+':''}{scoreBreakdown.change} points.<br/></>}
               </>:<>Complete questions in both sections to see a breakdown.<br/></>}
-              <br/><b>Previous official exam</b><br/>
+              <br/><AlexText component="span" sx={{fontWeight:600}}>Previous official exam</AlexText><br/>
               {previousExam?`${previousExam.label} ${previousExam.year}: ${previousExam.total} (actual score). This is a historical reference, not a directly comparable SAT practice-score change.`:'No previous official score recorded.'}
-              <br/><br/><b>National Merit outlook</b><br/>
+              <br/><br/><AlexText component="span" sx={{fontWeight:600}}>National Merit outlook</AlexText><br/>
               {nationalMeritChance!==null
                 ?`${nationalMeritChance}% estimated qualifying outlook${projectedSelectionIndex!==null?` · projected Selection Index ~${projectedSelectionIndex}`:''}.`
                 :'The National Merit outlook is still calibrating.'}
               <br/><br/>
               {estimateConfidence&&<>
-                <b>Estimate confidence</b><br/>
+                <AlexText component="span" sx={{fontWeight:600}}>Estimate confidence</AlexText><br/>
                 {estimateConfidence.label} estimate confidence · {estimateConfidence.within80}% within ±80 points. This combines recent question-pool uncertainty, score stability, and SAT measurement error. It is a model estimate, not a guarantee.
               </>}
               <br/><br/>
-              <b>PSAT/NMSQT scholarship context</b><br/>
+              <AlexText component="span" sx={{fontWeight:600}}>PSAT/NMSQT scholarship context</AlexText><br/>
               National Merit uses Selection Index = (2 × Reading & Writing + Math) ÷ 10, on a 48–228 scale. The Massachusetts cutoff varies by year, and a Merit Scholarship is not determined by score alone.
             </>}
           />
         </AlexBox>}
         subtitle={<AlexBox className="study-plan-estimate-details" sx={{minWidth:0,pr:{xs:7,sm:8}}}>
           <AlexBox sx={{display:'flex',flexWrap:'wrap',alignItems:'center',columnGap:{xs:1,sm:1.5},rowGap:.25,mb:.3}}>
-            <AlexText sx={{fontSize:'inherit',fontWeight:800,color:'inherit',whiteSpace:'nowrap'}}>
+            <AlexText sx={{fontSize:'inherit',fontWeight:600,color:'inherit',whiteSpace:'nowrap'}}>
               Reading &amp; Writing {estimatedScore!==null&&scoreBreakdown?.english?scoreBreakdown.english.score:'—'}
             </AlexText>
-            <AlexText sx={{fontSize:'inherit',fontWeight:800,color:'inherit',whiteSpace:'nowrap'}}>
+            <AlexText sx={{fontSize:'inherit',fontWeight:600,color:'inherit',whiteSpace:'nowrap'}}>
               Math {estimatedScore!==null&&scoreBreakdown?.math?scoreBreakdown.math.score:'—'}
             </AlexText>
           </AlexBox>
@@ -118,7 +118,7 @@ export default function StudyPlanHero({
             display:'block',
             mt:.25,
             fontSize:'inherit',
-            fontWeight:750,
+            fontWeight:600,
             color:'inherit',
             whiteSpace:'nowrap',
           }}>

@@ -10,6 +10,7 @@ import QuestionSourceReview from '../molecules/QuestionSourceReview'
 import {availablePracticeTests,moduleLabel,practiceTestLabel,QUESTION_BANK} from '../../lib/questionBank'
 import {groupQuestionsByPracticeTest} from '../../lib/questionBankGroups'
 import {loadSharedQuestionBank,mergeQuestionBanks} from '../../lib/sharedQuestionBank'
+import {matchesPsatDomain,questionPsatDomain,PSAT_DOMAINS,type PsatDomainFilter} from '../../lib/psatDomains'
 import type {PracticeQuestion,PracticeTestFilter} from '../../types'
 
 type Props={questionsPdf:ArrayBuffer|null}
@@ -20,6 +21,7 @@ function questionLabel(question:PracticeQuestion){return `${moduleLabel(question
 export default function QuestionBankReview({questionsPdf}:Props){
   const[practiceTestFilter,setPracticeTestFilter]=useState<PracticeTestFilter>('all')
   const[moduleFilter,setModuleFilter]=useState<ModuleFilter>('all')
+  const[categoryFilter,setCategoryFilter]=useState<PsatDomainFilter>('all')
   const[search,setSearch]=useState('')
   const[bank,setBank]=useState<PracticeQuestion[]>(()=>QUESTION_BANK)
   const[selectedId,setSelectedId]=useState('')
@@ -50,10 +52,11 @@ export default function QuestionBankReview({questionsPdf}:Props){
     return bank.filter(question=>{
       if(practiceTestFilter!=='all'&&question.practiceTestId!==practiceTestFilter)return false
       if(moduleFilter!=='all'&&question.module!==moduleFilter)return false
+      if(!matchesPsatDomain(question,categoryFilter))return false
       if(!needle)return true
       return question.id.toLowerCase().includes(needle)||questionLabel(question).toLowerCase().includes(needle)||String(question.number)===needle
     })
-  },[bank,practiceTestFilter,moduleFilter,search])
+  },[bank,practiceTestFilter,moduleFilter,categoryFilter,search])
 
   const groupedPracticeTests=useMemo(()=>groupQuestionsByPracticeTest(questions),[questions])
   useEffect(()=>{
@@ -82,7 +85,8 @@ export default function QuestionBankReview({questionsPdf}:Props){
             {value:'rw2',label:'Reading & Writing · Module 2'},
           ]} onChange={value=>setModuleFilter(value as ModuleFilter)}/>
         </div>
-        <div className="question-bank-search"><Search size={17}/><AlexTextField value={search} onChange={event=>setSearch(event.target.value)} placeholder="Find question"/></div>
+        <div className="question-bank-filter-practice-test"><AlexDropdown id="question-bank-psat-domain" label="PSAT category" value={categoryFilter} options={[{value:'all',label:'All categories'},...PSAT_DOMAINS.map(domain=>({value:domain.id,label:domain.label})),{value:'uncategorized',label:'Not yet categorized'}]} onChange={setCategoryFilter}/></div>
+      <div className="question-bank-search"><Search size={17}/><AlexTextField value={search} onChange={event=>setSearch(event.target.value)} placeholder="Find question"/></div>
       </div>
     </header>
 
@@ -98,7 +102,7 @@ export default function QuestionBankReview({questionsPdf}:Props){
 
     <div className="question-bank-workspace">
       <aside className="question-bank-list" aria-label="Questions">
-        <div className="question-bank-list-header"><b>{questions.length} questions</b><span>Select a question</span></div>
+        <div className="question-bank-list-header"><AlexText component="span" sx={{fontWeight:600}}>{questions.length} questions</AlexText><span>Select a question</span></div>
         <div className="question-bank-list-scroll">
           {groupedPracticeTests.map(testGroup=><section className="question-bank-test-group" key={testGroup.practiceTestId}>
             <div className="question-bank-group-title"><span>{practiceTestLabel(testGroup.practiceTestId)}</span><small>{testGroup.items.length}</small></div>
@@ -122,8 +126,9 @@ export default function QuestionBankReview({questionsPdf}:Props){
           <div>
             <span>{practiceTestLabel(selected.practiceTestId)} · {selected.subject==='math'?'Math':'Reading & Writing'}</span>
             <AlexBox sx={{display:'flex',alignItems:'center',gap:.75}}><h2>{questionLabel(selected)}</h2><ParsingIssueReporter question={selected} context="question-bank" compact/></AlexBox>
+            <AlexText sx={{fontSize:12,color:'#475467',mt:.25}}>PSAT category: {PSAT_DOMAINS.find(domain=>domain.id===questionPsatDomain(selected))?.label??'Needs classification'}</AlexText>
             {Boolean(selected.concepts?.length)&&<AlexBox sx={{display:'flex',flexWrap:'wrap',alignItems:'baseline',columnGap:.75,rowGap:.25,mt:.5}} aria-label="Question concepts">
-              <AlexText sx={{fontSize:12,color:'#667085',fontWeight:700}}>Concepts:</AlexText>
+              <AlexText sx={{fontSize:12,color:'#667085',fontWeight:600}}>Concepts:</AlexText>
               <AlexText sx={{fontSize:12,color:'#475467'}}>{selected.concepts?.join(' · ')}</AlexText>
             </AlexBox>}
           </div>

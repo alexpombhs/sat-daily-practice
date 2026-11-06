@@ -37,7 +37,7 @@ export default function SectionPanel({eyebrow,title,description,action,children,
         {eyebrow&&<AlexText
           sx={{
             fontSize:12,
-            fontWeight:850,
+            fontWeight:600,
             textTransform:'uppercase',
             letterSpacing:'.07em',
             color:'#6558F5',
@@ -50,7 +50,7 @@ export default function SectionPanel({eyebrow,title,description,action,children,
           sx={{
             mt:eyebrow ? .5 : 0,
             fontSize:22,
-            fontWeight:800,
+            fontWeight:600,
             lineHeight:1.25,
             color:'#08275B',
           }}

@@ -15,7 +15,7 @@ function RecommendationBody({recommendation,compact}:{recommendation:PracticePla
 
   return <>
     <AlexBox sx={{display:'flex',alignItems:'baseline',gap:1.1,flexWrap:'wrap'}}>
-      <AlexText sx={{fontSize:compact?28:38,fontWeight:900,lineHeight:1,color:'#08275B'}}>
+      <AlexText sx={{fontSize:compact?28:38,fontWeight:600,lineHeight:1,color:'#08275B'}}>
         {headline}
       </AlexText>
       {!complete&&!recommendation.isExamDay&&<AlexText sx={{fontSize:13.5,color:'#667085'}}>
@@ -24,33 +24,33 @@ function RecommendationBody({recommendation,compact}:{recommendation:PracticePla
     </AlexBox>
 
     {!complete&&recommendation.isExamDay&&
-      <AlexText sx={{mt:1.15,fontSize:13.5,lineHeight:1.5,color:'#344054',fontWeight:650}}>
+      <AlexText sx={{mt:1.15,fontSize:13.5,lineHeight:1.5,color:'#344054',fontWeight:600}}>
         {recommendation.practiceGuidance}
       </AlexText>}
 
     {!complete&&!recommendation.isExamDay&&recommendation.planPhase==='final-review'&&
-      <AlexText sx={{mt:1.15,fontSize:13.5,lineHeight:1.5,color:'#344054',fontWeight:650}}>
+      <AlexText sx={{mt:1.15,fontSize:13.5,lineHeight:1.5,color:'#344054',fontWeight:600}}>
         {recommendation.practiceGuidance}
       </AlexText>}
 
     {!complete&&!recommendation.isExamDay&&recommendation.focusLabel&&recommendation.focusSharePercent&&
       <AlexText sx={{mt:1.25,fontSize:13.5,lineHeight:1.5,color:'#344054'}}>
-        Focus about {recommendation.focusSharePercent}% of targeted work on <b>{recommendation.focusLabel}</b>, and use the rest for mixed practice.
+        Focus about {recommendation.focusSharePercent}% of targeted work on <AlexText component="span" sx={{fontWeight:600}}>{recommendation.focusLabel}</AlexText>, and use the rest for mixed practice.
       </AlexText>}
 
     {!compact&&
       <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'1fr',sm:'repeat(3,minmax(0,1fr))'},gap:1.25,mt:2.25}}>
         <AlexSurface sx={{p:1.5,border:'1px solid #E4E7EC',borderRadius:2,bgcolor:'#fff'}}>
-          <AlexText sx={{fontSize:11,fontWeight:800,color:'#667085',textTransform:'uppercase',letterSpacing:'.05em'}}>Practice estimate</AlexText>
-          <AlexText sx={{fontSize:18,fontWeight:850,color:'#08275B',mt:.3}}>{recommendation.estimatedScore??'Need baseline'}</AlexText>
+          <AlexText sx={{fontSize:11,fontWeight:600,color:'#667085',textTransform:'uppercase',letterSpacing:'.05em'}}>Practice estimate</AlexText>
+          <AlexText sx={{fontSize:18,fontWeight:600,color:'#08275B',mt:.3}}>{recommendation.estimatedScore??'Need baseline'}</AlexText>
         </AlexSurface>
         <AlexSurface sx={{p:1.5,border:'1px solid #E4E7EC',borderRadius:2,bgcolor:'#fff'}}>
-          <AlexText sx={{fontSize:11,fontWeight:800,color:'#667085',textTransform:'uppercase',letterSpacing:'.05em'}}>Target</AlexText>
-          <AlexText sx={{fontSize:18,fontWeight:850,color:'#08275B',mt:.3}}>{recommendation.targetScore??'Not set'}</AlexText>
+          <AlexText sx={{fontSize:11,fontWeight:600,color:'#667085',textTransform:'uppercase',letterSpacing:'.05em'}}>Target</AlexText>
+          <AlexText sx={{fontSize:18,fontWeight:600,color:'#08275B',mt:.3}}>{recommendation.targetScore??'Not set'}</AlexText>
         </AlexSurface>
         <AlexSurface sx={{p:1.5,border:'1px solid #E4E7EC',borderRadius:2,bgcolor:'#fff'}}>
-          <AlexText sx={{fontSize:11,fontWeight:800,color:'#667085',textTransform:'uppercase',letterSpacing:'.05em'}}>Days left</AlexText>
-          <AlexText sx={{fontSize:18,fontWeight:850,color:'#08275B',mt:.3}}>{recommendation.daysRemaining}</AlexText>
+          <AlexText sx={{fontSize:11,fontWeight:600,color:'#667085',textTransform:'uppercase',letterSpacing:'.05em'}}>Days left</AlexText>
+          <AlexText sx={{fontSize:18,fontWeight:600,color:'#08275B',mt:.3}}>{recommendation.daysRemaining}</AlexText>
         </AlexSurface>
       </AlexBox>}
 
