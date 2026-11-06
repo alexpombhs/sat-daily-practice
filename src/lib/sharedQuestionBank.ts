@@ -1,5 +1,6 @@
 import {supabase} from './supabase'
 import type {QuestionVisualSpec} from './questionVisuals'
+import {categorizeConcepts} from './psatDomains'
 import type {ModuleKey,PracticeQuestion,SourceCrop,Subject} from '../types'
 
 export type SharedQuestionContent={
@@ -96,6 +97,7 @@ export async function loadSharedQuestionBank():Promise<PracticeQuestion[]|null>{
     id:row.id,
     difficulty:difficulties.get(row.id) as PracticeQuestion['difficulty'],
     concepts:concepts.get(row.id)??[],
+    psatDomain:categorizeConcepts(row.subject as Subject,concepts.get(row.id)??[])??undefined,
     practiceTestId:row.practice_test_id,
     subject:row.subject as Subject,
     module:row.module as ModuleKey,
