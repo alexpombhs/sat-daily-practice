@@ -350,7 +350,7 @@ export default function App(){
     }
     setReviewMode(false)
     setFailedSessionOrder('mixed')
-    setPreTestGroups(conceptGroups??[])
+    setPreTestGroups(conceptGroups?.map(group=>({...group,questionIds:nextQuestions.filter(question=>group.questionIds.includes(question.id)).map(question=>question.id)}))??[])
     setSessionSettings(nextSettings)
     setQs(nextQuestions)
     setSid(sessionId)
@@ -741,11 +741,10 @@ export default function App(){
       />
       {preTestGroups.length>0&&!reviewMode&&(()=>{
         const group=preTestGroups.find(g=>g.questionIds.includes(current.id))
-        const groupIndex=preTestGroups.indexOf(group!)
         const within=group?.questionIds.indexOf(current.id)??0
         return <AlexBox sx={{p:1.4,mb:1,bgcolor:'#EAF3FF',border:'1px solid #D9E7F8',borderRadius:2}}>
-          <AlexBox sx={{fontWeight:850,color:'#08275B',fontSize:15}}>PRE-TEST REVIEW · Group {groupIndex+1} of {preTestGroups.length}: {group?.concept}</AlexBox>
-          <AlexBox sx={{fontSize:12.5,color:'#405B80',mt:.3}}>Review this concept through {group?.questionIds.length} questions · Question {within+1} of {group?.questionIds.length} · Concepts progress from most challenging to easier</AlexBox>
+          <AlexBox sx={{fontWeight:600,color:'#08275B',fontSize:14}}>PRE-TEST REVIEW · {group?.concept}</AlexBox>
+          <AlexBox sx={{fontSize:12.5,color:'#405B80',mt:.3}}>{qs.length} questions from this group · Question {within+1} of {qs.length} · New questions first, followed by earlier misses</AlexBox>
         </AlexBox>
       })()}
       <div className="practice-workspace">
@@ -791,11 +790,22 @@ export default function App(){
   if(view==='results'){
     const session=summarizeSession(currentAttempts)
     const completedSession=sessions.find(item=>item.id===sid)??(sid?{id:sid,startedAt:started,endedAt:new Date().toISOString(),mode:settings.mode,questionCount:qs.length,attempts:currentAttempts}:null)
+    const scoreAfterSession=performance.scoreTrend.find(point=>point.sessionId===sid)
     return withSidebar('practice',<main className="shell">
       <section className="card results">
         <p className="eyebrow">Session complete</p>
         <h1>{session.accuracy}% accuracy</h1>
         <p>{session.correct} of {session.total} correct · {formatDuration(session.averageMs)} average</p>
+        {scoreAfterSession&&<AlexBox sx={{my:1.5,p:1.5,border:'1px solid #D9E5F2',borderRadius:2,bgcolor:'#F5F9FF',display:'grid',gap:.45}}>
+          <AlexBox sx={{fontSize:12.5,fontWeight:600,color:'#344054'}}>Updated practice SAT score estimate</AlexBox>
+          <AlexBox sx={{fontSize:22,fontWeight:600,color:'#08275B'}}>
+            {scoreAfterSession.score}
+            <AlexBox component="span" sx={{ml:1,fontSize:12.5,color:scoreAfterSession.delta>0?'#027A48':scoreAfterSession.delta<0?'#B42318':'#667085'}}>
+              {scoreAfterSession.delta>0?'+'+scoreAfterSession.delta:scoreAfterSession.delta<0?String(scoreAfterSession.delta):'No change'} {scoreAfterSession.delta!==0?'points':''}
+            </AlexBox>
+          </AlexBox>
+          <AlexBox sx={{fontSize:12,color:'#667085',lineHeight:1.5}}>Completed sessions update your rolling practice estimate using recent distinct questions and reviewed answers. Higher accuracy can improve the estimate, but completing a session alone does not guarantee an increase.</AlexBox>
+        </AlexBox>}
         <div className="hero-actions">
           {completedSession&&<AlexButton onClick={()=>reviewSession(completedSession)}>Review answers</AlexButton>}
           <AlexButton tone="secondary" onClick={start}>Start another session</AlexButton>
