@@ -20,7 +20,7 @@ export default function PracticeSettingField({label,helperText,control}:Props){
     }}
   >
     <AlexBox sx={{minWidth:0}}>
-      <AlexText component="div" sx={{fontWeight:800,color:'#08275B',fontSize:15}}>
+      <AlexText component="div" sx={{fontWeight:600,color:'#08275B',fontSize:15}}>
         {label}
       </AlexText>
       {helperText&&<AlexText component="div" sx={{mt:.5,color:'#667085',fontSize:13,lineHeight:1.5}}>
