@@ -22,7 +22,6 @@ type Props={
   settings:Settings
   practiceTests:PracticeTestOption[]
   difficultyCounts:{all:number;easy:number;medium:number;advanced:number}
-  categoryCounts:Record<string,number>
   newQuestionCount:number
   failedQuestionCount:number
   onChange:(settings:Settings)=>void
@@ -34,7 +33,7 @@ function labelForTest(value:PracticeTestFilter,options:PracticeTestOption[]){
   return options.find(option=>option.value===value)?.label??'All available tests'
 }
 
-export default function PracticeSetupPanel({settings,practiceTests,difficultyCounts,categoryCounts,newQuestionCount,failedQuestionCount,onChange,onStart,recommendation}:Props){
+export default function PracticeSetupPanel({settings,practiceTests,difficultyCounts,newQuestionCount,failedQuestionCount,onChange,onStart,recommendation}:Props){
   const difficultyLevels=settings.difficultyLevels??(settings.difficulty&&settings.difficulty!=='all'?[settings.difficulty]:['easy','medium','advanced'] as QuestionDifficulty[])
   const difficultyAll=difficultyLevels.length===3
   const filteredDifficultyCount=difficultyAll?difficultyCounts.all:difficultyLevels.reduce((sum,level)=>sum+difficultyCounts[level],0)
@@ -62,9 +61,9 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
   const startDisabled=filteredDifficultyCount===0||(newOnly&&newQuestionCount===0)||(failedEverOnly&&failedQuestionCount===0)
   const selectedDomain=settings.psatDomain??'all'
   const categoryOptions:Array<{value:PsatDomainFilter;label:string}>=[
-    {value:'all',label:`All PSAT categories (${categoryCounts.all??0})`},
-    ...PSAT_DOMAINS.filter(domain=>settings.mode==='both'||domain.subject===settings.mode).map(domain=>({value:domain.id,label:`${domain.label} (${categoryCounts[domain.id]??0})`})),
-    {value:'uncategorized',label:`Not yet categorized (${categoryCounts.uncategorized??0})`},
+    {value:'all',label:'All PSAT categories'},
+    ...PSAT_DOMAINS.filter(domain=>settings.mode==='both'||domain.subject===settings.mode).map(domain=>({value:domain.id,label:domain.label})),
+    {value:'uncategorized',label:'Not yet categorized'},
   ]
   const categoryLabel=selectedDomain==='all'?'All PSAT categories':selectedDomain==='uncategorized'?'Not yet categorized':domainForId(selectedDomain).label
   const setCategory=(value:PsatDomainFilter)=>onChange({...settings,psatDomain:value,...(value!=='all'&&value!=='uncategorized'?{mode:domainForId(value).subject}:{})})
@@ -92,8 +91,8 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
       flexDirection:{xs:'column',sm:'row'},
     }}>
       <AlexBox sx={{minWidth:0}}>
-        <AlexText sx={{fontSize:12,fontWeight:850,color:'#667085',textTransform:'uppercase',letterSpacing:'.06em'}}>Ready to practice</AlexText>
-        <AlexText sx={{mt:.35,fontSize:15,fontWeight:800,color:'#08275B',lineHeight:1.4}}>
+        <AlexText sx={{fontSize:12,fontWeight:600,color:'#667085',textTransform:'uppercase',letterSpacing:'.06em'}}>Ready to practice</AlexText>
+        <AlexText sx={{mt:.35,fontSize:15,fontWeight:600,color:'#08275B',lineHeight:1.4}}>
           {settings.questionsPerSession} questions · {subjectLabel} · {selectionMode==='adaptive'?'Adaptive':'Random'}
         </AlexText>
         <AlexText sx={{mt:.25,fontSize:12.75,color:'#667085',lineHeight:1.4}}>
@@ -246,7 +245,7 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
       summary={recommendation.activeExamLabel
         ?`${recommendation.activeExamLabel} · Target ${recommendation.targetScore??'not set'}`
         :`Target ${recommendation.targetScore??'not set'} · No upcoming exam date`}
-      trailing={<AlexText sx={{fontSize:13.5,fontWeight:850,color:'#6558F5',whiteSpace:'nowrap'}}>{dailyLabel}</AlexText>}
+      trailing={<AlexText sx={{fontSize:13.5,fontWeight:600,color:'#6558F5',whiteSpace:'nowrap'}}>{dailyLabel}</AlexText>}
     >
       <PracticeGoalSettings settings={settings} onChange={onChange}/>
       <AlexBox sx={{mt:1.5}}>
