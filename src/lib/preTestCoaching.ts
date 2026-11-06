@@ -18,6 +18,7 @@ export type PreTestCoachAnalysis={
   authoring:string
   headline:string
   domains:Partial<Record<PsatDomainId,PreTestCoachDomain>>
+  concepts?:Record<string,PreTestCoachDomain>
 }
 export type PreTestCoachingSnapshot={
   analysis:PreTestCoachAnalysis
