@@ -54,11 +54,11 @@ describe('Pre-test Review navigation',()=>{
   it('starts a group session from either view using only the selected group, unseen first',async()=>{
     const user=userEvent.setup()
     const {onStartGroup}=setup()
-    await user.click(screen.getByRole('button',{name:'Start group session'}))
+    await user.click(screen.getByRole('button',{name:'Start session'}))
     expect(onStartGroup).toHaveBeenLastCalledWith('math','Quadratics & Nonlinear Functions',[unseen.id,math.id])
     await user.click(screen.getByRole('button',{name:'SAT categories'}))
     await user.click(within(screen.getByRole('navigation',{name:'Pre-test review groups'})).getByText('Advanced Math'))
-    await user.click(screen.getByRole('button',{name:'Start group session'}))
+    await user.click(screen.getByRole('button',{name:'Start session'}))
     expect(onStartGroup).toHaveBeenLastCalledWith('math','Advanced Math',[unseen.id,math.id])
   })
 
