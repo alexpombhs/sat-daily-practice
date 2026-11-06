@@ -55,21 +55,24 @@ export function summarizeDomain(domain:PsatDomainId,label:string,items:ReviewQue
   }
 }
 
-export function buildPreTestDomainReview(questions:PracticeQuestion[],attempts:Attempt[],subject:Subject):ReviewSummary[]{
+
+export function buildPreTestQuestionRows(questions:PracticeQuestion[],attempts:Attempt[]):ReviewQuestion[]{
   const history=new Map<string,Attempt[]>()
   for(const attempt of attempts){
-    if(attempt.subject!==subject)continue
     history.set(attempt.questionId,[...(history.get(attempt.questionId)??[]),attempt])
   }
-  const states=questions.filter(q=>q.subject===subject).map(question=>{
+  return questions.map(question=>{
     const ordered=[...(history.get(question.id)??[])].sort((a,b)=>a.createdAt.localeCompare(b.createdAt)||a.id.localeCompare(b.id))
     return {question,first:ordered[0]??null,last:ordered[ordered.length-1]??null,attemptCount:ordered.length}
   })
+}
+
+export function buildPreTestDomainReview(questions:PracticeQuestion[],attempts:Attempt[],subject:Subject):ReviewSummary[]{
+  const states=buildPreTestQuestionRows(questions.filter(q=>q.subject===subject),attempts)
   return PSAT_DOMAINS.filter(domain=>domain.subject===subject).map(domain=>summarizeDomain(
     domain.id,domain.label,states.filter(row=>questionPsatDomain(row.question)===domain.id),
   ))
 }
-
 
 export type ReviewHistoryFilter='missed'|'unseen'|'all'
 
