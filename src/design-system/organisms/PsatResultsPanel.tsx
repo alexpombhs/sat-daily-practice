@@ -8,11 +8,17 @@ import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
 import AlexTextField from '../atoms/AlexTextField'
 import {PSAT_DOMAINS,type PsatDomainId,type PsatScoreReport} from '../../lib/psatDomains'
+import {PSAT_DOMAIN_WEIGHTS,ScoreRangeBar,SectionScoreBar} from '../molecules/PsatScoreBars'
+import PsatTopicBreakdown from '../molecules/PsatTopicBreakdown'
+import type {Attempt,PracticeQuestion} from '../../types'
 
 type Props={
   results:PsatScoreReport[]
   onChange:(results:PsatScoreReport[])=>void
   onPracticeDomain?:(domain:PsatDomainId)=>void
+  questions?:PracticeQuestion[]
+  attempts?:Attempt[]
+  recoveryCorrectAnswers?:number
 }
 
 const BAND_OPTIONS=[
@@ -27,7 +33,7 @@ function reportTotal(report:PsatScoreReport){
   return report.readingWriting!==null&&report.math!==null?report.readingWriting+report.math:null
 }
 
-export default function PsatResultsPanel({results,onChange,onPracticeDomain}:Props){
+export default function PsatResultsPanel({results,onChange,onPracticeDomain,questions=[],attempts=[],recoveryCorrectAnswers=2}:Props){
   const sorted=[...results].sort((a,b)=>b.year-a.year)
   function addResult(){
     let year=new Date().getFullYear()
@@ -51,21 +57,21 @@ export default function PsatResultsPanel({results,onChange,onPracticeDomain}:Pro
     updateResult(index,{[field]:numeric})
   }
 
-  return <AlexSurface sx={{border:'1px solid #E4E7EC',bgcolor:'#fff',p:{xs:1.75,sm:2.5},borderRadius:2.5}}>
+  return <AlexSurface sx={{border:'1px solid #E4E7EC',bgcolor:'#F7F9FD',p:{xs:1.75,sm:2.5},borderRadius:2.5}}>
     <AlexBox sx={{display:'flex',justifyContent:'space-between',alignItems:{xs:'flex-start',sm:'center'},gap:1.5,flexWrap:'wrap'}}>
       <AlexBox>
-        <AlexText component="h2" sx={{fontSize:19,fontWeight:850,color:'#08275B'}}>Official PSAT score history</AlexText>
+        <AlexText component="h2" sx={{fontSize:22,fontWeight:850,color:'#08275B'}}>PSAT/NMSQT score report</AlexText>
         <AlexText sx={{fontSize:12.5,color:'#667085',mt:.35}}>Enter your score reports and the College Board skill ranges. They are saved in your private account settings when signed in.</AlexText>
       </AlexBox>
       <AlexButton tone="secondary" startIcon={<Plus size={15}/>} onClick={addResult}>Add PSAT result</AlexButton>
     </AlexBox>
     {!results.length&&<AlexText sx={{mt:2,color:'#667085',fontSize:13.5}}>No PSAT results recorded yet. Add your score report to compare years and jump to focused practice.</AlexText>}
     <AlexBox sx={{display:'grid',gap:1.5,mt:results.length?2:0}}>
-      {sorted.map(report=>{
+      {sorted.map((report,displayIndex)=>{
         const index=results.indexOf(report)
         const total=reportTotal(report)
-        return <AlexAccordion key={index} defaultExpanded={results.length===1} summary={<AlexBox sx={{width:'100%',display:'flex',alignItems:'center',gap:1,justifyContent:'space-between',pr:1,flexWrap:'wrap'}}>
-          <AlexText sx={{color:'#08275B',fontWeight:850}}>PSAT {report.year}</AlexText>
+        return <AlexAccordion key={report.year} defaultExpanded={displayIndex===0} summary={<AlexBox sx={{width:'100%',display:'flex',alignItems:'center',gap:1,justifyContent:'space-between',pr:1,flexWrap:'wrap'}}>
+          <AlexText sx={{color:'#08275B',fontWeight:850}}>PSAT/NMSQT {report.year}</AlexText>
           <AlexText sx={{fontWeight:800,color:'#08275B'}}>{total??'—'} <AlexText component="span" sx={{fontSize:12,color:'#667085'}}> / 1520</AlexText></AlexText>
           <AlexText sx={{fontSize:12.5,color:'#667085'}}>R&W {report.readingWriting??'—'} · Math {report.math??'—'}{report.percentile!==null?` · ${report.percentile}th percentile`:''}</AlexText>
         </AlexBox>}>
