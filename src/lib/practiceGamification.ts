@@ -1,6 +1,7 @@
 import {QUESTION_BANK} from './questionBank'
 import {buildPerformanceAnalytics,type PerformanceAnalytics} from './performanceAnalytics'
 import {failedQuestionIds} from './questionMastery'
+import {matchesPsatDomain,PSAT_DOMAINS} from './psatDomains'
 import type {Attempt,PracticeQuestion,QuestionDifficulty,SessionSummary,Settings} from '../types'
 
 export type PerformanceSummary=PerformanceAnalytics
@@ -34,6 +35,7 @@ function eligibleQuestions(settings:Settings,questions:PracticeQuestion[]){
   return questions.filter(question=>
     (settings.mode==='both'||question.subject===settings.mode)&&
     ((settings.practiceTest??'all')==='all'||question.practiceTestId===settings.practiceTest)&&
+    matchesPsatDomain(question,settings.psatDomain)&&
     (includeAll||(question.difficulty!==undefined&&levels.includes(question.difficulty)))
   )
 }
@@ -49,6 +51,15 @@ export function practiceQuestionPool(settings:Settings,attempts:Attempt[],questi
     return pool.filter(question=>!attemptedIds.has(question.id))
   }
   return pool
+}
+
+export function countCategoryQuestions(settings:Settings,questions:PracticeQuestion[]=QUESTION_BANK){
+  const scoped=eligibleQuestions({...settings,psatDomain:'all'},questions)
+  return {
+    all:scoped.length,
+    uncategorized:scoped.filter(q=>matchesPsatDomain(q,'uncategorized')).length,
+    ...Object.fromEntries(PSAT_DOMAINS.map(domain=>[domain.id,scoped.filter(q=>matchesPsatDomain(q,domain.id)).length])),
+  } as Record<string,number>
 }
 
 export function countDifficultyQuestions(settings:Settings,questions:PracticeQuestion[]=QUESTION_BANK){
