@@ -75,6 +75,41 @@ export default function PsatResultsPanel({results,onChange,onPracticeDomain,ques
           <AlexText sx={{fontWeight:800,color:'#08275B'}}>{total??'—'} <AlexText component="span" sx={{fontSize:12,color:'#667085'}}> / 1520</AlexText></AlexText>
           <AlexText sx={{fontSize:12.5,color:'#667085'}}>R&W {report.readingWriting??'—'} · Math {report.math??'—'}{report.percentile!==null?` · ${report.percentile}th percentile`:''}</AlexText>
         </AlexBox>}>
+          <AlexBox sx={{display:'grid',gap:2,mb:2}}>
+            <AlexBox sx={{p:{xs:1.75,sm:2.5},bgcolor:'#EDF2FF',borderRadius:2}}>
+              <AlexText sx={{fontSize:12,fontWeight:850,color:'#536780',letterSpacing:'.06em',textTransform:'uppercase'}}>Your PSAT/NMSQT total score</AlexText>
+              <AlexText sx={{fontSize:40,fontWeight:850,color:'#132B57'}}>{total??'—'} <AlexText component="span" sx={{fontSize:15,color:'#667085'}}> / 1520</AlexText></AlexText>
+              {report.percentile!==null&&<AlexText sx={{fontSize:13,color:'#516481'}}>Reported {report.percentile}th percentile</AlexText>}
+            </AlexBox>
+            <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'1fr',lg:'repeat(2,minmax(0,1fr))'},gap:1.5}}>
+              {(['english','math'] as const).map(subject=><AlexBox key={subject} sx={{p:{xs:1.5,sm:2},bgcolor:'#fff',border:'1px solid #E1E7F2',borderRadius:2,minWidth:0}}>
+                <AlexText component="h3" sx={{fontSize:19,color:'#12264A',fontWeight:850,mb:1.5}}>{subject==='english'?'Reading and Writing':'Math'}</AlexText>
+                <AlexText sx={{fontSize:12,color:'#667085',mb:.5}}>Your {subject==='english'?'Reading and Writing':'Math'} Score</AlexText>
+                <SectionScoreBar score={subject==='english'?report.readingWriting:report.math}/>
+                <AlexText sx={{fontSize:12,color:'#667085',mt:1.5,mb:1}}>Your performance across content areas</AlexText>
+                {PSAT_DOMAINS.filter(d=>d.subject===subject).sort((a,b)=>{
+                  const order=['craft-structure','expression-ideas','information-ideas','standard-conventions','algebra','advanced-math','problem-solving-data','geometry-trigonometry']
+                  return order.indexOf(a.id)-order.indexOf(b.id)
+                }).map(domain=><AlexBox key={domain.id} sx={{py:2,borderTop:'1px solid #E8EDF6'}}>
+                  <AlexBox sx={{display:'flex',justifyContent:'space-between',alignItems:'start',gap:1,flexWrap:'wrap'}}>
+                    <AlexBox sx={{minWidth:0,flex:'1 1 170px'}}>
+                      <AlexText sx={{fontSize:14.5,color:'#17284A',fontWeight:850}}>{domain.label}</AlexText>
+                      <AlexText sx={{fontSize:12,color:'#667085',mt:.2}}>{PSAT_DOMAIN_WEIGHTS[domain.id].percent}% of section, {PSAT_DOMAIN_WEIGHTS[domain.id].questions} questions</AlexText>
+                    </AlexBox>
+                    <AlexBox sx={{width:{xs:'100%',sm:'46%'},minWidth:0}}>
+                      <ScoreRangeBar band={report.bands?.[domain.id]}/>
+                    </AlexBox>
+                  </AlexBox>
+                  <PsatTopicBreakdown domain={domain.id} questions={questions} attempts={attempts} recoveryCorrectAnswers={recoveryCorrectAnswers}/>
+                  {onPracticeDomain&&<AlexButton tone="secondary" sx={{mt:1,fontSize:12}} onClick={()=>onPracticeDomain(domain.id)}>Practice {domain.label}</AlexButton>}
+                </AlexBox>)}
+              </AlexBox>)}
+            </AlexBox>
+          </AlexBox>
+          <AlexAccordion summary={<AlexBox>
+            <AlexText sx={{fontSize:13.5,color:'#17284A',fontWeight:850}}>Edit official report</AlexText>
+            <AlexText sx={{fontSize:12,color:'#667085'}}>Adjust scores, percentile, or category ranges</AlexText>
+          </AlexBox>}>
           <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'repeat(2,minmax(0,1fr))',md:'repeat(4,minmax(0,1fr))'},gap:1,mb:1.5}}>
             <AlexDropdown id={`psat-year-${index}`} label="Exam year" value={String(report.year)} options={Array.from({length:21},(_,i)=>({value:String(2015+i),label:String(2015+i)}))} onChange={value=>updateNumber(index,'year',value)}/>
             <AlexTextField type="number" label="Reading & Writing" value={report.readingWriting??''} inputProps={{min:0,max:760,step:10}} onChange={event=>updateNumber(index,'readingWriting',event.target.value)}/>
@@ -91,6 +126,7 @@ export default function PsatResultsPanel({results,onChange,onPracticeDomain,ques
               {onPracticeDomain&&<AlexButton tone="quiet" sx={{fontSize:12,px:1,minWidth:0,alignSelf:'end',mb:.4}} onClick={()=>onPracticeDomain(domain.id)}>Practice</AlexButton>}
             </AlexBox>)}
           </AlexBox>
+          </AlexAccordion>
           <AlexBox sx={{display:'flex',justifyContent:'flex-end',mt:1.5}}>
             <AlexIconButton label={`Remove PSAT ${report.year} result`} onClick={()=>onChange(results.filter((_,i)=>i!==index))}><Trash2 size={16}/></AlexIconButton>
           </AlexBox>
