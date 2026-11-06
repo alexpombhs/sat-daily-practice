@@ -70,13 +70,34 @@ export function buildPreTestDomainReview(questions:PracticeQuestion[],attempts:A
   ))
 }
 
-export function reviewQuestionOrder(summary:ReviewSummary,filter:'missed'|'unseen'|'all'):ReviewQuestion[]{
-  const list=summary.questions.filter(row=>filter==='missed'?row.first&&!row.first.correct:filter==='unseen'?!row.first:true)
-  return [...list].sort((a,b)=>{
-    if(filter==='unseen')return Number(b.question.difficulty==='advanced')-Number(a.question.difficulty==='advanced')||a.question.number-b.question.number
-    return Number(a.last?.correct)-Number(b.last?.correct)
-      ||Number(b.question.difficulty==='advanced')-Number(a.question.difficulty==='advanced')
-      ||b.attemptCount-a.attemptCount
-      ||a.question.id.localeCompare(b.question.id)
-  })
+
+export type ReviewHistoryFilter='missed'|'unseen'|'all'
+
+// One order works for both concept groups and audited SAT categories:
+// incorrect first attempts first for review, then untouched questions,
+// then questions already correct on the first attempt.
+export function sortReviewQuestionRows(rows:ReviewQuestion[],filter:ReviewHistoryFilter='all'):ReviewQuestion[]{
+  const relevant=rows.filter(row=>filter==='missed'
+    ?Boolean(row.first&&!row.first.correct)
+    :filter==='unseen'?!row.first:true)
+  const rank=(row:ReviewQuestion)=>row.first&&!row.first.correct?0:!row.first?1:2
+  return [...relevant].sort((a,b)=>rank(a)-rank(b)
+    ||Number(Boolean(a.last?.correct))-Number(Boolean(b.last?.correct))
+    ||Number(b.question.difficulty==='advanced')-Number(a.question.difficulty==='advanced')
+    ||b.attemptCount-a.attemptCount
+    ||a.question.id.localeCompare(b.question.id))
+}
+
+// A focused group session draws ONLY from its selected group, prioritizes
+// previously unseen questions, then first-try misses, and uses the existing
+// per-session question limit in the app. The order is shared by both views.
+export function orderedGroupSessionQuestionIds(rows:ReviewQuestion[]):string[]{
+  const priority=(row:ReviewQuestion)=>!row.first?0:row.first.correct?2:1
+  return [...rows].sort((a,b)=>priority(a)-priority(b)
+    ||Number(b.question.difficulty==='advanced')-Number(a.question.difficulty==='advanced')
+    ||a.question.id.localeCompare(b.question.id)).map(row=>row.question.id)
+}
+
+export function reviewQuestionOrder(summary:ReviewSummary,filter:ReviewHistoryFilter):ReviewQuestion[]{
+  return sortReviewQuestionRows(summary.questions,filter)
 }
