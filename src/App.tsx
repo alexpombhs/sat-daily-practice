@@ -33,7 +33,7 @@ import {domainForId,type PsatDomainId} from './lib/psatDomains'
 import {failedQuestionIds} from './lib/questionMastery'
 import {estimateSectionPracticeScore} from './lib/performanceAnalytics'
 import {loadSharedQuestionBank} from './lib/sharedQuestionBank'
-import {choosePracticeQuestions,countCategoryQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
+import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
 import {pathForView,viewFromPathname,type AppRouteView} from './lib/appRoutes'
 import {DEFAULT_SETTINGS} from './lib/storage'
 import {abandonActiveSession,createActiveSession,getCurrentAuthUser,loadActiveSession,loadCloudHistory,loadUserSettings,saveActiveSessionProgress,saveActiveSessionQuestionOrder,saveUserSettings,subscribeToAuth,syncActiveAttempt,syncSession,type AuthUser} from './lib/supabase'
@@ -271,7 +271,6 @@ export default function App(){
     scoreEstimateConfidence:performance.scoreEstimateConfidence,
   }
   const difficultyCounts=countDifficultyQuestions(settings,questionBank)
-  const categoryCounts=countCategoryQuestions(settings,questionBank)
   const newQuestionCount=countNewPracticeQuestions(settings,attempts,questionBank)
   const failedQuestionCount=countFailedPracticeQuestions(settings,attempts,questionBank)
   const practiceRecommendation=buildPracticePlanRecommendation(settings,questionBank,attempts,performance)
@@ -1028,7 +1027,6 @@ export default function App(){
     settings={settings}
     practiceTests={practiceTestOptions}
     difficultyCounts={difficultyCounts}
-    categoryCounts={categoryCounts}
     newQuestionCount={newQuestionCount}
     failedQuestionCount={failedQuestionCount}
     recommendation={practiceRecommendation}
