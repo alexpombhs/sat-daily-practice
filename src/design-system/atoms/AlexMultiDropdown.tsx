@@ -20,7 +20,7 @@ const ALL_VALUE='__all__'
 export default function AlexMultiDropdown<T extends string>({
   id,label,value,options,onChange,allLabel='All categories',helperText,fullWidth=true,
 }:Props<T>){
-  const {open,onOpen,onClose,menuPaperRef}=useDropdownScrollDismiss()
+  const {open,onOpen,onClose,menuPaperRef,popoverActionRef}=useDropdownScrollDismiss()
   const labelId=`${id}-label`
   const selectedLabels=options.filter(option=>value.includes(option.value)).map(option=>option.label)
   const display=selectedLabels.length===0?allLabel
@@ -49,7 +49,7 @@ export default function AlexMultiDropdown<T extends string>({
       label={label}
       onChange={handleChange}
       renderValue={()=>display}
-      MenuProps={{PaperProps:{ref:menuPaperRef,sx:{mt:.75,maxHeight:360,border:'1px solid',borderColor:'divider',boxShadow:'0 14px 36px rgba(16,24,40,.12)'}}}}
+      MenuProps={{action:popoverActionRef,variant:'menu',PaperProps:{ref:menuPaperRef,sx:{mt:.75,maxHeight:360,border:'1px solid',borderColor:'divider',boxShadow:'0 14px 36px rgba(16,24,40,.12)'}}}}
       sx={{'& .MuiSelect-select':{fontWeight:500}}}
     >
       <MenuItem value={ALL_VALUE}>
