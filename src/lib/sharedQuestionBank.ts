@@ -1,6 +1,6 @@
 import {supabase} from './supabase'
 import type {QuestionVisualSpec} from './questionVisuals'
-import {categorizeConcepts} from './psatDomains'
+import {domainForId,isPsatDomainId} from './psatDomains'
 import type {ModuleKey,PracticeQuestion,SourceCrop,Subject} from '../types'
 
 export type SharedQuestionContent={
@@ -81,7 +81,7 @@ export async function loadSharedQuestionBank():Promise<PracticeQuestion[]|null>{
   for(let from=0;;){
     const {data,error}=await supabase
       .from('sat_question_difficulty')
-      .select('question_id,difficulty,concepts')
+      .select('question_id,difficulty,concepts,psat_domain')
       .order('question_id',{ascending:true})
       .range(from,from+pageSize-1)
     if(error)throw error
@@ -93,11 +93,12 @@ export async function loadSharedQuestionBank():Promise<PracticeQuestion[]|null>{
 
   const difficulties=new Map(difficultyRows.map(row=>[row.question_id,row.difficulty]))
   const concepts=new Map(difficultyRows.map(row=>[row.question_id,Array.isArray(row.concepts)?row.concepts.filter((item:unknown):item is string=>typeof item==='string'):[]]))
+  const reviewedDomains=new Map(difficultyRows.map(row=>[row.question_id,row.psat_domain as unknown]))
   const remote=questionRows.filter(row=>idMatchesPracticeTest(row.id,row.practice_test_id)).map(row=>({
     id:row.id,
     difficulty:difficulties.get(row.id) as PracticeQuestion['difficulty'],
     concepts:concepts.get(row.id)??[],
-    psatDomain:categorizeConcepts(row.subject as Subject,concepts.get(row.id)??[])??undefined,
+    psatDomain:(()=>{const domain=reviewedDomains.get(row.id);return isPsatDomainId(domain)&&domainForId(domain).subject===row.subject?domain:undefined})(),
     practiceTestId:row.practice_test_id,
     subject:row.subject as Subject,
     module:row.module as ModuleKey,
