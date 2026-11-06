@@ -14,7 +14,7 @@ type Props<T extends string>={
 
 export default function AlexDropdown<T extends string>({id,label,value,options,onChange,helperText,fullWidth=true}:Props<T>){
   const labelId=`${id}-label`
-  return <FormControl fullWidth={fullWidth} size="small">
+  return <FormControl fullWidth={fullWidth} size="small" sx={{minWidth:0}}>
     <InputLabel id={labelId}>{label}</InputLabel>
     <Select
       labelId={labelId}
@@ -22,7 +22,13 @@ export default function AlexDropdown<T extends string>({id,label,value,options,o
       value={value}
       label={label}
       onChange={(event:SelectChangeEvent<T>)=>onChange(event.target.value as T)}
-      MenuProps={{PaperProps:{sx:{mt:.75,border:'1px solid',borderColor:'divider',boxShadow:'0 14px 36px rgba(16,24,40,.12)'}}}}
+      sx={{'& .MuiSelect-select':{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}}
+      MenuProps={{
+        anchorOrigin:{vertical:'bottom',horizontal:'left'},
+        transformOrigin:{vertical:'top',horizontal:'left'},
+        marginThreshold:12,
+        PaperProps:{sx:{mt:.5,maxHeight:320,maxWidth:'calc(100vw - 24px)',border:'1px solid',borderColor:'divider',boxShadow:'0 14px 36px rgba(16,24,40,.12)'}},
+      }}
     >
       {options.map(option=><MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)}
     </Select>
