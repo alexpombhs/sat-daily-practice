@@ -197,8 +197,8 @@ export default function VocabularyPractice({signedIn,onSignIn,preferences,onPref
     <PageHeading subtitle="Continuous vocabulary practice based on your selected word pool."/>
     <AlexSurface sx={{mt:1.5,p:{xs:1.5,sm:1.75},border:'1px solid #D8E3F1',borderRadius:2,bgcolor:'#F8FAFD'}}>
       <AlexBox sx={{display:'flex',alignItems:'baseline',justifyContent:'space-between',gap:1,flexWrap:'wrap'}}>
-        <AlexText sx={{fontSize:13,fontWeight:800,color:'#344054'}}>Words practiced today</AlexText>
-        <AlexText role="status" aria-live="polite" sx={{fontSize:18,fontWeight:850,color:'#08275B',fontVariantNumeric:'tabular-nums'}}>
+        <AlexText sx={{fontSize:13,fontWeight:600,color:'#344054'}}>Words practiced today</AlexText>
+        <AlexText role="status" aria-live="polite" sx={{fontSize:18,fontWeight:600,color:'#08275B',fontVariantNumeric:'tabular-nums'}}>
           {loadingHistory?'Loading…':`${wordsDoneToday}/${dailyGoal}`}
         </AlexText>
       </AlexBox>
@@ -214,12 +214,12 @@ export default function VocabularyPractice({signedIn,onSignIn,preferences,onPref
       sx={{mt:1.75}}
       summary={<AlexBox sx={{display:'flex',alignItems:{xs:'flex-start',sm:'center'},justifyContent:'space-between',gap:1.25,width:'100%',pr:1,flexDirection:{xs:'column',sm:'row'}}}>
         <AlexBox>
-          <AlexText sx={{fontSize:14,fontWeight:800,color:'#08275B'}}>Practice configuration</AlexText>
+          <AlexText sx={{fontSize:14,fontWeight:600,color:'#08275B'}}>Practice configuration</AlexText>
           <AlexText sx={{fontSize:12.5,color:'#667085',mt:.15}}>
             {scopeBank.length} words in scope · {eligibleWords.length} currently eligible
           </AlexText>
         </AlexBox>
-        <AlexText sx={{fontSize:12.5,fontWeight:750,color:'#0B376D',whiteSpace:'nowrap'}}>
+        <AlexText sx={{fontSize:12.5,fontWeight:600,color:'#0B376D',whiteSpace:'nowrap'}}>
           {practicedCount}/{scopeBank.length} practiced · {accuracy===null?'—':accuracy+'%'} accuracy
         </AlexText>
       </AlexBox>}
@@ -299,7 +299,7 @@ export default function VocabularyPractice({signedIn,onSignIn,preferences,onPref
         control={masteredCount
           ?<AlexBox sx={{display:'grid',gap:.5,maxHeight:180,overflowY:'auto',pr:.5}}>
             {masteredEntries.map(entry=><AlexBox key={entry.id} sx={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:1,p:.7,border:'1px solid #EEF1F4',borderRadius:'7px'}}>
-              <AlexText sx={{fontSize:13.5,fontWeight:750,color:'#344054'}}>{entry.word}</AlexText>
+              <AlexText sx={{fontSize:13.5,fontWeight:600,color:'#344054'}}>{entry.word}</AlexText>
               <AlexButton tone="quiet" onClick={()=>restoreMastered(entry.id)} sx={{minWidth:0,px:1}}>Restore</AlexButton>
             </AlexBox>)}
           </AlexBox>
@@ -325,12 +325,12 @@ export default function VocabularyPractice({signedIn,onSignIn,preferences,onPref
         ?<AlexText sx={{fontSize:14,color:'#667085'}}>Loading vocabulary progress…</AlexText>
         :!current
           ?<AlexBox>
-            <AlexText sx={{fontSize:15,fontWeight:800,color:'#08275B'}}>No words match the current configuration.</AlexText>
+            <AlexText sx={{fontSize:15,fontWeight:600,color:'#08275B'}}>No words match the current configuration.</AlexText>
             <AlexText sx={{fontSize:13,color:'#667085',mt:.5}}>Open Practice configuration above and broaden the source, difficulty, or history filter.</AlexText>
           </AlexBox>
           :<>
             <AlexBox sx={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:2}}>
-              <AlexText sx={{fontSize:12.5,fontWeight:750,color:'#667085'}}>
+              <AlexText sx={{fontSize:12.5,fontWeight:600,color:'#667085'}}>
                 {eligibleWords.length} eligible word{eligibleWords.length===1?'':'s'}
               </AlexText>
               <AlexStatusChip>{accuracy===null?'NEW':accuracy+'% accuracy'}</AlexStatusChip>
@@ -348,12 +348,12 @@ export default function VocabularyPractice({signedIn,onSignIn,preferences,onPref
             />
 
             <AlexBox sx={{mt:2,p:{xs:1.75,sm:2.25},borderRadius:'8px',bgcolor:'#F8FAFC',border:'1px solid #EEF1F4'}}>
-              <AlexText sx={{fontSize:11.5,fontWeight:800,textTransform:'uppercase',letterSpacing:'.045em',color:'#667085'}}>
+              <AlexText sx={{fontSize:11.5,fontWeight:600,textTransform:'uppercase',letterSpacing:'.045em',color:'#667085'}}>
                 {current.direction==='word-to-definition'?'Choose the best meaning':'Choose the matching word'}
               </AlexText>
               <AlexText component="div" sx={{
                 fontSize:{xs:22,sm:25},
-                fontWeight:750,
+                fontWeight:600,
                 lineHeight:1.3,
                 letterSpacing:'-.01em',
                 color:'#08275B',
@@ -377,8 +377,8 @@ export default function VocabularyPractice({signedIn,onSignIn,preferences,onPref
               mt:1.5,p:1.5,border:'1px solid',borderColor:correct?'#B7DEC5':'#E9C5C1',
               bgcolor:correct?'#F5FAF7':'#FFF8F7',
             }}>
-              <AlexText sx={{fontSize:13.5,fontWeight:750,color:correct?'#177245':'#8E3932'}}>{correct?'Correct':'Not quite'}</AlexText>
-              {!correct&&<AlexText sx={{fontSize:13.5,color:'#344054',mt:.3}}>Correct answer: <b>{current.answer}</b></AlexText>}
+              <AlexText sx={{fontSize:13.5,fontWeight:600,color:correct?'#177245':'#8E3932'}}>{correct?'Correct':'Not quite'}</AlexText>
+              {!correct&&<AlexText sx={{fontSize:13.5,color:'#344054',mt:.3}}>Correct answer: <AlexText component="span" sx={{fontWeight:600}}>{current.answer}</AlexText></AlexText>}
               <AlexText sx={{fontSize:12,color:'#667085',mt:.4}}>Source: {current.entry.sourceLabel??VOCABULARY_SOURCE_LABELS[vocabularySource(current.entry)]}{current.entry.sourceQuestionId?' · '+current.entry.sourceQuestionId:''}</AlexText>
               {saveError&&<AlexText sx={{fontSize:12,color:'#A33A31',mt:.4}}>{saveError}</AlexText>}
             </AlexSurface>}

@@ -102,7 +102,7 @@ export default function QuestionBankReview({questionsPdf}:Props){
 
     <div className="question-bank-workspace">
       <aside className="question-bank-list" aria-label="Questions">
-        <div className="question-bank-list-header"><b>{questions.length} questions</b><span>Select a question</span></div>
+        <div className="question-bank-list-header"><AlexText component="span" sx={{fontWeight:600}}>{questions.length} questions</AlexText><span>Select a question</span></div>
         <div className="question-bank-list-scroll">
           {groupedPracticeTests.map(testGroup=><section className="question-bank-test-group" key={testGroup.practiceTestId}>
             <div className="question-bank-group-title"><span>{practiceTestLabel(testGroup.practiceTestId)}</span><small>{testGroup.items.length}</small></div>
@@ -128,7 +128,7 @@ export default function QuestionBankReview({questionsPdf}:Props){
             <AlexBox sx={{display:'flex',alignItems:'center',gap:.75}}><h2>{questionLabel(selected)}</h2><ParsingIssueReporter question={selected} context="question-bank" compact/></AlexBox>
             <AlexText sx={{fontSize:12,color:'#475467',mt:.25}}>PSAT category: {PSAT_DOMAINS.find(domain=>domain.id===questionPsatDomain(selected))?.label??'Needs classification'}</AlexText>
             {Boolean(selected.concepts?.length)&&<AlexBox sx={{display:'flex',flexWrap:'wrap',alignItems:'baseline',columnGap:.75,rowGap:.25,mt:.5}} aria-label="Question concepts">
-              <AlexText sx={{fontSize:12,color:'#667085',fontWeight:700}}>Concepts:</AlexText>
+              <AlexText sx={{fontSize:12,color:'#667085',fontWeight:600}}>Concepts:</AlexText>
               <AlexText sx={{fontSize:12,color:'#475467'}}>{selected.concepts?.join(' · ')}</AlexText>
             </AlexBox>}
           </div>

@@ -84,15 +84,15 @@ export default function AccountAuthPanel({email}:Props){
   return <AlexSurface sx={{p:{xs:2.25,md:3},border:'1px solid',borderColor:'divider',borderRadius:3}}>
     <AlexStack spacing={2.25}>
       <AlexStack spacing={.5}>
-        <AlexText component="p" sx={{fontSize:12,fontWeight:800,letterSpacing:'.08em',textTransform:'uppercase',color:'text.secondary',m:0}}>Account & sync</AlexText>
-        <AlexText component="h2" sx={{fontSize:24,fontWeight:850,m:0}}>{email?'Your account':'Keep your SAT history across devices'}</AlexText>
+        <AlexText component="p" sx={{fontSize:12,fontWeight:600,letterSpacing:'.08em',textTransform:'uppercase',color:'text.secondary',m:0}}>Account & sync</AlexText>
+        <AlexText component="h2" sx={{fontSize:24,fontWeight:600,m:0}}>{email?'Your account':'Keep your SAT history across devices'}</AlexText>
         <AlexText sx={{fontSize:14,color:'text.secondary'}}>{email?'Manage your profile and account details.':'Sign in with the same account on each device to back up and restore completed practice sessions.'}</AlexText>
       </AlexStack>
 
       {!isSupabaseConfigured?<AlexText role="alert" sx={{color:'error.main'}}>Supabase is not configured for this build.</AlexText>:email?<AlexStack spacing={2.25}>
         <AlexSurface variant="outlined" sx={{p:2,borderRadius:2}}>
           <AlexText sx={{fontSize:12,color:'text.secondary',mb:.25}}>Signed in as</AlexText>
-          <AlexText sx={{fontWeight:750}}>{email}</AlexText>
+          <AlexText sx={{fontWeight:600}}>{email}</AlexText>
         </AlexSurface>
         <UserProfileForm profile={profile} busy={busy} onSave={saveProfile}/>
         {error&&<AlexText role="alert" sx={{fontSize:13,color:'error.main'}}>{error}</AlexText>}

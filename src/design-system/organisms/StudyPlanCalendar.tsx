@@ -73,16 +73,16 @@ export default function StudyPlanCalendar({sessions,attempts,settings,recommenda
     <AlexBox sx={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:1.25,mb:{xs:1.15,xl:.65}}}>
       <AlexBox sx={{display:'flex',alignItems:'center',gap:.75,minWidth:0}}>
         <CalendarDays size={16} color="#6558F5"/>
-        <AlexText sx={{fontSize:10.2,fontWeight:800,lineHeight:1.2,textTransform:'uppercase',letterSpacing:'.075em',color:'#5B6575'}}>Practice calendar</AlexText>
+        <AlexText sx={{fontSize:10.2,fontWeight:600,lineHeight:1.2,textTransform:'uppercase',letterSpacing:'.075em',color:'#5B6575'}}>Practice calendar</AlexText>
       </AlexBox>
-      <AlexText sx={{fontSize:10.5,fontWeight:800,color:'#667085',whiteSpace:'nowrap'}}>
+      <AlexText sx={{fontSize:10.5,fontWeight:600,color:'#667085',whiteSpace:'nowrap'}}>
         {targetQuestions>0?`${targetQuestions} questions/day`:'Flexible pace'}
       </AlexText>
     </AlexBox>
 
     <AlexBox sx={{display:'flex',alignItems:'center',justifyContent:'space-between',mb:{xs:1,xl:.55}}}>
       <AlexIconButton label="Previous month" onClick={()=>moveMonth(-1)}><ChevronLeft size={16}/></AlexIconButton>
-      <AlexText sx={{fontSize:11.5,fontWeight:900,letterSpacing:'.045em',color:'#08275B',textTransform:'uppercase'}}>
+      <AlexText sx={{fontSize:11.5,fontWeight:600,letterSpacing:'.045em',color:'#08275B',textTransform:'uppercase'}}>
         {monthTitle(view.year,view.month)}
       </AlexText>
       <AlexIconButton label="Next month" onClick={()=>moveMonth(1)}><ChevronRight size={16}/></AlexIconButton>
@@ -96,7 +96,7 @@ export default function StudyPlanCalendar({sessions,attempts,settings,recommenda
       mx:'auto',
       mb:{xs:.7,xl:.35},
     }}>
-      {WEEKDAYS.map((day,index)=><AlexText key={`${day}-${index}`} sx={{textAlign:'center',fontSize:9,fontWeight:850,color:'#667085'}}>{day}</AlexText>)}
+      {WEEKDAYS.map((day,index)=><AlexText key={`${day}-${index}`} sx={{textAlign:'center',fontSize:9,fontWeight:600,color:'#667085'}}>{day}</AlexText>)}
     </AlexBox>
 
     <AlexBox sx={{
