@@ -127,7 +127,7 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
         <PracticeSettingField
           label="Subject"
           helperText="Practice both sections or focus on one."
-          control={<AlexDropdown id="practice-subject" label="Subject" value={settings.mode} options={[{value:'both',label:'Reading & Writing + Math'},{value:'english',label:'Reading & Writing'},{value:'math',label:'Math'}]} onChange={mode=>onChange({...settings,mode})}/>}
+          control={<AlexDropdown id="practice-subject" label="Subject" value={settings.mode} options={[{value:'both',label:'Reading & Writing + Math'},{value:'english',label:'Reading & Writing'},{value:'math',label:'Math'}]} onChange={mode=>onChange({...settings,mode,psatDomain:selectedDomain!=='all'&&selectedDomain!=='uncategorized'&&mode!=='both'&&domainForId(selectedDomain).subject!==mode?'all':selectedDomain})}/>}
         />
         <PracticeSettingField
           label="Questions per session"
