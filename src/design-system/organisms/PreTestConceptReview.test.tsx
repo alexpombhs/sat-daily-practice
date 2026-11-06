@@ -48,7 +48,7 @@ describe('Pre-test Review navigation',()=>{
     const nav=screen.getByRole('navigation',{name:'Pre-test review groups'})
     expect(within(nav).getByText('Advanced Math')).toBeTruthy()
     expect(screen.getByRole('heading',{name:'Individual questions'})).toBeTruthy()
-    await user.click(screen.getByRole('button',{name:'Concepts'}))
+    await user.click(screen.getByRole('switch',{name:'SAT categories'}))
     expect(screen.getAllByText('Quadratics & Nonlinear Functions').length).toBeGreaterThan(0)
   })
 
@@ -86,7 +86,7 @@ describe('Pre-test Review navigation',()=>{
     const nav=screen.getByRole('navigation',{name:'Pre-test review groups'})
     expect(within(nav).getByText('Craft and Structure')).toBeTruthy()
     expect(within(nav).queryByText('Advanced Math')).toBeNull()
-    await user.click(screen.getByRole('button',{name:'Concepts'}))
+    await user.click(screen.getByRole('switch',{name:'SAT categories'}))
     expect(screen.getByRole('tab',{name:'Reading & Writing','selected':true})).toBeTruthy()
   })
   it('shows individually reviewed strategies in both views while keeping real examples in a closed drawer',async()=>{
@@ -104,7 +104,7 @@ describe('Pre-test Review navigation',()=>{
     const coaching:PreTestCoachingSnapshot={
       reviewedAt:'2026-11-06T12:00:00Z',basedOnAttemptAt:'2026-11-01T12:00:00Z',
       analysis:{schemaVersion:2,authoring:'Reviewed first attempts',headline:'Target hard problems',
-        domains:{'advanced-math':insight},concepts:{'Quadratics & Nonlinear Functions':insight}},
+        domains:{'advanced-math':insight},concepts:{[rankReviewConcepts([math,unseen],[attempt])[0].concept]:insight}},
     }
     const {onReview}=setup(coaching)
     expect(screen.queryByRole('heading',{name:'Examples from your answers'})).toBeNull()
