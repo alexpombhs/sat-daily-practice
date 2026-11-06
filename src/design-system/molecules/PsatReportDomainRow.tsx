@@ -1,48 +1,24 @@
-import {ArrowUpRight} from 'lucide-react'
 import AlexBox from '../atoms/AlexBox'
-import AlexIconButton from '../atoms/AlexIconButton'
 import AlexInfoTooltipButton from '../atoms/AlexInfoTooltipButton'
 import AlexText from '../atoms/AlexText'
 import {PSAT_DOMAIN_WEIGHTS,ScoreRangeBar} from './PsatScoreBars'
-import PsatTopicBreakdown from './PsatTopicBreakdown'
 import type {PsatDomainId} from '../../lib/psatDomains'
-import type {Attempt,PracticeQuestion} from '../../types'
 
-type Props={
-  domain:PsatDomainId
-  label:string
-  band?:string
-  questions:PracticeQuestion[]
-  attempts:Attempt[]
-  recoveryCorrectAnswers:number
-  onPractice?:()=>void
-}
+type Props={domain:PsatDomainId;label:string;band?:string}
 
-export default function PsatReportDomainRow({domain,label,band,questions,attempts,recoveryCorrectAnswers,onPractice}:Props){
+export default function PsatReportDomainRow({domain,label,band}:Props){
   const weight=PSAT_DOMAIN_WEIGHTS[domain]
-  return <AlexBox sx={{py:1.45,borderTop:'1px solid #F0F2F6','&:first-of-type':{borderTop:0}}}>
-    <AlexBox sx={{display:'flex',alignItems:'center',gap:.4,minWidth:0}}>
-      <AlexText sx={{fontSize:12.5,fontWeight:600,color:'#344054',lineHeight:1.4,flex:1,minWidth:0}}>
-        {label}
+  return <AlexBox sx={{py:1.35,borderTop:'1px solid #F3F4F6'}}>
+    <AlexText sx={{fontSize:12.5,fontWeight:600,lineHeight:1.35,color:'#344054'}}>{label}</AlexText>
+    <AlexBox sx={{display:'flex',alignItems:'center',gap:.1,mt:.05,mb:.65}}>
+      <AlexText sx={{fontSize:10.5,color:'#667085'}}>
+        {weight.percent}% of section, {weight.questions} questions
       </AlexText>
       <AlexInfoTooltipButton
         label={`About ${label}`}
-        title={<span>{weight.percent}% of this PSAT section, approximately {weight.questions} questions. The displayed range is from the official score report; practice progress comes from your app question bank.</span>}
+        title={`This domain represents about ${weight.percent}% of the PSAT section (${weight.questions} questions). The blue bar shows the range reported by College Board.`}
       />
-      {onPractice&&<AlexIconButton
-        label={`Practice ${label}`}
-        onClick={onPractice}
-        sx={{p:.4,color:'#3458CE'}}
-      ><ArrowUpRight size={15}/></AlexIconButton>}
     </AlexBox>
-    <AlexBox sx={{mt:.45}}>
-      <ScoreRangeBar band={band}/>
-    </AlexBox>
-    <PsatTopicBreakdown
-      domain={domain}
-      questions={questions}
-      attempts={attempts}
-      recoveryCorrectAnswers={recoveryCorrectAnswers}
-    />
+    <ScoreRangeBar band={band}/>
   </AlexBox>
 }
