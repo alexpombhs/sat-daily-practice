@@ -157,7 +157,7 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
       <SettingsFieldGroup>
         <PracticeSettingField
           label="PSAT skill category"
-          helperText="Choose a PSAT/SAT reporting category to focus the practice pool. Categories are inferred from reviewed concept tags; questions without a reliable match stay uncategorized."
+          helperText="Practice questions from a specific SAT content area."
           control={<AlexDropdown id="practice-psat-domain" label="PSAT content category" value={selectedDomain} options={categoryOptions} onChange={setCategory}/>}
         />
         <PracticeSettingField
