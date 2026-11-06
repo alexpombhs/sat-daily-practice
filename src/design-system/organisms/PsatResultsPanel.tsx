@@ -7,13 +7,12 @@ import AlexIconButton from '../atoms/AlexIconButton'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
 import AlexTextField from '../atoms/AlexTextField'
-import {PSAT_DOMAINS,type PsatDomainId,type PsatScoreReport} from '../../lib/psatDomains'
+import {PSAT_DOMAINS,type PsatScoreReport} from '../../lib/psatDomains'
 import PsatReportSection from '../molecules/PsatReportSection'
 
 type Props={
   results:PsatScoreReport[]
   onChange:(results:PsatScoreReport[])=>void
-  onPracticeDomain?:(domain:PsatDomainId)=>void
 }
 
 const BAND_OPTIONS=[
@@ -56,11 +55,10 @@ export default function PsatResultsPanel({results,onChange}:Props){
     <AlexBox sx={{display:'flex',justifyContent:'space-between',alignItems:{xs:'flex-start',sm:'center'},gap:1.5,flexWrap:'wrap'}}>
       <AlexBox>
         <AlexText component="h2" sx={{fontSize:16,fontWeight:600,color:'#1D2939'}}>PSAT/NMSQT score report</AlexText>
-        <AlexText sx={{fontSize:12.5,color:'#667085',mt:.35}}></AlexText>
       </AlexBox>
       <AlexButton tone="quiet" startIcon={<Plus size={14}/>} sx={{fontSize:12.5,fontWeight:500,minHeight:30}} onClick={addResult}>Add result</AlexButton>
     </AlexBox>
-    {!results.length&&<AlexText sx={{mt:2,color:'#667085',fontSize:13.5}}>No PSAT results recorded yet. Add your score report to compare years and jump to focused practice.</AlexText>}
+    {!results.length&&<AlexText sx={{mt:2,color:'#667085',fontSize:13.5}}>No PSAT results recorded.</AlexText>}
     <AlexBox sx={{display:'grid',gap:1.5,mt:results.length?2:0}}>
       {sorted.map((report,displayIndex)=>{
         const index=results.indexOf(report)
@@ -82,7 +80,6 @@ export default function PsatResultsPanel({results,onChange}:Props){
           </AlexBox>
           <AlexAccordion summary={<AlexBox>
             <AlexText sx={{fontSize:12.5,color:'#475467',fontWeight:600}}>Edit official report</AlexText>
-            <AlexText sx={{fontSize:12,color:'#667085'}}> </AlexText>
           </AlexBox>}>
           <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'repeat(2,minmax(0,1fr))',md:'repeat(4,minmax(0,1fr))'},gap:1,mb:1.5}}>
             <AlexDropdown id={`psat-year-${index}`} label="Exam year" value={String(report.year)} options={Array.from({length:21},(_,i)=>({value:String(2015+i),label:String(2015+i)}))} onChange={value=>updateNumber(index,'year',value)}/>
@@ -94,7 +91,7 @@ export default function PsatResultsPanel({results,onChange}:Props){
           <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'1fr',md:'repeat(2,minmax(0,1fr))'},gap:1}}>
             {PSAT_DOMAINS.map(domain=><AlexBox key={domain.id} sx={{display:'flex',alignItems:'center',gap:1,p:1,border:'1px solid #F1F3F6',borderRadius:1.5,minWidth:0}}>
               <AlexBox sx={{flex:1,minWidth:0}}>
-                <AlexText sx={{fontSize:12.5,fontWeight:750,color:'#344054',mb:.5}}>{domain.label}</AlexText>
+                <AlexText sx={{fontSize:12,fontWeight:600,color:'#475467',mb:.5}}>{domain.label}</AlexText>
                 <AlexDropdown id={`psat-${report.year}-${domain.id}`} label="Score range" value={report.bands?.[domain.id]??''} options={BAND_OPTIONS} onChange={value=>updateResult(index,{bands:{...(report.bands??{}),[domain.id]:value}})}/>
               </AlexBox>
 
