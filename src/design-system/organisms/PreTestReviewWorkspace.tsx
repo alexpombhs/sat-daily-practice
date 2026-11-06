@@ -72,7 +72,7 @@ export default function PreTestReviewWorkspace({groups,selectedId,onSelect,title
             <AlexText sx={{fontSize:12,color:'#667085',mt:.4,lineHeight:1.45}}>{subtitle}</AlexText>
           </AlexBox>
           <AlexButton disabled={rows.length===0} sx={{fontSize:12,minHeight:34,whiteSpace:'nowrap'}}
-            onClick={()=>onStartGroup(orderedGroupSessionQuestionIds(rows))}>Start group session</AlexButton>
+            onClick={()=>onStartGroup(orderedGroupSessionQuestionIds(rows))}>Start session</AlexButton>
         </AlexBox>
         <AlexBox sx={{display:'grid',gridTemplateColumns:'repeat(3,minmax(0,1fr))',gap:1,borderTop:'1px solid #EDF0F5',pt:1.2}}>
           {[
