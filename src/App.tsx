@@ -692,6 +692,7 @@ export default function App(){
 
   if(view==='pre-test-review')return withSidebar('dashboard',<main className="shell" style={{overflowY:'auto',height:'100%'}}>
     <PreTestConceptReview
+      concepts={conceptPriorities}
       questions={questionBank}
       attempts={attempts}
       psatResults={settings.psatResults??[]}
