@@ -1,5 +1,5 @@
 import {describe,expect,it} from 'vitest'
-import {categorizeConcepts,matchesPsatDomain,questionPsatDomain,PSAT_DOMAINS} from './psatDomains'
+import {matchesPsatDomain,questionPsatDomain,PSAT_DOMAINS} from './psatDomains'
 import {choosePracticeQuestions,countCategoryQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,practiceQuestionPool} from './practiceGamification'
 import type {Attempt,PracticeQuestion,Settings} from '../types'
 
@@ -10,14 +10,14 @@ function question(id:string,subject:'english'|'math',concepts:string[],difficult
   }
 }
 const questions=[
-  question('rw-craft','english',['Words in Context'],'advanced'),
-  question('rw-info','english',['Command of Evidence']),
-  question('rw-expression','english',['Rhetorical Synthesis']),
-  question('rw-conventions','english',['Punctuation']),
-  question('math-algebra','math',['Systems of linear equations']),
-  question('math-advanced','math',['Quadratic Functions'],'advanced'),
-  question('math-data','math',['Percent increase']),
-  question('math-geometry','math',['Similar triangles']),
+  {...question('rw-craft','english',['Words in Context'],'advanced'),psatDomain:'craft-structure' as const},
+  {...question('rw-info','english',['Command of Evidence']),psatDomain:'information-ideas' as const},
+  {...question('rw-expression','english',['Rhetorical Synthesis']),psatDomain:'expression-ideas' as const},
+  {...question('rw-conventions','english',['Punctuation']),psatDomain:'standard-conventions' as const},
+  {...question('math-algebra','math',['Systems of linear equations']),psatDomain:'algebra' as const},
+  {...question('math-advanced','math',['Quadratic Functions'],'advanced'),psatDomain:'advanced-math' as const},
+  {...question('math-data','math',['Percent increase']),psatDomain:'problem-solving-data' as const},
+  {...question('math-geometry','math',['Similar triangles']),psatDomain:'geometry-trigonometry' as const},
   question('math-unclassified','math',['unknown specialized tag']),
 ]
 const settings:Settings={mode:'both',practiceTest:'all',questionsPerSession:10,shuffle:true,showExplanations:true,psatDomain:'all'}
@@ -31,21 +31,21 @@ describe('PSAT content domains',()=>{
     expect(PSAT_DOMAINS.filter(item=>item.subject==='math')).toHaveLength(4)
     expect(PSAT_DOMAINS.filter(item=>item.subject==='english')).toHaveLength(4)
   })
-  it('maps canonical concept tags to the correct reporting domains',()=>{
+  it('uses audited category metadata for all eight content areas',()=>{
     expect(questions.slice(0,8).map(questionPsatDomain)).toEqual([
       'craft-structure','information-ideas','expression-ideas','standard-conventions',
       'algebra','advanced-math','problem-solving-data','geometry-trigonometry',
     ])
   })
   it('does not pretend to know the category of an untagged or unknown question',()=>{
-    expect(categorizeConcepts('math',[])).toBeNull()
+    expect(questionPsatDomain(question('no-tag','math',[]))).toBeNull()
     expect(questionPsatDomain(questions[8])).toBeNull()
     expect(matchesPsatDomain(questions[8],'uncategorized')).toBe(true)
     expect(matchesPsatDomain(questions[8],'algebra')).toBe(false)
   })
-  it('uses explicitly reviewed category metadata when it matches the section',()=>{
+  it('rejects incorrect cross-section domain metadata',()=>{
     expect(questionPsatDomain({...questions[0],psatDomain:'expression-ideas'})).toBe('expression-ideas')
-    expect(questionPsatDomain({...questions[0],psatDomain:'algebra'})).toBe('craft-structure')
+    expect(questionPsatDomain({...questions[0],psatDomain:'algebra'})).toBeNull()
   })
 })
 
