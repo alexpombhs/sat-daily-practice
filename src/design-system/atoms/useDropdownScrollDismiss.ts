@@ -1,25 +1,41 @@
 import {useEffect,useRef,useState} from 'react'
 
 /**
- * MUI Select menus are portaled. A nested page scroll can move the select
- * without moving the open menu, leaving it visually detached.
- * Dismiss on an outside scroll, but keep scrolling inside the menu usable.
+ * MUI Select renders its menu in a portal. When an ancestor scrolls,
+ * update the Popover position so the menu follows its trigger instead
+ * of remaining behind or closing unexpectedly.
  */
 export default function useDropdownScrollDismiss(){
   const [open,setOpen]=useState(false)
   const menuPaperRef=useRef<HTMLDivElement|null>(null)
+  const popoverActionRef=useRef<{updatePosition:()=>void}|null>(null)
 
   useEffect(()=>{
     if(!open)return
+    let frame=0
+    const updatePosition=()=>{
+      if(frame)return
+      frame=window.requestAnimationFrame(()=>{
+        frame=0
+        popoverActionRef.current?.updatePosition()
+      })
+    }
     const handleScroll=(event:Event)=>{
       const target=event.target
+      // Scrolling through the menu's own options should not move it.
       if(target instanceof Node&&menuPaperRef.current?.contains(target))return
-      setOpen(false)
+      updatePosition()
     }
-    // Scroll events don't bubble, so capture scrolling in nested containers.
+
+    // Capture catches scrolls in nested containers (scroll doesn't bubble).
     window.addEventListener('scroll',handleScroll,true)
-    return ()=>window.removeEventListener('scroll',handleScroll,true)
+    window.addEventListener('resize',updatePosition)
+    return ()=>{
+      window.removeEventListener('scroll',handleScroll,true)
+      window.removeEventListener('resize',updatePosition)
+      if(frame)window.cancelAnimationFrame(frame)
+    }
   },[open])
 
-  return {open,onOpen:()=>setOpen(true),onClose:()=>setOpen(false),menuPaperRef}
+  return {open,onOpen:()=>setOpen(true),onClose:()=>setOpen(false),menuPaperRef,popoverActionRef}
 }
