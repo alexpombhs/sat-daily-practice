@@ -15,7 +15,7 @@ type Props<T extends string>={
 }
 
 export default function AlexDropdown<T extends string>({id,label,value,options,onChange,helperText,fullWidth=true}:Props<T>){
-  const {open,onOpen,onClose,menuPaperRef}=useDropdownScrollDismiss()
+  const {open,onOpen,onClose,menuPaperRef,popoverActionRef}=useDropdownScrollDismiss()
   const labelId=`${id}-label`
   return <FormControl fullWidth={fullWidth} size="small" sx={{minWidth:0}}>
     <InputLabel id={labelId}>{label}</InputLabel>
@@ -30,6 +30,8 @@ export default function AlexDropdown<T extends string>({id,label,value,options,o
       onChange={(event:SelectChangeEvent<T>)=>onChange(event.target.value as T)}
       sx={{'& .MuiSelect-select':{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}}
       MenuProps={{
+        action:popoverActionRef,
+        variant:'menu',
         anchorOrigin:{vertical:'bottom',horizontal:'left'},
         transformOrigin:{vertical:'top',horizontal:'left'},
         marginThreshold:12,
