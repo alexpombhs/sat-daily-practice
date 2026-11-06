@@ -433,6 +433,7 @@ export default function PerformanceDashboard({
           >
             <AlexDropdown
               id="performance-session-review"
+        menuPlacement="above"
               label="Completed session"
               value={selectedReviewSession}
               options={reviewSessionOptions}
