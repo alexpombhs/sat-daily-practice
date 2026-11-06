@@ -37,7 +37,7 @@ export default function PreTestConceptReview({concepts,questions,attempts,coachi
       <AlexBox sx={{display:'flex',alignItems:'center',gap:1,p:.65,px:1.25,border:'1px solid #E1E6EE',borderRadius:2.25,bgcolor:'#F8FAFC'}}>
         <AlexText sx={{fontSize:12.5,fontWeight:view==='concepts'?600:500,color:view==='concepts'?'#12477F':'#667085'}}>Concepts</AlexText>
         <AlexBox sx={{'& .MuiFormControlLabel-root':{m:0,gap:.4},'& .MuiFormControlLabel-label':{fontSize:12.5,fontWeight:view==='categories'?600:500,color:view==='categories'?'#12477F':'#667085'}}}>
-          <AlexSwitch label="SAT categories" checked={view==='categories'} onChange={checked=>setView(checked?'categories':'concepts')}/>
+          <AlexSwitch label="SAT categories" checked={view==='categories'} onChange={checked=>setView(checked?'categories':'concepts')} switchProps={{inputProps:{role:'switch'}}}/>
         </AlexBox>
       </AlexBox>
     </AlexBox>
