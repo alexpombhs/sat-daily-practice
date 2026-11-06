@@ -69,9 +69,9 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
   const selectedLabels=visibleCategories.map(value=>value==='uncategorized'?'Not yet categorized':domainForId(value).label)
   const categoryLabel=selectedLabels.length===0?'All SAT content areas':selectedLabels.length<=2?selectedLabels.join(' + '):`${selectedLabels.length} categories`
   const setCategories=(values:PsatSelectableCategory[])=>{
-    const subjects=new Set(values.filter(value=>value!=='uncategorized').map(value=>domainForId(value).subject))
-    const mode=subjects.size===2?'both':subjects.size===1?[...subjects][0]:settings.mode
-    onChange({...settings,psatDomain:values.length?values:'all',mode})
+    // Keep Subject independent: when both subjects are selected the user can
+    // combine R&W and Math categories without switching filters repeatedly.
+    onChange({...settings,psatDomain:values.length?values:'all'})
   }
   const setSubject=(mode:Settings['mode'])=>{
     const allowed=selectedCategories.filter(value=>value==='uncategorized'||mode==='both'||domainForId(value).subject===mode)
