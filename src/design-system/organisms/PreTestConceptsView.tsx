@@ -3,6 +3,8 @@ import {useMemo,useState} from 'react'
 import AlexBox from '../atoms/AlexBox'
 import AlexText from '../atoms/AlexText'
 import type {Attempt,PracticeQuestion,Subject} from '../../types'
+import type {PreTestCoachingSnapshot} from '../../lib/preTestCoaching'
+import PreTestCoachingPanel from '../molecules/PreTestCoachingPanel'
 import {reviewConceptGroup,type ConceptPriority} from '../../lib/conceptReview'
 import {buildPreTestQuestionRows} from '../../lib/preTestReviewAnalytics'
 import PreTestReviewWorkspace from './PreTestReviewWorkspace'
@@ -12,6 +14,7 @@ type Props={
   subject:Subject
   questions:PracticeQuestion[]
   attempts:Attempt[]
+  coaching:PreTestCoachingSnapshot|null
   onPractice:(question:PracticeQuestion)=>void
   onReview:(question:PracticeQuestion)=>void
   onStartGroup:(subject:Subject,label:string,questionIds:string[])=>void
@@ -21,7 +24,7 @@ function displayConcept(value:string){
   return value.trim().replace(/\b[a-z]/g,letter=>letter.toUpperCase())
 }
 
-export default function PreTestConceptsView({concepts,subject,questions,attempts,onPractice,onReview,onStartGroup}:Props){
+export default function PreTestConceptsView({concepts,subject,questions,attempts,coaching,onPractice,onReview,onStartGroup}:Props){
   const [selectedConcept,setSelectedConcept]=useState<string|null>(null)
   const available=useMemo(()=>questions.filter(q=>q.subject===subject),[questions,subject])
   const ids=new Set(available.map(q=>q.id))
@@ -31,6 +34,8 @@ export default function PreTestConceptsView({concepts,subject,questions,attempts
   const active=ranked.find(item=>item.concept===selectedConcept)??ranked[0]
   const groupedQuestions=active?available.filter(q=>q.concepts?.length&&reviewConceptGroup(q.concepts,q.subject)===active.concept):[]
   const rows=buildPreTestQuestionRows(groupedQuestions,attempts)
+  const insight=active?coaching?.analysis.concepts?.[active.concept]:undefined
+  const stale=Boolean(coaching?.basedOnAttemptAt&&attempts.some(attempt=>attempt.createdAt>coaching.basedOnAttemptAt!))
   const options=ranked.map(item=>({
     id:item.concept,label:displayConcept(item.concept),
     score:String(item.accuracy)+'%',
@@ -51,6 +56,7 @@ export default function PreTestConceptsView({concepts,subject,questions,attempts
       onStartGroup={ids=>active&&onStartGroup(subject,active.concept,ids)}
       onPractice={onPractice}
       onReview={onReview}
+      details={<PreTestCoachingPanel insight={insight} rows={rows} onReview={onReview} stale={stale}/>}
     />
   </AlexBox>
 }
