@@ -29,10 +29,11 @@ import {availablePracticeTests,moduleLabel,practiceTestLabel} from './lib/questi
 import {buildPracticePlanRecommendation,examTargetsFromSettings} from './lib/practicePlan'
 import {rankReviewConcepts} from './lib/conceptReview'
 import {buildNationalMeritOutlook} from './lib/nationalMeritOutlook'
+import {domainForId,type PsatDomainId} from './lib/psatDomains'
 import {failedQuestionIds} from './lib/questionMastery'
 import {estimateSectionPracticeScore} from './lib/performanceAnalytics'
 import {loadSharedQuestionBank} from './lib/sharedQuestionBank'
-import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
+import {choosePracticeQuestions,countCategoryQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
 import {pathForView,viewFromPathname,type AppRouteView} from './lib/appRoutes'
 import {DEFAULT_SETTINGS} from './lib/storage'
 import {abandonActiveSession,createActiveSession,getCurrentAuthUser,loadActiveSession,loadCloudHistory,loadUserSettings,saveActiveSessionProgress,saveActiveSessionQuestionOrder,saveUserSettings,subscribeToAuth,syncActiveAttempt,syncSession,type AuthUser} from './lib/supabase'
@@ -270,6 +271,7 @@ export default function App(){
     scoreEstimateConfidence:performance.scoreEstimateConfidence,
   }
   const difficultyCounts=countDifficultyQuestions(settings,questionBank)
+  const categoryCounts=countCategoryQuestions(settings,questionBank)
   const newQuestionCount=countNewPracticeQuestions(settings,attempts,questionBank)
   const failedQuestionCount=countFailedPracticeQuestions(settings,attempts,questionBank)
   const practiceRecommendation=buildPracticePlanRecommendation(settings,questionBank,attempts,performance)
@@ -807,6 +809,9 @@ export default function App(){
     onCustomEndDateChange={setPerformanceCustomEnd}
     sessionHistory={completedSessionHistory}
     onReviewSession={reviewPastSession}
+    psatResults={settings.psatResults??[]}
+    onPsatResultsChange={psatResults=>setSettings(previous=>({...previous,psatResults}))}
+    onPracticeDomain={(domain:PsatDomainId)=>void beginPractice(domainForId(domain).subject,'all',undefined,undefined,false,{psatDomain:domain,failedOnly:false,failedEverOnly:false})}
   /></main>)
 
   if(view==='vocabulary')return withSidebar('vocabulary',<VocabularyPractice
@@ -896,8 +901,8 @@ export default function App(){
               examLabel={practiceRecommendation.activeExamLabel}
               signedIn={Boolean(authUser)}
               vocabularyDailyTarget={settings.vocabulary?.dailyGoal??20}
-              onPracticeMath={()=>void beginPractice('math',settings.practiceTest??'all',undefined,undefined,false,{failedOnly:true,failedEverOnly:false})}
-              onPracticeReadingWriting={()=>void beginPractice('english',settings.practiceTest??'all',undefined,undefined,false,{failedOnly:true,failedEverOnly:false})}
+              onPracticeMath={()=>void beginPractice('math',settings.practiceTest??'all',undefined,undefined,false,{psatDomain:'all',failedOnly:true,failedEverOnly:false})}
+              onPracticeReadingWriting={()=>void beginPractice('english',settings.practiceTest??'all',undefined,undefined,false,{psatDomain:'all',failedOnly:true,failedEverOnly:false})}
               onPracticeVocabulary={()=>navigateTo('vocabulary')}
               onReviewFailed={startFailedReview}
             />
@@ -1021,6 +1026,7 @@ export default function App(){
     settings={settings}
     practiceTests={practiceTestOptions}
     difficultyCounts={difficultyCounts}
+    categoryCounts={categoryCounts}
     newQuestionCount={newQuestionCount}
     failedQuestionCount={failedQuestionCount}
     recommendation={practiceRecommendation}
