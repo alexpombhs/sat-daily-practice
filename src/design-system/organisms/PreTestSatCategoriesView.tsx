@@ -2,7 +2,6 @@
 import {useMemo,useState} from 'react'
 import AlexAccordion from '../atoms/AlexAccordion'
 import AlexBox from '../atoms/AlexBox'
-import AlexButton from '../atoms/AlexButton'
 import AlexDropdown from '../atoms/AlexDropdown'
 import AlexText from '../atoms/AlexText'
 import {CRAFT_SKILLS,buildPreTestDomainReview,craftSubskill,summarizeDomain,type CraftSubskill} from '../../lib/preTestReviewAnalytics'
@@ -10,6 +9,7 @@ import {PSAT_DOMAINS,type PsatDomainId,type PsatScoreReport} from '../../lib/psa
 import type {PreTestCoachingSnapshot} from '../../lib/preTestCoaching'
 import type {Attempt,PracticeQuestion,Subject} from '../../types'
 import PreTestReviewWorkspace from './PreTestReviewWorkspace'
+import PreTestCoachingPanel from '../molecules/PreTestCoachingPanel'
 
 type Props={
   subject:Subject
@@ -28,7 +28,6 @@ export default function PreTestSatCategoriesView({subject,questions,attempts,coa
   const sections=useMemo(()=>buildPreTestDomainReview(questions,attempts,subject),[questions,attempts,subject])
   const active=sections.find(section=>section.domain===selectedDomain)??sections[0]
   const insight=active?coaching?.analysis.domains?.[active.domain]:undefined
-  const labels=useMemo(()=>new Map(questions.map(question=>[question.id,question])),[questions])
   const reports=[...psatResults].sort((a,b)=>a.year-b.year).slice(-2)
   const bands=reports.filter(item=>Boolean(active&&item.bands?.[active.domain]))
     .map(item=>String(item.year)+': '+item.bands[active!.domain])
@@ -90,39 +89,13 @@ export default function PreTestSatCategoriesView({subject,questions,attempts,coa
             <AlexText sx={{fontSize:11.5,color:'#667085'}}>Selecting a subskill filters both the individual questions and the group practice session to that subskill.</AlexText>
           </AlexBox>
         </AlexAccordion>}
-        <AlexAccordion summary={<AlexBox>
-          <AlexText sx={{fontWeight:600,fontSize:13.5,color:'#08275B'}}>Personalized coaching</AlexText>
-          <AlexText sx={{fontSize:11.5,color:'#667085',mt:.2}}>{insight?String(insight.focus.length)+' strategies based on reviewed answers':'No individual coaching report saved'}</AlexText>
-        </AlexBox>}>
-          {insight?<AlexBox sx={{display:'grid',gap:1.15}}>
-            <AlexText sx={{fontSize:12.5,color:'#475467',lineHeight:1.55}}>{insight.summary}</AlexText>
-            <AlexBox sx={{bgcolor:'#F8FAF8',borderLeft:'2px solid #85A995',p:1.2}}>
-              <AlexText sx={{fontSize:12,fontWeight:600,color:'#344054'}}>What is going well</AlexText>
-              <AlexText sx={{fontSize:12.5,color:'#667085',mt:.25}}>{insight.strength}</AlexText>
-            </AlexBox>
-            {insight.focus.map((focus,index)=><AlexAccordion key={focus.title} summary={<AlexText sx={{fontSize:12.5,fontWeight:600,color:'#344054'}}>{index+1}. {focus.title}</AlexText>}>
-              <AlexBox sx={{display:'grid',gap:1}}>
-                <AlexText sx={{fontSize:12.5,color:'#475467',lineHeight:1.55}}>{focus.observation}</AlexText>
-                <AlexText sx={{fontSize:12.5,color:'#344054',lineHeight:1.55}}>
-                  <AlexText component="span" sx={{fontWeight:600}}>How to improve: </AlexText>{focus.strategy}
-                </AlexText>
-                {focus.examples.filter(example=>labels.has(example.questionId)).map(example=><AlexBox key={example.questionId}
-                  sx={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:1.2,py:.65,borderTop:'1px solid #EDF0F5'}}>
-                  <AlexBox sx={{minWidth:0}}>
-                    <AlexText sx={{fontSize:11.5,fontWeight:600,color:'#344054'}}>
-                      {'Test '+labels.get(example.questionId)!.practiceTestId.replace('practice-test-','')+' · Q'+labels.get(example.questionId)!.number}
-                    </AlexText>
-                    <AlexText sx={{fontSize:12,color:'#667085',mt:.2,lineHeight:1.45}}>{example.note}</AlexText>
-                  </AlexBox>
-                  <AlexButton tone="secondary" sx={{fontSize:11.5,minHeight:30,flexShrink:0}}
-                    onClick={()=>onReview(labels.get(example.questionId)!)}>Review</AlexButton>
-                </AlexBox>)}
-              </AlexBox>
-            </AlexAccordion>)}
-            {stale&&<AlexText sx={{fontSize:11.5,color:'#667085'}}>More questions have been answered since this coaching snapshot. Live statistics above include the new results.</AlexText>}
-            <AlexText sx={{fontSize:11,color:'#98A2B3'}}>These notes were reviewed for this account; they are not an automatic diagnosis.</AlexText>
-          </AlexBox>:<AlexText sx={{fontSize:12.5,color:'#667085'}}>Live SAT category statistics remain available. Individual written coaching must be reviewed and saved separately.</AlexText>}
-        </AlexAccordion>
+        <PreTestCoachingPanel
+          key={active?.domain??'none'}
+          insight={insight}
+          rows={active?.questions??[]}
+          onReview={onReview}
+          stale={stale}
+        />
       </AlexBox>}
     />
   </AlexBox>
