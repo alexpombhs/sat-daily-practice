@@ -15,6 +15,7 @@ export const DEFAULT_SETTINGS:Settings={
   shuffle:true,
   practiceTest:'all',
   selectionMode:'adaptive',
+  psatDomain:'all',
   failedOnly:false,
   failedEverOnly:false,
   failedRecoveryCorrectAnswers:2,
