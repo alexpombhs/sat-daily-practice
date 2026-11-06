@@ -70,7 +70,7 @@ export default function PsatResultsPanel({results,onChange,onPracticeDomain}:Pro
           <AlexText sx={{fontSize:12.5,color:'#667085'}}>R&W {report.readingWriting??'—'} · Math {report.math??'—'}{report.percentile!==null?` · ${report.percentile}th percentile`:''}</AlexText>
         </AlexBox>}>
           <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'repeat(2,minmax(0,1fr))',md:'repeat(4,minmax(0,1fr))'},gap:1,mb:1.5}}>
-            <AlexTextField type="number" label="Year" value={report.year} inputProps={{min:2000,max:2100}} onChange={event=>updateNumber(index,'year',event.target.value)}/>
+            <AlexDropdown id={`psat-year-${index}`} label="Exam year" value={String(report.year)} options={Array.from({length:21},(_,i)=>({value:String(2015+i),label:String(2015+i)}))} onChange={value=>updateNumber(index,'year',value)}/>
             <AlexTextField type="number" label="Reading & Writing" value={report.readingWriting??''} inputProps={{min:0,max:760,step:10}} onChange={event=>updateNumber(index,'readingWriting',event.target.value)}/>
             <AlexTextField type="number" label="Math" value={report.math??''} inputProps={{min:0,max:760,step:10}} onChange={event=>updateNumber(index,'math',event.target.value)}/>
             <AlexTextField type="number" label="Percentile (optional)" value={report.percentile??''} inputProps={{min:0,max:100}} onChange={event=>updateNumber(index,'percentile',event.target.value)}/>
