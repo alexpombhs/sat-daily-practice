@@ -12,6 +12,7 @@ import PracticeSetupSection from '../molecules/PracticeSetupSection'
 import SettingsFieldGroup from '../molecules/SettingsFieldGroup'
 import StudyPlanRecommendation from './StudyPlanRecommendation'
 import {DEFAULT_VOCABULARY_SETTINGS} from '../../lib/vocabulary'
+import {domainForId,PSAT_DOMAINS,type PsatDomainFilter} from '../../lib/psatDomains'
 import type {PracticePlanRecommendation} from '../../lib/practicePlan'
 import type {PracticeTestFilter,QuestionDifficulty,Settings} from '../../types'
 
@@ -21,6 +22,7 @@ type Props={
   settings:Settings
   practiceTests:PracticeTestOption[]
   difficultyCounts:{all:number;easy:number;medium:number;advanced:number}
+  categoryCounts:Record<string,number>
   newQuestionCount:number
   failedQuestionCount:number
   onChange:(settings:Settings)=>void
@@ -32,7 +34,7 @@ function labelForTest(value:PracticeTestFilter,options:PracticeTestOption[]){
   return options.find(option=>option.value===value)?.label??'All available tests'
 }
 
-export default function PracticeSetupPanel({settings,practiceTests,difficultyCounts,newQuestionCount,failedQuestionCount,onChange,onStart,recommendation}:Props){
+export default function PracticeSetupPanel({settings,practiceTests,difficultyCounts,categoryCounts,newQuestionCount,failedQuestionCount,onChange,onStart,recommendation}:Props){
   const difficultyLevels=settings.difficultyLevels??(settings.difficulty&&settings.difficulty!=='all'?[settings.difficulty]:['easy','medium','advanced'] as QuestionDifficulty[])
   const difficultyAll=difficultyLevels.length===3
   const filteredDifficultyCount=difficultyAll?difficultyCounts.all:difficultyLevels.reduce((sum,level)=>sum+difficultyCounts[level],0)
@@ -57,7 +59,15 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
     dailyGoal,
     masteredIds:vocabularySettings.masteredIds??[],
   }})
-  const startDisabled=(newOnly&&newQuestionCount===0)||(failedEverOnly&&failedQuestionCount===0)
+  const startDisabled=filteredDifficultyCount===0||(newOnly&&newQuestionCount===0)||(failedEverOnly&&failedQuestionCount===0)
+  const selectedDomain=settings.psatDomain??'all'
+  const categoryOptions:Array<{value:PsatDomainFilter;label:string}>=[
+    {value:'all',label:`All PSAT categories (${categoryCounts.all??0})`},
+    ...PSAT_DOMAINS.filter(domain=>settings.mode==='both'||domain.subject===settings.mode).map(domain=>({value:domain.id,label:`${domain.label} (${categoryCounts[domain.id]??0})`})),
+    {value:'uncategorized',label:`Not yet categorized (${categoryCounts.uncategorized??0})`},
+  ]
+  const categoryLabel=selectedDomain==='all'?'All PSAT categories':selectedDomain==='uncategorized'?'Not yet categorized':domainForId(selectedDomain).label
+  const setCategory=(value:PsatDomainFilter)=>onChange({...settings,psatDomain:value,...(value!=='all'&&value!=='uncategorized'?{mode:domainForId(value).subject}:{})})
 
   const subjectLabel=settings.mode==='both'?'Reading & Writing + Math':settings.mode==='english'?'Reading & Writing':'Math'
   const feedbackLabel=answerFeedbackTiming==='end'?'Answers at end':'Immediate feedback'
@@ -87,7 +97,7 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
           {settings.questionsPerSession} questions · {subjectLabel} · {selectionMode==='adaptive'?'Adaptive':'Random'}
         </AlexText>
         <AlexText sx={{mt:.25,fontSize:12.75,color:'#667085',lineHeight:1.4}}>
-          {labelForTest(practiceTest,practiceTests)} · {difficultyLabel}
+          {labelForTest(practiceTest,practiceTests)} · {categoryLabel} · {difficultyLabel}
         </AlexText>
       </AlexBox>
       <AlexButton
@@ -143,9 +153,14 @@ export default function PracticeSetupPanel({settings,practiceTests,difficultyCou
     <PracticeSetupSection
       title="Question pool"
       description="Selection strategy, difficulty, and review filters."
-      summary={`${selectionMode==='adaptive'?'Adaptive':'Random'} · ${difficultyLabel} · ${poolModeLabel}`}
+      summary={`${categoryLabel} · ${selectionMode==='adaptive'?'Adaptive':'Random'} · ${difficultyLabel} · ${poolModeLabel}`}
     >
       <SettingsFieldGroup>
+        <PracticeSettingField
+          label="PSAT skill category"
+          helperText="Choose a PSAT/SAT reporting category to focus the practice pool. Categories are inferred from reviewed concept tags; questions without a reliable match stay uncategorized."
+          control={<AlexDropdown id="practice-psat-domain" label="PSAT content category" value={selectedDomain} options={categoryOptions} onChange={setCategory}/>}
+        />
         <PracticeSettingField
           label="Question selection"
           helperText="Adaptive prioritizes unseen and weaker questions."
