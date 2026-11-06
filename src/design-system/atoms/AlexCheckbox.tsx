@@ -6,6 +6,6 @@ export default function AlexCheckbox({label,checked,onChange}:Props){
   return <FormControlLabel
     control={<Checkbox checked={checked} onChange={e=>onChange(e.target.checked)}/>}
     label={label}
-    sx={{m:0,'.MuiFormControlLabel-label':{fontWeight:650,color:'text.primary'}}}
+    sx={{m:0,'.MuiFormControlLabel-label':{fontWeight:600,fontSize:13.5,color:'text.primary'}}}
   />
 }
