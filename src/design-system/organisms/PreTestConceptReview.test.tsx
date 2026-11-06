@@ -1,4 +1,5 @@
-import {render,screen} from '@testing-library/react'
+
+import {render,screen,within} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {describe,expect,it,vi} from 'vitest'
 import {rankReviewConcepts} from '../../lib/conceptReview'
@@ -10,9 +11,7 @@ const math:PracticeQuestion={
   concepts:['quadratic functions'],practiceTestId:'practice-test-6',module:'math2',
   number:14,sourcePage:1,answerPage:2,responseType:'multiple-choice',correctAnswer:'B',
 }
-const unseen:PracticeQuestion={
-  ...math,id:'algebra-2',number:15,
-}
+const unseen:PracticeQuestion={...math,id:'algebra-2',number:15}
 const attempt:Attempt={
   id:'one',sessionId:'s1',questionId:math.id,subject:'math',module:'math2',
   questionNumber:14,correct:false,selectedAnswer:'A',correctAnswer:'B',
@@ -22,6 +21,7 @@ const attempt:Attempt={
 function setup(){
   const onPractice=vi.fn()
   const onReview=vi.fn()
+  const onStartGroup=vi.fn()
   const questions=[math,unseen]
   render(<PreTestConceptReview
     concepts={rankReviewConcepts(questions,[attempt])}
@@ -31,45 +31,58 @@ function setup(){
     psatResults={[]}
     onPractice={onPractice}
     onReview={onReview}
-    onStartCategory={vi.fn()}
+    onStartGroup={onStartGroup}
   />)
-  return {onPractice,onReview}
+  return {onPractice,onReview,onStartGroup}
 }
 
 describe('Pre-test Review navigation',()=>{
-  it('preserves the original concept groupings and switches to the official SAT categories',async()=>{
+  it('preserves the original concept groups and provides official SAT categories in the same layout',async()=>{
     const user=userEvent.setup()
     setup()
-    expect(screen.getByText('TOP REVIEW CONCEPTS')).toBeTruthy()
+    expect(screen.getByRole('navigation',{name:'Pre-test review groups'})).toBeTruthy()
     expect(screen.getAllByText('Quadratics & Nonlinear Functions').length).toBeGreaterThan(0)
+    expect(screen.getByRole('heading',{name:'Individual questions'})).toBeTruthy()
     await user.click(screen.getByRole('button',{name:'SAT categories'}))
-    expect(screen.getByText('Advanced Math')).toBeTruthy()
-    expect(screen.queryByText('TOP REVIEW CONCEPTS')).toBeNull()
+    const nav=screen.getByRole('navigation',{name:'Pre-test review groups'})
+    expect(within(nav).getByText('Advanced Math')).toBeTruthy()
+    expect(screen.getByRole('heading',{name:'Individual questions'})).toBeTruthy()
     await user.click(screen.getByRole('button',{name:'Concepts'}))
-    expect(screen.getByText('TOP REVIEW CONCEPTS')).toBeTruthy()
+    expect(screen.getAllByText('Quadratics & Nonlinear Functions').length).toBeGreaterThan(0)
   })
 
-  it('reveals question details on demand instead of showing an overwhelming list',async()=>{
+  it('starts a group session from either view using only the selected group, unseen first',async()=>{
     const user=userEvent.setup()
-    const {onPractice}=setup()
+    const {onStartGroup}=setup()
+    await user.click(screen.getByRole('button',{name:'Start group session'}))
+    expect(onStartGroup).toHaveBeenLastCalledWith('math','Quadratics & Nonlinear Functions',[unseen.id,math.id])
     await user.click(screen.getByRole('button',{name:'SAT categories'}))
-    await user.click(screen.getByRole('button',{name:/Advanced Math/}))
-    expect(screen.getByText('Review and practice questions')).toBeTruthy()
-    expect(screen.queryByRole('tab',{name:'Unseen'})).toBeNull()
-    await user.click(screen.getByText('Review and practice questions'))
+    await user.click(screen.getByRole('button',{name:'Start group session'}))
+    expect(onStartGroup).toHaveBeenLastCalledWith('math','Advanced Math',[unseen.id,math.id])
+  })
+
+  it('supports reviewing and practicing individual questions in both views',async()=>{
+    const user=userEvent.setup()
+    const {onPractice,onReview}=setup()
+    const questionList=screen.getByRole('heading',{name:'Individual questions'}).parentElement?.parentElement
+    expect(questionList).toBeTruthy()
+    await user.click(screen.getByRole('button',{name:'Review'}))
+    expect(onReview).toHaveBeenCalledWith(math)
+    await user.click(screen.getByRole('button',{name:'SAT categories'}))
     await user.click(screen.getByRole('tab',{name:'Unseen'}))
-    const open=screen.getByRole('button',{name:'Open'})
-    await user.click(open)
+    expect(screen.getByText(/Not attempted/)).toBeTruthy()
+    await user.click(screen.getByRole('button',{name:'Practice'}))
     expect(onPractice).toHaveBeenCalledWith(unseen)
   })
 
-  it('keeps the selected subject when switching between concepts and SAT categories',async()=>{
+  it('keeps the selected subject while switching views and filters each group list',async()=>{
     const user=userEvent.setup()
     setup()
     await user.click(screen.getByRole('tab',{name:'Reading & Writing'}))
     await user.click(screen.getByRole('button',{name:'SAT categories'}))
-    expect(screen.getByRole('heading',{name:'Craft and Structure'})).toBeTruthy()
-    expect(screen.queryByText('Advanced Math')).toBeNull()
+    const nav=screen.getByRole('navigation',{name:'Pre-test review groups'})
+    expect(within(nav).getByText('Craft and Structure')).toBeTruthy()
+    expect(within(nav).queryByText('Advanced Math')).toBeNull()
     await user.click(screen.getByRole('button',{name:'Concepts'}))
     expect(screen.getByRole('tab',{name:'Reading & Writing','selected':true})).toBeTruthy()
   })
