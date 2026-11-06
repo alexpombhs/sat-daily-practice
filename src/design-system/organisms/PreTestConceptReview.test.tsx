@@ -107,6 +107,7 @@ describe('Pre-test Review navigation',()=>{
         domains:{'advanced-math':insight},concepts:{[rankReviewConcepts([math,unseen],[attempt])[0].concept]:insight}},
     }
     const {onReview}=setup(coaching)
+    expect(screen.getByText(/1 targeted strategies/)).toBeTruthy()
     expect(screen.queryByRole('heading',{name:'Examples from your answers'})).toBeNull()
     await user.click(screen.getByRole('button',{name:/Personalized coaching/}))
     expect(await screen.findByText('Check the requested condition')).toBeTruthy()
