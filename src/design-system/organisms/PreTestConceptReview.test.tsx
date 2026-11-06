@@ -7,7 +7,7 @@ import PreTestConceptReview from './PreTestConceptReview'
 
 const math:PracticeQuestion={
   id:'algebra-1',subject:'math',psatDomain:'advanced-math',difficulty:'advanced',
-  concepts:['quadratic equations'],practiceTestId:'practice-test-6',module:'math2',
+  concepts:['quadratic functions'],practiceTestId:'practice-test-6',module:'math2',
   number:14,sourcePage:1,answerPage:2,responseType:'multiple-choice',correctAnswer:'B',
 }
 const unseen:PracticeQuestion={
@@ -68,7 +68,7 @@ describe('Pre-test Review navigation',()=>{
     setup()
     await user.click(screen.getByRole('tab',{name:'Reading & Writing'}))
     await user.click(screen.getByRole('button',{name:'SAT categories'}))
-    expect(screen.getByText('Craft and Structure')).toBeTruthy()
+    expect(screen.getByRole('heading',{name:'Craft and Structure'})).toBeTruthy()
     expect(screen.queryByText('Advanced Math')).toBeNull()
     await user.click(screen.getByRole('button',{name:'Concepts'}))
     expect(screen.getByRole('tab',{name:'Reading & Writing','selected':true})).toBeTruthy()
