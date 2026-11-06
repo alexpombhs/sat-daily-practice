@@ -108,7 +108,7 @@ describe('Pre-test Review navigation',()=>{
     }
     const {onReview}=setup(coaching)
     expect(screen.queryByRole('heading',{name:'Examples from your answers'})).toBeNull()
-    await user.click(screen.getByText('Personalized coaching'))
+    await user.click(screen.getByRole('button',{name:/Personalized coaching/}))
     expect(await screen.findByText('Check the requested condition')).toBeTruthy()
     expect(screen.queryByRole('heading',{name:'Examples from your answers'})).toBeNull()
     await user.click(screen.getByRole('button',{name:'Review 1 example'}))
@@ -118,7 +118,7 @@ describe('Pre-test Review navigation',()=>{
     await user.click(screen.getByRole('switch',{name:'SAT categories'}))
     await user.click(within(screen.getByRole('navigation',{name:'Pre-test review groups'})).getByText('Advanced Math'))
     expect(screen.queryByRole('heading',{name:'Examples from your answers'})).toBeNull()
-    await user.click(screen.getByText('Personalized coaching'))
+    await user.click(screen.getByRole('button',{name:/Personalized coaching/}))
     expect(await screen.findByText('Check the requested condition')).toBeTruthy()
     await user.click(screen.getByRole('button',{name:'Review 1 example'}))
     expect(await screen.findByRole('heading',{name:'Examples from your answers'})).toBeTruthy()
