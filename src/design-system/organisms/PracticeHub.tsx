@@ -28,6 +28,7 @@ type Props={
   settings:Settings
   practiceTests:PracticeTestOption[]
   difficultyCounts:{all:number;easy:number;medium:number;advanced:number}
+  categoryCounts:Record<string,number>
   newQuestionCount:number
   failedQuestionCount:number
   recommendation:PracticePlanRecommendation
@@ -44,6 +45,7 @@ export default function PracticeHub({
   settings,
   practiceTests,
   difficultyCounts,
+  categoryCounts,
   newQuestionCount,
   failedQuestionCount,
   recommendation,
@@ -93,6 +95,7 @@ export default function PracticeHub({
         settings={settings}
         practiceTests={practiceTests}
         difficultyCounts={difficultyCounts}
+        categoryCounts={categoryCounts}
         newQuestionCount={newQuestionCount}
         failedQuestionCount={failedQuestionCount}
         onChange={onChangeSettings}
