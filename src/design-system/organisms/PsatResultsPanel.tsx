@@ -4,7 +4,6 @@ import AlexBox from '../atoms/AlexBox'
 import AlexButton from '../atoms/AlexButton'
 import AlexDropdown from '../atoms/AlexDropdown'
 import AlexIconButton from '../atoms/AlexIconButton'
-import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
 import AlexTextField from '../atoms/AlexTextField'
 import {PSAT_DOMAINS,type PsatDomainId,type PsatScoreReport} from '../../lib/psatDomains'
@@ -52,19 +51,19 @@ export default function PsatResultsPanel({results,onChange}:Props){
     updateResult(index,{[field]:numeric})
   }
 
-  return <AlexSurface sx={{border:'1px solid #E4E7EC',bgcolor:'#fff',p:{xs:1.5,sm:2},borderRadius:2}}>
-    <AlexBox sx={{display:'flex',justifyContent:'space-between',alignItems:{xs:'flex-start',sm:'center'},gap:1.5,flexWrap:'wrap'}}>
-      <AlexBox>
-        <AlexText component="h2" sx={{fontSize:16,fontWeight:600,color:'#1D2939'}}>PSAT/NMSQT score report</AlexText>
-      </AlexBox>
+  return <AlexAccordion defaultExpanded={false} summary={<AlexBox sx={{minWidth:0,pr:1}}>
+    <AlexText component="h2" sx={{fontSize:15,fontWeight:600,color:'#1D2939'}}>PSAT score history</AlexText>
+    <AlexText sx={{fontSize:12,color:'#667085',mt:.2}}>Reference only · {sorted.length?`${sorted.length} report${sorted.length===1?'':'s'} saved`:'No reports saved'}</AlexText>
+  </AlexBox>}>
+    <AlexBox sx={{display:'flex',justifyContent:'flex-end'}}>
       <AlexButton tone="quiet" startIcon={<Plus size={14}/>} sx={{fontSize:12.5,fontWeight:500,minHeight:30}} onClick={addResult}>Add result</AlexButton>
     </AlexBox>
     {!results.length&&<AlexText sx={{mt:2,color:'#667085',fontSize:13.5}}>No PSAT results recorded.</AlexText>}
     <AlexBox sx={{display:'grid',gap:1.5,mt:results.length?2:0}}>
-      {sorted.map((report,displayIndex)=>{
+      {sorted.map(report=>{
         const index=results.indexOf(report)
         const total=reportTotal(report)
-        return <AlexAccordion key={report.year} defaultExpanded={displayIndex===0} summary={<AlexBox sx={{width:'100%',display:'flex',alignItems:'center',gap:1,justifyContent:'space-between',pr:1,flexWrap:'wrap'}}>
+        return <AlexAccordion key={report.year} defaultExpanded={false} summary={<AlexBox sx={{width:'100%',display:'flex',alignItems:'center',gap:1,justifyContent:'space-between',pr:1,flexWrap:'wrap'}}>
           <AlexText sx={{color:'#08275B',fontWeight:600,fontSize:13}}>PSAT/NMSQT {report.year}</AlexText>
           <AlexText sx={{fontWeight:600,fontSize:15,color:'#1D2939'}}>{total??'—'} <AlexText component="span" sx={{fontSize:12,color:'#667085'}}> / 1520</AlexText></AlexText>
           <AlexText sx={{fontSize:11.5,color:'#98A2B3'}}>R&W {report.readingWriting??'—'} · Math {report.math??'—'}{report.percentile!==null?` · ${report.percentile}th percentile`:''}</AlexText>
@@ -106,5 +105,5 @@ export default function PsatResultsPanel({results,onChange}:Props){
       })}
     </AlexBox>
 
-  </AlexSurface>
+  </AlexAccordion>
 }

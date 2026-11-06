@@ -43,6 +43,7 @@ export default function SessionReviewSelector({value,options,onChange,onReview}:
     >
       <AlexDropdown
         id="practice-session-review"
+        menuPlacement="above"
         label="Completed session"
         value={value}
         options={options}

@@ -1,5 +1,7 @@
 import {Checkbox,FormControl,FormHelperText,InputLabel,ListItemText,MenuItem,Select,type SelectChangeEvent} from '@mui/material'
 
+import useDropdownScrollDismiss from './useDropdownScrollDismiss'
+
 export type AlexMultiDropdownOption<T extends string>={value:T;label:string}
 
 type Props<T extends string>={
@@ -18,6 +20,7 @@ const ALL_VALUE='__all__'
 export default function AlexMultiDropdown<T extends string>({
   id,label,value,options,onChange,allLabel='All categories',helperText,fullWidth=true,
 }:Props<T>){
+  const {open,onOpen,onClose,menuPaperRef,popoverActionRef}=useDropdownScrollDismiss()
   const labelId=`${id}-label`
   const selectedLabels=options.filter(option=>value.includes(option.value)).map(option=>option.label)
   const display=selectedLabels.length===0?allLabel
@@ -32,10 +35,13 @@ export default function AlexMultiDropdown<T extends string>({
     onChange([...new Set(next.filter(item=>allowed.has(item)))] as T[])
   }
 
-  return <FormControl fullWidth={fullWidth} size="small">
+  return <FormControl fullWidth={fullWidth} size="small" sx={{minWidth:0}}>
     <InputLabel id={labelId} shrink>{label}</InputLabel>
     <Select<string[]>
       multiple
+      open={open}
+      onOpen={onOpen}
+      onClose={onClose}
       displayEmpty
       labelId={labelId}
       id={id}
@@ -43,7 +49,7 @@ export default function AlexMultiDropdown<T extends string>({
       label={label}
       onChange={handleChange}
       renderValue={()=>display}
-      MenuProps={{PaperProps:{sx:{mt:.75,maxHeight:360,border:'1px solid',borderColor:'divider',boxShadow:'0 14px 36px rgba(16,24,40,.12)'}}}}
+      MenuProps={{action:popoverActionRef,variant:'menu',PaperProps:{ref:menuPaperRef,sx:{mt:.75,maxHeight:360,border:'1px solid',borderColor:'divider',boxShadow:'0 14px 36px rgba(16,24,40,.12)'}}}}
       sx={{'& .MuiSelect-select':{fontWeight:500}}}
     >
       <MenuItem value={ALL_VALUE}>
