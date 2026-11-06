@@ -1,4 +1,4 @@
-import type {PsatDomainFilter,PsatDomainId,PsatScoreReport} from './lib/psatDomains'
+import type {PsatDomainSelection,PsatDomainId,PsatScoreReport} from './lib/psatDomains'
 
 export type Subject = 'english' | 'math'
 export type SubjectMode = Subject | 'both'
@@ -17,4 +17,4 @@ export interface Attempt { id:string; sessionId:string; questionId:string; pract
 export interface SessionSummary { id:string; startedAt:string; endedAt:string; mode:SubjectMode; questionCount:number; attempts:Attempt[]; dailyQuestionGoal?:number; settings?:Settings }
 export type SessionStatus = 'active' | 'completed' | 'abandoned'
 export interface ActivePracticeSession { id:string; startedAt:string; mode:SubjectMode; questionCount:number; questionIds:string[]; currentIndex:number; draftAnswer:string; lastActivityAt:string; settings:Settings; attempts:Attempt[] }
-export interface Settings { mode:SubjectMode; questionsPerSession:number; showExplanations:boolean; answerFeedbackTiming?:AnswerFeedbackTiming; shuffle:boolean; practiceTest?:PracticeTestFilter; selectionMode?:PracticeSelectionMode; difficulty?:DifficultyFilter; difficultyLevels?:QuestionDifficulty[]; failedOnly?:boolean; failedEverOnly?:boolean; failedRecoveryCorrectAnswers?:number; targetExamDate?:string; examTargets?:ExamTarget[]; targetPracticeSets?:number; targetCoveragePercent?:number; fallbackMinutesPerQuestion?:number; targetScore?:number; psatDomain?:PsatDomainFilter; psatResults?:PsatScoreReport[]; vocabulary?:VocabularyPreferences }
+export interface Settings { mode:SubjectMode; questionsPerSession:number; showExplanations:boolean; answerFeedbackTiming?:AnswerFeedbackTiming; shuffle:boolean; practiceTest?:PracticeTestFilter; selectionMode?:PracticeSelectionMode; difficulty?:DifficultyFilter; difficultyLevels?:QuestionDifficulty[]; failedOnly?:boolean; failedEverOnly?:boolean; failedRecoveryCorrectAnswers?:number; targetExamDate?:string; examTargets?:ExamTarget[]; targetPracticeSets?:number; targetCoveragePercent?:number; fallbackMinutesPerQuestion?:number; targetScore?:number; psatDomain?:PsatDomainSelection; psatResults?:PsatScoreReport[]; vocabulary?:VocabularyPreferences }
