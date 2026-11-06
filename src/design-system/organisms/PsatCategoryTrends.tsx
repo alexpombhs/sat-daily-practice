@@ -3,7 +3,7 @@ import AlexBox from '../atoms/AlexBox'
 import AlexDropdown from '../atoms/AlexDropdown'
 import AlexLineChart from '../atoms/AlexLineChart'
 import AlexText from '../atoms/AlexText'
-import SectionPanel from '../molecules/SectionPanel'
+import AlexAccordion from '../atoms/AlexAccordion'
 import {buildRecentCategoryTrend} from '../../lib/psatCategoryTrends'
 import {PSAT_DOMAINS} from '../../lib/psatDomains'
 import type {Attempt,PracticeQuestion,Subject} from '../../types'
@@ -30,17 +30,21 @@ export default function PsatCategoryTrends({questions,attempts,sessions}:Props){
   })).filter(line=>line.data.length)
   const dates=recent.map(point=>point.date)
   const tickValues=dates.filter((_,index)=>index===0||index===dates.length-1||index%Math.max(1,Math.ceil(dates.length/6))===0)
-  return <SectionPanel
-    eyebrow="Category performance"
-    title="SAT content areas over time"
-    description="Rolling accuracy from the most recent 120 distinct questions: up to 60 Reading & Writing and 60 Math. Earlier retries have lower weight."
-    action={<AlexBox sx={{width:{xs:'100%',sm:235}}}>
-      <AlexDropdown id="category-trend-subject" label="Section" value={subject} onChange={setSubject} options={[
-        {value:'english',label:'Reading & Writing'},
-        {value:'math',label:'Math'},
-      ]}/>
+  return <AlexAccordion
+    defaultExpanded={false}
+    summary={<AlexBox sx={{minWidth:0,pr:1}}>
+      <AlexText component="h2" sx={{fontSize:15,fontWeight:600,color:'#1D2939'}}>Category performance over time</AlexText>
+      <AlexText sx={{fontSize:12,color:'#667085',mt:.2}}>Latest 120 distinct questions · 60 per section</AlexText>
     </AlexBox>}
   >
+    <AlexBox sx={{display:'flex',justifyContent:'flex-end',mb:2}}>
+      <AlexBox sx={{width:{xs:'100%',sm:235}}}>
+        <AlexDropdown id="category-trend-subject" label="Section" value={subject} onChange={setSubject} options={[
+          {value:'english',label:'Reading & Writing'},
+          {value:'math',label:'Math'},
+        ]}/>
+      </AlexBox>
+    </AlexBox>
     <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'repeat(2,minmax(0,1fr))',md:'repeat(4,minmax(0,1fr))'},gap:1,mb:1.5}}>
       {domains.map((domain,index)=>{
         const currentValue=current?.domains.find(item=>item.domain===domain.id)
@@ -75,5 +79,5 @@ export default function PsatCategoryTrends({questions,attempts,sessions}:Props){
       <AlexText sx={{fontSize:13,color:'#667085'}}>No categorized practice attempts yet for this section.</AlexText>
     </AlexBox>}
     <AlexText sx={{fontSize:11.5,color:'#667085',mt:1}}>Daily snapshots use the same distinct-question window and recency weighting as the practice score estimate. This is practice accuracy, not an official PSAT content-area score.</AlexText>
-  </SectionPanel>
+  </AlexAccordion>
 }
