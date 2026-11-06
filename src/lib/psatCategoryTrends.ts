@@ -54,7 +54,7 @@ export function recentCategorySnapshot(attempts:Attempt[],questions:PracticeQues
   }
 }
 
-export function buildRecentCategoryTrend(attempts:Attempt[],sessions:SessionSummary[],questions:PracticeQuestion[]):PsatCategorySnapshot[]{
+export function buildRecentCategoryTrend(attempts:Attempt[],sessions:Array<Pick<SessionSummary,'id'|'endedAt'>>,questions:PracticeQuestion[]):PsatCategorySnapshot[]{
   const valid=new Set(questions.map(q=>q.id))
   const ordered=[...sessions].filter(s=>s.endedAt).sort((a,b)=>a.endedAt.localeCompare(b.endedAt))
   const cumulative:Attempt[]=[]
