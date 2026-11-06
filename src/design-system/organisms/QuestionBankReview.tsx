@@ -56,7 +56,7 @@ export default function QuestionBankReview({questionsPdf}:Props){
       if(!needle)return true
       return question.id.toLowerCase().includes(needle)||questionLabel(question).toLowerCase().includes(needle)||String(question.number)===needle
     })
-  },[bank,practiceTestFilter,moduleFilter,search])
+  },[bank,practiceTestFilter,moduleFilter,categoryFilter,search])
 
   const groupedPracticeTests=useMemo(()=>groupQuestionsByPracticeTest(questions),[questions])
   useEffect(()=>{
