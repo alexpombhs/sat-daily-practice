@@ -33,7 +33,7 @@ export default function PreTestReviewWorkspace({groups,selectedId,onSelect,title
   const shown=showAll?visible:visible.slice(0,8)
 
   return <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'minmax(0,1fr)',md:'minmax(245px,.86fr) minmax(0,2fr)'},alignItems:'start',gap:1.5,minWidth:0}}>
-    <AlexBox component="nav" aria-label="Pre-test review groups" sx={{border:'1px solid #E4E7EC',borderRadius:2,p:1.25,bgcolor:'#fff',display:'grid',gap:.4,minWidth:0}}>
+    <AlexBox component="nav" aria-label="Pre-test review groups" sx={{border:'1px solid #E4E7EC',borderRadius:2,p:1.25,bgcolor:'#fff',display:'grid',gridTemplateColumns:'minmax(0,1fr)',alignContent:'start',width:'100%',boxSizing:'border-box',gap:.4,minWidth:0}}>
       <AlexText sx={{px:.8,py:.55,fontSize:11.5,fontWeight:600,color:'#667085'}}>REVIEW GROUPS</AlexText>
       {groups.length===0&&<AlexText sx={{fontSize:12.5,color:'#667085',p:1}}>No groups with practice history in this subject.</AlexText>}
       {groups.map(group=>{
@@ -41,7 +41,7 @@ export default function PreTestReviewWorkspace({groups,selectedId,onSelect,title
         return <AlexButtonBase key={group.id} onClick={()=>{onSelect(group.id);setFilter('all');setShowAll(false)}}
           aria-current={selected?'true':undefined}
           sx={{
-            display:'block',width:'100%',minWidth:0,height:'auto',
+            display:'block',width:'100%',maxWidth:'100%',boxSizing:'border-box',justifySelf:'stretch',minWidth:0,height:'auto',
             p:.85,textAlign:'left',justifyContent:'flex-start',alignItems:'stretch',
             borderRadius:1.25,
             border:selected?'1px solid #96B6DC':'1px solid transparent',
