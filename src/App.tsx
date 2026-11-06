@@ -28,6 +28,7 @@ import {getPdf} from './lib/pdfStore'
 import {availablePracticeTests,moduleLabel,practiceTestLabel} from './lib/questionBank'
 import {buildPracticePlanRecommendation,examTargetsFromSettings} from './lib/practicePlan'
 import {rankReviewConcepts} from './lib/conceptReview'
+import {loadPreTestCoaching,type PreTestCoachingSnapshot} from './lib/preTestCoaching'
 import {buildNationalMeritOutlook} from './lib/nationalMeritOutlook'
 import {domainForId,type PsatDomainId} from './lib/psatDomains'
 import {failedQuestionIds} from './lib/questionMastery'
@@ -73,6 +74,7 @@ export default function App(){
   const[replacingSession,setReplacingSession]=useState(false)
   const[confirmEndSession,setConfirmEndSession]=useState(false)
   const[preTestQuestion,setPreTestQuestion]=useState<PracticeQuestion|null>(null)
+  const[preTestCoaching,setPreTestCoaching]=useState<PreTestCoachingSnapshot|null>(null)
   const[preTestSelected,setPreTestSelected]=useState('')
   const[preTestSubmitted,setPreTestSubmitted]=useState(false)
   const[reviewMode,setReviewMode]=useState(false)
@@ -174,6 +176,14 @@ export default function App(){
       if(activeResult.status==='fulfilled')setResumableSession(activeResult.value)
       else console.warn('Supabase active-session load failed',activeResult.reason)
     })()
+    return()=>{cancelled=true}
+  },[authUser?.id])
+  useEffect(()=>{
+    if(!authUser){setPreTestCoaching(null);return}
+    let cancelled=false
+    void loadPreTestCoaching()
+      .then(snapshot=>{if(!cancelled)setPreTestCoaching(snapshot)})
+      .catch(error=>{if(!cancelled){setPreTestCoaching(null);console.warn('Unable to load private Pre-test coaching',error)}})
     return()=>{cancelled=true}
   },[authUser?.id])
   useEffect(()=>{
@@ -646,7 +656,7 @@ export default function App(){
   if(view==='pre-test-question')return withSidebar('dashboard',<main className="practice pre-test-question-page">
     <AlexBox sx={{display:'flex',alignItems:'center',justifyContent:'space-between',p:1,mb:1}}>
       <AlexBox sx={{fontWeight:850,color:'#08275B'}}>PRE-TEST REVIEW · Individual question</AlexBox>
-      <AlexButton tone="secondary" onClick={()=>navigateTo('pre-test-review')}>Back to concepts</AlexButton>
+      <AlexButton tone="secondary" onClick={()=>navigateTo('pre-test-review')}>Back to categories</AlexButton>
     </AlexBox>
     {preTestQuestion?<div className="practice-workspace">
       <section className="question-panel">
@@ -682,11 +692,13 @@ export default function App(){
 
   if(view==='pre-test-review')return withSidebar('dashboard',<main className="shell" style={{overflowY:'auto',height:'100%'}}>
     <PreTestConceptReview
-      concepts={conceptPriorities}
       questions={questionBank}
       attempts={attempts}
+      psatResults={settings.psatResults??[]}
+      coaching={preTestCoaching}
       onPractice={practiceConceptQuestion}
       onReview={reviewConceptQuestion}
+      onStartCategory={(domain:PsatDomainId)=>void beginPractice(domainForId(domain).subject,'all',undefined,undefined,false,{psatDomain:domain,failedOnly:false,failedEverOnly:false})}
     />
   </main>,'#F7F6F2')
 
