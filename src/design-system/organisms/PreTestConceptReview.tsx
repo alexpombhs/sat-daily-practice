@@ -2,7 +2,7 @@ import {useState} from 'react'
 import AlexBox from '../atoms/AlexBox'
 import AlexTabs from '../atoms/AlexTabs'
 import AlexText from '../atoms/AlexText'
-import AlexViewToggle from '../atoms/AlexViewToggle'
+import AlexSwitch from '../atoms/AlexSwitch'
 import type {ConceptPriority} from '../../lib/conceptReview'
 import type {PreTestCoachingSnapshot} from '../../lib/preTestCoaching'
 import type {PsatScoreReport} from '../../lib/psatDomains'
@@ -34,12 +34,12 @@ export default function PreTestConceptReview({concepts,questions,attempts,coachi
           {view==='concepts'?'Review the concepts you have missed most often.':'Review official SAT content areas and open detailed coaching when needed.'}
         </AlexText>
       </AlexBox>
-      <AlexViewToggle
-        value={view}
-        onChange={setView}
-        ariaLabel="Pre-test review view"
-        options={[{value:'concepts',label:'Concepts'},{value:'categories',label:'SAT categories'}]}
-      />
+      <AlexBox sx={{display:'flex',alignItems:'center',gap:1,p:.65,px:1.25,border:'1px solid #E1E6EE',borderRadius:2.25,bgcolor:'#F8FAFC'}}>
+        <AlexText sx={{fontSize:12.5,fontWeight:view==='concepts'?600:500,color:view==='concepts'?'#12477F':'#667085'}}>Concepts</AlexText>
+        <AlexBox sx={{'& .MuiFormControlLabel-root':{m:0,gap:.4},'& .MuiFormControlLabel-label':{fontSize:12.5,fontWeight:view==='categories'?600:500,color:view==='categories'?'#12477F':'#667085'}}}>
+          <AlexSwitch label="SAT categories" checked={view==='categories'} onChange={checked=>setView(checked?'categories':'concepts')}/>
+        </AlexBox>
+      </AlexBox>
     </AlexBox>
     <AlexTabs
       value={subject}
@@ -54,6 +54,7 @@ export default function PreTestConceptReview({concepts,questions,attempts,coachi
         subject={subject}
         questions={questions}
         attempts={attempts}
+        coaching={coaching}
         onPractice={onPractice}
         onReview={onReview}
         onStartGroup={onStartGroup}
