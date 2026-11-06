@@ -253,7 +253,7 @@ export default function PerformanceDashboard({
       </AlexBox>}
     </SectionPanel></AlexBox>}
 
-    {onPsatResultsChange&&<AlexBox sx={{mt:2.5}}><PsatResultsPanel results={psatResults} onChange={onPsatResultsChange} onPracticeDomain={onPracticeDomain} questions={coverageQuestions} attempts={coverageAttempts} recoveryCorrectAnswers={recoveryCorrectAnswers}/></AlexBox>}
+    {onPsatResultsChange&&<AlexBox sx={{mt:2.5}}><PsatResultsPanel results={psatResults} onChange={onPsatResultsChange} onPracticeDomain={onPracticeDomain}/></AlexBox>}
 
     <AlexBox sx={{mt:2.5}}><QuestionCoverageCharts questions={coverageQuestions} attempts={coverageAttempts} recoveryCorrectAnswers={recoveryCorrectAnswers}/></AlexBox>
 
