@@ -5,7 +5,7 @@ import AlexText from '../atoms/AlexText'
 import AlexViewToggle from '../atoms/AlexViewToggle'
 import type {ConceptPriority} from '../../lib/conceptReview'
 import type {PreTestCoachingSnapshot} from '../../lib/preTestCoaching'
-import type {PsatDomainId,PsatScoreReport} from '../../lib/psatDomains'
+import type {PsatScoreReport} from '../../lib/psatDomains'
 import type {Attempt,PracticeQuestion,Subject} from '../../types'
 import PreTestConceptsView from './PreTestConceptsView'
 import PreTestSatCategoriesView from './PreTestSatCategoriesView'
@@ -19,10 +19,10 @@ type Props={
   psatResults:PsatScoreReport[]
   onPractice:(question:PracticeQuestion)=>void
   onReview:(question:PracticeQuestion)=>void
-  onStartCategory:(category:PsatDomainId)=>void
+  onStartGroup:(subject:Subject,label:string,questionIds:string[])=>void
 }
 
-export default function PreTestConceptReview({concepts,questions,attempts,coaching,psatResults,onPractice,onReview,onStartCategory}:Props){
+export default function PreTestConceptReview({concepts,questions,attempts,coaching,psatResults,onPractice,onReview,onStartGroup}:Props){
   const [view,setView]=useState<ReviewView>('concepts')
   const [subject,setSubject]=useState<Subject>('math')
 
@@ -56,6 +56,7 @@ export default function PreTestConceptReview({concepts,questions,attempts,coachi
         attempts={attempts}
         onPractice={onPractice}
         onReview={onReview}
+        onStartGroup={onStartGroup}
       />
       :<PreTestSatCategoriesView
         subject={subject}
@@ -65,7 +66,7 @@ export default function PreTestConceptReview({concepts,questions,attempts,coachi
         psatResults={psatResults}
         onPractice={onPractice}
         onReview={onReview}
-        onStartCategory={onStartCategory}
+        onStartGroup={onStartGroup}
       />}
   </AlexBox>
 }
