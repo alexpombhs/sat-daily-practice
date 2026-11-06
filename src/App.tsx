@@ -315,7 +315,7 @@ export default function App(){
       setPendingPractice({mode:nextMode,test:nextPracticeTest,questionIds:reviewQuestionIds,groups:conceptGroups,sessionOverrides})
       return
     }
-    const nextSettings={...settings,mode:nextMode,practiceTest:nextPracticeTest,...sessionOverrides,...(reviewQuestionIds?{failedOnly:false,failedEverOnly:true}: {})}
+    const nextSettings={...settings,mode:nextMode,practiceTest:nextPracticeTest,...sessionOverrides,...(reviewQuestionIds?{failedOnly:false,failedEverOnly:!conceptGroups?.length}: {})}
     const nextQuestions=reviewQuestionIds
       ?reviewQuestionIds.map(id=>questionBank.find(q=>q.id===id)).filter((q):q is PracticeQuestion=>Boolean(q)).slice(0,settings.questionsPerSession)
       :choosePracticeQuestions(nextSettings,attempts,Math.random,questionBank)
@@ -699,7 +699,7 @@ export default function App(){
       coaching={preTestCoaching}
       onPractice={practiceConceptQuestion}
       onReview={reviewConceptQuestion}
-      onStartCategory={(domain:PsatDomainId)=>void beginPractice(domainForId(domain).subject,'all',undefined,undefined,false,{psatDomain:domain,failedOnly:false,failedEverOnly:false})}
+      onStartGroup={(subject,label,ids)=>void beginPractice(subject,'all',ids,[{concept:label,questionIds:ids}],false,{psatDomain:'all',failedOnly:false,failedEverOnly:false})}
     />
   </main>,'#F7F6F2')
 
@@ -744,7 +744,7 @@ export default function App(){
         const groupIndex=preTestGroups.indexOf(group!)
         const within=group?.questionIds.indexOf(current.id)??0
         return <AlexBox sx={{p:1.4,mb:1,bgcolor:'#EAF3FF',border:'1px solid #D9E7F8',borderRadius:2}}>
-          <AlexBox sx={{fontWeight:850,color:'#08275B',fontSize:15}}>PRE-TEST REVIEW · Concept {groupIndex+1} of {preTestGroups.length}: {group?.concept}</AlexBox>
+          <AlexBox sx={{fontWeight:850,color:'#08275B',fontSize:15}}>PRE-TEST REVIEW · Group {groupIndex+1} of {preTestGroups.length}: {group?.concept}</AlexBox>
           <AlexBox sx={{fontSize:12.5,color:'#405B80',mt:.3}}>Review this concept through {group?.questionIds.length} questions · Question {within+1} of {group?.questionIds.length} · Concepts progress from most challenging to easier</AlexBox>
         </AlexBox>
       })()}
