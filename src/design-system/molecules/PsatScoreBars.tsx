@@ -18,12 +18,12 @@ export function ScoreRangeBar({low=160,high=760,band}:{low?:number;high?:number;
   const start=valid?(parts![0]-low)/(high-low)*100:0
   const width=valid?(parts![1]-parts![0])/(high-low)*100:0
   return <AlexBox sx={{width:'100%'}}>
-    <AlexBox sx={{height:10,borderRadius:6,bgcolor:'#DFE6F5',position:'relative',overflow:'hidden'}}>
-      {valid&&<AlexBox sx={{position:'absolute',left:`${start}%`,width:`${width}%`,height:'100%',bgcolor:'#3151CC',borderRadius:6}}/>}
+    <AlexBox sx={{height:6,borderRadius:999,bgcolor:'#E7EBF3',position:'relative',overflow:'hidden'}}>
+      {valid&&<AlexBox sx={{position:'absolute',left:`${start}%`,width:`${width}%`,height:'100%',bgcolor:'#3458CE',borderRadius:999}}/>}
     </AlexBox>
     <AlexBox sx={{display:'flex',justifyContent:'space-between',mt:.3}}>
-      <AlexText sx={{fontSize:10.5,color:'#667085'}}>{low}</AlexText>
-      <AlexText sx={{fontSize:11,fontWeight:750,color:'#3151CC'}}>{band||'Not recorded'}</AlexText>
+      <AlexText sx={{fontSize:10,color:'#98A2B3'}}>{low}</AlexText>
+      <AlexText sx={{fontSize:10.5,fontWeight:600,color:'#3458CE'}}>{band||'Not recorded'}</AlexText>
       <AlexText sx={{fontSize:10.5,color:'#667085'}}>{high}</AlexText>
     </AlexBox>
   </AlexBox>
@@ -32,12 +32,12 @@ export function ScoreRangeBar({low=160,high=760,band}:{low?:number;high?:number;
 export function SectionScoreBar({score}:{score:number|null}){
   const percent=score===null?0:Math.max(0,Math.min(100,(score-160)/600*100))
   return <AlexBox>
-    <AlexText sx={{fontSize:33,fontWeight:850,color:'#10213E'}}>{score??'—'}</AlexText>
-    <AlexBox sx={{height:11,borderRadius:8,overflow:'hidden',bgcolor:'#DFE6F5'}}>
-      <AlexBox sx={{height:'100%',width:`${percent}%`,bgcolor:'#3151CC',borderRadius:8}}/>
+    <AlexText sx={{fontSize:26,fontWeight:600,color:'#1D2939',lineHeight:1.25,mb:.45}}>{score??'—'}</AlexText>
+    <AlexBox sx={{height:7,borderRadius:999,overflow:'hidden',bgcolor:'#E7EBF3'}}>
+      <AlexBox sx={{height:'100%',width:`${percent}%`,bgcolor:'#3458CE',borderRadius:999}}/>
     </AlexBox>
     <AlexBox sx={{display:'flex',justifyContent:'space-between',mt:.3}}>
-      {['160','460','760'].map(n=><AlexText key={n} sx={{fontSize:11,color:'#667085'}}>{n}</AlexText>)}
+      {['160','460','760'].map(n=><AlexText key={n} sx={{fontSize:10,color:'#98A2B3'}}>{n}</AlexText>)}
     </AlexBox>
   </AlexBox>
 }
