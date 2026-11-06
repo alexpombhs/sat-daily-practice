@@ -15,6 +15,8 @@ export const PSAT_DOMAINS=[
 
 export type PsatDomainId=(typeof PSAT_DOMAINS)[number]['id']
 export type PsatDomainFilter=PsatDomainId|'all'|'uncategorized'
+export type PsatSelectableCategory=PsatDomainId|'uncategorized'
+export type PsatDomainSelection=PsatDomainFilter|PsatSelectableCategory[]
 export type PsatDomainBand=Partial<Record<PsatDomainId,string>>
 export interface PsatScoreReport {
   year:number
@@ -39,8 +41,15 @@ export function questionPsatDomain(question:PracticeQuestion):PsatDomainId|null{
   return null
 }
 
-export function matchesPsatDomain(question:PracticeQuestion,filter:PsatDomainFilter|undefined){
-  if(!filter||filter==='all')return true
+export function selectedPsatCategories(selection:PsatDomainSelection|undefined):PsatSelectableCategory[]{
+  if(!selection||selection==='all')return []
+  const values=Array.isArray(selection)?selection:[selection]
+  return [...new Set(values)].filter(value=>value==='uncategorized'||isPsatDomainId(value))
+}
+
+export function matchesPsatDomain(question:PracticeQuestion,selection:PsatDomainSelection|undefined){
+  const filters=selectedPsatCategories(selection)
+  if(filters.length===0)return true
   const domain=questionPsatDomain(question)
-  return filter==='uncategorized'?domain===null:domain===filter
+  return filters.includes((domain??'uncategorized') as PsatSelectableCategory)
 }
