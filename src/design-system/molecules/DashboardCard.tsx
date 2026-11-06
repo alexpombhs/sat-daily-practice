@@ -99,7 +99,7 @@ export default function DashboardCard({tone,variant='metric',icon,title,value,va
         fontSize:valueFontSize??valueSize,
         lineHeight:1,
         letterSpacing:'-.02em',
-        fontWeight:700,
+        fontWeight:600,
         color:valueColor??'#08275B',
         minWidth:0,
       }}>{value}</AlexText>
@@ -122,7 +122,7 @@ export default function DashboardCard({tone,variant='metric',icon,title,value,va
       color:palette.title,
       fontSize:dashboardTypography.cardTitle,
       lineHeight:1.2,
-      fontWeight:850,
+      fontWeight:600,
       textTransform:'uppercase',
       letterSpacing:'.075em',
     }}>{children}</AlexText>

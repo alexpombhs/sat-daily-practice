@@ -19,7 +19,7 @@ export default function AlexTabs<T extends string>({value,options,onChange,sx,..
       px:2,
       py:1,
       textTransform:'none',
-      fontWeight:800,
+      fontWeight:600,
       fontSize:13.5,
     },
   }

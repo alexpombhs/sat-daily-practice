@@ -33,9 +33,10 @@ export default function AlexMultiDropdown<T extends string>({
   }
 
   return <FormControl fullWidth={fullWidth} size="small">
-    <InputLabel id={labelId}>{label}</InputLabel>
+    <InputLabel id={labelId} shrink>{label}</InputLabel>
     <Select<string[]>
       multiple
+      displayEmpty
       labelId={labelId}
       id={id}
       value={value}

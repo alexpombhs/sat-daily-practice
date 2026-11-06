@@ -9,6 +9,6 @@ export default function AlexChoiceButton({label,selected,disabled,onClick}:Props
     disabled={disabled}
     onClick={onClick}
     aria-pressed={selected}
-    sx={{minHeight:52,fontSize:'1rem',fontWeight:850}}
+    sx={{minHeight:52,fontSize:'1rem',fontWeight:600}}
   >{label}</Button>
 }

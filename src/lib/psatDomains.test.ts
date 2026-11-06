@@ -1,5 +1,5 @@
 import {describe,expect,it} from 'vitest'
-import {matchesPsatDomain,questionPsatDomain,PSAT_DOMAINS} from './psatDomains'
+import {matchesPsatDomain,questionPsatDomain,selectedPsatCategories,PSAT_DOMAINS} from './psatDomains'
 import {choosePracticeQuestions,countCategoryQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,practiceQuestionPool} from './practiceGamification'
 import type {Attempt,PracticeQuestion,Settings} from '../types'
 
@@ -76,5 +76,34 @@ describe('category-specific practice selection',()=>{
   it('does not silently exclude uncategorized questions from ordinary practice',()=>{
     expect(practiceQuestionPool(settings,[],questions)).toHaveLength(9)
     expect(practiceQuestionPool({...settings,psatDomain:'uncategorized'},[],questions).map(q=>q.id)).toEqual(['math-unclassified'])
+  })
+})
+
+
+describe('multiple PSAT content-area selection',()=>{
+  it('preserves legacy single-category settings and defaults to all',()=>{
+    expect(selectedPsatCategories(undefined)).toEqual([])
+    expect(selectedPsatCategories('all')).toEqual([])
+    expect(selectedPsatCategories('craft-structure')).toEqual(['craft-structure'])
+    expect(selectedPsatCategories(['craft-structure','advanced-math'])).toEqual(['craft-structure','advanced-math'])
+  })
+  it('combines selected categories without affecting other question filters',()=>{
+    const filtered:Settings={...settings,mode:'both',psatDomain:['craft-structure','advanced-math'],difficultyLevels:['advanced']}
+    expect(practiceQuestionPool(filtered,[],questions).map(q=>q.id)).toEqual(['rw-craft','math-advanced'])
+    expect(countDifficultyQuestions(filtered,questions)).toEqual({all:2,easy:0,medium:0,advanced:2})
+    expect(practiceQuestionPool({...filtered,mode:'math'},[],questions).map(q=>q.id)).toEqual(['math-advanced'])
+    expect(practiceQuestionPool({...filtered,practiceTest:'practice-test-5'},[],questions)).toEqual([])
+  })
+  it('supports uncategorized alongside multiple reviewed categories',()=>{
+    const selected:Settings={...settings,psatDomain:['algebra','uncategorized']}
+    expect(practiceQuestionPool(selected,[],questions).map(q=>q.id)).toEqual(['math-algebra','math-unclassified'])
+    expect(practiceQuestionPool({...selected,psatDomain:[]},[],questions)).toHaveLength(9)
+  })
+  it('keeps New and Failed counts scoped to all selected categories',()=>{
+    const selected:Settings={...settings,psatDomain:['craft-structure','advanced-math']}
+    const attempts=[failedAttempt('rw-craft')]
+    expect(countFailedPracticeQuestions(selected,attempts,questions)).toBe(1)
+    expect(countNewPracticeQuestions(selected,attempts,questions)).toBe(1)
+    expect(practiceQuestionPool({...selected,failedOnly:true},attempts,questions).map(q=>q.id)).toEqual(['math-advanced'])
   })
 })
