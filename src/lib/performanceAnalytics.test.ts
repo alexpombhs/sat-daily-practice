@@ -82,4 +82,16 @@ describe('recent 120-question score prediction',()=>{
     expect(estimateSectionPracticeScore(0)).toBe(200)
     expect(estimateSectionPracticeScore(100)).toBe(800)
   })
+  it('lets a completed targeted Math session improve the score estimate when new answers demonstrate learning',()=>{
+    const baseline=sample.map((q,i)=>makeAttempt(q,'s1',i,q.subject==='english'))
+    const nextQuestions=QUESTION_BANK.filter(q=>q.subject==='math').slice(3,6)
+    const focused=nextQuestions.map((q,i)=>makeAttempt(q,'s2',i,true))
+    const before=analytics(baseline,[session('s1',baseline)])
+    const after=analytics([...baseline,...focused],[session('s1',baseline),session('s2',focused)])
+    expect(after.scorePredictionBasis?.sections.find(s=>s.subject==='math')?.questions).toBe(6)
+    expect(after.latestScoreEstimate!).toBeGreaterThan(before.latestScoreEstimate!)
+    expect(after.scoreTrend.at(-1)?.delta).toBeGreaterThan(0)
+    expect(after.questionsSeen).toBe(9)
+  })
+
 })
