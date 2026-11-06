@@ -16,6 +16,8 @@ import DashboardCard from '../molecules/DashboardCard'
 import PerformanceChartCard from '../molecules/PerformanceChartCard'
 import QuestionStatsTable from '../molecules/QuestionStatsTable'
 import QuestionCoverageCharts from './QuestionCoverageCharts'
+import PsatResultsPanel from './PsatResultsPanel'
+import type {PsatDomainId,PsatScoreReport} from '../../lib/psatDomains'
 import type {Attempt,PracticeQuestion} from '../../types'
 import type {PerformanceAnalytics} from '../../lib/performanceAnalytics'
 
@@ -47,6 +49,9 @@ type Props={
   onCustomEndDateChange?:(value:string)=>void
   sessionHistory?:SessionReviewSummary[]
   onReviewSession?:(sessionId:string)=>void
+  psatResults?:PsatScoreReport[]
+  onPsatResultsChange?:(results:PsatScoreReport[])=>void
+  onPracticeDomain?:(domain:PsatDomainId)=>void
 }
 
 const chartTheme={
@@ -59,7 +64,7 @@ const chartTheme={
 export default function PerformanceDashboard({
   summary,coverageQuestions=[],coverageAttempts=[],recoveryCorrectAnswers=2,hasHistory,compact=false,compactRecommendationExtra=null,questionsPdf=null,answersPdf=null,
   timeRange='30d',customStartDate='',customEndDate='',onTimeRangeChange,onCustomStartDateChange,onCustomEndDateChange,
-  sessionHistory=[],onReviewSession,
+  sessionHistory=[],onReviewSession,psatResults=[],onPsatResultsChange,onPracticeDomain,
 }:Props){
   const[selectedReviewSession,setSelectedReviewSession]=useState(sessionHistory[0]?.id??'')
   useEffect(()=>{
@@ -247,6 +252,8 @@ export default function PerformanceDashboard({
         </AlexBox>
       </AlexBox>}
     </SectionPanel></AlexBox>}
+
+    {onPsatResultsChange&&<AlexBox sx={{mt:2.5}}><PsatResultsPanel results={psatResults} onChange={onPsatResultsChange} onPracticeDomain={onPracticeDomain}/></AlexBox>}
 
     <AlexBox sx={{mt:2.5}}><QuestionCoverageCharts questions={coverageQuestions} attempts={coverageAttempts} recoveryCorrectAnswers={recoveryCorrectAnswers}/></AlexBox>
 
