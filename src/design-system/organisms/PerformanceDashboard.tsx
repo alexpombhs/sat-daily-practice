@@ -190,16 +190,13 @@ export default function PerformanceDashboard({
   </AlexBox>
 
   return <AlexBox>
-    {!compact&&<AlexBox>
-      <AlexText sx={{fontSize:12,textTransform:'uppercase',letterSpacing:'.12em',fontWeight:600,color:'#6558F5'}}>Performance</AlexText>
-      <AlexText component="h1" sx={{fontFamily:'Georgia, "Times New Roman", serif',fontSize:{xs:32,md:46},lineHeight:1.08,my:1,color:'#08275B'}}>Your practice trends</AlexText>
-      <AlexText sx={{color:'#667085',maxWidth:720}}>See your current performance first, then expand deeper breakdowns only when you need them.</AlexText>
-    </AlexBox>}
+    <AlexBox sx={{mb:1.5}}>
+      <AlexText component="h1" sx={{fontSize:{xs:25,md:30},fontWeight:650,lineHeight:1.2,color:'#08275B'}}>Performance</AlexText>
+      <AlexText sx={{fontSize:13,color:'#667085',mt:.35}}>Your progress and the skills to focus on next.</AlexText>
+    </AlexBox>
 
-    {!compact&&<AlexBox sx={{mt:2.5}}><SectionPanel
-      eyebrow="Selected period"
-      title={`Performance in ${rangeLabel}`}
-      description="Essential stats for the selected time range. Score prediction remains based on the rolling scoring model."
+    {!compact&&<AlexBox sx={{mt:1.5}}><SectionPanel
+      title={`Overview · ${rangeLabel}`}
       action={onTimeRangeChange?<AlexBox sx={{width:{xs:'100%',sm:260},display:'grid',gap:1}}>
         <AlexDropdown
           id="performance-time-range"
@@ -254,10 +251,7 @@ export default function PerformanceDashboard({
       </AlexBox>}
     </SectionPanel></AlexBox>}
 
-    {onPsatResultsChange&&<AlexBox sx={{mt:2.5}}><PsatResultsPanel results={psatResults} onChange={onPsatResultsChange} onPracticeDomain={onPracticeDomain}/></AlexBox>}
-
-    <AlexBox sx={{mt:2.5}}><QuestionCoverageCharts questions={coverageQuestions} attempts={coverageAttempts} recoveryCorrectAnswers={recoveryCorrectAnswers}/></AlexBox>
-    <AlexBox sx={{mt:2.5}}><PsatCategoryTrends questions={coverageQuestions} attempts={coverageAttempts} sessions={sessionHistory}/></AlexBox>
+    <AlexBox sx={{mt:1.5}}><QuestionCoverageCharts questions={coverageQuestions} attempts={coverageAttempts} recoveryCorrectAnswers={recoveryCorrectAnswers}/></AlexBox>
 
     {!hasHistory&&!compact&&<AlexSurface sx={{p:3.5,mt:2.5,border:'1px solid #E6E2DB'}}>
       <AlexText component="h2" sx={{fontSize:22,fontWeight:600,mb:1}}>No sessions in this range</AlexText>
@@ -265,7 +259,7 @@ export default function PerformanceDashboard({
     </AlexSurface>}
 
     {hasHistory&&!compact&&<>
-      <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'1fr',xl:'1fr 1fr'},gap:2,mt:2.5}}>
+      <AlexBox sx={{display:'grid',gridTemplateColumns:{xs:'1fr',xl:'1fr 1fr'},gap:1.5,mt:1.5}}>
         <PerformanceChartCard title="Daily success trend" description="Accuracy across practice days in the selected time range.">
           <AlexLineChart
             data={sessionAccuracy}
@@ -456,6 +450,11 @@ export default function PerformanceDashboard({
         </AlexBox>
       </AlexAccordion>}
     </>}
+
+    <AlexBox sx={{mt:1.5}}>
+      <PsatCategoryTrends questions={coverageQuestions} attempts={coverageAttempts} sessions={sessionHistory}/>
+      {onPsatResultsChange&&<AlexBox sx={{mt:1.25}}><PsatResultsPanel results={psatResults} onChange={onPsatResultsChange} onPracticeDomain={onPracticeDomain}/></AlexBox>}
+    </AlexBox>
   </AlexBox>
 }
 
