@@ -7,12 +7,13 @@ import AlexIconButton from '../atoms/AlexIconButton'
 import AlexSurface from '../atoms/AlexSurface'
 import AlexText from '../atoms/AlexText'
 import AlexTextField from '../atoms/AlexTextField'
-import {PSAT_DOMAINS,type PsatScoreReport} from '../../lib/psatDomains'
+import {PSAT_DOMAINS,type PsatDomainId,type PsatScoreReport} from '../../lib/psatDomains'
 import PsatReportSection from '../molecules/PsatReportSection'
 
 type Props={
   results:PsatScoreReport[]
   onChange:(results:PsatScoreReport[])=>void
+  onPracticeDomain?:(domain:PsatDomainId)=>void
 }
 
 const BAND_OPTIONS=[
