@@ -32,6 +32,7 @@ import {loadPreTestCoaching,type PreTestCoachingSnapshot} from './lib/preTestCoa
 import {buildNationalMeritOutlook} from './lib/nationalMeritOutlook'
 import {domainForId,type PsatDomainId} from './lib/psatDomains'
 import {failedQuestionIds} from './lib/questionMastery'
+import {completedPracticeSession} from './lib/completedPracticeSession'
 import {estimateSectionPracticeScore} from './lib/performanceAnalytics'
 import {loadSharedQuestionBank} from './lib/sharedQuestionBank'
 import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
@@ -579,7 +580,7 @@ export default function App(){
   async function finish(){
     if(!sid||!currentAttempts.length||finishingSession)return
     const activeSettings=sessionSettings??settings
-    const session:SessionSummary={id:sid,startedAt:started,endedAt:new Date().toISOString(),mode:activeSettings.mode,questionCount:currentAttempts.length,attempts:currentAttempts,dailyQuestionGoal:practiceRecommendation.questionsPerSession*practiceRecommendation.recommendedSessionsPerDay,settings:{...activeSettings}}
+    const session=completedPracticeSession(sid,started,currentAttempts,activeSettings,practiceRecommendation.questionsPerSession*practiceRecommendation.recommendedSessionsPerDay)
     setFinishingSession(true)
     try{
       await syncSession(session)
