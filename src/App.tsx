@@ -32,6 +32,7 @@ import {loadPreTestCoaching,type PreTestCoachingSnapshot} from './lib/preTestCoa
 import {buildNationalMeritOutlook} from './lib/nationalMeritOutlook'
 import {domainForId,type PsatDomainId} from './lib/psatDomains'
 import {failedQuestionIds} from './lib/questionMastery'
+import {singlePreTestQuestionSelection} from './lib/preTestPractice'
 import {estimateSectionPracticeScore} from './lib/performanceAnalytics'
 import {loadSharedQuestionBank} from './lib/sharedQuestionBank'
 import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
@@ -315,7 +316,7 @@ export default function App(){
       setPendingPractice({mode:nextMode,test:nextPracticeTest,questionIds:reviewQuestionIds,groups:conceptGroups,sessionOverrides})
       return
     }
-    const nextSettings={...settings,mode:nextMode,practiceTest:nextPracticeTest,...sessionOverrides,...(reviewQuestionIds?{failedOnly:false,failedEverOnly:!conceptGroups?.length}: {})}
+    const nextSettings={...settings,mode:nextMode,practiceTest:nextPracticeTest,...(reviewQuestionIds?{failedOnly:false,failedEverOnly:!conceptGroups?.length}: {}),...sessionOverrides}
     const nextQuestions=reviewQuestionIds
       ?reviewQuestionIds.map(id=>questionBank.find(q=>q.id===id)).filter((q):q is PracticeQuestion=>Boolean(q)).slice(0,nextSettings.questionsPerSession)
       :choosePracticeQuestions(nextSettings,attempts,Math.random,questionBank)
@@ -501,7 +502,8 @@ export default function App(){
   }
 
   function practiceConceptQuestion(question:PracticeQuestion){
-    openPreTestQuestion(question,'question')
+    const selection=singlePreTestQuestionSelection(question)
+    void beginPractice(selection.mode,selection.practiceTest,selection.questionIds,undefined,false,selection.overrides)
   }
 
   function reviewConceptQuestion(question:PracticeQuestion){
