@@ -32,6 +32,7 @@ import {loadPreTestCoaching,type PreTestCoachingSnapshot} from './lib/preTestCoa
 import {buildNationalMeritOutlook} from './lib/nationalMeritOutlook'
 import {domainForId,type PsatDomainId} from './lib/psatDomains'
 import {failedQuestionIds} from './lib/questionMastery'
+import {singlePreTestQuestionSelection} from './lib/preTestPractice'
 import {estimateSectionPracticeScore} from './lib/performanceAnalytics'
 import {loadSharedQuestionBank} from './lib/sharedQuestionBank'
 import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
@@ -501,7 +502,8 @@ export default function App(){
   }
 
   function practiceConceptQuestion(question:PracticeQuestion){
-    openPreTestQuestion(question,'question')
+    const selection=singlePreTestQuestionSelection(question)
+    void beginPractice(selection.mode,selection.practiceTest,selection.questionIds,undefined,false,selection.overrides)
   }
 
   function reviewConceptQuestion(question:PracticeQuestion){
