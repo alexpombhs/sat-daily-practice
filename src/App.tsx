@@ -32,6 +32,7 @@ import {loadPreTestCoaching,type PreTestCoachingSnapshot} from './lib/preTestCoa
 import {buildNationalMeritOutlook} from './lib/nationalMeritOutlook'
 import {domainForId,type PsatDomainId} from './lib/psatDomains'
 import {failedQuestionIds} from './lib/questionMastery'
+import {completedPracticeSession} from './lib/completedPracticeSession'
 import {estimateSectionPracticeScore} from './lib/performanceAnalytics'
 import {loadSharedQuestionBank} from './lib/sharedQuestionBank'
 import {choosePracticeQuestions,countDifficultyQuestions,countFailedPracticeQuestions,countNewPracticeQuestions,formatDuration,summarizePerformance,summarizeSession} from './lib/practiceGamification'
@@ -73,6 +74,8 @@ export default function App(){
   const[sessionSettings,setSessionSettings]=useState<Settings|null>(null)
   const[replacingSession,setReplacingSession]=useState(false)
   const[confirmEndSession,setConfirmEndSession]=useState(false)
+  const[confirmFinishEarly,setConfirmFinishEarly]=useState(false)
+  const[finishingSession,setFinishingSession]=useState(false)
   const[preTestQuestion,setPreTestQuestion]=useState<PracticeQuestion|null>(null)
   const[preTestCoaching,setPreTestCoaching]=useState<PreTestCoachingSnapshot|null>(null)
   const[preTestSelected,setPreTestSelected]=useState('')
@@ -575,16 +578,21 @@ export default function App(){
   }
 
   async function finish(){
+    if(!sid||!currentAttempts.length||finishingSession)return
     const activeSettings=sessionSettings??settings
-    const session:SessionSummary={id:sid,startedAt:started,endedAt:new Date().toISOString(),mode:activeSettings.mode,questionCount:qs.length,attempts:currentAttempts,dailyQuestionGoal:practiceRecommendation.questionsPerSession*practiceRecommendation.recommendedSessionsPerDay,settings:{...activeSettings}}
+    const session=completedPracticeSession(sid,started,currentAttempts,activeSettings,practiceRecommendation.questionsPerSession*practiceRecommendation.recommendedSessionsPerDay)
+    setFinishingSession(true)
     try{
       await syncSession(session)
       setSessions(previous=>[...previous,session])
       setResumableSession(previous=>previous?.id===sid?null:previous)
+      setConfirmFinishEarly(false)
       navigateTo('results')
     }catch(error){
       console.warn('Supabase session completion sync failed',error)
       window.alert('The session could not be completed in your shared account yet. Check your connection and try again.')
+    }finally{
+      setFinishingSession(false)
     }
   }
 
@@ -619,6 +627,15 @@ export default function App(){
       contentBackground={background}
       showSignInPrompt={view!=='account'}
     >{content}</AppSidebarLayout>
+      <AlexConfirmDialog
+        open={confirmFinishEarly}
+        title="Finish practice early?"
+        description={`Complete this session with ${currentAttempts.length} answered question${currentAttempts.length===1?'':'s'} out of ${qs.length}. Unanswered questions will not count as incorrect. Your saved answers will appear in the normal results and review.`}
+        confirmLabel="Finish and see results"
+        busy={finishingSession}
+        onConfirm={()=>void finish()}
+        onCancel={()=>setConfirmFinishEarly(false)}
+      />
       <AlexConfirmDialog
         open={confirmEndSession}
         title="End unfinished session?"
@@ -738,6 +755,8 @@ export default function App(){
         onPrevious={()=>goTo(i-1)}
         onNext={next}
         reviewMode={reviewMode}
+        canFinishEarly={currentAttempts.length>0&&currentAttempts.length<qs.length&&!finishingSession}
+        onFinishEarly={()=>setConfirmFinishEarly(true)}
       />
       {preTestGroups.length>0&&!reviewMode&&(()=>{
         const group=preTestGroups.find(g=>g.questionIds.includes(current.id))

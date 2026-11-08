@@ -186,6 +186,7 @@ function sessionRow(s:SessionSummary,userId:string){
     ended_at:s.endedAt,
     mode:s.mode,
     question_count:s.questionCount,
+    question_ids:s.attempts.map(attempt=>attempt.questionId),
     session_settings:s.settings||s.dailyQuestionGoal?{...(s.settings??{}),...(s.dailyQuestionGoal?{dailyQuestionGoal:s.dailyQuestionGoal}:{})}:null,
     status:'completed',
     last_activity_at:s.endedAt,

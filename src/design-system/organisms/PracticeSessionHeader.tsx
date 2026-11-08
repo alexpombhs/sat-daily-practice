@@ -20,10 +20,12 @@ type Props={
   isLast:boolean
   onPrevious:()=>void
   onNext:()=>void
+  onFinishEarly?:()=>void
+  canFinishEarly?:boolean
   reviewMode?:boolean
 }
 
-export default function PracticeSessionHeader({moduleLabel,subjectLabel,sourceTestLabel,sessionSummary,failedOrder,onFailedOrderChange,current,total,canGoPrevious,canGoNext,isLast,onPrevious,onNext,reviewMode=false}:Props){
+export default function PracticeSessionHeader({moduleLabel,subjectLabel,sourceTestLabel,sessionSummary,failedOrder,onFailedOrderChange,current,total,canGoPrevious,canGoNext,isLast,onPrevious,onNext,onFinishEarly,canFinishEarly=false,reviewMode=false}:Props){
   return <AlexBox component="header" className="practice-topbar">
     <AlexBox className="practice-title">
       <AlexText component="span">{reviewMode?'SESSION REVIEW':'SAT PRACTICE'}</AlexText>
@@ -39,6 +41,9 @@ export default function PracticeSessionHeader({moduleLabel,subjectLabel,sourceTe
       </AlexBox>
     </AlexBox>
     <AlexBox className="question-nav">
+      {!reviewMode&&onFinishEarly&&<AlexButton tone="secondary" onClick={onFinishEarly} disabled={!canFinishEarly} sx={{fontSize:12}}>
+        Finish early
+      </AlexButton>}
       <AlexIconButton
         label="Previous question"
         onClick={onPrevious}
