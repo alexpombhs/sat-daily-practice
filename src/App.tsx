@@ -316,7 +316,7 @@ export default function App(){
       setPendingPractice({mode:nextMode,test:nextPracticeTest,questionIds:reviewQuestionIds,groups:conceptGroups,sessionOverrides})
       return
     }
-    const nextSettings={...settings,mode:nextMode,practiceTest:nextPracticeTest,...sessionOverrides,...(reviewQuestionIds?{failedOnly:false,failedEverOnly:!conceptGroups?.length}: {})}
+    const nextSettings={...settings,mode:nextMode,practiceTest:nextPracticeTest,...(reviewQuestionIds?{failedOnly:false,failedEverOnly:!conceptGroups?.length}: {}),...sessionOverrides}
     const nextQuestions=reviewQuestionIds
       ?reviewQuestionIds.map(id=>questionBank.find(q=>q.id===id)).filter((q):q is PracticeQuestion=>Boolean(q)).slice(0,nextSettings.questionsPerSession)
       :choosePracticeQuestions(nextSettings,attempts,Math.random,questionBank)
