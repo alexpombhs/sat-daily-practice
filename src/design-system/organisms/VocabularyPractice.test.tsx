@@ -1,5 +1,6 @@
 import {fireEvent,render,screen,waitFor} from '@testing-library/react'
 import {beforeEach,describe,expect,it,vi} from 'vitest'
+import {loadVocabularyAttempts} from '../../lib/supabase'
 import VocabularyPractice from './VocabularyPractice'
 
 vi.mock('../../lib/supabase',()=>({
@@ -23,8 +24,15 @@ describe('VocabularyPractice answer actions',()=>{
       onPreferencesChange={vi.fn()}
     />)
 
+    await waitFor(()=>{
+      expect(loadVocabularyAttempts).toHaveBeenCalled()
+      expect(screen.queryByText('Loading vocabulary progress…')).not.toBeInTheDocument()
+    })
     const choices=await screen.findAllByRole('button',{pressed:false})
+    expect(choices).toHaveLength(4)
+    expect(screen.getByRole('button',{name:'Next word'})).toBeDisabled()
     fireEvent.click(choices[0])
+    await waitFor(()=>expect(screen.getByRole('button',{name:'Next word'})).toBeEnabled())
 
     await waitFor(()=>expect(scrollIntoView).toHaveBeenCalledWith({
       block:'nearest',
