@@ -1,4 +1,4 @@
-import {useEffect,useMemo,useState,type ReactNode} from 'react'
+import {useEffect,useLayoutEffect,useMemo,useRef,useState,type ReactNode} from 'react'
 import AlexAccordion from '../atoms/AlexAccordion'
 import AlexBox from '../atoms/AlexBox'
 import AlexButton from '../atoms/AlexButton'
@@ -46,6 +46,7 @@ export default function VocabularyPractice({signedIn,onSignIn,preferences,onPref
   const[current,setCurrent]=useState<VocabularyPrompt|null>(null)
   const[selected,setSelected]=useState('')
   const[saveError,setSaveError]=useState('')
+  const actionsRef=useRef<HTMLDivElement|null>(null)
 
   useEffect(()=>{
     if(!signedIn){setAttempts([]);return}
@@ -95,6 +96,12 @@ export default function VocabularyPractice({signedIn,onSignIn,preferences,onPref
 
   const answered=Boolean(selected)
   const correct=Boolean(current&&answered&&selected===current.answer)
+
+  // Feedback adds height above the buttons. Keep the next action visible without
+  // making students manually scroll after every submitted answer.
+  useLayoutEffect(()=>{
+    if(answered)actionsRef.current?.scrollIntoView?.({block:'nearest',behavior:'smooth'})
+  },[answered])
 
   function updateSettings(patch:Partial<VocabularyPracticeSettings>){
     const next={...settings,...patch}
@@ -383,7 +390,19 @@ export default function VocabularyPractice({signedIn,onSignIn,preferences,onPref
               {saveError&&<AlexText sx={{fontSize:12,color:'#A33A31',mt:.4}}>{saveError}</AlexText>}
             </AlexSurface>}
 
-            <AlexBox sx={{display:'flex',justifyContent:'flex-end',gap:1,mt:2,flexWrap:'wrap'}}>
+            <AlexBox ref={actionsRef} data-testid="vocabulary-actions" sx={{
+              display:'flex',justifyContent:'flex-end',gap:1,mt:2,flexWrap:'wrap',
+              position:answered?'sticky':'static',
+              bottom:'calc(66px + env(safe-area-inset-bottom))',
+              '@media (min-width:768px)':{bottom:0,scrollMarginBottom:16},
+              scrollMarginBottom:'calc(76px + env(safe-area-inset-bottom))',
+              zIndex:2,
+              bgcolor:answered?'#FFFFFF':'transparent',
+              borderTop:answered?'1px solid #E4E7EC':'none',
+              borderRadius:1,
+              boxShadow:answered?'0 -4px 14px rgba(8,39,91,.07)':'none',
+              p:answered?1:0,
+            }}>
               {answered&&!masteredIds.has(current.entry.id)&&<AlexButton tone="secondary" onClick={markMastered}>Mark mastered</AlexButton>}
               <AlexButton disabled={!answered} onClick={next}>Next word</AlexButton>
             </AlexBox>
