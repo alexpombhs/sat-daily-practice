@@ -352,41 +352,60 @@ export async function loadCloudHistory():Promise<{attempts:Attempt[];sessions:Se
   const userId=await currentUserId()
   if(!userId)return null
 
-  let sessionResult=await supabase.from('sat_sessions')
-    .select('id,started_at,ended_at,mode,question_count,status,session_settings')
-    .eq('user_id',userId)
-    .eq('status','completed')
-    .not('ended_at','is',null)
-    .order('started_at',{ascending:true})
-
-  if(sessionResult.error&&isMissingResumableSessionSchema(sessionResult.error)){
-    sessionResult=await supabase.from('sat_sessions')
-      .select('id,started_at,ended_at,mode,question_count,session_settings')
+  // Supabase limits a single Data API response to 1,000 rows by default.
+  // Fetch every page so newer answers cannot disappear from daily goals.
+  const PAGE_SIZE=500
+  const attempts:Attempt[]=[]
+  for(let from=0;;from+=PAGE_SIZE){
+    const {data,error}=await supabase.from('sat_attempts')
+      .select('id,session_id,question_id,practice_test_id,subject,module,question_number,selected_answer,correct_answer,correct,self_graded,elapsed_ms,created_at')
       .eq('user_id',userId)
-      .not('ended_at','is',null)
-      .order('started_at',{ascending:true}) as typeof sessionResult
+      .order('created_at',{ascending:true})
+      .order('id',{ascending:true})
+      .range(from,from+PAGE_SIZE-1)
+    if(error)throw error
+    const page=(data??[]).map(attemptFromRow)
+    attempts.push(...page)
+    if(page.length<PAGE_SIZE)break
   }
 
-  const attemptResult=await supabase.from('sat_attempts')
-    .select('id,session_id,question_id,practice_test_id,subject,module,question_number,selected_answer,correct_answer,correct,self_graded,elapsed_ms,created_at')
-    .eq('user_id',userId)
-    .order('created_at',{ascending:true})
-
-  if(sessionResult.error)throw sessionResult.error
-  if(attemptResult.error)throw attemptResult.error
-  const attempts:Attempt[]=(attemptResult.data??[]).map(attemptFromRow)
   const bySession=new Map<string,Attempt[]>()
   attempts.forEach(attempt=>bySession.set(attempt.sessionId,[...(bySession.get(attempt.sessionId)??[]),attempt]))
-  const sessions:SessionSummary[]=(sessionResult.data??[]).map(row=>({
-    id:row.id,
-    startedAt:row.started_at,
-    endedAt:row.ended_at??row.started_at,
-    mode:row.mode as SessionSummary['mode'],
-    questionCount:row.question_count,
-    attempts:bySession.get(row.id)??[],
-    dailyQuestionGoal:typeof row.session_settings?.dailyQuestionGoal==='number'?row.session_settings.dailyQuestionGoal:undefined,
-    settings:row.session_settings?row.session_settings as Settings:undefined,
-  }))
+
+  const sessions:SessionSummary[]=[]
+  for(let from=0;;from+=PAGE_SIZE){
+    let sessionPage=await supabase.from('sat_sessions')
+      .select('id,started_at,ended_at,mode,question_count,status,session_settings')
+      .eq('user_id',userId)
+      .eq('status','completed')
+      .not('ended_at','is',null)
+      .order('started_at',{ascending:true})
+      .order('id',{ascending:true})
+      .range(from,from+PAGE_SIZE-1)
+
+    if(sessionPage.error&&isMissingResumableSessionSchema(sessionPage.error)){
+      sessionPage=await supabase.from('sat_sessions')
+        .select('id,started_at,ended_at,mode,question_count,session_settings')
+        .eq('user_id',userId)
+        .not('ended_at','is',null)
+        .order('started_at',{ascending:true})
+        .order('id',{ascending:true})
+        .range(from,from+PAGE_SIZE-1) as typeof sessionPage
+    }
+    if(sessionPage.error)throw sessionPage.error
+    const page=sessionPage.data??[]
+    sessions.push(...page.map(row=>({
+      id:row.id,
+      startedAt:row.started_at,
+      endedAt:row.ended_at??row.started_at,
+      mode:row.mode as SessionSummary['mode'],
+      questionCount:row.question_count,
+      attempts:bySession.get(row.id)??[],
+      dailyQuestionGoal:typeof row.session_settings?.dailyQuestionGoal==='number'?row.session_settings.dailyQuestionGoal:undefined,
+      settings:row.session_settings?row.session_settings as Settings:undefined,
+    })))
+    if(page.length<PAGE_SIZE)break
+  }
   return {attempts,sessions}
 }
 
