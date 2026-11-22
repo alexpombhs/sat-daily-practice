@@ -6,10 +6,10 @@ type Props={value:string;onChange:(value:string)=>void;onSelectionFormatsChange?
 
 const escapeHtml=(value:string)=>value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
 
-const TABLE_BLOCK=/\\[TABLE\\]\\s*\\n([\\s\\S]*?)\\n\\[\\/TABLE\\]/gi
+const TABLE_BLOCK=/\[TABLE\]\s*\n([\s\S]*?)\n\[\/TABLE\]/gi
 
 function renderTable(body:string){
-  const rows=body.trim().split(/\\r?\\n/).map(line=>line.split('|').map(cell=>cell.trim()))
+  const rows=body.trim().split(/\r?\n/).map(line=>line.split('|').map(cell=>cell.trim()))
   const width=rows[0]?.length??0
   if(width<2||rows.some(row=>row.length!==width)){
     return '<span class="latex-table-error" contenteditable="false">Invalid table: use | between cells and one row per line.</span>'
@@ -41,8 +41,8 @@ function serialize(root:HTMLElement){
     if(node.nodeType===Node.TEXT_NODE)return node.textContent??''
     if(!(node instanceof HTMLElement))return ''
     if(node.getAttribute('data-editor-table')==='true'){
-      const rows=Array.from(node.querySelectorAll('tr')).map(row=>Array.from(row.querySelectorAll('th,td')).map(cell=>(cell.textContent??'').replace(/\\s+/g,' ').trim()).join(' | '))
-      return '[TABLE]\\n'+rows.join('\\n')+'\\n[/TABLE]'
+      const rows=Array.from(node.querySelectorAll('tr')).map(row=>Array.from(row.querySelectorAll('th,td')).map(cell=>(cell.textContent??'').replace(/\s+/g,' ').trim()).join(' | '))
+      return '[TABLE]\n'+rows.join('\n')+'\n[/TABLE]'
     }
     const latex=node.getAttribute('data-latex')
     if(latex!==null)return latex
@@ -89,8 +89,8 @@ const LiveLatexEditor=forwardRef<LiveLatexEditorHandle,Props>(function LiveLatex
       if(!root)return false
       const range=selectedRange.current
       if(kind==='table'){
-        const table='[TABLE]\\nHeading 1 | Heading 2\\nValue 1 | Value 2\\n[/TABLE]'
-        const next=serialize(root)+(root.textContent?.trim()?'\\n':'')+table
+        const table='[TABLE]\nHeading 1 | Heading 2\nValue 1 | Value 2\n[/TABLE]'
+        const next=serialize(root)+(root.textContent?.trim()?'\n':'')+table
         root.innerHTML=render(next)
         last.current=next
         onChange(next)
