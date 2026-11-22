@@ -6,7 +6,22 @@ type Props={value:string;onChange:(value:string)=>void;onSelectionFormatsChange?
 
 const escapeHtml=(value:string)=>value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
 
+const TABLE_BLOCK=/\\[TABLE\\]\\s*\\n([\\s\\S]*?)\\n\\[\\/TABLE\\]/gi
+
+function renderTable(body:string){
+  const rows=body.trim().split(/\\r?\\n/).map(line=>line.split('|').map(cell=>cell.trim()))
+  const width=rows[0]?.length??0
+  if(width<2||rows.some(row=>row.length!==width)){
+    return '<span class="latex-table-error" contenteditable="false">Invalid table: use | between cells and one row per line.</span>'
+  }
+  return '<table data-editor-table="true" style="border-collapse:collapse;margin:10px 0;width:auto;">'+rows.map((row,i)=>'<tr>'+row.map(cell=>'<'+(i===0?'th':'td')+' contenteditable="true" style="border:1px solid #667085;padding:6px 12px;min-width:48px;">'+escapeHtml(cell)+'</'+(i===0?'th':'td')+'>').join('')+'</tr>').join('')+'</table>'
+}
+
 function render(value:string):string{
+  // Preserve structured tables as real editable cells, without parsing them as inline math.
+  const blocks=value.split(TABLE_BLOCK)
+  if(blocks.length>1)return blocks.map((part,index)=>index%2?renderTable(part):render(part)).join('')
+
   return value.split(/(<(?:u|strong|em|s)>[\s\S]*?<\/(?:u|strong|em|s)>|\$\$[\s\S]+?\$\$|\$[^$\n]+\$)/gi).map(part=>{
     const format=part.match(/^<(u|strong|em|s)>([\s\S]*)<\/\1>$/i)
     if(format)return '<'+format[1]+'>'+render(format[2])+'</'+format[1]+'>'
@@ -25,6 +40,10 @@ function serialize(root:HTMLElement){
   function walk(node:Node):string{
     if(node.nodeType===Node.TEXT_NODE)return node.textContent??''
     if(!(node instanceof HTMLElement))return ''
+    if(node.getAttribute('data-editor-table')==='true'){
+      const rows=Array.from(node.querySelectorAll('tr')).map(row=>Array.from(row.querySelectorAll('th,td')).map(cell=>(cell.textContent??'').replace(/\\s+/g,' ').trim()).join(' | '))
+      return '[TABLE]\\n'+rows.join('\\n')+'\\n[/TABLE]'
+    }
     const latex=node.getAttribute('data-latex')
     if(latex!==null)return latex
     if(node.tagName==='BR')return '\n'
@@ -69,6 +88,15 @@ const LiveLatexEditor=forwardRef<LiveLatexEditorHandle,Props>(function LiveLatex
       const root=ref.current
       if(!root)return false
       const range=selectedRange.current
+      if(kind==='table'){
+        const table='[TABLE]\\nHeading 1 | Heading 2\\nValue 1 | Value 2\\n[/TABLE]'
+        const next=serialize(root)+(root.textContent?.trim()?'\\n':'')+table
+        root.innerHTML=render(next)
+        last.current=next
+        onChange(next)
+        selectedRange.current=null
+        return true
+      }
       if(!range||range.collapsed||!root.contains(range.commonAncestorContainer))return false
       const selected=range.toString()
       if(!selected.trim())return false
