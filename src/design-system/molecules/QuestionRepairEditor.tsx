@@ -267,7 +267,7 @@ export default function QuestionRepairEditor({question,questionsPdf,issueMessage
       if(!input)return
       const start=input.selectionStart??0,end=input.selectionEnd??start
       const selected=questionText.slice(start,end)
-      const replacement='[TABLE]\\n'+(selected||'x | y\\n')+'\\n[/TABLE]'
+      const replacement='[TABLE]\n'+(selected||'Heading 1 | Heading 2\nValue 1 | Value 2')+'\n[/TABLE]'
       setQuestionText(questionText.slice(0,start)+replacement+questionText.slice(end))
       requestAnimationFrame(()=>input.focus())
       return
